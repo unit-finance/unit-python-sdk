@@ -3,7 +3,7 @@ from typing import Optional
 
 import requests
 
-from models import UnitEncoder
+from models.codecs import UnitEncoder
 
 
 class BaseResource(object):

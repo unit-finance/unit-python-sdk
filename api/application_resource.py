@@ -1,6 +1,6 @@
 from api.base_resource import BaseResource
 from models.application import *
-from models.dto_decoder import DtoDecoder
+from models.codecs import DtoDecoder
 
 
 class ApplicationResource(BaseResource):
