@@ -19,7 +19,7 @@ class ApplicationResource(BaseResource):
             if data["type"] == "individualApplication":
                 return UnitResponse[IndividualApplicationDTO](DtoDecoder.decode(data), None)
             else:
-                return UnitResponse[BusinessApplicationDTO](DtoDecoder.decode(response.json(data)), None)
+                return UnitResponse[BusinessApplicationDTO](DtoDecoder.decode(data), None)
 
         else:
             return UnitError.from_json_api(response.json())
