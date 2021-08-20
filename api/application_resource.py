@@ -34,3 +34,14 @@ class ApplicationResource(BaseResource):
             return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
+
+    # def get(self, applicationId: str)-> Union[UnitResponse[ApplicationDTO], UnitError]:
+    #     response = super().get(f"{self.resource}/{applicationId}")
+    #     if response.status_code == 200:
+    #         data = response.json().get("data")
+    #         included = response.json().get("included")
+    #
+    #         return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
+    #     else:
+    #         return UnitError.from_json_api(response.json())
+

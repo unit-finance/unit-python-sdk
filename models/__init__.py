@@ -36,7 +36,6 @@ class UnitErrorPayload(object):
         self.source = source
 
     def __str__(self):
-        print(self.detail)
         return self.detail
 
 
@@ -56,9 +55,11 @@ class UnitError(object):
         return UnitError(errors)
 
     def __str__(self):
+        str = ""
         for err in self.errors:
-            print(err)
+            str += err + '\n'
 
+        return str
 
 Status = Literal["Approved", "Denied", "PendingReview"]
 Title = Literal["CEO", "COO", "CFO", "President"]
