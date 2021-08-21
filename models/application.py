@@ -195,21 +195,20 @@ class ApplicationDocumentDTO(object):
         self.status = status
         self.documentType = documentType
         self.description = description
+        self.name = name
         self.address = address
         self.date_of_birth = date_of_birth
         self.passport = passport
         self.ein = ein
         self.reasonCode = reasonCode
         self.reason = reason
-        self.tags = tags
-        self.relationships = relationships
 
     @staticmethod
     def from_json_api(_id, _type, attributes):
-        return ApplicationDocument(
+        return ApplicationDocumentDTO(
             _id, attributes["status"], attributes["documentType"], attributes["description"], attributes["name"],
-            attributes["address"], date_utils.to_datetime(attributes["dateOfBirth"]),attributes["passport"],
-            attributes["ein"], attributes["reasonCode"], attributes["reason"]
+            attributes.get("address"), attributes.get("dateOfBirth"), attributes.get("passport"),
+            attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
         )
 
 

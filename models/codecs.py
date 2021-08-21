@@ -11,7 +11,7 @@ mappings = {
         "businessApplication": lambda _id, _type, attributes, relationships:
         BusinessApplicationDTO.from_json_api(_id, _type, attributes, relationships),
 
-        "document": lambda _id, _type, attributes:
+        "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
     }
 
