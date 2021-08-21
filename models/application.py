@@ -6,7 +6,10 @@ from utils import date_utils
 from models import *
 
 ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview"]
-
+DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "CertificateOfIncorporation",
+                       "EmployerIdentificationNumberConfirmation"]
+ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMismatch", "DOBMismatch", "ExpiredId",
+                     "EINMismatch", "StateMismatch", "Other"]
 
 class IndividualApplicationDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
@@ -100,6 +103,33 @@ class CreateIndividualApplicationRequest(UnitRequest):
 class CreateBusinessApplicationRequest(UnitRequest):
     def to_json_api(self) -> str:
         pass
+
+
+class ApplicationDocumentDTO(object):
+    def __init__(self, id: str, status: ApplicationStatus, documentType: DocumentType, description: str, name: str,
+                 address: Optional[Address], date_of_birth: Optional[date], passport: Optional[str], ein: Optional[str],
+                 reasonCode: Optional[ReasonCode], reason: Optional[str]):
+        self.id = id
+        self.type = "document"
+        self.status = status
+        self.documentType = documentType
+        self.description = description
+        self.address = address
+        self.date_of_birth = date_of_birth
+        self.passport = passport
+        self.ein = ein
+        self.reasonCode = reasonCode
+        self.reason = reason
+        self.tags = tags
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes):
+        return ApplicationDocument(
+            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes["name"],
+            attributes["address"], date_utils.to_datetime(attributes["dateOfBirth"]),attributes["passport"],
+            attributes["ein"], attributes["reasonCode"], attributes["reason"]
+        )
 
 
 ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]

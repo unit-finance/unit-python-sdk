@@ -34,3 +34,12 @@ class ApplicationResource(BaseResource):
             return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
+
+
+    def list_documents(self, applicationId: str):
+        response = super().get(f"{self.resource}/{applicationId}/documents")
+        if response.status_code == 200:
+            data = response.json().get("data")
+            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
