@@ -57,8 +57,6 @@ class ApplicationE2eTests(unittest.TestCase):
         token = os.environ.get("token")
         client = Unit("https://api.s.unit.sh", token)
         response = client.applications.list_documents("61176")
-        x = 5
-
 
 if __name__ == '__main__':
     unittest.main()
