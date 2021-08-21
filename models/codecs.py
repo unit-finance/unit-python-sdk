@@ -2,7 +2,7 @@ import json
 from models import *
 from datetime import datetime, date
 from utils import date_utils
-from models.application import IndividualApplicationDTO, BusinessApplicationDTO
+from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -10,6 +10,9 @@ mappings = {
 
         "businessApplication": lambda _id, _type, attributes, relationships:
         BusinessApplicationDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "document": lambda _id, _type, attributes:
+        ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
     }
 
 

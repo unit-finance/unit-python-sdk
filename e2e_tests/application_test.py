@@ -10,8 +10,10 @@ class ApplicationE2eTests(unittest.TestCase):
         token = os.environ.get("token")
         request = CreateIndividualApplicationRequest(
             FullName("Jhon", "Doe"), date.today() - timedelta(days=20*365),
-            Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
-            "jone.doe1@unit-finance.com", Phone("1", "2025550108"), ssn="000000002")
+            Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"), "jone.doe1@unit-finance.com",
+            Phone("1", "2025550108"),
+            ssn="000000002"
+        )
 
         client = Unit("https://api.s.unit.sh", token)
         response = client.applications.create(request)
