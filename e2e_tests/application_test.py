@@ -17,7 +17,6 @@ class ApplicationE2eTests(unittest.TestCase):
 
         client = Unit("https://api.s.unit.sh", token)
         response = client.applications.create(request)
-        print(response)
         self.assertTrue(response.data.type == "individualApplication")
 
     def test_create_business_application(self):
@@ -43,10 +42,15 @@ class ApplicationE2eTests(unittest.TestCase):
 
         client = Unit("https://api.s.unit.sh", token)
         response = client.applications.create(request)
-        print(response)
         self.assertTrue(response.data.type == "businessApplication")
 
     def test_get_applications(self):
+        token = os.environ.get("token")
+        client = Unit("https://api.s.unit.sh", token)
+        response = client.applications.get("72996")
+        self.assertTrue(response.data.type == "businessApplication" or response.data.type == "individualApplication")
+
+    def test_list_applications(self):
         token = os.environ.get("token")
         client = Unit("https://api.s.unit.sh", token)
         response = client.applications.list()
@@ -57,6 +61,9 @@ class ApplicationE2eTests(unittest.TestCase):
         token = os.environ.get("token")
         client = Unit("https://api.s.unit.sh", token)
         response = client.applications.list_documents("61176")
+        for app in response.data:
+            self.assertTrue(app.type == "document")
+
 
 if __name__ == '__main__':
     unittest.main()

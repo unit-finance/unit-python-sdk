@@ -61,6 +61,7 @@ class UnitError(object):
 
         return str
 
+
 Status = Literal["Approved", "Denied", "PendingReview"]
 Title = Literal["CEO", "COO", "CFO", "President"]
 
