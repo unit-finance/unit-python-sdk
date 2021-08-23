@@ -16,9 +16,9 @@ class ApplicationResource(BaseResource):
             data = response.json().get("data")
             included = response.json().get("included")
             if data["type"] == "individualApplication":
-                return UnitResponse[IndividualApplicationDTO](DtoDecoder.decode(data), DtoDecoder.included(data))
+                return UnitResponse[IndividualApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
             else:
-                return UnitResponse[BusinessApplicationDTO](DtoDecoder.decode(data), DtoDecoder.included(data))
+                return UnitResponse[BusinessApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
 
@@ -27,7 +27,7 @@ class ApplicationResource(BaseResource):
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
-            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.included(data))
+            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
