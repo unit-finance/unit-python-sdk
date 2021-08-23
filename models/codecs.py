@@ -1,6 +1,8 @@
 import json
 from models import *
-from models.application import IndividualApplicationDTO, BusinessApplicationDTO
+from datetime import datetime, date
+from utils import date_utils
+from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -8,6 +10,9 @@ mappings = {
 
         "businessApplication": lambda _id, _type, attributes, relationships:
         BusinessApplicationDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "document": lambda _id, _type, attributes, relationships:
+        ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
     }
 
 
@@ -72,4 +77,34 @@ class UnitEncoder(json.JSONEncoder):
             if obj.street2 is not None:
                 addr["street2"] = obj.street2
             return addr
+        if isinstance(obj, BusinessContact):
+            return {"fullName": obj.full_name, "email": obj.email, "phone": obj.phone}
+        if isinstance(obj, Officer):
+            officer = {"fullName": obj.full_name, "dateOfBirth": date_utils.to_date_str(obj.date_of_birth), "address": obj.address,
+                    "phone": obj.phone, "email": obj.email}
+            if obj.status is not None:
+                officer["status"] = obj.status
+            if obj.title is not None:
+                officer["title"] = obj.title
+            if obj.ssn is not None:
+                officer["ssn"] = obj.ssn
+            if obj.passport is not None:
+                officer["passport"] = obj.passport
+            if obj.nationality is not None:
+                officer["nationality"] = obj.nationality
+            return officer
+        if isinstance(obj, BeneficialOwner):
+            beneficial_owner = {"fullName": obj.full_name, "dateOfBirth": date_utils.to_date_str(obj.date_of_birth), "address": obj.address,
+                                "phone": obj.phone, "email": obj.email}
+            if obj.status is not None:
+                beneficial_owner["status"] = obj.status
+            if obj.ssn is not None:
+                beneficial_owner["ssn"] = obj.ssn
+            if obj.passport is not None:
+                beneficial_owner["passport"] = obj.passport
+            if obj.nationality is not None:
+                beneficial_owner["nationality"] = obj.nationality
+            if obj.percentage is not None:
+                beneficial_owner["percentage"] = obj.percentage
+            return beneficial_owner
         return json.JSONEncoder.default(self, obj)
