@@ -3,6 +3,7 @@ from models import *
 from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
+from models.account import DepositAccountDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -13,7 +14,11 @@ mappings = {
 
         "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
+
+        "depositAccount": lambda _id, _type, attributes, relationships:
+        DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
     }
+
 
 
 def split_json_api_single_response(payload: dict):
