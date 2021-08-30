@@ -2,11 +2,9 @@ import json
 from datetime import datetime, date
 from typing import Literal, Optional
 from utils import date_utils
-
 from models import *
 
 ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview"]
-EntityType = Literal["Corporation", "LLC", "Partnership"]
 
 DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "CertificateOfIncorporation",
                        "EmployerIdentificationNumberConfirmation"]

@@ -64,7 +64,7 @@ class UnitError(object):
 
 Status = Literal["Approved", "Denied", "PendingReview"]
 Title = Literal["CEO", "COO", "CFO", "President"]
-
+EntityType = Literal["Corporation", "LLC", "Partnership"]
 
 class FullName(object):
     def __init__(self, first: str, last: str):
@@ -159,3 +159,17 @@ class BeneficialOwner(object):
                 data.get("phone"), data.get("email"), data.get("status"), data.get("ssn"),
                 data.get("passport"), data.get("nationality"), data.get("percentage")))
         return beneficial_owners
+
+
+class AuthorizedUser(object):
+    def __init__(self, full_name: FullName, email: str, phone: Phone):
+        self.full_name = full_name
+        self.email = email
+        self.phone = phone
+
+    @staticmethod
+    def from_json_api(l: list):
+        authorized_users = []
+        for data in l:
+            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("phone"), data.get("email")))
+        return authorized_users
