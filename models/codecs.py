@@ -15,10 +15,15 @@ mappings = {
         "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
 
+        "individualCustomer": lambda _id, _type, attributes, relationships:
+        IndividualCustomerDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessCustomer": lambda _id, _type, attributes, relationships:
+        BusinessCustomerDTO.from_json_api(_id, _type, attributes, relationships),
+
         "depositAccount": lambda _id, _type, attributes, relationships:
         DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
     }
-
 
 
 def split_json_api_single_response(payload: dict):

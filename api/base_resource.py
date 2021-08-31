@@ -1,6 +1,5 @@
 import json
 from typing import Optional
-
 import requests
 
 from models.codecs import UnitEncoder
@@ -15,7 +14,7 @@ class BaseResource(object):
             "authorization": f"Bearer {self.token}"
         }
 
-    def get(self, resource: str, params: dict, headers: Optional[dict[str, str]] = None):
+    def get(self, resource: str, params: dict = None, headers: Optional[dict[str, str]] = None):
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
     def post(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
