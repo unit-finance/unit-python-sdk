@@ -3,6 +3,7 @@ from models import *
 from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
+from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -13,6 +14,12 @@ mappings = {
 
         "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
+
+        "individualCustomer": lambda _id, _type, attributes, relationships:
+        IndividualCustomerDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessCustomer": lambda _id, _type, attributes, relationships:
+        BusinessCustomerDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 
