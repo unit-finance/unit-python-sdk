@@ -15,6 +15,7 @@ class DepositAccountDTO(object):
                  tags: Optional[dict[str, str]], close_reason: Optional[CloseReason],
                  relationships: Optional[dict[str, Relationship]]):
         self.id = id
+        self.type = "depositAccount"
         self.created_at = created_at
         self.name = name
         self.deposit_product = deposit_product
@@ -40,4 +41,70 @@ class DepositAccountDTO(object):
 
 
 AccountDTO = Union[DepositAccountDTO]
+
+class CreateDepositAccountRequest(UnitRequest):
+    def __init__(self, deposit_product: str, relationships: Optional[dict[str, Relationship]],
+                 tags: Optional[dict[str, str]] = None, idempotency_key: Optional[str] = None):
+        self.deposit_product = deposit_product
+        self.tags = tags
+        self.idempotency_key = idempotency_key
+        self.relationships = relationships
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "depositAccount",
+                "attributes": {
+                    "depositProduct": self.deposit_product,
+                },
+                "relationships": self.relationships
+            }
+        }
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class PatchDepositAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, deposit_product: Optional[str] = None, tags: Optional[dict[str, str]] = None):
+        self.account_id = account_id
+        self.deposit_product = deposit_product
+        self.tags = tags
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "depositAccount",
+                "attributes": {}
+            }
+        }
+
+        if self.deposit_product:
+            payload["data"]["attributes"]["depositProduct"] = self.deposit_product
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+class AccountLimitsDTO(object):
+    def __init__(self, ach: object, card: object):
+        self.type = "limits"
+        self.ach = ach
+        self.card = card
+
+    @staticmethod
+    def from_json_api(_type, attributes):
+        return AccountLimitsDTO(attributes["ach"], attributes["card"])
 

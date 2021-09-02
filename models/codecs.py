@@ -3,7 +3,7 @@ from models import *
 from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
-from models.account import DepositAccountDTO
+from models.account import DepositAccountDTO, AccountLimitsDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -23,11 +23,14 @@ mappings = {
 
         "depositAccount": lambda _id, _type, attributes, relationships:
         DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "limits": lambda _id, _type, attributes, relationships:
+        AccountLimitsDTO.from_json_api(_type, attributes),
     }
 
 
 def split_json_api_single_response(payload: dict):
-    _id, _type, attributes = payload["id"], payload["type"], payload["attributes"]
+    _id, _type, attributes = payload.get("id"), payload["type"], payload["attributes"]
     relationships = None
 
     if payload.get("relationships"):
@@ -56,6 +59,8 @@ def split_json_api_array_response(payload):
 class DtoDecoder(object):
     @staticmethod
     def decode(payload):
+        if payload is None:
+            return None
         # if response contains a list of dtos
         if isinstance(payload, list):
             dtos = split_json_api_array_response(payload)
@@ -117,4 +122,6 @@ class UnitEncoder(json.JSONEncoder):
             if obj.percentage is not None:
                 beneficial_owner["percentage"] = obj.percentage
             return beneficial_owner
+        if isinstance(obj, Relationship):
+            return {"type": obj.type, "id": obj.id}
         return json.JSONEncoder.default(self, obj)
