@@ -123,5 +123,5 @@ class UnitEncoder(json.JSONEncoder):
                 beneficial_owner["percentage"] = obj.percentage
             return beneficial_owner
         if isinstance(obj, Relationship):
-            return {"type": obj.type, "id": obj.id}
+            return {"data": {"type": obj.type, "id": obj.id} }
         return json.JSONEncoder.default(self, obj)

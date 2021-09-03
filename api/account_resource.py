@@ -10,15 +10,15 @@ class AccountResource(BaseResource):
     def create(self, request: CreateDepositAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(self.resource, payload)
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def close_account(self, account_id: str, reason: Optional[str] = "ByCustomer") -> Union[UnitResponse[AccountDTO], UnitError]:
-        response = super().post(f"{self.resource}/{account_id}/close", reason)
-        if response.status_code == 200:
+    def close_account(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer") -> Union[UnitResponse[AccountDTO], UnitError]:
+        response = super().post(f"{self.resource}/{account_id}/close", {"attributes": { "reason": reason }})
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
         else:
@@ -26,7 +26,7 @@ class AccountResource(BaseResource):
 
     def reopen_account(self, account_id: str,) -> Union[UnitResponse[AccountDTO], UnitError]:
         response = super().post(f"{self.resource}/{account_id}/reopen", reason)
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
         else:
@@ -34,7 +34,7 @@ class AccountResource(BaseResource):
 
     def get(self, account_id: str) -> Union[UnitResponse[AccountDTO], UnitError]:
         response = super().get(f"{self.resource}/{account_id}", None)
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
@@ -43,7 +43,7 @@ class AccountResource(BaseResource):
 
     def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[list[AccountDTO]], UnitError]:
         response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
@@ -53,7 +53,7 @@ class AccountResource(BaseResource):
     def update(self, request: PatchDepositAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.account_id}", payload)
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
         else:
@@ -61,7 +61,7 @@ class AccountResource(BaseResource):
 
     def limits(self, account_id: str) -> Union[UnitResponse[AccountLimitsDTO], UnitError]:
         response = super().get(f"{self.resource}/{account_id}/limits", None)
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountLimitsDTO](DtoDecoder.decode(data), None)
         else:

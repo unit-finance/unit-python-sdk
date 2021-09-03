@@ -33,3 +33,6 @@ class BaseResource(object):
             merged.update(**headers)
             return merged
 
+    def is_20x(self, status: int):
+        return status == 200 or status == 201
+
