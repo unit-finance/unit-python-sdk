@@ -4,6 +4,7 @@ from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
+from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -20,6 +21,20 @@ mappings = {
 
         "businessCustomer": lambda _id, _type, attributes, relationships:
         BusinessCustomerDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "individualDebitCard": lambda _id, _type, attributes, relationships:
+        IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessDebitCard": lambda _id, _type, attributes, relationships:
+        BusinessDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "individualVirtualDebitCard": lambda _id, _type, attributes, relationships:
+        IndividualVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessVirtualDebitCard": lambda _id, _type, attributes, relationships:
+        BusinessVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+
     }
 
 
