@@ -8,8 +8,27 @@ class CardResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "cards"
 
+    def create(self, request: CreateCardRequest) -> Union[UnitResponse[Card], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(self.resource, payload)
+        if response.status_code == 200:
+            data = response.json().get("data")
+            included = response.json().get("included")
+            return UnitResponse[Card](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
     def get(self, card_id: str, include: Optional[str] = "") -> Union[UnitResponse[Card], UnitError]:
         response = super().get(f"{self.resource}/{card_id}")
+        if response.status_code == 200:
+            data = response.json().get("data")
+            included = response.json().get("included")
+            return UnitResponse[Card](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[list[Card]], UnitError]:
+        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")

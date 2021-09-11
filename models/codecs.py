@@ -33,8 +33,6 @@ mappings = {
 
         "businessVirtualDebitCard": lambda _id, _type, attributes, relationships:
         BusinessVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
-
-
     }
 
 
