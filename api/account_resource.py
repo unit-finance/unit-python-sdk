@@ -24,8 +24,8 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def reopen_account(self, account_id: str,) -> Union[UnitResponse[AccountDTO], UnitError]:
-        response = super().post(f"{self.resource}/{account_id}/reopen", reason)
+    def reopen_account(self, account_id: str, reason: str = "ByCustomer") -> Union[UnitResponse[AccountDTO], UnitError]:
+        response = super().post(f"{self.resource}/{account_id}/reopen", {'reason' : reason})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
