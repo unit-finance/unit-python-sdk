@@ -122,6 +122,8 @@ class UnitEncoder(json.JSONEncoder):
             if obj.percentage is not None:
                 beneficial_owner["percentage"] = obj.percentage
             return beneficial_owner
+        if isinstance(obj, RelationshipArray):
+            return {"data": list(map(lambda r: r.to_dict(), obj.relationships))}
         if isinstance(obj, Relationship):
-            return {"data": {"type": obj.type, "id": obj.id} }
+            return {"data": obj.to_dict()}
         return json.JSONEncoder.default(self, obj)

@@ -10,23 +10,7 @@ class AccountE2eTests(unittest.TestCase):
     token = os.environ.get("token")
     client = Unit("https://api.s.unit.sh", token)
 
-    def get_open_account(self):
-        response = self.client.accounts.list()
-        for acc in response.data:
-            if acc.status == "Open" and acc.balance == 0 and acc.hold == 0:
-                return acc.id
-
-        return ""
-
-    def get_closed_account(self):
-        response = self.client.accounts.list()
-        for acc in response.data:
-            if acc.status == "Closed":
-                return acc.id
-
-        return ""
-
-    def create_application(self):
+    def get_new_customer(self):
         request = CreateIndividualApplicationRequest(
             FullName("Jhon", "Doe"), date.today() - timedelta(days=20 * 365),
             Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
@@ -40,23 +24,31 @@ class AccountE2eTests(unittest.TestCase):
 
         return ""
 
-    def test_create_deposit_account(self):
+    def create_deposit_account(self):
+        customer_id = self.get_new_customer()
         request = CreateDepositAccountRequest("checking",
-                                              {"customer": Relationship("customer", self.create_application())},
+                                              {"customer": Relationship("customer", customer_id)},
                                               {"purpose": "checking"})
-        response = self.client.accounts.create(request)
+        return self.client.accounts.create(request)
+
+    def test_create_deposit_account(self):
+        response = self.create_deposit_account()
         self.assertTrue(response.data.type == "depositAccount")
 
     def test_create_joint_deposit_account(self):
+        customer_id1 = self.get_new_customer()
+        customer_id2 = self.get_new_customer()
         request = CreateDepositAccountRequest("checking",
-                                              {"customers": [Relationship("customer", self.create_application()),
-                                                            Relationship("customer", self.create_application())]},
+                                              {"customers": RelationshipArray([
+                                                Relationship("customer", customer_id1),
+                                                Relationship("customer", customer_id2)])},
                                               {"purpose": "checking"})
         response = self.client.accounts.create(request)
         self.assertTrue(response.data.type == "depositAccount")
 
     def test_get_account(self):
-        response = self.client.accounts.get(self.get_open_account())
+        account_id = self.create_deposit_account().data.id
+        response = self.client.accounts.get(account_id)
         self.assertTrue(response.data.type == "depositAccount")
 
     def test_list_accounts(self):
@@ -65,19 +57,20 @@ class AccountE2eTests(unittest.TestCase):
             self.assertTrue(acc.type == "depositAccount")
 
     def test_limits_account(self):
-        response = self.client.accounts.limits(self.get_open_account())
+        account_id = self.create_deposit_account().data.id
+        response = self.client.accounts.limits(account_id)
         self.assertTrue(response.data.type == "limits")
 
-    def test_close_account(self):
-        response = self.client.accounts.close_account(self.get_open_account(), "Fraud")
+    def test_close_and_reopen_account(self):
+        account_id = self.create_deposit_account().data.id
+        response = self.client.accounts.close_account(account_id, "Fraud")
         self.assertTrue(response.data.type == "depositAccount")
-
-    def test_reopen_account(self):
-        response = self.client.accounts.reopen_account(self.get_closed_account())
+        response = self.client.accounts.reopen_account(account_id)
         self.assertTrue(response.data.type == "depositAccount")
 
     def test_update_account(self):
-        request = PatchDepositAccountRequest(self.get_open_account(), tags={
+        account_id = self.create_deposit_account().data.id
+        request = PatchDepositAccountRequest(account_id, tags={
             "purpose": "tax",
             "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
         response = self.client.accounts.update(request)

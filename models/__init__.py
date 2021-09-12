@@ -2,13 +2,21 @@ import json
 from typing import TypeVar, Generic, Union, Optional, Literal
 from datetime import datetime, date
 
+
 class Relationship(object):
     def __init__(self, _type: str, _id: str):
         self.type = _type
         self.id = _id
 
+    def to_dict(self):
+        return {"type": self.type, "id": self.id}
+
 
 T = TypeVar('T')
+
+class RelationshipArray(Generic[T]):
+    def __init__(self, l: list[T]):
+        self.relationships = l
 
 
 class UnitResponse(Generic[T]):

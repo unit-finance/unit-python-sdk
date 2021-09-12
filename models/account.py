@@ -42,8 +42,9 @@ class DepositAccountDTO(object):
 
 AccountDTO = Union[DepositAccountDTO]
 
+
 class CreateDepositAccountRequest(UnitRequest):
-    def __init__(self, deposit_product: str, relationships: Optional[dict[str, Relationship]],
+    def __init__(self, deposit_product: str, relationships: Optional[dict[str, Union[Relationship, RelationshipArray]]],
                  tags: Optional[dict[str, str]] = None, idempotency_key: Optional[str] = None):
         self.deposit_product = deposit_product
         self.tags = tags
