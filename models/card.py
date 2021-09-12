@@ -290,3 +290,125 @@ class CreateBusinessVirtualDebitCard(object):
 
 CreateCardRequest = Union[CreateIndividualDebitCard, CreateBusinessDebitCard, CreateIndividualVirtualDebitCard, CreateBusinessVirtualDebitCard]
 
+class PatchIndividualDebitCard(object):
+    def __init__(self, shipping_address: Optional[Address] = None, design: Optional[str] = None, tags: Optional[dict[str, str]] = None):
+        self.shipping_address = shipping_address
+        self.design = design
+        self.tags = tags
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "individualDebitCard",
+                "attributes": {},
+            }
+        }
+
+        if self.shipping_address:
+            payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
+
+        if self.design:
+            payload["data"]["attributes"]["design"] = self.design
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class PatchBusinessDebitCard(object):
+    def __init__(self, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
+                 phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
+                 tags: Optional[dict[str, str]] = None):
+        self.shipping_address = shipping_address
+        self.design = design
+        self.tags = tags
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "businessDebitCard",
+                "attributes": {},
+            }
+        }
+
+        if self.shipping_address:
+            payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
+
+        if self.address:
+            payload["data"]["attributes"]["address"] = self.address
+
+        if self.phone:
+            payload["data"]["attributes"]["phone"] = self.phone
+
+        if self.email:
+            payload["data"]["attributes"]["email"] = self.email
+
+        if self.design:
+            payload["data"]["attributes"]["design"] = self.design
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+class PatchIndividualVirtualDebitCard(object):
+    def __init__(self, tags: Optional[dict[str, str]] = None):
+        self.tags = tags
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "individualVirtualDebitCard",
+                "attributes": {},
+            }
+        }
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+class PatchBusinessVirtualDebitCard(object):
+    def __init__(self, address: Optional[Address] = None, phone: Optional[Phone] = None, email: Optional[str] = None,
+                 tags: Optional[dict[str, str]] = None):
+        self.address = address
+        self.phone = phone
+        self.email = email
+        self.tags = tags
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "businessVirtualDebitCard",
+                "attributes": {},
+            }
+        }
+
+        if self.address:
+            payload["data"]["attributes"]["address"] = self.address
+
+        if self.phone:
+            payload["data"]["attributes"]["phone"] = self.phone
+
+        if self.email:
+            payload["data"]["attributes"]["email"] = self.email
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+PatchCardRequest = Union[PatchIndividualDebitCard, PatchBusinessDebitCard, PatchIndividualVirtualDebitCard, PatchBusinessVirtualDebitCard]
