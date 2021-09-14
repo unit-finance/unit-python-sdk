@@ -89,7 +89,7 @@ class BusinessApplicationDTO(object):
 
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None, ssn=None):
+                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None, ssn = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -106,7 +106,6 @@ class CreateIndividualApplicationRequest(UnitRequest):
             "data": {
                 "type": "individualApplication",
                 "attributes": {
-                    "ssn": self.ssn,
                     "fullName": self.full_name,
                     "dateOfBirth": date_utils.to_date_str(self.date_of_birth),
                     "address": self.address,
@@ -127,6 +126,9 @@ class CreateIndividualApplicationRequest(UnitRequest):
 
         if self.sole_proprietorship:
             payload["data"]["attributes"]["soleProprietorship"] = self.sole_proprietorship
+
+        if self.ssn:
+            payload["data"]["attributes"]["ssn"] = self.ssn
 
         return payload
 
