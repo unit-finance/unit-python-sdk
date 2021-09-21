@@ -29,6 +29,13 @@ class MyTestCase(unittest.TestCase):
         for card in response.data:
             self.assertTrue(card.type in self.card_types)
 
+    def test_freeze_and_unfreeze_card(self):
+        card_id = ""
+        response = self.client.cards.freeze_card(card_id)
+        self.assertTrue(response.data.type == "individualDebitCard")
+        response = self.client.cards.unfreeze_card(card_id)
+        self.assertTrue(response.data.type == "individualDebitCard")
+
 
 if __name__ == '__main__':
     unittest.main()
