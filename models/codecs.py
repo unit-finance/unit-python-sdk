@@ -3,6 +3,7 @@ from models import *
 from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
+from models.account import DepositAccountDTO, AccountLimitsDTO
 from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 
@@ -22,6 +23,12 @@ mappings = {
         "businessCustomer": lambda _id, _type, attributes, relationships:
         BusinessCustomerDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "depositAccount": lambda _id, _type, attributes, relationships:
+        DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "limits": lambda _id, _type, attributes, relationships:
+        AccountLimitsDTO.from_json_api(_type, attributes),
+
         "individualDebitCard": lambda _id, _type, attributes, relationships:
         IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -37,7 +44,7 @@ mappings = {
 
 
 def split_json_api_single_response(payload: dict):
-    _id, _type, attributes = payload["id"], payload["type"], payload["attributes"]
+    _id, _type, attributes = payload.get("id"), payload["type"], payload["attributes"]
     relationships = None
 
     if payload.get("relationships"):
@@ -66,6 +73,8 @@ def split_json_api_array_response(payload):
 class DtoDecoder(object):
     @staticmethod
     def decode(payload):
+        if payload is None:
+            return None
         # if response contains a list of dtos
         if isinstance(payload, list):
             dtos = split_json_api_array_response(payload)
@@ -127,4 +136,8 @@ class UnitEncoder(json.JSONEncoder):
             if obj.percentage is not None:
                 beneficial_owner["percentage"] = obj.percentage
             return beneficial_owner
+        if isinstance(obj, RelationshipArray):
+            return {"data": list(map(lambda r: r.to_dict(), obj.relationships))}
+        if isinstance(obj, Relationship):
+            return {"data": obj.to_dict()}
         return json.JSONEncoder.default(self, obj)
