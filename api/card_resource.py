@@ -11,7 +11,7 @@ class CardResource(BaseResource):
     def create(self, request: CreateCardRequest) -> Union[UnitResponse[Card], UnitError]:
         payload = request.to_json_api()
         response = super().post(self.resource, payload)
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -20,7 +20,7 @@ class CardResource(BaseResource):
 
     def report_stolen(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/report-stolen")
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -29,7 +29,7 @@ class CardResource(BaseResource):
 
     def report_lost(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/report-lost")
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -38,7 +38,7 @@ class CardResource(BaseResource):
 
     def close_card(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/close")
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -47,7 +47,7 @@ class CardResource(BaseResource):
 
     def freeze_card(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/freeze")
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -56,16 +56,18 @@ class CardResource(BaseResource):
 
     def unfreeze_card(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/unfreeze")
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def replace_card(self, card_id: str, shipping_address: Optional[str]) -> Union[UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]], UnitError]:
-        response = super().post(f"{self.resource}/{card_id}/replace")
-        if response.status_code == 200:
+    def replace_card(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]], UnitError]:
+        request = ReplaceCardRequest(shipping_address)
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{card_id}/replace", payload)
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]](DtoDecoder.decode(data), None)
@@ -74,8 +76,8 @@ class CardResource(BaseResource):
 
     def update(self, request: PatchCardRequest) -> Union[UnitResponse[Card], UnitError]:
         payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{request.card_id}", payload)
-        if response.status_code == 200:
+        response = super().patch(f"{self.resource}/{request.card_id}", payload)
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -84,7 +86,7 @@ class CardResource(BaseResource):
 
     def get(self, card_id: str, include: Optional[str] = "") -> Union[UnitResponse[Card], UnitError]:
         response = super().get(f"{self.resource}/{card_id}")
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -93,7 +95,7 @@ class CardResource(BaseResource):
 
     def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[list[Card]], UnitError]:
         response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)

@@ -291,7 +291,8 @@ class CreateBusinessVirtualDebitCard(object):
 CreateCardRequest = Union[CreateIndividualDebitCard, CreateBusinessDebitCard, CreateIndividualVirtualDebitCard, CreateBusinessVirtualDebitCard]
 
 class PatchIndividualDebitCard(object):
-    def __init__(self, shipping_address: Optional[Address] = None, design: Optional[str] = None, tags: Optional[dict[str, str]] = None):
+    def __init__(self,card_id: str, shipping_address: Optional[Address] = None, design: Optional[str] = None, tags: Optional[dict[str, str]] = None):
+        self.card_id = card_id
         self.shipping_address = shipping_address
         self.design = design
         self.tags = tags
@@ -320,9 +321,10 @@ class PatchIndividualDebitCard(object):
 
 
 class PatchBusinessDebitCard(object):
-    def __init__(self, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
+    def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
                  tags: Optional[dict[str, str]] = None):
+        self.card_id = card_id
         self.shipping_address = shipping_address
         self.design = design
         self.tags = tags
@@ -359,7 +361,8 @@ class PatchBusinessDebitCard(object):
         json.dumps(self.to_json_api())
 
 class PatchIndividualVirtualDebitCard(object):
-    def __init__(self, tags: Optional[dict[str, str]] = None):
+    def __init__(self, card_id: str, tags: Optional[dict[str, str]] = None):
+        self.card_id = card_id
         self.tags = tags
 
     def to_json_api(self) -> dict:
@@ -379,8 +382,9 @@ class PatchIndividualVirtualDebitCard(object):
         json.dumps(self.to_json_api())
 
 class PatchBusinessVirtualDebitCard(object):
-    def __init__(self, address: Optional[Address] = None, phone: Optional[Phone] = None, email: Optional[str] = None,
+    def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None, email: Optional[str] = None,
                  tags: Optional[dict[str, str]] = None):
+        self.card_id = card_id
         self.address = address
         self.phone = phone
         self.email = email
@@ -412,3 +416,23 @@ class PatchBusinessVirtualDebitCard(object):
         json.dumps(self.to_json_api())
 
 PatchCardRequest = Union[PatchIndividualDebitCard, PatchBusinessDebitCard, PatchIndividualVirtualDebitCard, PatchBusinessVirtualDebitCard]
+
+class ReplaceCardRequest(object):
+    def __init__(self, shipping_address: Optional[Address] = None):
+        self.shipping_address = shipping_address
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "replaceCard",
+                "attributes": {},
+            }
+        }
+
+        if self.shipping_address:
+            payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
+
+        return payload
+
+        def __repr__(self):
+            json.dumps(self.to_json_api())
