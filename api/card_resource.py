@@ -13,7 +13,6 @@ class CardResource(BaseResource):
         response = super().post(self.resource, payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
@@ -22,7 +21,6 @@ class CardResource(BaseResource):
         response = super().post(f"{self.resource}/{card_id}/report-stolen")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
@@ -31,45 +29,40 @@ class CardResource(BaseResource):
         response = super().post(f"{self.resource}/{card_id}/report-lost")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def close_card(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
+    def close(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/close")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def freeze_card(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
+    def freeze(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/freeze")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def unfreeze_card(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
+    def unfreeze(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
         response = super().post(f"{self.resource}/{card_id}/unfreeze")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def replace_card(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]], UnitError]:
+    def replace(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]], UnitError]:
         request = ReplaceCardRequest(shipping_address)
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{card_id}/replace", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
@@ -79,7 +72,6 @@ class CardResource(BaseResource):
         response = super().patch(f"{self.resource}/{request.card_id}", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
@@ -89,7 +81,7 @@ class CardResource(BaseResource):
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
+            return UnitResponse[Card](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
 
@@ -98,6 +90,6 @@ class CardResource(BaseResource):
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
+            return UnitResponse[Card](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())

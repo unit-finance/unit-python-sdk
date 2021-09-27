@@ -12,20 +12,18 @@ class CardE2eTests(unittest.TestCase):
     client = Unit("https://api.s.unit.sh", token)
     card_types = ["individualDebitCard", "businessDebitCard", "individualVirtualDebitCard", "businessVirtualDebitCard"]
 
-    def get_card_id(self, opt_dict: dict[str, str]):
-        response = self.client.cards.list()
-        for card in response.data:
-            cond = True
-            for key, value in opt_dict.items():
+    def find_card_id(self, criteria: dict[str, str]):
+        def filter_func(card):
+            for key, value in criteria.items():
                 if getattr(card, key) != value:
-                    cond = False
+                    return False
+            return True
 
-            if cond:
-                return card.id
+        response = self.client.cards.list()
+        filtered = list(filter(filter_func, response.data))
+        return filtered[0].id if len(filtered) > 0 else ""
 
-        return ""
-
-    def get_new_customer(self):
+    def create_individual_customer(self):
         request = CreateIndividualApplicationRequest(
             FullName("Jhon", "Doe"), date.today() - timedelta(days=20 * 365),
             Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
@@ -40,7 +38,7 @@ class CardE2eTests(unittest.TestCase):
         return ""
 
     def create_deposit_account(self):
-        customer_id = self.get_new_customer()
+        customer_id = self.create_individual_customer()
         request = CreateDepositAccountRequest("checking",
                                               {"customer": Relationship("customer", customer_id)},
                                               {"purpose": "checking"})
@@ -73,40 +71,40 @@ class CardE2eTests(unittest.TestCase):
             self.assertTrue(card.type in self.card_types)
 
     def test_freeze_and_unfreeze_card(self):
-        card_id = self.get_card_id({"status": "Active"})
-        response = self.client.cards.freeze_card(card_id)
+        card_id = self.find_card_id({"status": "Active"})
+        response = self.client.cards.freeze(card_id)
         self.assertTrue(response.data.status == "Frozen")
-        response = self.client.cards.unfreeze_card(card_id)
+        response = self.client.cards.unfreeze(card_id)
         self.assertTrue(response.data.status != "Frozen")
 
     def test_close_card(self):
-        card_id = self.get_card_id({"status": "Active"})
-        response = self.client.cards.close_card(card_id)
+        card_id = self.find_card_id({"status": "Active"})
+        response = self.client.cards.close(card_id)
         self.assertTrue(response.data.status == "ClosedByCustomer")
 
     def test_replace_card(self):
-        card_id = self.get_card_id({"type": "individualDebitCard", "status": "Active"})
+        card_id = self.find_card_id({"type": "individualDebitCard", "status": "Active"})
         address = Address("1616 Pennsylvania Avenue Northwest", "Washington", "CA", "21500", "US")
-        response = self.client.cards.replace_card(card_id, address)
+        response = self.client.cards.replace(card_id, address)
         self.assertTrue(response.data.type == "individualDebitCard")
 
     def test_close_card(self):
-        card_id = self.get_card_id({"status": "Active"})
-        response = self.client.cards.close_card(card_id)
+        card_id = self.find_card_id({"status": "Active"})
+        response = self.client.cards.close(card_id)
         self.assertTrue(response.data.type in self.card_types)
 
     def test_report_stolen_card(self):
-        card_id = self.get_card_id({"status": "Active"})
+        card_id = self.find_card_id({"status": "Active"})
         response = self.client.cards.report_stolen(card_id)
         self.assertTrue(response.data.type in self.card_types)
 
     def test_report_lost_card(self):
-        card_id = self.get_card_id({"status": "Active"})
+        card_id = self.find_card_id({"status": "Active"})
         response = self.client.cards.report_lost(card_id)
         self.assertTrue(response.data.type in self.card_types)
 
     def test_update_individual_card(self):
-        card_id = self.get_card_id({"type": "individualDebitCard", "status": "Active"})
+        card_id = self.find_card_id({"type": "individualDebitCard", "status": "Active"})
         address = Address("1818 Pennsylvania Avenue Northwest", "Washington", "CA", "21500", "US")
         request = PatchIndividualDebitCard(card_id, address)
         response = self.client.cards.update(request)
