@@ -81,13 +81,13 @@ mappings = {
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "achPayment": lambda _id, _type, attributes, relationships:
-        AchPaymentDTO.from_json_api(_type, attributes),
+        AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "bookPayment": lambda _id, _type, attributes, relationships:
-        BookPaymentDTO.from_json_api(_type, attributes),
+        BookPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "wirePayment": lambda _id, _type, attributes, relationships:
-        WirePaymentDTO.from_json_api(_type, attributes),
+        WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 

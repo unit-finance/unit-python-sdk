@@ -34,14 +34,14 @@ class AchPaymentDTO(BasePayment):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
+        settlement_date = date_utils.to_date(attributes.get("settlementDate")) if attributes.get("settlementDate") else None
         return AchPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
                              attributes["counterparty"], attributes["direction"], attributes["description"],
-                             attributes["amount"], attributes["addenda"], attributes.get("reason"),
-                             date_utils.to_datetime(attributes.get("settlementDate")), attributes.get("tags"),
-                             relationships)
+                             attributes["amount"], attributes.get("addenda"), attributes.get("reason"), settlement_date,
+                             attributes.get("tags"), relationships)
 
 class BookPaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: str, direction: str, description: str, amount: int,
+    def __init__(self, id: str, created_at: datetime, status: str, direction: Optional[str], description: str, amount: int,
                  reason: Optional[str], tags: Optional[dict[str, str]],
                  relationships: Optional[dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
@@ -51,7 +51,7 @@ class BookPaymentDTO(BasePayment):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return BookPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                              attributes["direction"], attributes["description"], attributes["amount"],
+                              attributes.get("direction"), attributes["description"], attributes["amount"],
                               attributes.get("reason"), attributes.get("tags"), relationships)
 
 class WirePaymentDTO(BasePayment):
@@ -68,9 +68,9 @@ class WirePaymentDTO(BasePayment):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return WirePaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                             WireCounterparty.from_json_api(attributes["counterparty"]), attributes["direction"], attributes["description"],
-                             attributes["amount"], attributes.get("reason"), attributes.get("tags"),
-                             relationships)
+                              WireCounterparty.from_json_api(attributes["counterparty"]), attributes["direction"],
+                              attributes["description"], attributes["amount"], attributes.get("reason"),
+                              attributes.get("tags"), relationships)
 
 PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
 
