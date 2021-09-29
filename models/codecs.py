@@ -4,6 +4,7 @@ from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from models.account import DepositAccountDTO, AccountLimitsDTO
+from models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -26,6 +27,16 @@ mappings = {
 
         "limits": lambda _id, _type, attributes, relationships:
         AccountLimitsDTO.from_json_api(_type, attributes),
+
+        "achPayment": lambda _id, _type, attributes, relationships:
+        AchPaymentDTO.from_json_api(_type, attributes),
+
+        "bookPayment": lambda _id, _type, attributes, relationships:
+        BookPaymentDTO.from_json_api(_type, attributes),
+
+        "wirePayment": lambda _id, _type, attributes, relationships:
+        WirePaymentDTO.from_json_api(_type, attributes),
+
     }
 
 
@@ -126,4 +137,5 @@ class UnitEncoder(json.JSONEncoder):
             return {"data": list(map(lambda r: r.to_dict(), obj.relationships))}
         if isinstance(obj, Relationship):
             return {"data": obj.to_dict()}
+
         return json.JSONEncoder.default(self, obj)

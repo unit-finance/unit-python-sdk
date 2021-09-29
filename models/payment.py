@@ -55,7 +55,7 @@ class BookPaymentDTO(BasePayment):
                               attributes.get("reason"), attributes.get("tags"), relationships)
 
 class WirePaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: Counterparty, direction: str,
+    def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: WireCounterparty, direction: str,
                  description: str, amount: int, reason: Optional[str], tags: Optional[dict[str, str]],
                  relationships: Optional[dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
@@ -68,8 +68,9 @@ class WirePaymentDTO(BasePayment):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return WirePaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                             attributes["counterparty"], attributes["direction"], attributes["description"],
+                             WireCounterparty.from_json_api(attributes["counterparty"]), attributes["direction"], attributes["description"],
                              attributes["amount"], attributes.get("reason"), attributes.get("tags"),
                              relationships)
 
 PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
+
