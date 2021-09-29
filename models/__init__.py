@@ -181,3 +181,35 @@ class AuthorizedUser(object):
         for data in l:
             authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("phone"), data.get("email")))
         return authorized_users
+
+class Counterparty(object):
+    def __init__(self, routing_number: str, account_number: str, account_type: str, name: str):
+        self.routing_number = routing_number
+        self.account_number = account_number
+        self.account_type = account_type
+        self.name = name
+
+    @staticmethod
+    def from_json_api(data: dict):
+        return Counterparty(data["routingNumber"], data["accountNumber"], data["accountType"], data["name"])
+
+class Coordinates(object):
+    def __init__(self, longitude: int, latitude: int):
+        self.longitude = longitude
+        self.latitude = latitude
+
+    @staticmethod
+    def from_json_api(data: dict):
+        return Coordinates(data["longitude"], data["latitude"])
+
+
+class Merchant(object):
+    def __init__(self, name: str, type: int, category: str, location: Optional[str]):
+        self.name = name
+        self.type = type
+        self.category = category
+        self.location = location
+
+    @staticmethod
+    def from_json_api(data: dict):
+        return Merchant(data["name"], data["type"], data["category"], data.get("location"))

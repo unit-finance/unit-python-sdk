@@ -1,6 +1,7 @@
 from api.application_resource import ApplicationResource
 from api.customer_resource import CustomerResource
 from api.account_resource import AccountResource
+from api.transaction_resource import TransactionResource
 
 
 class Unit(object):
@@ -8,3 +9,4 @@ class Unit(object):
         self.applications = ApplicationResource(api_url, token)
         self.customers = CustomerResource(api_url, token)
         self.accounts = AccountResource(api_url, token)
+        self.transactions = TransactionResource(api_url, token)
