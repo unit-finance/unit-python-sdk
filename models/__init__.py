@@ -182,6 +182,18 @@ class AuthorizedUser(object):
             authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("phone"), data.get("email")))
         return authorized_users
 
+class WireCounterparty(object):
+    def __init__(self, routing_number: str, account_number: str, name: str, address: Address):
+        self.routing_number = routing_number
+        self.account_number = account_number
+        self.name = name
+        self.address = address
+
+    @staticmethod
+    def from_json_api(data: dict):
+        return WireCounterparty(data["routingNumber"], data["accountNumber"], data["name"],
+                                Address.from_json_api(data["address"]))
+
 class Counterparty(object):
     def __init__(self, routing_number: str, account_number: str, account_type: str, name: str):
         self.routing_number = routing_number

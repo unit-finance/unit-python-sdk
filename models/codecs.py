@@ -7,6 +7,7 @@ from models.account import DepositAccountDTO, AccountLimitsDTO
 from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 from models.transaction import *
+from models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -92,6 +93,16 @@ mappings = {
 
         "returnedCheckDepositTransaction": lambda _id, _type, attributes, relationships:
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "achPayment": lambda _id, _type, attributes, relationships:
+        AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "bookPayment": lambda _id, _type, attributes, relationships:
+        BookPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "wirePayment": lambda _id, _type, attributes, relationships:
+        WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
     }
 
 
