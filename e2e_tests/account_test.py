@@ -10,7 +10,7 @@ class AccountE2eTests(unittest.TestCase):
     token = os.environ.get("token")
     client = Unit("https://api.s.unit.sh", token)
 
-    def get_new_customer(self):
+    def create_individual_customer(self):
         request = CreateIndividualApplicationRequest(
             FullName("Jhon", "Doe"), date.today() - timedelta(days=20 * 365),
             Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
@@ -25,7 +25,7 @@ class AccountE2eTests(unittest.TestCase):
         return ""
 
     def create_deposit_account(self):
-        customer_id = self.get_new_customer()
+        customer_id = self.create_individual_customer()
         request = CreateDepositAccountRequest("checking",
                                               {"customer": Relationship("customer", customer_id)},
                                               {"purpose": "checking"})
@@ -36,8 +36,8 @@ class AccountE2eTests(unittest.TestCase):
         self.assertTrue(response.data.type == "depositAccount")
 
     def test_create_joint_deposit_account(self):
-        customer_id1 = self.get_new_customer()
-        customer_id2 = self.get_new_customer()
+        customer_id1 = self.create_individual_customer()
+        customer_id2 = self.create_individual_customer()
         request = CreateDepositAccountRequest("checking",
                                               {"customers": RelationshipArray([
                                                 Relationship("customer", customer_id1),

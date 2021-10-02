@@ -3,6 +3,8 @@ from api.customer_resource import CustomerResource
 from api.account_resource import AccountResource
 from api.transaction_resource import TransactionResource
 from api.payment_resource import PaymentResource
+from api.counterparty_resource import CounterpartyResource
+from api.returnAch_resource import ReturnAchResource
 
 
 class Unit(object):
@@ -12,3 +14,5 @@ class Unit(object):
         self.accounts = AccountResource(api_url, token)
         self.transactions = TransactionResource(api_url, token)
         self.payments = PaymentResource(api_url, token)
+        self.counterparty = CounterpartyResource(api_url, token)
+        self.returnAch = ReturnAchResource(api_url, token)

@@ -6,6 +6,7 @@ from models.application import IndividualApplicationDTO, BusinessApplicationDTO,
 from models.account import DepositAccountDTO, AccountLimitsDTO
 from models.transaction import *
 from models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
+from models.counterparty import CounterpartyDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -88,6 +89,9 @@ mappings = {
 
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "achCounterparty": lambda _id, _type, attributes, relationships:
+        CounterpartyDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 
