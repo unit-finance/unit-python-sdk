@@ -12,12 +12,8 @@ class IndividualDebitCardDTO(object):
                  shipping_address: Optional[Address], design: Optional[str], relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "individualDebitCard"
-        self.created_at = created_at
-        self.last_4_digits = last_4_digits
-        self.expiration_date = expiration_date
-        self.status = status
-        self.shipping_address = shipping_address
-        self.design = design
+        self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
+                           "status": status, "shippingAddress": shipping_address, "design": design}
         self.relationships = relationships
 
     @staticmethod
@@ -30,25 +26,16 @@ class IndividualDebitCardDTO(object):
 
 class BusinessDebitCardDTO(object):
     def __init__(self, id: str, created_at: datetime, last_4_digits: str, expiration_date: str, ssn: str,
-                 full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str, status: CardStatus,
-                 passport: Optional[str], nationality: Optional[str], shipping_address: Optional[Address], design: Optional[str],
+                 full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
+                 status: CardStatus, passport: Optional[str], nationality: Optional[str],
+                 shipping_address: Optional[Address], design: Optional[str],
                  relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "businessDebitCard"
-        self.created_at = created_at
-        self.last_4_digits = last_4_digits
-        self.expiration_date = expiration_date
-        self.ssn = ssn
-        self.full_name = full_name
-        self.date_of_birth = date_of_birth
-        self.address = address
-        self.phone = phone
-        self.email = email
-        self.status = status
-        self.passport = passport
-        self.nationality = nationality
-        self.shipping_address = shipping_address
-        self.design = design
+        self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
+                           "ssn": ssn, "fullName": full_name, "dateOfBirth": date_of_birth, "address": address,
+                           "phone": phone, "email": email, "status": status, "passport": passport,
+                           "nationality": nationality, "shippingAddress": shipping_address, "design": design}
         self.relationships = relationships
 
     def from_json_api(_id, _type, attributes, relationships):
@@ -65,10 +52,8 @@ class IndividualVirtualDebitCardDTO(object):
                  relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "individualVirtualDebitCard"
-        self.created_at = created_at
-        self.last_4_digits = last_4_digits
-        self.expiration_date = expiration_date
-        self.status = status
+        self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
+                           "status": status}
         self.relationships = relationships
 
     @staticmethod
@@ -85,18 +70,10 @@ class BusinessVirtualDebitCardDTO(object):
                  passport: Optional[str], nationality: Optional[str], relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "businessVirtualDebitCard"
-        self.created_at = created_at
-        self.last_4_digits = last_4_digits
-        self.expiration_date = expiration_date
-        self.ssn = ssn
-        self.full_name = full_name
-        self.date_of_birth = date_of_birth
-        self.address = address
-        self.phone = phone
-        self.email = email
-        self.status = status
-        self.passport = passport
-        self.nationality = nationality
+        self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
+                           "ssn": ssn, "fullName": full_name, "dateOfBirth": date_of_birth, "address": address,
+                           "phone": phone, "email": email, "status": status, "passport": passport,
+                           "nationality": nationality}
         self.relationships = relationships
 
     def from_json_api(_id, _type, attributes, relationships):

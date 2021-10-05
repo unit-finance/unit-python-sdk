@@ -19,20 +19,10 @@ class IndividualApplicationDTO(object):
                  relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "individualApplication"
-        self.created_at = created_at
-        self.full_name = full_name
-        self.address = address
-        self.date_of_birth = date_of_birth
-        self.email = email
-        self.phone = phone
-        self.status = status
-        self.ssn = ssn
-        self.message = message
-        self.ip = ip
-        self.ein = ein
-        self.dba = dba
-        self.sole_proprietorship = sole_proprietorship
-        self.tags = tags
+        self.attributes = {"createdAt": created_at, "fullName": full_name, "address": address,
+                           "dateOfBirth": date_of_birth, "email": email, "phone": phone, "status": status, "ssn": ssn,
+                           "message": message, "ip": ip, "ein": ein, "dba": dba,
+                           "soleProprietorship": sole_proprietorship, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -56,22 +46,10 @@ class BusinessApplicationDTO(object):
                  tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "businessApplication"
-        self.created_at = created_at
-        self.name = name
-        self.address = address
-        self.phone = phone
-        self.status = status
-        self.state_of_incorporation = state_of_incorporation
-        self.ssn = ssn
-        self.message = message
-        self.ip = ip
-        self.ein = ein
-        self.entity_type = entity_type
-        self.dba = dba
-        self.contact = contact
-        self.officer = officer
-        self.beneficial_owners = beneficial_owners
-        self.tags = tags
+        self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
+                           "status": status, "ssn": ssn, "stateOfIncorporation": state_of_incorporation, "ssn": ssn,
+                           "message": message, "ip": ip, "ein": ein, "entityType": entity_type, "dba": dba,
+                           "contact": contact, "officer": officer, "beneficialOwners":beneficial_owners, "tags": tags}
         self.relationships = relationships
 
 
@@ -86,6 +64,7 @@ class BusinessApplicationDTO(object):
             attributes.get("ip"), attributes.get("ein"), attributes.get("dba"), attributes.get("tags"), relationships
         )
 
+ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
 
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
@@ -187,21 +166,14 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
 
 class ApplicationDocumentDTO(object):
-    def __init__(self, id: str, status: ApplicationStatus, documentType: DocumentType, description: str, name: str,
+    def __init__(self, id: str, status: ApplicationStatus, document_type: DocumentType, description: str, name: str,
                  address: Optional[Address], date_of_birth: Optional[date], passport: Optional[str], ein: Optional[str],
-                 reasonCode: Optional[ReasonCode], reason: Optional[str]):
+                 reason_code: Optional[ReasonCode], reason: Optional[str]):
         self.id = id
         self.type = "document"
-        self.status = status
-        self.documentType = documentType
-        self.description = description
-        self.name = name
-        self.address = address
-        self.date_of_birth = date_of_birth
-        self.passport = passport
-        self.ein = ein
-        self.reasonCode = reasonCode
-        self.reason = reason
+        self.attributes = {"status": status, "documentType": document_type, "description": description, "name": name,
+                           "address": address, "dateOfBirth": date_of_birth, "passport": passport, "ein": ein,
+                           "reasonCode": reasonCode, "reason": reason}
 
     @staticmethod
     def from_json_api(_id, _type, attributes):
@@ -210,6 +182,3 @@ class ApplicationDocumentDTO(object):
             attributes.get("address"), attributes.get("dateOfBirth"), attributes.get("passport"),
             attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
         )
-
-
-ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]

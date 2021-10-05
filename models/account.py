@@ -16,18 +16,10 @@ class DepositAccountDTO(object):
                  relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "depositAccount"
-        self.created_at = created_at
-        self.name = name
-        self.deposit_product = deposit_product
-        self.routing_number = routing_number
-        self.account_number = account_number
-        self.currency = currency
-        self.balance = balance
-        self.hold = hold
-        self.available = available
-        self.tags = tags
-        self.status = status
-        self.close_reason = close_reason
+        self.attributes = {"name": name, "createdAt": created_at, "depositProduct": deposit_product,
+                           "routingNumber": routing_number, "accountNumber": account_number, "currency": currency,
+                           "balance": balance, "hold": hold, "available": available, "status": status,
+                           "closeReason": close_reason, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -102,8 +94,7 @@ class PatchDepositAccountRequest(UnitRequest):
 class AccountLimitsDTO(object):
     def __init__(self, ach: object, card: object):
         self.type = "limits"
-        self.ach = ach
-        self.card = card
+        self.attributes = {"ach": ach, "card": card}
 
     @staticmethod
     def from_json_api(_type, attributes):

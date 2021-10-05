@@ -11,12 +11,8 @@ class BasePayment(object):
                  reason: Optional[str], tags: Optional[dict[str, str]],
                  relationships: Optional[dict[str, Relationship]]):
         self.id = id
-        self.created_at = created_at
-        self.direction = direction
-        self.description = description
-        self.amount = amount
-        self.reason = reason
-        self.tags = tags
+        self.attributes = {"createdAt": created_at, "direction": direction, "description": description,
+                           "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
 
 
@@ -27,9 +23,9 @@ class AchPaymentDTO(BasePayment):
                  relationships: Optional[dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
         self.type = 'achPayment'
-        self.status = status
-        self.counterparty = counterparty
-        self.addenda = addenda
+        self.attributes["status"] = status
+        self.attributes["counterparty"] = counterparty
+        self.attributes["addenda"] = addenda
         self.settlement_date = settlement_date
 
     @staticmethod
@@ -46,7 +42,7 @@ class BookPaymentDTO(BasePayment):
                  relationships: Optional[dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
         self.type = 'bookPayment'
-        self.status = status
+        self.attributes["status"] = status
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -60,10 +56,10 @@ class WirePaymentDTO(BasePayment):
                  relationships: Optional[dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
         self.type = 'wirePayment'
-        self.status = status
-        self.counterparty = counterparty
-        self.addenda = addenda
-        self.settlement_date = settlement_date
+        self.attributes["status"] = status
+        self.attributes["counterparty"] = counterparty
+        self.attributes["addenda"] = addenda
+        self.attributes["settlementDate"] = settlement_date
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
