@@ -173,7 +173,7 @@ class ApplicationDocumentDTO(object):
         self.type = "document"
         self.attributes = {"status": status, "documentType": document_type, "description": description, "name": name,
                            "address": address, "dateOfBirth": date_of_birth, "passport": passport, "ein": ein,
-                           "reasonCode": reasonCode, "reason": reason}
+                           "reasonCode": reason_code, "reason": reason}
 
     @staticmethod
     def from_json_api(_id, _type, attributes):

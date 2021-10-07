@@ -15,7 +15,10 @@ class CardE2eTests(unittest.TestCase):
     def find_card_id(self, criteria: dict[str, str]):
         def filter_func(card):
             for key, value in criteria.items():
-                if getattr(card, key) != value:
+                if key not in card.attributes:
+                    if getattr(card,key) != value:
+                        return False
+                elif card.attributes[key] != value:
                     return False
             return True
 
@@ -73,14 +76,14 @@ class CardE2eTests(unittest.TestCase):
     def test_freeze_and_unfreeze_card(self):
         card_id = self.find_card_id({"status": "Active"})
         response = self.client.cards.freeze(card_id)
-        self.assertTrue(response.data.status == "Frozen")
+        self.assertTrue(response.data.attributes["status"] == "Frozen")
         response = self.client.cards.unfreeze(card_id)
-        self.assertTrue(response.data.status != "Frozen")
+        self.assertTrue(response.data.attributes["status"] != "Frozen")
 
     def test_close_card(self):
         card_id = self.find_card_id({"status": "Active"})
         response = self.client.cards.close(card_id)
-        self.assertTrue(response.data.status == "ClosedByCustomer")
+        self.assertTrue(response.data.attributes["status"] == "ClosedByCustomer")
 
     def test_replace_card(self):
         card_id = self.find_card_id({"type": "individualDebitCard", "status": "Active"})
