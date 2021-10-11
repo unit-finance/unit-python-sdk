@@ -8,6 +8,7 @@ from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 from models.transaction import *
 from models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
+from models.applicationForm import ApplicationFormDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -102,6 +103,9 @@ mappings = {
 
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "applicationForm": lambda _id, _type, attributes, relationships:
+        ApplicationFormDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 
