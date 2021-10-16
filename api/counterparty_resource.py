@@ -25,16 +25,15 @@ class CounterpartyResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def delete(self, counterparty_id: str) -> Union[UnitResponse[CounterpartyDTO], UnitError]:
-        response = super().delete(f"{self.resource}/{counterparty_id}", payload)
+    def delete(self, counterparty_id: str) -> Union[UnitResponse, UnitError]:
+        response = super().delete(f"{self.resource}/{counterparty_id}")
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CounterpartyDTO](DtoDecoder.decode(data), None)
+            return UnitResponse([], None)
         else:
             return UnitError.from_json_api(response.json())
 
     def get(self, counterparty_id: str) -> Union[UnitResponse[CounterpartyDTO], UnitError]:
-        response = super().get(f"{self.resource}/{counterparty_id}", payload)
+        response = super().get(f"{self.resource}/{counterparty_id}")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[CounterpartyDTO](DtoDecoder.decode(data), None)

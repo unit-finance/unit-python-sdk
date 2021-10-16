@@ -11,14 +11,9 @@ class CounterpartyDTO(object):
                  relationships: [dict[str, Relationship]]):
         self.id = id
         self.type = "achCounterparty"
-        self.created_at = created_at
-        self.name = name
-        self.routing_number = routing_number
-        self.bank = bank
-        self.account_number = account_number
-        self.account_type = account_type
-        self.type = type
-        self.permissions = permissions
+        self.attributes = {"createdAt": created_at, "name": name, "routingNumber": routing_number, "bank": bank,
+                           "accountNumber": account_number, "accountType": account_type, "type": type,
+                           "permissions": permissions}
         self.relationships = relationships
 
     @staticmethod
@@ -26,6 +21,7 @@ class CounterpartyDTO(object):
         return CounterpartyDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"],
                                attributes["routingNumber"], attributes.get("bank"), attributes["accountNumber"],
                                attributes["accountType"], attributes["type"], attributes["permissions"], relationships)
+
 
 class CreateCounterpartyRequest(object):
     def __init__(self, name: str, routing_number: str, account_number: str, account_type: str, type: str,
@@ -57,6 +53,7 @@ class CreateCounterpartyRequest(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class CreateCounterpartyWithTokenRequest(object):
     def __init__(self, name: str, type: str, plaid_processor_token: str, verify_name: Optional[bool],
                  relationships: [dict[str, Relationship]]):
@@ -87,8 +84,10 @@ class CreateCounterpartyWithTokenRequest(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class PatchCounterpartyRequest(object):
-    def __init__(self, plaid_processor_token: str, verify_name: Optional[bool]):
+    def __init__(self, counterparty_id: str, plaid_processor_token: str, verify_name: Optional[bool] = False):
+        self.counterparty_id = counterparty_id
         self.plaid_processor_token = plaid_processor_token
         self.verify_name = verify_name
 

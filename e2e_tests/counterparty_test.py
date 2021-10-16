@@ -20,6 +20,21 @@ class CounterpartyE2eTests(unittest.TestCase):
         response = self.create_counterparty()
         self.assertTrue(response.data.type == "achCounterparty")
 
+    def test_delete_counterparty(self):
+        counterparty_id = self.create_counterparty().data.id
+        response = self.client.counterparty.delete(counterparty_id)
+        self.assertTrue(response.data == [])
+
+    def test_get_counterparty(self):
+        counterparty_id = self.create_counterparty().data.id
+        response = self.client.counterparty.get(counterparty_id)
+        self.assertTrue(response.data.type == "achCounterparty")
+
+    def test_counterparty_list(self):
+        response = self.client.counterparty.list()
+        for c in response.data:
+            self.assertTrue(c.type == "achCounterparty")
+
 
 if __name__ == '__main__':
     unittest.main()
