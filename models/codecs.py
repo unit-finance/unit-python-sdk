@@ -4,6 +4,8 @@ from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from models.account import DepositAccountDTO, AccountLimitsDTO
+from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
+from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 from models.transaction import *
 from models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from models.counterparty import CounterpartyDTO
@@ -29,6 +31,18 @@ mappings = {
 
         "limits": lambda _id, _type, attributes, relationships:
         AccountLimitsDTO.from_json_api(_type, attributes),
+
+        "individualDebitCard": lambda _id, _type, attributes, relationships:
+        IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessDebitCard": lambda _id, _type, attributes, relationships:
+        BusinessDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "individualVirtualDebitCard": lambda _id, _type, attributes, relationships:
+        IndividualVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessVirtualDebitCard": lambda _id, _type, attributes, relationships:
+        BusinessVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
 
         "originatedAchTransaction": lambda _id, _type, attributes, relationships:
         OriginatedAchTransactionDTO.from_json_api(_id, _type, attributes, relationships),
