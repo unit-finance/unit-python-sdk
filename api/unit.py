@@ -4,6 +4,7 @@ from api.account_resource import AccountResource
 from api.card_resource import CardResource
 from api.transaction_resource import TransactionResource
 from api.payment_resource import PaymentResource
+from api.statement_resource import StatementResource
 
 
 class Unit(object):
@@ -14,3 +15,4 @@ class Unit(object):
         self.cards = CardResource(api_url, token)
         self.transactions = TransactionResource(api_url, token)
         self.payments = PaymentResource(api_url, token)
+        self.statements = StatementResource(api_url, token)
