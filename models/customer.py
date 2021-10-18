@@ -11,16 +11,9 @@ class IndividualCustomerDTO(object):
                  tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = 'individualCustomer'
-        self.created_at = created_at
-        self.full_name = full_name
-        self.date_of_birth = date_of_birth
-        self.address = address
-        self.phone = phone
-        self.email = email
-        self.ssn = ssn
-        self.passport = passport
-        self.nationality = nationality
-        self.tags = tags
+        self.attributes = {"createdAt": created_at, "fullName": full_name, "dateOfBirth": date_of_birth,
+                           "address": address, "phone": phone, "email": email, "ssn": ssn, "passport": passport,
+                           "nationality": nationality, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -41,17 +34,9 @@ class BusinessCustomerDTO(object):
                  relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = 'businessCustomer'
-        self.created_at = created_at
-        self.name = name
-        self.address = address
-        self.phone = phone
-        self.state_of_incorporation = state_of_incorporation
-        self.ein = ein
-        self.entity_type = entity_type
-        self.contact = contact
-        self.authorized_users = authorized_users
-        self.dba = dba
-        self.tags = tags
+        self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
+                           "stateOfIncorporation": state_of_incorporation, "ein": ein, "entityType": entity_type,
+                           "contact": contact, "authorizedUsers": authorized_users, "dba": dba, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
