@@ -6,9 +6,10 @@ AchReturnReason = Literal["Unauthorized"]
 
 
 class ReturnReceivedAchTransactionRequest(object):
-    def __init__(self, transaction_id: str, reason: AchReturnReason):
+    def __init__(self, transaction_id: str, reason: AchReturnReason, relationships: [dict[str, Relationship]]):
         self.transaction_id = transaction_id
         self.reason = reason
+        self.relationships = relationships
 
     def to_json_api(self) -> dict:
         payload = {
@@ -16,7 +17,8 @@ class ReturnReceivedAchTransactionRequest(object):
                 "type": "returnAch",
                 "attributes": {
                     "reason": self.reason
-                }
+                },
+                "relationships": self.relationships
             }
         }
 
