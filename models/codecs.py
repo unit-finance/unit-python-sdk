@@ -8,6 +8,7 @@ from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 from models.transaction import *
 from models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
+from models.event import *
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -102,6 +103,23 @@ mappings = {
 
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "account.closed": lambda _id, _type, attributes, relationships:
+        AccountClosedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "account.frozen": lambda _id, _type, attributes, relationships:
+        AccountFrozenEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "application.awaitingDocuments": lambda _id, _type, attributes, relationships:
+        ApplicationAwaitingDocumentsEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "transaction.created": lambda _id, _type, attributes, relationships:
+        TransactionCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "customer.created": lambda _id, _type, attributes, relationships:
+        CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+
 
     }
 
