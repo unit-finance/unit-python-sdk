@@ -334,7 +334,6 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                      AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent,
                      AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
                      CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
-                     CheckDepositReturnedEvent, CustomerCreatedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
-                     PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent, StatementsCreatedEvent,
-                 TransactionCreatedEvent]
+                     CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
+                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent]
 

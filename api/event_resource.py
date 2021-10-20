@@ -10,7 +10,7 @@ class EventResource(BaseResource):
 
     def get(self, event_id: str) -> Union[UnitResponse[EventDTO], UnitError]:
         response = super().get(f"{self.resource}/{event_id}")
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[EventDTO](DtoDecoder.decode(data), None)
         else:
@@ -18,8 +18,15 @@ class EventResource(BaseResource):
 
     def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[list[EventDTO]], UnitError]:
         response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[EventDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def fire(self) -> Union[UnitResponse, UnitError]:
+        response = super().post(self.resource)
+        if super().is_20x(response.status_code):
+            return UnitResponse([], None)
         else:
             return UnitError.from_json_api(response.json())
