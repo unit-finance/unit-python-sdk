@@ -3,7 +3,7 @@ from models import *
 from datetime import datetime, date
 from utils import date_utils
 from models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
-from models.account import DepositAccountDTO, AccountLimitsDTO
+from models.account import DepositAccountDTO, AccountLimitsDTO, BatchAccountDTO
 from models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 from models.transaction import *
@@ -28,6 +28,9 @@ mappings = {
 
         "depositAccount": lambda _id, _type, attributes, relationships:
         DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "batchAccount":  lambda _id, _type, attributes, relationships:
+        BatchAccountDTO.from_json_api(_id, _type, attributes, relationships),
 
         "limits": lambda _id, _type, attributes, relationships:
         AccountLimitsDTO.from_json_api(_type, attributes),

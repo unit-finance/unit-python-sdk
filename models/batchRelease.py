@@ -6,7 +6,7 @@ from models import *
 
 
 class BatchReleaseDTO(object):
-    def __init__(self, id: str, amount: str, description: str, sender_name: str, sender_address: Address,
+    def __init__(self, id: str, amount: int, description: str, sender_name: str, sender_address: Address,
                  sender_account_number: str, relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "batchRelease"
@@ -22,9 +22,9 @@ class BatchReleaseDTO(object):
 
 
 class CreateBatchReleaseRequest(object):
-    def __init__(self, amount: str, description: str, sender_name: str, sender_address: Address,
-                 sender_account_number: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, amount: int, description: str, sender_name: str, sender_address: Address,
+                 sender_account_number: str, relationships: Optional[dict[str, Relationship]],
+                 tags: Optional[dict[str, str]] = None):
         self.amount = amount
         self.description = description
         self.sender_name = sender_name

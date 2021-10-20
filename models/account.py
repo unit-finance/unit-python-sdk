@@ -27,12 +27,30 @@ class DepositAccountDTO(object):
         return DepositAccountDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"], attributes["depositProduct"],
             attributes["routingNumber"], attributes["accountNumber"], attributes["currency"], attributes["balance"],
-            attributes["hold"], attributes["available"],attributes["status"], attributes.get("tags"),
+            attributes["hold"], attributes["available"], attributes["status"], attributes.get("tags"),
             attributes.get("closeReason"), relationships
         )
 
 
-AccountDTO = Union[DepositAccountDTO]
+class BatchAccountDTO(object):
+    def __init__(self, id: str, created_at: datetime, name: str, routing_number: str,
+                 account_number: str, balance: int, hold: int, tags: Optional[dict[str, str]],
+                 relationships: Optional[dict[str, Relationship]]):
+        self.id = id
+        self.type = "batchAccount"
+        self.attributes = {"name": name, "createdAt": created_at, "routingNumber": routing_number,
+                           "accountNumber": account_number, "balance": balance, "hold": hold, "tags": tags}
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return BatchAccountDTO(
+            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"], attributes["routingNumber"],
+            attributes["accountNumber"], attributes["balance"], attributes["hold"], attributes.get("tags"),
+            attributes.get("closeReason"), relationships)
+
+
+AccountDTO = Union[DepositAccountDTO, BatchAccountDTO]
 
 
 class CreateDepositAccountRequest(UnitRequest):
@@ -91,6 +109,7 @@ class PatchDepositAccountRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class AccountLimitsDTO(object):
     def __init__(self, ach: object, card: object):
         self.type = "limits"
@@ -99,4 +118,3 @@ class AccountLimitsDTO(object):
     @staticmethod
     def from_json_api(_type, attributes):
         return AccountLimitsDTO(attributes["ach"], attributes["card"])
-

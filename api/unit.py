@@ -4,7 +4,7 @@ from api.account_resource import AccountResource
 from api.card_resource import CardResource
 from api.transaction_resource import TransactionResource
 from api.payment_resource import PaymentResource
-from api.batchRelease_resource import BatchResource
+from api.batchRelease_resource import BatchReleaseResource
 
 class Unit(object):
     def __init__(self, api_url, token):
@@ -14,4 +14,4 @@ class Unit(object):
         self.cards = CardResource(api_url, token)
         self.transactions = TransactionResource(api_url, token)
         self.payments = PaymentResource(api_url, token)
-        self.batchRelease = BatchResource(api_url, token)
+        self.batchRelease = BatchReleaseResource(api_url, token)
