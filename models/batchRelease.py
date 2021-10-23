@@ -35,7 +35,6 @@ class CreateBatchReleaseRequest(object):
 
     def to_json_api(self) -> dict:
         payload = {
-            "data": {
                 "type": "batchRelease",
                 "attributes": {
                     "amount": self.amount,
@@ -46,7 +45,6 @@ class CreateBatchReleaseRequest(object):
                 },
                 "relationships": self.relationships
             }
-        }
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags

@@ -12,12 +12,12 @@ class BatchReleaseE2eTests(unittest.TestCase):
 
         request1 = CreateBatchReleaseRequest(3000, "BATCH PYMT", "Richard Hendricks",
                                              Address("5230 Newell Rd", "Palo Alto", "CA", "94303", "US"),
-                                             "123456798", {"batchAccount": Relationship("batchAccount", account_id1),
+                                             "123456798", {"batchAccount": Relationship("batchAccount", "27573"),
                                                                  "receiver": Relationship("depositAccount",
                                                                                                      "27573")})
         request2 = CreateBatchReleaseRequest(2000, "Purchase", "Peter Parker",
                                              Address("5230 Newell Rd", "Palo Alto", "CA", "94303", "US"),
-                                             "5324131257", {"batchAccount": Relationship("batchAccount", account_id1),
+                                             "5324131257", {"batchAccount": Relationship("batchAccount", "27573"),
                                                                  "receiver": Relationship("depositAccount",
                                                                                                      "27573")})
 
