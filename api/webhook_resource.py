@@ -43,8 +43,7 @@ class WebhookResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def enable(self, webhook_id: str) -> Union[UnitResponse[WebhookDTO], UnitError]:
-        payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{webhook_id}/enable", payload)
+        response = super().post(f"{self.resource}/{webhook_id}/enable")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[WebhookDTO](DtoDecoder.decode(data), None)
@@ -52,8 +51,7 @@ class WebhookResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def disable(self, webhook_id: str) -> Union[UnitResponse[WebhookDTO], UnitError]:
-        payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{webhook_id}/disable", payload)
+        response = super().post(f"{self.resource}/{webhook_id}/disable")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[WebhookDTO](DtoDecoder.decode(data), None)

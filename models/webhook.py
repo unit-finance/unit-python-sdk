@@ -5,11 +5,12 @@ from models import *
 from typing import Literal
 
 ContentType = Literal["Json", "JsonAPI"]
+WebhookStatus = Literal["Enabled", "Disabled"]
 
 
 class WebhookDTO(object):
-    def __init__(self, id: str, created_at: datetime, label: str, url: str, status: str, content_type: ContentType,
-                 token: str):
+    def __init__(self, id: str, created_at: datetime, label: str, url: str, status: WebhookStatus,
+                 content_type: ContentType, token: str):
         self.id = id
         self.type = 'webhook'
         self.attributes = {"createdAt": created_at, "label": label, "url": url, "status": status,
