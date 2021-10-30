@@ -9,6 +9,7 @@ from models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Individual
 from models.transaction import *
 from models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
+from models.institution import InstitutionDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -109,6 +110,9 @@ mappings = {
 
         "customerTokenVerification": lambda _id, _type, attributes, relationships:
         CustomerVerificationTokenDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "institution": lambda _id, _type, attributes, relationships:
+        InstitutionDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 
