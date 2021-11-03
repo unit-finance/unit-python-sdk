@@ -1,6 +1,7 @@
-from api.base_resource import BaseResource
-from models.applicationForm import *
-from models.codecs import DtoDecoder
+from unit.api.base_resource import BaseResource
+from unit.models.applicationForm import *
+from unit.models.codecs import DtoDecoder
+
 
 class ApplicationFormResource(BaseResource):
     def __init__(self, api_url, token):

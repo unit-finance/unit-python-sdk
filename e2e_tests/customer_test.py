@@ -1,8 +1,7 @@
 import os
 import unittest
-from datetime import datetime, date, timedelta
-from api.unit import Unit
-from models.customer import *
+from unit import Unit
+from unit.models.customer import *
 
 
 class CustomerE2eTests(unittest.TestCase):

@@ -1,7 +1,7 @@
 import os
 import unittest
-from api.unit import Unit
-from models.applicationForm import CreateApplicationFormRequest
+from unit import Unit
+from unit.models.applicationForm import CreateApplicationFormRequest
 
 
 class ApplicationFormE2eTests(unittest.TestCase):
@@ -12,7 +12,7 @@ class ApplicationFormE2eTests(unittest.TestCase):
     def create_create_application_form(self):
         request = CreateApplicationFormRequest(tags={"userId": "106a75e9-de77-4e25-9561-faffe59d7814"},
                                                allowed_application_types=["Individual"])
-        return self.client.applicationForm.create(request)
+        return self.client.applicationForms.create(request)
 
     def test_create_application_form(self):
         response = self.create_create_application_form()
@@ -20,11 +20,11 @@ class ApplicationFormE2eTests(unittest.TestCase):
 
     def test_get_application_form(self):
         application_form_id = self.create_create_application_form().data.id
-        response = self.client.applicationForm.get(application_form_id)
+        response = self.client.applicationForms.get(application_form_id)
         self.assertTrue(response.data.type == "applicationForm")
 
     def test_list_application_form(self):
-        response = self.client.applicationForm.list()
+        response = self.client.applicationForms.list()
         for app in response.data:
             self.assertTrue(app.type == "applicationForm")
 

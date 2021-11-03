@@ -2,7 +2,7 @@ import json
 from typing import Optional
 import requests
 
-from models.codecs import UnitEncoder
+from unit.models.codecs import UnitEncoder
 
 
 class BaseResource(object):
