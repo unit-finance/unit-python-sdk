@@ -1,7 +1,7 @@
 import os
 import unittest
-from api.unit import Unit
-from models.returnAch import *
+from unit import Unit
+from unit.models.returnAch import *
 
 
 class ReturnAchE2eTests(unittest.TestCase):
