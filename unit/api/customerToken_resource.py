@@ -1,6 +1,6 @@
-from api.base_resource import BaseResource
-from models.customerToken import *
-from models.codecs import DtoDecoder
+from unit.api.base_resource import BaseResource
+from unit.models.customerToken import *
+from unit.models.codecs import DtoDecoder
 
 
 class CustomerTokenResource(BaseResource):

@@ -1,8 +1,8 @@
 import os
 import unittest
-from api.unit import Unit
-from models.customerToken import *
+from unit import Unit
 from e2e_tests.account_test import AccountE2eTests
+from unit.models.customerToken import CreateCustomerToken, CreateCustomerTokenVerification
 
 
 class CustomerTokenE2eTests(unittest.TestCase):

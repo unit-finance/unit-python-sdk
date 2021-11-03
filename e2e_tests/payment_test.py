@@ -1,8 +1,7 @@
 import os
 import unittest
-from datetime import datetime, date, timedelta
-from api.unit import Unit
-from models.payment import *
+from unit import Unit
+from unit.models.payment import *
 from e2e_tests.account_test import AccountE2eTests
 
 

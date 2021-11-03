@@ -1,8 +1,7 @@
 import os
 import unittest
-from datetime import datetime, date, timedelta
-from api.unit import Unit
-from models.transaction import *
+from unit import Unit
+from unit.models.transaction import PatchTransactionRequest
 
 
 class TransactionE2eTests(unittest.TestCase):
