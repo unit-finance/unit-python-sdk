@@ -1,9 +1,9 @@
 import os
 import unittest
-from datetime import datetime, date, timedelta
-from api.unit import Unit
-from models.account import *
-from models.application import CreateIndividualApplicationRequest
+from datetime import timedelta
+from unit import Unit
+from unit.models.account import *
+from unit.models.application import CreateIndividualApplicationRequest
 
 
 class AccountE2eTests(unittest.TestCase):
