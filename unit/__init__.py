@@ -1,10 +1,10 @@
-from api.application_resource import ApplicationResource
-from api.customer_resource import CustomerResource
-from api.account_resource import AccountResource
-from api.card_resource import CardResource
-from api.transaction_resource import TransactionResource
-from api.payment_resource import PaymentResource
-from api.customerToken_resource import CustomerTokenResource
+from unit.api.application_resource import ApplicationResource
+from unit.api.customer_resource import CustomerResource
+from unit.api.account_resource import AccountResource
+from unit.api.card_resource import CardResource
+from unit.api.transaction_resource import TransactionResource
+from unit.api.payment_resource import PaymentResource
+from unit.api.customerToken_resource import CustomerTokenResource
 
 
 class Unit(object):
