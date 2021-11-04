@@ -5,6 +5,7 @@ from unit.api.card_resource import CardResource
 from unit.api.transaction_resource import TransactionResource
 from unit.api.payment_resource import PaymentResource
 from unit.api.customerToken_resource import CustomerTokenResource
+from unit.api.applicationForm_resource import ApplicationFormResource
 
 
 class Unit(object):
@@ -16,3 +17,4 @@ class Unit(object):
         self.transactions = TransactionResource(api_url, token)
         self.payments = PaymentResource(api_url, token)
         self.customerTokens = CustomerTokenResource(api_url, token)
+        self.applicationForms = ApplicationFormResource(api_url, token)

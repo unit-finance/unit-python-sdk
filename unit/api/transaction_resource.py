@@ -1,5 +1,5 @@
 from unit.api.base_resource import BaseResource
-from unit.models import *
+from unit.models.transaction import *
 from unit.models.codecs import DtoDecoder
 
 
