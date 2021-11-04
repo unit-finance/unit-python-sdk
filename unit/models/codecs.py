@@ -1,6 +1,8 @@
 import json
+from models import *
 from datetime import datetime, date
 from unit.utils import date_utils
+from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
@@ -112,7 +114,9 @@ mappings = {
 
         "achCounterparty": lambda _id, _type, attributes, relationships:
         CounterpartyDTO.from_json_api(_id, _type, attributes, relationships),
-
+  
+        "applicationForm": lambda _id, _type, attributes, relationships:
+        ApplicationFormDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 

@@ -8,6 +8,7 @@ from unit.api.customerToken_resource import CustomerTokenResource
 from unit.api.counterparty_resource import CounterpartyResource
 from unit.api.counterparty_resource import CounterpartyResource
 from unit.api.returnAch_resource import ReturnAchResource
+from unit.api.applicationForm_resource import ApplicationFormResource
 
 
 class Unit(object):
@@ -21,3 +22,4 @@ class Unit(object):
         self.customerTokens = CustomerTokenResource(api_url, token)
         self.counterparty = CounterpartyResource(api_url, token)
         self.returnAch = ReturnAchResource(api_url, token)
+        self.applicationForms = ApplicationFormResource(api_url, token)
