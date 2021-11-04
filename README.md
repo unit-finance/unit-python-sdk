@@ -11,7 +11,7 @@ See https://docs.unit.co/
 
 ## Usage
 Creating Business Application
-
+```python
     import os
     from unit import Unit
     from unit.models import *
@@ -49,9 +49,11 @@ Creating Business Application
     
     application = unit.applications.create(request).data
     print(application.id)
+```
 
 Fetching a customer
-    
+
+```python
     import os
     from unit import Unit
     from unit.models.customer import *
@@ -62,3 +64,4 @@ Fetching a customer
     unit = Unit(api_url, token)
     customer = unit.customers.list().data[0]
     print(customer.id)
+```
