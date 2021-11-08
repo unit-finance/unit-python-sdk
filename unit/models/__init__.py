@@ -63,11 +63,8 @@ class UnitError(object):
         return UnitError(errors)
 
     def __str__(self):
-        str = ""
-        for err in self.errors:
-            str += err + '\n'
-
-        return str
+        return json.dumps({"errors": [{"title": err.title, "status": err.status, "detail": err.detail,
+                                "details": err.details, "source": err.source} for err in self.errors]})
 
 
 Status = Literal["Approved", "Denied", "PendingReview"]

@@ -1,6 +1,6 @@
 from api.base_resource import BaseResource
-from models.fee import *
-from models.codecs import DtoDecoder
+from unit.models.fee import *
+from unit.models.codecs import DtoDecoder
 
 
 class FeeResource(BaseResource):
