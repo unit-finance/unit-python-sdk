@@ -1,7 +1,7 @@
 import os
 import unittest
-from api.unit import Unit
-from models.fee import *
+from unit import Unit
+from unit.models.fee import *
 from e2e_tests.account_test import AccountE2eTests
 
 
