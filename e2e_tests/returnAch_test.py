@@ -19,7 +19,7 @@ class ReturnAchE2eTests(unittest.TestCase):
     def test_return_ach(self):
         transaction = self.get_received_ach_transaction()
         transaction_id = transaction.id
-        account_id = transaction.relationships["account"].id
+        account_id = transaction.relationships["customer"].id
         request = ReturnReceivedAchTransactionRequest(transaction_id, "Unauthorized",
                                                       {"account": Relationship("depositAccount", account_id)})
         response = self.client.returnAch.return_ach(request)
