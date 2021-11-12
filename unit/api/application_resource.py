@@ -39,6 +39,30 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def upload(self, request: UploadDocumentRequest):
+        url = f"{self.resource}/{request.application_id}/documents/{request.document_id}"
+        if request.is_back_side:
+            url += "/back"
+
+        headers = {}
+        #
+        # match request.fileType:
+        #     case "jpeg":
+        #         headers = {"Content-Type": "image/jpeg"}
+        #     case "png":
+        #         headers = {"Content-Type": "image/png"}
+        #     case "pdf":
+        #         headers = {"Content-Type": "image/pdf"}
+        #     case _:
+        #         headers = {}
+
+        response = super().put(url, request.file, headers)
+        if response.status_code == 200:
+            data = response.json().get("data")
+            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
     def get(self, application_id: str)-> Union[UnitResponse[ApplicationDTO], UnitError]:
         response = super().get(f"{self.resource}/{application_id}")
         if response.status_code == 200:

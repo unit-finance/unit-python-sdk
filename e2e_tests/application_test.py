@@ -6,18 +6,21 @@ from unit.models.application import *
 
 
 class ApplicationE2eTests(unittest.TestCase):
-    def test_create_individual_application(self):
+    def create_individual_application(self):
         token = os.environ.get("token")
         request = CreateIndividualApplicationRequest(
             FullName("Jhon", "Doe"), date.today() - timedelta(days=20*365),
             Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"), "jone.doe1@unit-finance.com",
             Phone("1", "2025550108"),
-            ssn="000000002"
+            ssn="000000003"
         )
 
         client = Unit("https://api.s.unit.sh", token)
-        response = client.applications.create(request)
-        self.assertTrue(response.data.type == "individualApplication")
+        return client.applications.create(request)
+
+    def test_create_individual_application(self):
+        app = self.create_individual_application()
+        self.assertTrue(app.data.type == "individualApplication")
 
     def test_create_business_application(self):
         token = os.environ.get("token")
@@ -63,6 +66,27 @@ class ApplicationE2eTests(unittest.TestCase):
         response = client.applications.list_documents("61176")
         for app in response.data:
             self.assertTrue(app.type == "document")
+
+    def test_upload_application_document(self):
+        token = os.environ.get("token")
+        client = Unit("https://api.s.unit.sh", token)
+        app = self.create_individual_application()
+        doc_id = app.included[0].id
+        file = open("../testFile.png", "r")
+        request = UploadDocumentRequest(app.data.id, doc_id, file, "png")
+        response = client.applications.upload(request)
+
+    def test_upload_application_back_document(self):
+        token = os.environ.get("token")
+        client = Unit("https://api.s.unit.sh", token)
+        app = self.create_individual_application()
+        doc_id = app.included[0].id
+        file = open("../testFile.png", "r")
+        request = UploadDocumentRequest(app.data.id, doc_id, file, "png", True)
+        response = client.applications.upload(request)
+
+
+
 
 
 if __name__ == '__main__':

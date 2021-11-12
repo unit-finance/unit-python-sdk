@@ -25,6 +25,10 @@ class BaseResource(object):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
         return requests.patch(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
+    def put(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
+        data = json.dump(data, cls=UnitEncoder) if data is not None else None
+        return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
+
     def __merge_headers(self, headers: Optional[dict[str, str]] = None):
         if not headers:
             return self.headers
