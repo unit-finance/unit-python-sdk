@@ -72,20 +72,20 @@ class ApplicationE2eTests(unittest.TestCase):
         client = Unit("https://api.s.unit.sh", token)
         app = self.create_individual_application()
         doc_id = app.included[0].id
-        file = open("../testFile.png", "r")
-        request = UploadDocumentRequest(app.data.id, doc_id, file, "png")
+        with open("../sample.pdf", 'rb') as file:
+            request = UploadDocumentRequest(app.data.id, doc_id, file.read(), "pdf")
         response = client.applications.upload(request)
+        self.assertTrue(response.data.type == "document")
 
     def test_upload_application_back_document(self):
         token = os.environ.get("token")
         client = Unit("https://api.s.unit.sh", token)
         app = self.create_individual_application()
         doc_id = app.included[0].id
-        file = open("../testFile.png", "r")
-        request = UploadDocumentRequest(app.data.id, doc_id, file, "png", True)
+        with open("../sample.pdf", 'rb') as file:
+            request = UploadDocumentRequest(app.data.id, doc_id, file.read(), "pdf", True)
         response = client.applications.upload(request)
-
-
+        self.assertTrue(response.data.type == "document")
 
 
 

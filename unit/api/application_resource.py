@@ -45,16 +45,13 @@ class ApplicationResource(BaseResource):
             url += "/back"
 
         headers = {}
-        #
-        # match request.fileType:
-        #     case "jpeg":
-        #         headers = {"Content-Type": "image/jpeg"}
-        #     case "png":
-        #         headers = {"Content-Type": "image/png"}
-        #     case "pdf":
-        #         headers = {"Content-Type": "image/pdf"}
-        #     case _:
-        #         headers = {}
+
+        if request.file_type == "jpeg":
+                headers = {"Content-Type": "image/jpeg"}
+        if request.file_type == "png":
+                headers = {"Content-Type": "image/png"}
+        if request.file_type == "pdf":
+                headers = {"Content-Type": "application/pdf"}
 
         response = super().put(url, request.file, headers)
         if response.status_code == 200:
