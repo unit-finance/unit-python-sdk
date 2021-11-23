@@ -3,7 +3,7 @@ from models.institution import *
 from models.codecs import DtoDecoder
 
 
-class AccountResource(BaseResource):
+class InstitutionResource(BaseResource):
     def __init__(self, api_url, token):
         super().__init__(api_url, token)
         self.resource = "institutions"
