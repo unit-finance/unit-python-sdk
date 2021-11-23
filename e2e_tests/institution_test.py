@@ -8,8 +8,8 @@ class InstitutionE2eTests(unittest.TestCase):
     client = Unit("https://api.s.unit.sh", token)
 
     def test_institution(self):
-        response = self.client.institutions.get('1')
-        self.assertTrue(True)
+        response = self.client.institutions.get('053285241')
+        self.assertTrue(response.data.type == "institution")
 
 if __name__ == '__main__':
     unittest.main()

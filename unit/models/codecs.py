@@ -10,6 +10,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
+from unit.models.institution import InstitutionDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
