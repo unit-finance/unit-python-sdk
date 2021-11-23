@@ -28,6 +28,9 @@ class BaseResource(object):
     def delete(self, resource: str, params: dict = None, headers: Optional[dict[str, str]] = None):
         return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
+    def put(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
+        return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
+
     def __merge_headers(self, headers: Optional[dict[str, str]] = None):
         if not headers:
             return self.headers
