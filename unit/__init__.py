@@ -9,6 +9,8 @@ from unit.api.counterparty_resource import CounterpartyResource
 from unit.api.counterparty_resource import CounterpartyResource
 from unit.api.returnAch_resource import ReturnAchResource
 from unit.api.applicationForm_resource import ApplicationFormResource
+from unit.api.fee_resource import FeeResource
+from unit.api.event_resource import EventResource
 
 __all__ = ["api", "models", "utils"]
 
@@ -25,3 +27,6 @@ class Unit(object):
         self.counterparty = CounterpartyResource(api_url, token)
         self.returnAch = ReturnAchResource(api_url, token)
         self.applicationForms = ApplicationFormResource(api_url, token)
+        self.fees = FeeResource(api_url, token)
+        self.events = EventResource(api_url, token)
+
