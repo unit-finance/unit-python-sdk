@@ -63,11 +63,8 @@ class UnitError(object):
         return UnitError(errors)
 
     def __str__(self):
-        str = ""
-        for err in self.errors:
-            str += err + '\n'
-
-        return str
+        return json.dumps({"errors": [{"title": err.title, "status": err.status, "detail": err.detail,
+                                "details": err.details, "source": err.source} for err in self.errors]})
 
 
 Status = Literal["Approved", "Denied", "PendingReview"]
@@ -179,7 +176,7 @@ class AuthorizedUser(object):
     def from_json_api(l: list):
         authorized_users = []
         for data in l:
-            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("phone"), data.get("email")))
+            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("email"), data.get("phone")))
         return authorized_users
 
 class WireCounterparty(object):

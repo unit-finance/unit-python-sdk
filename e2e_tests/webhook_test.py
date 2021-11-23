@@ -1,7 +1,7 @@
 import os
 import unittest
-from api.unit import Unit
-from models.webhook import *
+from unit import Unit
+from unit.models.webhook import *
 
 
 class WebhookE2eTests(unittest.TestCase):
