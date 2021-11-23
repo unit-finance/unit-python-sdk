@@ -1,10 +1,9 @@
+from unit.api.base_resource import BaseResource
+from unit.models.institution import *
+from unit.models.codecs import DtoDecoder
 
-from api.base_resource import BaseResource
-from models.institution import *
-from models.codecs import DtoDecoder
 
-
-class AccountResource(BaseResource):
+class InstitutionResource(BaseResource):
     def __init__(self, api_url, token):
         super().__init__(api_url, token)
         self.resource = "institutions"
