@@ -13,6 +13,7 @@ from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationToke
 from unit.models.fee import FeeDTO
 from unit.models.event import *
 from unit.models.counterparty import CounterpartyDTO
+from unit.models.webhook import WebhookDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -191,6 +192,9 @@ mappings = {
 
         "customer.created": lambda _id, _type, attributes, relationships:
         CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+        "webhook": lambda _id, _type, attributes, relationships:
+        WebhookDTO.from_json_api(_id, _type, attributes, relationships),
+
     }
 
 
