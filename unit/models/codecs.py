@@ -12,6 +12,7 @@ from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
+from unit.models.counterparty import CounterpartyDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -112,6 +113,9 @@ mappings = {
 
         "customerTokenVerification": lambda _id, _type, attributes, relationships:
         CustomerVerificationTokenDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "achCounterparty": lambda _id, _type, attributes, relationships:
+        CounterpartyDTO.from_json_api(_id, _type, attributes, relationships),
 
         "applicationForm": lambda _id, _type, attributes, relationships:
         ApplicationFormDTO.from_json_api(_id, _type, attributes, relationships),
