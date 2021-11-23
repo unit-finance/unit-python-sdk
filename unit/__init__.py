@@ -5,7 +5,12 @@ from unit.api.card_resource import CardResource
 from unit.api.transaction_resource import TransactionResource
 from unit.api.payment_resource import PaymentResource
 from unit.api.customerToken_resource import CustomerTokenResource
+from unit.api.counterparty_resource import CounterpartyResource
+from unit.api.counterparty_resource import CounterpartyResource
+from unit.api.returnAch_resource import ReturnAchResource
 from unit.api.applicationForm_resource import ApplicationFormResource
+from unit.api.fee_resource import FeeResource
+from unit.api.event_resource import EventResource
 from unit.api.webhook_resource import WebhookResource
 
 __all__ = ["api", "models", "utils"]
@@ -20,5 +25,9 @@ class Unit(object):
         self.transactions = TransactionResource(api_url, token)
         self.payments = PaymentResource(api_url, token)
         self.customerTokens = CustomerTokenResource(api_url, token)
+        self.counterparty = CounterpartyResource(api_url, token)
+        self.returnAch = ReturnAchResource(api_url, token)
         self.applicationForms = ApplicationFormResource(api_url, token)
+        self.fees = FeeResource(api_url, token)
+        self.events = EventResource(api_url, token)
         self.webhooks = WebhookResource(api_url, token)
