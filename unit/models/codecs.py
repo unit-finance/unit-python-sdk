@@ -10,6 +10,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
+from unit.models.fee import FeeDTO
 from unit.models.event import *
 
 mappings = {
@@ -114,6 +115,9 @@ mappings = {
 
         "applicationForm": lambda _id, _type, attributes, relationships:
         ApplicationFormDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "fee": lambda _id, _type, attributes, relationships:
+        FeeDTO.from_json_api(_id, _type, attributes, relationships),
 
         "account.closed": lambda _id, _type, attributes, relationships:
         AccountClosedEvent.from_json_api(_id, _type, attributes, relationships),
