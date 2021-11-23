@@ -31,11 +31,12 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list_documents(self, application_id: str):
-        response = super().get(f"{self.resource}/{application_id}/documents", None)
+    def get(self, application_id: str) -> Union[UnitResponse[ApplicationDTO], UnitError]:
+        response = super().get(f"{self.resource}/{application_id}")
         if response.status_code == 200:
             data = response.json().get("data")
-            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+            included = response.json().get("included")
+            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
 
@@ -59,13 +60,3 @@ class ApplicationResource(BaseResource):
             return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
-
-    def get(self, application_id: str)-> Union[UnitResponse[ApplicationDTO], UnitError]:
-        response = super().get(f"{self.resource}/{application_id}")
-        if response.status_code == 200:
-            data = response.json().get("data")
-            included = response.json().get("included")
-            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
-        else:
-            return UnitError.from_json_api(response.json())
-

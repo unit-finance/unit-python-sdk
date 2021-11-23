@@ -176,7 +176,7 @@ class AuthorizedUser(object):
     def from_json_api(l: list):
         authorized_users = []
         for data in l:
-            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("phone"), data.get("email")))
+            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("email"), data.get("phone")))
         return authorized_users
 
 class WireCounterparty(object):

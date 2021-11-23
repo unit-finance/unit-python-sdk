@@ -10,6 +10,11 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
+from unit.models.fee import FeeDTO
+from unit.models.event import *
+from unit.models.counterparty import CounterpartyDTO
+from unit.models.webhook import WebhookDTO
+from unit.models.institution import InstitutionDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -111,8 +116,88 @@ mappings = {
         "customerTokenVerification": lambda _id, _type, attributes, relationships:
         CustomerVerificationTokenDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "achCounterparty": lambda _id, _type, attributes, relationships:
+        CounterpartyDTO.from_json_api(_id, _type, attributes, relationships),
+
         "applicationForm": lambda _id, _type, attributes, relationships:
         ApplicationFormDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "fee": lambda _id, _type, attributes, relationships:
+        FeeDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "account.closed": lambda _id, _type, attributes, relationships:
+        AccountClosedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "account.frozen": lambda _id, _type, attributes, relationships:
+        AccountFrozenEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "application.awaitingDocuments": lambda _id, _type, attributes, relationships:
+        ApplicationAwaitingDocumentsEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "application.denied": lambda _id, _type, attributes, relationships:
+        ApplicationDeniedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "application.pendingReview": lambda _id, _type, attributes, relationships:
+        ApplicationPendingReviewEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "card.activated": lambda _id, _type, attributes, relationships:
+        CardActivatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "card.statusChanged": lambda _id, _type, attributes, relationships:
+        CardStatusChangedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "authorization.created": lambda _id, _type, attributes, relationships:
+        AuthorizationCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "authorizationRequest.declined": lambda _id, _type, attributes, relationships:
+        AuthorizationRequestDeclinedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "authorizationRequest.pending": lambda _id, _type, attributes, relationships:
+        AuthorizationRequestPendingEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "authorizationRequest.approved": lambda _id, _type, attributes, relationships:
+        AuthorizationRequestApprovedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "document.approved": lambda _id, _type, attributes, relationships:
+        DocumentApprovedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "document.rejected": lambda _id, _type, attributes, relationships:
+        DocumentRejectedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "document.approved": lambda _id, _type, attributes, relationships:
+        DocumentApprovedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkDeposit.created": lambda _id, _type, attributes, relationships:
+        CheckDepositCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkDeposit.clearing": lambda _id, _type, attributes, relationships:
+        CheckDepositClearingEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkDeposit.sent": lambda _id, _type, attributes, relationships:
+        CheckDepositSentEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "payment.clearing": lambda _id, _type, attributes, relationships:
+        PaymentClearingEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "payment.sent": lambda _id, _type, attributes, relationships:
+        PaymentSentEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "payment.returned": lambda _id, _type, attributes, relationships:
+        PaymentReturnedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "statements.created": lambda _id, _type, attributes, relationships:
+        StatementsCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "transaction.created": lambda _id, _type, attributes, relationships:
+        TransactionCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "customer.created": lambda _id, _type, attributes, relationships:
+        CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+        "webhook": lambda _id, _type, attributes, relationships:
+        WebhookDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "institution": lambda _id, _type, attributes, relationships:
+        InstitutionDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 

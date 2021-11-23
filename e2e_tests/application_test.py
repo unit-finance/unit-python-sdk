@@ -60,13 +60,6 @@ class ApplicationE2eTests(unittest.TestCase):
         for app in response.data:
             self.assertTrue(app.type == "businessApplication" or app.type == "individualApplication")
 
-    def test_application_documents(self):
-        token = os.environ.get("token")
-        client = Unit("https://api.s.unit.sh", token)
-        response = client.applications.list_documents("61176")
-        for app in response.data:
-            self.assertTrue(app.type == "document")
-
     def test_upload_application_document(self):
         token = os.environ.get("token")
         client = Unit("https://api.s.unit.sh", token)

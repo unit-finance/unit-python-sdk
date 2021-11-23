@@ -25,6 +25,9 @@ class BaseResource(object):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
         return requests.patch(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
+    def delete(self, resource: str, params: dict = None, headers: Optional[dict[str, str]] = None):
+        return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
+
     def put(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
         return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
@@ -37,5 +40,5 @@ class BaseResource(object):
             return merged
 
     def is_20x(self, status: int):
-        return status == 200 or status == 201
+        return status == 200 or status == 201 or status == 204
 
