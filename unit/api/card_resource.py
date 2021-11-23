@@ -1,6 +1,6 @@
-from api.base_resource import BaseResource
-from models.card import *
-from models.codecs import DtoDecoder
+from unit.api.base_resource import BaseResource
+from unit.models.card import *
+from unit.models.codecs import DtoDecoder
 
 
 class CardResource(BaseResource):

@@ -1,8 +1,8 @@
 import os
 import unittest
 from datetime import datetime, date, timedelta
-from api.unit import Unit
-from models.event import *
+from unit import Unit
+from unit.models.event import *
 
 class EventE2eTests(unittest.TestCase):
     token = os.environ.get("token")
