@@ -1,10 +1,10 @@
 import os
 import unittest
-from datetime import date, timedelta
-from api.unit import Unit
-from models.card import CreateIndividualDebitCard, PatchIndividualDebitCard
-from models.account import *
-from models.application import CreateIndividualApplicationRequest
+from datetime import timedelta
+from unit import Unit
+from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard
+from unit.models.account import *
+from unit.models.application import CreateIndividualApplicationRequest
 
 
 class CardE2eTests(unittest.TestCase):

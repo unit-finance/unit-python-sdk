@@ -1,6 +1,6 @@
 import os
 import unittest
-from api.unit import Unit
+from unit import Unit
 
 
 class PaymentE2eTests(unittest.TestCase):
