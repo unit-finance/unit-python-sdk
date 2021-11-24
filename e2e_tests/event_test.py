@@ -19,6 +19,11 @@ class EventE2eTests(unittest.TestCase):
             response = self.client.events.get(e)
             self.assertTrue("." in response.data.type)
 
+    def test_fire_event(self):
+        event_id = self.client.events.list().data[0].id
+        response = self.client.events.fire(event_id)
+        self.assertTrue(response.data == [])
+
 
 if __name__ == '__main__':
     unittest.main()
