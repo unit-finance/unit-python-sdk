@@ -6,18 +6,21 @@ from unit.models.application import *
 
 
 class ApplicationE2eTests(unittest.TestCase):
-    def test_create_individual_application(self):
+    def create_individual_application(self):
         token = os.environ.get("token")
         request = CreateIndividualApplicationRequest(
             FullName("Jhon", "Doe"), date.today() - timedelta(days=20*365),
             Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"), "jone.doe1@unit-finance.com",
             Phone("1", "2025550108"),
-            ssn="000000002"
+            ssn="000000003"
         )
 
         client = Unit("https://api.s.unit.sh", token)
-        response = client.applications.create(request)
-        self.assertTrue(response.data.type == "individualApplication")
+        return client.applications.create(request)
+
+    def test_create_individual_application(self):
+        app = self.create_individual_application()
+        self.assertTrue(app.data.type == "individualApplication")
 
     def test_create_business_application(self):
         token = os.environ.get("token")
@@ -57,12 +60,26 @@ class ApplicationE2eTests(unittest.TestCase):
         for app in response.data:
             self.assertTrue(app.type == "businessApplication" or app.type == "individualApplication")
 
-    def test_application_documents(self):
+    def test_upload_application_document(self):
         token = os.environ.get("token")
         client = Unit("https://api.s.unit.sh", token)
-        response = client.applications.list_documents("61176")
-        for app in response.data:
-            self.assertTrue(app.type == "document")
+        app = self.create_individual_application()
+        doc_id = app.included[0].id
+        with open("../sample.pdf", 'rb') as file:
+            request = UploadDocumentRequest(app.data.id, doc_id, file.read(), "pdf")
+        response = client.applications.upload(request)
+        self.assertTrue(response.data.type == "document")
+
+    def test_upload_application_back_document(self):
+        token = os.environ.get("token")
+        client = Unit("https://api.s.unit.sh", token)
+        app = self.create_individual_application()
+        doc_id = app.included[0].id
+        with open("../sample.pdf", 'rb') as file:
+            request = UploadDocumentRequest(app.data.id, doc_id, file.read(), "pdf", True)
+        response = client.applications.upload(request)
+        self.assertTrue(response.data.type == "document")
+
 
 
 if __name__ == '__main__':
