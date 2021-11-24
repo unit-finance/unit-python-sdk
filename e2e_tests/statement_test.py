@@ -3,7 +3,7 @@ import unittest
 from unit import Unit
 
 
-class PaymentE2eTests(unittest.TestCase):
+class StatementE2eTests(unittest.TestCase):
     token = os.environ.get("token")
     client = Unit("https://api.s.unit.sh", token)
 
