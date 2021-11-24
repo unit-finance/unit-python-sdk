@@ -63,7 +63,12 @@ class AccountE2eTests(unittest.TestCase):
 
     def test_close_and_reopen_account(self):
         account_id = self.create_deposit_account().data.id
-        response = self.client.accounts.close_account(account_id, "Fraud")
+        requet = CloseAccountRequest(account_id, "Fraud")
+        response = self.client.accounts.close_account(requet)
+        self.assertTrue(response.data.type == "depositAccount")
+        account_id = self.create_deposit_account().data.id
+        requet = CloseAccountRequest(account_id)
+        response = self.client.accounts.close_account(requet)
         self.assertTrue(response.data.type == "depositAccount")
         response = self.client.accounts.reopen_account(account_id)
         self.assertTrue(response.data.type == "depositAccount")

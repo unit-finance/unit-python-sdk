@@ -16,9 +16,9 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def close_account(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer") -> Union[UnitResponse[AccountDTO], UnitError]:
-        data = {"data": {"type": "accountClose", "attributes": {"reason": reason}}}
-        response = super().post(f"{self.resource}/{account_id}/close", data)
+    def close_account(self, request: CloseAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.account_id}/close", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)

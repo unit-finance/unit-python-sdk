@@ -97,3 +97,24 @@ class AccountLimitsDTO(object):
     def from_json_api(_type, attributes):
         return AccountLimitsDTO(attributes["ach"], attributes["card"])
 
+
+class CloseAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer"):
+        self.account_id = account_id
+        self.reason = reason
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "accountClose",
+                "attributes": {
+                    "reason": self.reason,
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
