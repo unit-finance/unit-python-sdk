@@ -1,6 +1,7 @@
 from unit.api.base_resource import BaseResource
 from unit.models.transaction import *
 from unit.models.codecs import DtoDecoder
+from unit.models.transaction import *
 
 
 class TransactionResource(BaseResource):

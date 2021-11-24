@@ -1,5 +1,6 @@
 from unit.utils import date_utils
 from unit.models import *
+from typing import IO
 
 ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview"]
 
@@ -179,3 +180,16 @@ class ApplicationDocumentDTO(object):
             attributes.get("address"), attributes.get("dateOfBirth"), attributes.get("passport"),
             attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
         )
+
+FileType = Literal["jpeg", "png", "pdf"]
+
+
+class UploadDocumentRequest(object):
+    def __init__(self, application_id: str, document_id: str, file: IO, file_type: FileType,
+                 is_back_side: Optional[bool] = False):
+        self.application_id = application_id
+        self.document_id = document_id
+        self.file = file
+        self.file_type = file_type
+        self.is_back_side = is_back_side
+
