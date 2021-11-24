@@ -24,8 +24,8 @@ class EventResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def fire(self) -> Union[UnitResponse, UnitError]:
-        response = super().post(self.resource)
+    def fire(self, event_id: str) -> Union[UnitResponse, UnitError]:
+        response = super().post(f"{self.resource}/{event_id}")
         if super().is_20x(response.status_code):
             return UnitResponse([], None)
         else:
