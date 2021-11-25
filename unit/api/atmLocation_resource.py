@@ -7,8 +7,13 @@ class AtmLocationResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "atm-locations"
 
-    def get(self, request: GetAtmLocationRequest) -> Union[UnitResponse[AtmLocationDTO], UnitError]:
+    def get(self, request: GetAtmLocationRequest) -> Union[UnitResponse[list[AtmLocationDTO]], UnitError]:
         params = request.to_json_api()
+        # params = {}
+        #
+        if request.coordinates:
+            params["filter[coordinates]"] = json.dumps(request.coordinates, cls=UnitEncoder)
+
         response = super().get(self.resource, params)
         if super().is_20x(response.status_code):
             data = response.json().get("data")

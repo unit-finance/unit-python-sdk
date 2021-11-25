@@ -307,5 +307,5 @@ class UnitEncoder(json.JSONEncoder):
             return {"routingNumber": obj.routingNumber, "accountNumber": obj.accountNumber,
                     "accountType": obj.accountType, "name": obj.name}
         if isinstance(obj, Coordinates):
-            return {"longitude": obj.longitude, "latitude": obj.latitude}
+            return {"longitude": f"'{obj.longitude}'", "latitude": f"'{obj.latitude}'"}
         return json.JSONEncoder.default(self, obj)

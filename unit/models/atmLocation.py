@@ -1,7 +1,6 @@
 import json
 from unit.models import *
 
-
 class AtmLocationDTO(object):
     def __init__(self, network: int, location_name: str, coordinates: Coordinates, address: str, distance: int,
                  surcharge_free: bool, accept_deposits: bool):
@@ -28,8 +27,7 @@ class GetAtmLocationRequest(object):
         params = {}
 
         if self.coordinates:
-            params["filter[coordinates]"] = {"longitude": f"{self.coordinates.longitude}",
-                                             "latitude": f"{self.coordinates.latitude}"}
+            params["filter[coordinates]"] = self.coordinates
 
         if self.postal_code:
             params["filter[postalCode]"] = self.postal_code

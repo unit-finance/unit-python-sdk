@@ -15,6 +15,7 @@ class BaseResource(object):
         }
 
     def get(self, resource: str, params: dict = None, headers: Optional[dict[str, str]] = None):
+        # params = json.dumps(params, cls=UnitEncoder) if params is not None else None
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
     def post(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
