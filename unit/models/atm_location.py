@@ -2,18 +2,13 @@ import json
 from unit.models import *
 
 class AtmLocationDTO(object):
-    def __init__(self, network: int, location_name: str, coordinates: Coordinates, address: str, distance: int,
-                 surcharge_free: bool, accept_deposits: bool):
+    def __init__(self, attributes: dict):
         self.type = "atmLocation"
-        self.attributes = {"network": network, "locationName": location_name, "coordinates": coordinates,
-                           "address": address, "distance": distance, "surchargeFree": surcharge_free,
-                           "acceptDeposits": accept_deposits}
+        self.attributes = attributes
 
     @staticmethod
     def from_json_api(_type, attributes):
-        return AtmLocationDTO(attributes["network"], attributes["locationName"], attributes["coordinates"],
-                              attributes["address"], attributes["distance"], attributes["surchargeFree"],
-                              attributes["acceptDeposits"])
+        return AtmLocationDTO(attributes)
 
 
 class GetAtmLocationParams(object):
