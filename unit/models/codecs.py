@@ -15,7 +15,7 @@ from unit.models.event import *
 from unit.models.counterparty import CounterpartyDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
-from unit.models.atmLocation import AtmLocationDTO
+from unit.models.atm_location import AtmLocationDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -307,5 +307,5 @@ class UnitEncoder(json.JSONEncoder):
             return {"routingNumber": obj.routingNumber, "accountNumber": obj.accountNumber,
                     "accountType": obj.accountType, "name": obj.name}
         if isinstance(obj, Coordinates):
-            return {"longitude": f"'{obj.longitude}'", "latitude": f"'{obj.latitude}'"}
+            return {"longitude": obj.longitude, "latitude": obj.latitude}
         return json.JSONEncoder.default(self, obj)

@@ -15,7 +15,8 @@ class AtmLocationDTO(object):
                               attributes["address"], attributes["distance"], attributes["surchargeFree"],
                               attributes["acceptDeposits"])
 
-class GetAtmLocationRequest(object):
+
+class GetAtmLocationParams(object):
     def __init__(self, search_radius: Optional[int] = None, coordinates: Optional[Coordinates] = None,
                  postal_code: Optional[str] = None, address: Optional[Address] = None):
         self.search_radius = search_radius
@@ -23,22 +24,3 @@ class GetAtmLocationRequest(object):
         self.postal_code = postal_code
         self.address = address
 
-    def to_json_api(self) -> dict:
-        params = {}
-
-        if self.coordinates:
-            params["filter[coordinates]"] = self.coordinates
-
-        if self.postal_code:
-            params["filter[postalCode]"] = self.postal_code
-
-        if self.address:
-            params["filter[address]"] = self.address
-
-        if self.search_radius:
-            params["filter[searchRadius]"] = self.search_radius
-
-        return params
-
-    def __repr__(self):
-        json.dumps(self.to_json_api())
