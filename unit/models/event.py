@@ -22,7 +22,7 @@ class AccountClosedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AccountClosedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["closeReason"],
-                             attributes.get("tags"), relationships)
+                                  attributes.get("tags"), relationships)
 
 
 class AccountFrozenEvent(BaseEvent):
@@ -35,7 +35,7 @@ class AccountFrozenEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AccountFrozenEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["freezeReason"],
-                             attributes.get("tags"), relationships)
+                                  attributes.get("tags"), relationships)
 
 
 class ApplicationDeniedEvent(BaseEvent):
@@ -58,8 +58,8 @@ class ApplicationPendingReviewEvent(BaseEvent):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return ApplicationPendingReviewEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("tags"),
-                                  relationships)
+        return ApplicationPendingReviewEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                             attributes.get("tags"), relationships)
 
 
 class ApplicationAwaitingDocumentsEvent(BaseEvent):
@@ -70,8 +70,8 @@ class ApplicationAwaitingDocumentsEvent(BaseEvent):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return ApplicationAwaitingDocumentsEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("tags"),
-                                  relationships)
+        return ApplicationAwaitingDocumentsEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                                 attributes.get("tags"), relationships)
 
 
 class AuthorizationCreatedEvent(BaseEvent):
@@ -105,9 +105,10 @@ class AuthorizationRequestApprovedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AuthorizationRequestApprovedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                                 attributes["amount"], attributes["status"], attributes["approvedAmount"],
-                                                 attributes["partialApprovalAllowed"], attributes["merchant"],
-                                                 attributes["recurring"], attributes.get("tags"), relationships)
+                                                 attributes["amount"], attributes["status"],
+                                                 attributes["approvedAmount"], attributes["partialApprovalAllowed"],
+                                                 attributes["merchant"], attributes["recurring"],
+                                                 attributes.get("tags"), relationships)
 
 
 class AuthorizationRequestDeclinedEvent(BaseEvent):
@@ -127,9 +128,10 @@ class AuthorizationRequestDeclinedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AuthorizationRequestDeclinedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                                 attributes["amount"], attributes["status"], attributes["declineReason"],
-                                                 attributes["partialApprovalAllowed"], attributes["merchant"],
-                                                 attributes["recurring"], attributes.get("tags"), relationships)
+                                                 attributes["amount"], attributes["status"],
+                                                 attributes["declineReason"], attributes["partialApprovalAllowed"],
+                                                 attributes["merchant"], attributes["recurring"],
+                                                 attributes.get("tags"), relationships)
 
 
 class AuthorizationRequestPendingEvent(BaseEvent):
@@ -149,9 +151,10 @@ class AuthorizationRequestPendingEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AuthorizationRequestPendingEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                                 attributes["amount"], attributes["status"], attributes["approvedAmount"],
-                                                 attributes["partialApprovalAllowed"], attributes["merchant"],
-                                                 attributes["recurring"], attributes.get("tags"), relationships)
+                                                attributes["amount"], attributes["status"],
+                                                attributes["approvedAmount"], attributes["partialApprovalAllowed"],
+                                                attributes["merchant"], attributes["recurring"], attributes.get("tags"),
+                                                relationships)
 
 class CardActivatedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
@@ -253,12 +256,12 @@ class DocumentApprovedEvent(BaseEvent):
                                     attributes.get("tags"), relationships)
 
 class DocumentRejectedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, reason: str, reasonCode: str,
+    def __init__(self, id: str, created_at: datetime, reason: str, reason_code: str,
                  tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'document.rejected'
         self.attributes["reason"] = reason
-        self.attributes["reasonCode"] = reasonCode
+        self.attributes["reasonCode"] = reason_code
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -327,13 +330,14 @@ class TransactionCreatedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return TransactionCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["summary"],
-                                     attributes["direction"], attributes["amount"], attributes.get("tags"), relationships)
+                                       attributes["direction"], attributes["amount"], attributes.get("tags"),
+                                       relationships)
 
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationAwaitingDocumentsEvent,
-                     ApplicationPendingReviewEvent, CardActivatedEvent, CardStatusChangedEvent, AuthorizationCreatedEvent,
-                     AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent,
-                     AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
-                     CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
-                     CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
+                 ApplicationPendingReviewEvent, CardActivatedEvent, CardStatusChangedEvent,
+                 AuthorizationCreatedEvent, AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent,
+                 AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
+                 CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
+                 CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
                  PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent]
 

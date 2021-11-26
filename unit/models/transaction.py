@@ -234,9 +234,10 @@ class WireTransactionDTO(BaseTransactionDTO):
 
 
 class ReleaseTransactionDTO(BaseTransactionDTO):
-    def __init__(self, id: str, created_at: datetime, sender_name: str, sender_address: str, sender_account_number: str,
-                 counterparty: Counterparty, amount: int, direction: str, description: str, balance: int, summary: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, sender_name: str, sender_address: Address,
+                 sender_account_number: str, counterparty: Counterparty, amount: int, direction: str,
+                 description: str, balance: int, summary: str, tags: Optional[dict[str, str]],
+                 relationships: Optional[dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'releaseTransaction'
         self.attributes["description"] = description
@@ -248,11 +249,11 @@ class ReleaseTransactionDTO(BaseTransactionDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return ReleaseTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["senderName"],
-                                     attributes["senderAddress"], attributes["senderAccountNumber"],
-                                     attributes["counterparty"],
-                                     attributes["amount"], attributes["direction"], attributes["description"],
-                                     attributes["balance"], attributes["summary"], attributes.get("tags"),
-                                     relationships)
+                                     Address.from_json_api(attributes["senderAddress"]),
+                                     attributes["senderAccountNumber"],
+                                     Counterparty.from_json_api(attributes["counterparty"]), attributes["amount"],
+                                     attributes["direction"], attributes["description"], attributes["balance"],
+                                     attributes["summary"], attributes.get("tags"), relationships)
 
 
 class AdjustmentTransactionDTO(BaseTransactionDTO):

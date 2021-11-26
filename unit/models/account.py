@@ -24,7 +24,7 @@ class DepositAccountDTO(object):
         return DepositAccountDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"], attributes["depositProduct"],
             attributes["routingNumber"], attributes["accountNumber"], attributes["currency"], attributes["balance"],
-            attributes["hold"], attributes["available"],attributes["status"], attributes.get("tags"),
+            attributes["hold"], attributes["available"], attributes["status"], attributes.get("tags"),
             attributes.get("closeReason"), relationships
         )
 
@@ -87,6 +87,7 @@ class PatchDepositAccountRequest(UnitRequest):
 
     def __repr__(self):
         json.dumps(self.to_json_api())
+
 
 class AccountLimitsDTO(object):
     def __init__(self, ach: object, card: object):
