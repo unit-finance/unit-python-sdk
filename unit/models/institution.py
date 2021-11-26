@@ -13,5 +13,5 @@ class InstitutionDTO(object):
     def from_json_api(_id, _type, attributes, relationships):
         return InstitutionDTO(
             attributes["routingNumber"], attributes["name"], attributes["isACHSupported"],
-            attributes["isWireSupported"], Address.from_json_api(attributes.get("address")))
+            attributes["isWireSupported"], attributes.get("address"))
 

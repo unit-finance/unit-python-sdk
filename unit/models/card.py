@@ -16,10 +16,11 @@ class IndividualDebitCardDTO(object):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
+        shipping_address = Address.from_json_api(attributes.get("shippingAddress")) if attributes.get("shippingAddress") else None
         return IndividualDebitCardDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
             attributes["expirationDate"], attributes["status"],
-            Address.from_json_api(attributes.get("shippingAddress")), attributes.get("design"), relationships
+            shipping_address, attributes.get("design"), relationships
         )
 
 
@@ -38,13 +39,14 @@ class BusinessDebitCardDTO(object):
         self.relationships = relationships
 
     def from_json_api(_id, _type, attributes, relationships):
+        shipping_address = Address.from_json_api(attributes.get("shippingAddress")) if attributes.get("shippingAddress") else None
         return BusinessDebitCardDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
             attributes["expirationDate"], attributes["ssn"], FullName.from_json_api(attributes["fullName"]),
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
             attributes.get("passport"), attributes.get("nationality"),
-            Address.from_json_api(attributes.get("shippingAddress")), attributes.get("design"), relationships
+            shipping_address, attributes.get("design"), relationships
         )
 
 
