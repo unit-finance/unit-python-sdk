@@ -15,6 +15,7 @@ from unit.models.event import *
 from unit.models.counterparty import CounterpartyDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
+from unit.models.api_token import APITokenDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -199,6 +200,8 @@ mappings = {
         "institution": lambda _id, _type, attributes, relationships:
         InstitutionDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "apiToken": lambda _id, _type, attributes, relationships:
+        APITokenDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 
