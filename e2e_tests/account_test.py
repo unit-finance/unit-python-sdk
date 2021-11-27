@@ -76,6 +76,12 @@ class AccountE2eTests(unittest.TestCase):
         response = self.client.accounts.update(request)
         self.assertTrue(response.data.type == "depositAccount")
 
+    def test_get_available_deposit_products(self):
+        account_id = self.create_deposit_account().data.id
+        response = self.client.accounts.get_available_deposit_products(account_id)
+        for deposit_product in response.data:
+            self.assertTrue(deposit_product.type == "accountDepositProduct")
+
 
 if __name__ == '__main__':
     unittest.main()

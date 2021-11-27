@@ -67,3 +67,11 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def get_available_deposit_products(self, account_id: str) -> Union[UnitResponse[DepositProductDTO], UnitError]:
+        response = super().get(f"{self.resource}/{account_id}/deposit-products", None)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[DepositProductDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+

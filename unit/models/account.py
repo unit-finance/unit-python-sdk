@@ -97,3 +97,13 @@ class AccountLimitsDTO(object):
     def from_json_api(_type, attributes):
         return AccountLimitsDTO(attributes["ach"], attributes["card"])
 
+
+class DepositProductDTO(object):
+    def __init__(self, attributes: dict):
+        self.type = "accountDepositProduct"
+        self.attributes = attributes
+
+    @staticmethod
+    def from_json_api(_type, attributes):
+        return DepositProductDTO(attributes)
+
