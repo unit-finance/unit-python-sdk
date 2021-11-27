@@ -15,7 +15,7 @@ from unit.models.event import *
 from unit.models.counterparty import CounterpartyDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
-from unit.models.billPay import BillerDTO
+from unit.models.bill_pay import BillerDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:

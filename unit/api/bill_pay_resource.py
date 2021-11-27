@@ -1,5 +1,5 @@
 from unit.api.base_resource import BaseResource
-from unit.models.billPay import *
+from unit.models.bill_pay import *
 from unit.models.codecs import DtoDecoder
 
 

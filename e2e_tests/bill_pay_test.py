@@ -1,7 +1,7 @@
 import os
 import unittest
 from unit import Unit
-from unit.models.billPay import *
+from unit.models.bill_pay import *
 
 
 class BillPayE2eTests(unittest.TestCase):

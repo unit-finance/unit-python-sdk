@@ -13,7 +13,7 @@ from unit.api.fee_resource import FeeResource
 from unit.api.event_resource import EventResource
 from unit.api.webhook_resource import WebhookResource
 from unit.api.institution_resource import InstitutionResource
-from unit.api.billPay_resource import BillPayResource
+from unit.api.bill_pay_resource import BillPayResource
 
 __all__ = ["api", "models", "utils"]
 
