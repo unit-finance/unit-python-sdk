@@ -9,13 +9,13 @@ class BillPayE2eTests(unittest.TestCase):
     client = Unit("https://api.s.unit.sh", token)
 
     def test_get_billers(self):
-        request = GetBillersRequest("Electric")
+        request = GetBillersParams("Electric")
         response = self.client.billPays.get(request)
         for b in response.data:
             self.assertTrue(b.type == "biller")
 
     def test_get_billers_with_page_param(self):
-        request = GetBillersRequest("Electric", 1)
+        request = GetBillersParams("Electric", 1)
         response = self.client.billPays.get(request)
         for b in response.data:
             self.assertTrue(b.type == "biller")

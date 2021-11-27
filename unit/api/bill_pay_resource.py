@@ -8,9 +8,12 @@ class BillPayResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "payments/billpay/billers"
 
-    def get(self, request: GetBillersRequest) -> Union[UnitResponse[list[BillerDTO]], UnitError]:
-        params = request.to_json_api()
-        response = super().get(self.resource, params)
+    def get(self, params: GetBillersParams) -> Union[UnitResponse[list[BillerDTO]], UnitError]:
+        parameters = {"name": params.name}
+        if params.page:
+            parameters["page"] = params.page
+
+        response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[BillerDTO](DtoDecoder.decode(data), None)

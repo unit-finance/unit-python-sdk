@@ -14,19 +14,8 @@ class BillerDTO(object):
         return BillerDTO(_id, attributes["name"], attributes["category"])
 
 
-class GetBillersRequest(object):
+class GetBillersParams(object):
     def __init__(self, name: str, page: Optional[int] = None):
         self.name = name
         self.page = page
-
-    def to_json_api(self) -> dict:
-        payload = {"name": self.name}
-
-        if self.page:
-            payload["page"] = self.page
-
-        return payload
-
-    def __repr__(self):
-        json.dumps(self.to_json_api())
 
