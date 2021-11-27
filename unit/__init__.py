@@ -4,11 +4,11 @@ from unit.api.account_resource import AccountResource
 from unit.api.card_resource import CardResource
 from unit.api.transaction_resource import TransactionResource
 from unit.api.payment_resource import PaymentResource
-from unit.api.customerToken_resource import CustomerTokenResource
+from unit.api.customer_token_resource import CustomerTokenResource
 from unit.api.counterparty_resource import CounterpartyResource
 from unit.api.counterparty_resource import CounterpartyResource
-from unit.api.returnAch_resource import ReturnAchResource
-from unit.api.applicationForm_resource import ApplicationFormResource
+from unit.api.return_ach_resource import ReturnAchResource
+from unit.api.application_form_resource import ApplicationFormResource
 from unit.api.fee_resource import FeeResource
 from unit.api.event_resource import EventResource
 from unit.api.webhook_resource import WebhookResource

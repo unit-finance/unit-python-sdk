@@ -2,14 +2,14 @@ import json
 from unit.models import *
 from datetime import datetime, date
 from unit.utils import date_utils
-from unit.models.applicationForm import ApplicationFormDTO
+from unit.models.application_form import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
-from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
+from unit.models.customer_token import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
 from unit.models.counterparty import CounterpartyDTO

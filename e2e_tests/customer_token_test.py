@@ -2,7 +2,7 @@ import os
 import unittest
 from unit import Unit
 from e2e_tests.account_test import AccountE2eTests
-from unit.models.customerToken import CreateCustomerToken, CreateCustomerTokenVerification
+from unit.models.customer_token import CreateCustomerToken, CreateCustomerTokenVerification
 
 
 class CustomerTokenE2eTests(unittest.TestCase):

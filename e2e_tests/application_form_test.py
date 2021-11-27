@@ -1,7 +1,7 @@
 import os
 import unittest
 from unit import Unit
-from unit.models.applicationForm import CreateApplicationFormRequest
+from unit.models.application_form import CreateApplicationFormRequest
 
 
 class ApplicationFormE2eTests(unittest.TestCase):
