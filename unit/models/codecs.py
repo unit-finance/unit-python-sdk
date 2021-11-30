@@ -15,6 +15,7 @@ from unit.models.event import *
 from unit.models.counterparty import CounterpartyDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
+from unit.models.account_end_of_day import AccountEndOfDayDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -198,6 +199,9 @@ mappings = {
 
         "institution": lambda _id, _type, attributes, relationships:
         InstitutionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "accountEndOfDay": lambda _id, _type, attributes, relationships:
+        AccountEndOfDayDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 
