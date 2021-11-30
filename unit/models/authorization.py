@@ -6,7 +6,7 @@ from unit.utils import date_utils
 
 class AuthorizationDTO(object):
     def __init__(self, id: str, created_at: datetime, amount: int, card_last_4_digits: str, merchant_name: str,
-                 merchant_type: str, merchant_category: str, merchant_location: Optional[str], recurring: bool,
+                 merchant_type: int, merchant_category: str, merchant_location: Optional[str], recurring: bool,
                  tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "authorization"
