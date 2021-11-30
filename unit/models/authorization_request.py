@@ -13,7 +13,7 @@ class PurchaseAuthorizationRequestDTO(object):
                  merchant_name: str, merchant_type: int, merchant_category: str, merchant_location: Optional[str],
                  recurring: bool, tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
         self.id = id
-        self.type = "authorization"
+        self.type = "purchaseAuthorizationRequest"
         self.attributes = {"createdAt": created_at, "amount": amount, "status": status,
                            "partialApprovalAllowed": partial_approval_allowed, "approvedAmount": approved_amount,
                            "declineReason": decline_reason, "merchant": { "name": merchant_name, "type": merchant_type,
@@ -41,3 +41,49 @@ class PurchaseAuthorizationRequestListParams(object):
         self.account_id = account_id
         self.customer_id = customer_id
 
+
+class ApproveAuthorizationRequest(object):
+    def __init__(self, authorization_id: str, amount: Optional[int] = None, tags: Optional[dict[str, str]] = None):
+        self.authorization_id = authorization_id
+        self.amount = amount
+        self.tags = tags
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "approveAuthorizationRequest",
+                "attributes": {}
+            }
+        }
+
+        if self.amount:
+            payload["data"]["attributes"]["amount"] = self.amount
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class DeclineAuthorizationRequest(object):
+    def __init__(self, authorization_id: str, reason: DeclineReason):
+        self.authorization_id = authorization_id
+        self.reason = reason
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "declineAuthorizationRequest",
+                "attributes": {
+                    "reason": self.reason
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())

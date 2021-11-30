@@ -13,6 +13,7 @@ from unit.api.fee_resource import FeeResource
 from unit.api.event_resource import EventResource
 from unit.api.webhook_resource import WebhookResource
 from unit.api.institution_resource import InstitutionResource
+from unit.api.authorization_request_resource import AuthorizationRequestResource
 
 __all__ = ["api", "models", "utils"]
 
@@ -33,3 +34,4 @@ class Unit(object):
         self.events = EventResource(api_url, token)
         self.webhooks = WebhookResource(api_url, token)
         self.institutions = InstitutionResource(api_url, token)
+        self.authorization_requests = AuthorizationRequestResource(api_url, token)
