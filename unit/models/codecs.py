@@ -17,6 +17,7 @@ from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
 from unit.models.atm_location import AtmLocationDTO
 from unit.models.bill_pay import BillerDTO
+from unit.models.api_token import APITokenDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -207,6 +208,8 @@ mappings = {
         "biller": lambda _id, _type, attributes, relationships:
         BillerDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "apiToken": lambda _id, _type, attributes, relationships:
+        APITokenDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 
