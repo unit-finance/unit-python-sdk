@@ -1,6 +1,7 @@
 import os
 import unittest
 from unit import Unit
+from unit.models.statement import GetStatementParams
 
 
 class StatementE2eTests(unittest.TestCase):
@@ -11,10 +12,22 @@ class StatementE2eTests(unittest.TestCase):
         statements = self.client.statements.list().data
         for s in statements:
             self.assertTrue(s.type == "accountStatementDTO")
-            html_statement = self.client.statements.get_html(s.id).data
-            self.assertTrue('<!DOCTYPE html>' in html_statement)
-            pdf_statement = self.client.statements.get_pdf(s.id).data
-            self.assertTrue('PDF' in pdf_statement)
+
+            params = GetStatementParams(s.id)
+            html_statement = self.client.statements.get(params).data
+            self.assertTrue("<!DOCTYPE html>" in html_statement)
+
+            params = GetStatementParams(s.id, customer_id=s.relationships["customer"].id)
+            html_statement = self.client.statements.get(params).data
+            self.assertTrue("<!DOCTYPE html>" in html_statement)
+
+            account_id = s.relationships["account"].id
+            pdf_response = self.client.statements.get_bank_verification(account_id).data
+            self.assertTrue("PDF" in pdf_response)
+
+            params = GetStatementParams(s.id, "pdf")
+            pdf_statement = self.client.statements.get(params).data
+            self.assertTrue("PDF" in pdf_statement)
 
 
 if __name__ == '__main__':

@@ -8,15 +8,20 @@ class StatementResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "statements"
 
-    def get_html(self, statement_id: str, language: Optional[str] = "en") -> Union[UnitResponse[str], UnitError]:
-        response = super().get(f"{self.resource}/{statement_id}/html", {"language": language})
+    def get(self, params: GetStatementParams) -> Union[UnitResponse[str], UnitError]:
+        parameters = {"language": params.language}
+        if params.customer_id:
+            parameters["filter[customerId]"] = params.customer_id
+
+        response = super().get(f"{self.resource}/{params.statement_id}/{params.output_type}", parameters)
         if response.status_code == 200:
             return UnitResponse[str](response.text, None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def get_pdf(self, statement_id: str, language: Optional[str] = "en") -> Union[UnitResponse[str], UnitError]:
-        response = super().get(f"{self.resource}/{statement_id}/pdf", {"language": language})
+    def get_bank_verification(self, account_id: str, include_proof_of_funds: Optional[bool] = False) -> Union[UnitResponse[str], UnitError]:
+        response = super().get(f"{self.resource}/{account_id}/bank/pdf",
+                               {"includeProofOfFunds": include_proof_of_funds})
         if response.status_code == 200:
             return UnitResponse[str](response.text, None)
         else:

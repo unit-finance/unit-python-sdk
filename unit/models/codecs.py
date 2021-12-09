@@ -114,6 +114,9 @@ mappings = {
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "sandboxAccountStatement": lambda _id, _type, attributes, relationships:
+        StatementDTO.from_json_api(_id, _type, attributes, relationships),
+
         "customerBearerToken": lambda _id, _type, attributes, relationships:
         CustomerTokenDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -197,6 +200,7 @@ mappings = {
 
         "customer.created": lambda _id, _type, attributes, relationships:
         CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
         "webhook": lambda _id, _type, attributes, relationships:
         WebhookDTO.from_json_api(_id, _type, attributes, relationships),
 
