@@ -54,12 +54,13 @@ class BusinessApplicationDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return BusinessApplicationDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]),attributes.get("name"),
-            Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]), attributes["status"],
-            attributes.get("stateOfIncorporation"), attributes.get("entityType"),
+            _id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("name"),
+            Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
+            attributes["status"], attributes.get("stateOfIncorporation"), attributes.get("entityType"),
             BusinessContact.from_json_api(attributes["contact"]), Officer.from_json_api(attributes["officer"]),
-            BeneficialOwner.from_json_api(attributes["beneficialOwners"]),  attributes.get("ssn"), attributes.get("message"),
-            attributes.get("ip"), attributes.get("ein"), attributes.get("dba"), attributes.get("tags"), relationships
+            BeneficialOwner.from_json_api(attributes["beneficialOwners"]),  attributes.get("ssn"),
+            attributes.get("message"), attributes.get("ip"), attributes.get("ein"), attributes.get("dba"),
+            attributes.get("tags"), relationships
         )
 
 ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
@@ -175,9 +176,10 @@ class ApplicationDocumentDTO(object):
 
     @staticmethod
     def from_json_api(_id, _type, attributes):
+        address = Address.from_json_api(attributes.get("address")) if attributes.get("address") else None
         return ApplicationDocumentDTO(
             _id, attributes["status"], attributes["documentType"], attributes["description"], attributes["name"],
-            attributes.get("address"), attributes.get("dateOfBirth"), attributes.get("passport"),
+            address, attributes.get("dateOfBirth"), attributes.get("passport"),
             attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
         )
 
