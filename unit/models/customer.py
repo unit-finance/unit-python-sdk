@@ -42,16 +42,16 @@ class BusinessCustomerDTO(object):
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"],
             Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
             attributes["stateOfIncorporation"], attributes["ein"], attributes["entityType"],
-            BusinessContact.from_json_api(attributes["contact"]), AuthorizedUser.from_json_api(attributes["authorizedUsers"]),
-            attributes.get("dba"), attributes.get("tags"), relationships
-        )
+            BusinessContact.from_json_api(attributes["contact"]),
+            [AuthorizedUser.from_json_api(user) for user in attributes["authorizedUsers"]],
+            attributes.get("dba"), attributes.get("tags"), relationships)
 
 CustomerDTO = Union[IndividualCustomerDTO, BusinessCustomerDTO]
 
 
 class PatchIndividualCustomerRequest(UnitRequest):
-    def __init__(self, customer_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None, email: Optional[str] = None, dba: Optional[str] = None,
-                 tags: Optional[dict[str, str]] = None):
+    def __init__(self, customer_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
+                 email: Optional[str] = None, dba: Optional[str] = None, tags: Optional[dict[str, str]] = None):
         self.customer_id = customer_id
         self.address = address
         self.phone = phone

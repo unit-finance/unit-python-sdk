@@ -13,6 +13,7 @@ from unit.api.fee_resource import FeeResource
 from unit.api.event_resource import EventResource
 from unit.api.webhook_resource import WebhookResource
 from unit.api.institution_resource import InstitutionResource
+from unit.api.atmLocation_resource import AtmLocationResource
 from unit.api.api_token_resource import APITokenResource
 
 __all__ = ["api", "models", "utils"]
@@ -34,4 +35,5 @@ class Unit(object):
         self.events = EventResource(api_url, token)
         self.webhooks = WebhookResource(api_url, token)
         self.institutions = InstitutionResource(api_url, token)
+        self.atmLocations = AtmLocationResource(api_url, token)
         self.api_tokens = APITokenResource(api_url, token)
