@@ -24,7 +24,7 @@ class DepositAccountDTO(object):
         return DepositAccountDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"], attributes["depositProduct"],
             attributes["routingNumber"], attributes["accountNumber"], attributes["currency"], attributes["balance"],
-            attributes["hold"], attributes["available"],attributes["status"], attributes.get("tags"),
+            attributes["hold"], attributes["available"], attributes["status"], attributes.get("tags"),
             attributes.get("closeReason"), relationships
         )
 
@@ -88,6 +88,7 @@ class PatchDepositAccountRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class AccountLimitsDTO(object):
     def __init__(self, ach: object, card: object):
         self.type = "limits"
@@ -96,4 +97,25 @@ class AccountLimitsDTO(object):
     @staticmethod
     def from_json_api(_type, attributes):
         return AccountLimitsDTO(attributes["ach"], attributes["card"])
+
+
+class CloseAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer"):
+        self.account_id = account_id
+        self.reason = reason
+
+    def to_json_api(self) -> dict:
+        payload = {
+            "data": {
+                "type": "accountClose",
+                "attributes": {
+                    "reason": self.reason,
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
 

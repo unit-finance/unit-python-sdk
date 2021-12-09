@@ -39,7 +39,7 @@ class ApplicationFormPrefill(object):
 
 class ApplicationFormDTO(object):
     def __init__(self, id: str, url: str, stage: ApplicationFormStage, applicant_details: ApplicationFormPrefill,
-               tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
         self.id = id
         self.type = "applicationForm"
         self.attributes = {"url": url, "stage": stage, "applicantDetails": applicant_details, "tags": tags}
@@ -48,14 +48,15 @@ class ApplicationFormDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return ApplicationFormDTO(_id, attributes["url"], attributes["stage"], attributes.get("applicantDetails"),
-            attributes.get("tags"), relationships)
+                                  attributes.get("tags"), relationships)
 
 
 AllowedApplicationTypes = Union["Individual", "Business", "SoleProprietorship"]
 
 
 class CreateApplicationFormRequest(UnitRequest):
-    def __init__(self, tags: Optional[dict[str, str]] = None, application_details: Optional[ApplicationFormPrefill] = None,
+    def __init__(self, tags: Optional[dict[str, str]] = None,
+                 application_details: Optional[ApplicationFormPrefill] = None,
                  allowed_application_types: [AllowedApplicationTypes] = None):
         self.tags = tags
         self.application_details = application_details
