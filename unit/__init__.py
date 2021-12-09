@@ -18,6 +18,7 @@ from unit.api.bill_pay_resource import BillPayResource
 from unit.api.api_token_resource import APITokenResource
 from unit.api.authorization_resource import AuthorizationResource
 from unit.api.authorization_request_resource import AuthorizationRequestResource
+from unit.api.account_end_of_day_resource import AccountEndOfDayResource
 
 __all__ = ["api", "models", "utils"]
 
@@ -43,3 +44,4 @@ class Unit(object):
         self.api_tokens = APITokenResource(api_url, token)
         self.authorizations = AuthorizationResource(api_url, token)
         self.authorization_requests = AuthorizationRequestResource(api_url, token)
+        self.account_end_of_day = AccountEndOfDayResource(api_url, token)
