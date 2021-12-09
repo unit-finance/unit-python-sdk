@@ -19,6 +19,7 @@ from unit.models.atm_location import AtmLocationDTO
 from unit.models.bill_pay import BillerDTO
 from unit.models.api_token import APITokenDTO
 from unit.models.authorization import AuthorizationDTO
+from unit.models.authorization_request import PurchaseAuthorizationRequestDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -214,6 +215,9 @@ mappings = {
 
         "authorization": lambda _id, _type, attributes, relationships:
         AuthorizationDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "purchaseAuthorizationRequest": lambda _id, _type, attributes, relationships:
+        PurchaseAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 

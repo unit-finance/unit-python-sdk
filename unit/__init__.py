@@ -17,6 +17,7 @@ from unit.api.atmLocation_resource import AtmLocationResource
 from unit.api.bill_pay_resource import BillPayResource
 from unit.api.api_token_resource import APITokenResource
 from unit.api.authorization_resource import AuthorizationResource
+from unit.api.authorization_request_resource import AuthorizationRequestResource
 
 __all__ = ["api", "models", "utils"]
 
@@ -41,3 +42,4 @@ class Unit(object):
         self.billPays = BillPayResource(api_url, token)
         self.api_tokens = APITokenResource(api_url, token)
         self.authorizations = AuthorizationResource(api_url, token)
+        self.authorization_requests = AuthorizationRequestResource(api_url, token)
