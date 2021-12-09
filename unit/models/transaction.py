@@ -90,7 +90,7 @@ class ReturnedReceivedAchTransactionDTO(BaseTransactionDTO):
 
 class DishonoredAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 company_name: str, counterparty_routing_number: str, trace_number: str, reason: str,
+                 company_name: str, counterparty_routing_number: str, reason: str, trace_number: Optional[str],
                  sec_code: Optional[str], tags: Optional[dict[str, str]],
                  relationships: Optional[dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
@@ -106,7 +106,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
         return DishonoredAchTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
             attributes["amount"], attributes["balance"], attributes["summary"], attributes["companyName"],
-            attributes["counterpartyRoutingNumber"], attributes["traceNumber"], attributes["reason"],
+            attributes["counterpartyRoutingNumber"], attributes["reason"], attributes.get("traceNumber"),
             attributes.get("secCode"), attributes.get("tags"), relationships)
 
 
