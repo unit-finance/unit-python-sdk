@@ -16,6 +16,7 @@ from unit.models.counterparty import CounterpartyDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
 from unit.models.atm_location import AtmLocationDTO
+from unit.models.bill_pay import BillerDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -202,6 +203,9 @@ mappings = {
 
         "atmLocation": lambda _id, _type, attributes, relationships:
         AtmLocationDTO.from_json_api(_type, attributes),
+
+        "biller": lambda _id, _type, attributes, relationships:
+        BillerDTO.from_json_api(_id, _type, attributes, relationships),
 
     }
 
