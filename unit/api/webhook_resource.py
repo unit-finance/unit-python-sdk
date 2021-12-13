@@ -1,6 +1,7 @@
 from unit.api.base_resource import BaseResource
 from unit.models.webhook import *
 from unit.models.codecs import DtoDecoder
+import hmac, hashlib
 
 
 class WebhookResource(BaseResource):
@@ -58,3 +59,4 @@ class WebhookResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def verify(self, signiture, secret, payload):
