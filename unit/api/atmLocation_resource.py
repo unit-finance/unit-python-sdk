@@ -7,7 +7,7 @@ class AtmLocationResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "atm-locations"
 
-    def get(self, request: GetAtmLocationParams) -> Union[UnitResponse[list[AtmLocationDTO]], UnitError]:
+    def get(self, request: GetAtmLocationParams) -> Union[UnitResponse[List[AtmLocationDTO]], UnitError]:
         params = {}
 
         if request.coordinates:

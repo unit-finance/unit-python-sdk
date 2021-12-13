@@ -85,7 +85,7 @@ class CardResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[list[Card]], UnitError]:
+    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[Card]], UnitError]:
         response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
         if super().is_20x(response.status_code):
             data = response.json().get("data")

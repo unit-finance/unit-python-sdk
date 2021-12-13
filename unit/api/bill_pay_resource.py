@@ -8,7 +8,7 @@ class BillPayResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "payments/billpay/billers"
 
-    def get(self, params: GetBillersParams) -> Union[UnitResponse[list[BillerDTO]], UnitError]:
+    def get(self, params: GetBillersParams) -> Union[UnitResponse[List[BillerDTO]], UnitError]:
         parameters = {"name": params.name}
         if params.page:
             parameters["page"] = params.page

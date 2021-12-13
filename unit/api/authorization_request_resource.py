@@ -17,7 +17,7 @@ class AuthorizationRequestResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def list(self, params: PurchaseAuthorizationRequestListParams = PurchaseAuthorizationRequestListParams()) \
-            -> Union[UnitResponse[list[PurchaseAuthorizationRequestDTO]], UnitError]:
+            -> Union[UnitResponse[List[PurchaseAuthorizationRequestDTO]], UnitError]:
         parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
 
         if params.account_id != "":

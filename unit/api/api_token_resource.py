@@ -17,7 +17,7 @@ class APITokenResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, user_id: str) -> Union[UnitResponse[list[APITokenDTO]], UnitError]:
+    def list(self, user_id: str) -> Union[UnitResponse[List[APITokenDTO]], UnitError]:
         response = super().get(f"{self.resource}/{user_id}/api-tokens")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
