@@ -226,7 +226,7 @@ mappings = {
     }
 
 
-def split_json_api_single_response(payload: dict):
+def split_json_api_single_response(payload: Dict):
     _id, _type, attributes = payload.get("id"), payload["type"], payload["attributes"]
     relationships = None
 

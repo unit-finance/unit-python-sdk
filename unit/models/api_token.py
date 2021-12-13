@@ -26,7 +26,7 @@ class CreateAPITokenRequest(object):
         self.expiration = expiration
         self.source_ip = source_ip
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "apiToken",

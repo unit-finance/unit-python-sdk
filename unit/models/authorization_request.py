@@ -11,7 +11,7 @@ class PurchaseAuthorizationRequestDTO(object):
     def __init__(self, id: str, created_at: datetime, amount: int, status: PurchaseAuthorizationRequestStatus,
                  partial_approval_allowed: str, approved_amount: Optional[int], decline_reason: Optional[DeclineReason],
                  merchant_name: str, merchant_type: int, merchant_category: str, merchant_location: Optional[str],
-                 recurring: bool, tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 recurring: bool, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "purchaseAuthorizationRequest"
         self.attributes = {"createdAt": created_at, "amount": amount, "status": status,
@@ -43,12 +43,12 @@ class PurchaseAuthorizationRequestListParams(object):
 
 
 class ApproveAuthorizationRequest(object):
-    def __init__(self, authorization_id: str, amount: Optional[int] = None, tags: Optional[dict[str, str]] = None):
+    def __init__(self, authorization_id: str, amount: Optional[int] = None, tags: Optional[Dict[str, str]] = None):
         self.authorization_id = authorization_id
         self.amount = amount
         self.tags = tags
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "approveAuthorizationRequest",
@@ -73,7 +73,7 @@ class DeclineAuthorizationRequest(object):
         self.authorization_id = authorization_id
         self.reason = reason
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "declineAuthorizationRequest",

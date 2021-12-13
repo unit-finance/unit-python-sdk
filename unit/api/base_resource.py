@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Optional, Dict
 import requests
 
 from unit.models.codecs import UnitEncoder
@@ -14,24 +14,24 @@ class BaseResource(object):
             "authorization": f"Bearer {self.token}"
         }
 
-    def get(self, resource: str, params: dict = None, headers: Optional[dict[str, str]] = None):
+    def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
-    def post(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
+    def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
         return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
-    def patch(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
+    def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
         return requests.patch(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
-    def delete(self, resource: str, params: dict = None, headers: Optional[dict[str, str]] = None):
+    def delete(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
         return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
-    def put(self, resource: str, data: Optional[dict] = None, headers: Optional[dict[str, str]] = None):
+    def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
-    def __merge_headers(self, headers: Optional[dict[str, str]] = None):
+    def __merge_headers(self, headers: Optional[Dict[str, str]] = None):
         if not headers:
             return self.headers
         else:

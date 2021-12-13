@@ -5,7 +5,7 @@ from unit.models import *
 
 class AccountEndOfDayDTO(object):
     def __init__(self, id: str, date: str, balance: int, hold: int, available: int,
-                 relationships: Optional[dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "accountEndOfDay"
         self.attributes = {"date": date, "balance": balance, "hold": hold, "available": available}

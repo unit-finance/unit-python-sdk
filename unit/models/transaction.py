@@ -4,7 +4,7 @@ from unit.models import *
 
 class BaseTransactionDTO(object):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 summary: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.attributes = {"createdAt": created_at, "direction": direction, "amount": amount, "balance": balance,
                            "summary": summary, "tags": tags}
@@ -13,8 +13,8 @@ class BaseTransactionDTO(object):
 
 class OriginatedAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, description: str, counterparty: Counterparty, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 summary: str, description: str, counterparty: Counterparty, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'originatedAchTransaction'
         self.attributes["description"] = description
@@ -32,7 +32,7 @@ class ReceivedAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, description: str, addenda: Optional[str], company_name: str,
                  counterparty_routing_number: str, trace_number: Optional[str], sec_code: Optional[str],
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'receivedAchTransaction'
         self.attributes["description"] = description
@@ -54,7 +54,7 @@ class ReceivedAchTransactionDTO(BaseTransactionDTO):
 class ReturnedAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, company_name: str, counterparty_name: str, counterparty_routing_number: str, reason: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'returnedAchTransaction'
         self.attributes["addenda"] = addenda
@@ -73,8 +73,8 @@ class ReturnedAchTransactionDTO(BaseTransactionDTO):
 
 class ReturnedReceivedAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 company_name: str, reason: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 company_name: str, reason: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'returnedReceivedAchTransaction'
         self.attributes["companyName"] = company_name
@@ -91,8 +91,8 @@ class ReturnedReceivedAchTransactionDTO(BaseTransactionDTO):
 class DishonoredAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
                  company_name: str, counterparty_routing_number: str, reason: str, trace_number: Optional[str],
-                 sec_code: Optional[str], tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 sec_code: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'dishonoredAchTransaction'
         self.attributes["companyName"] = company_name
@@ -113,7 +113,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
 class BookTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, description: str, addenda: Optional[str], counterparty: Counterparty,
-                 relationships: Optional[dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.description = description
         self.type = 'bookTransaction'
@@ -130,7 +130,7 @@ class BookTransactionDTO(BaseTransactionDTO):
 class PurchaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, card_last_4_digits: str, merchant: Merchant, coordinates: Coordinates, recurring: bool,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -150,7 +150,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
 class AtmTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, card_last_4_digits: str, atm_name: str, atm_location: Optional[str], surcharge: int,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'atmTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -170,7 +170,7 @@ class AtmTransactionDTO(BaseTransactionDTO):
 
 class FeeTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 summary: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'feeTransaction'
 
@@ -183,8 +183,8 @@ class FeeTransactionDTO(BaseTransactionDTO):
 
 class CardTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, card_last_4_digits: int, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 summary: str, card_last_4_digits: int, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'cardTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -198,8 +198,8 @@ class CardTransactionDTO(BaseTransactionDTO):
 
 class CardReversalTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, card_last_4_digits: int, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 summary: str, card_last_4_digits: int, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'cardReversalTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -215,8 +215,8 @@ class CardReversalTransactionDTO(BaseTransactionDTO):
 class WireTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, counterparty: Counterparty, description: str, sender_reference: str,
-                 reference_for_beneficiary: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 reference_for_beneficiary: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'wireTransaction'
         self.attributes["description"] = description
@@ -236,8 +236,8 @@ class WireTransactionDTO(BaseTransactionDTO):
 class ReleaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, sender_name: str, sender_address: Address,
                  sender_account_number: str, counterparty: Counterparty, amount: int, direction: str,
-                 description: str, balance: int, summary: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 description: str, balance: int, summary: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'releaseTransaction'
         self.attributes["description"] = description
@@ -258,7 +258,7 @@ class ReleaseTransactionDTO(BaseTransactionDTO):
 
 class AdjustmentTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 description: str, tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 description: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'adjustmentTransaction'
         self.attributes["description"] = description
@@ -273,7 +273,7 @@ class AdjustmentTransactionDTO(BaseTransactionDTO):
 
 class InterestTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'interestTransaction'
         self.relationships = relationships
@@ -287,8 +287,8 @@ class InterestTransactionDTO(BaseTransactionDTO):
 
 class DisputeTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, dispute_id: str,
-                 summary: str, reason: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 summary: str, reason: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'disputeTransaction'
         self.attributes["disputeId"] = dispute_id
@@ -303,7 +303,7 @@ class DisputeTransactionDTO(BaseTransactionDTO):
 
 class CheckDepositTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'checkDepositTransaction'
 
@@ -316,7 +316,7 @@ class CheckDepositTransactionDTO(BaseTransactionDTO):
 
 class ReturnedCheckDepositTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 reason: str, tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 reason: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'returnedCheckDepositTransaction'
         self.attributes["reason"] = reason
@@ -338,12 +338,12 @@ TransactionDTO = Union[OriginatedAchTransactionDTO, ReceivedAchTransactionDTO, R
 
 
 class PatchTransactionRequest(BaseTransactionDTO):
-    def __init__(self, account_id: str, transaction_id: str, tags: Optional[dict[str, str]] = None):
+    def __init__(self, account_id: str, transaction_id: str, tags: Optional[Dict[str, str]] = None):
         self.account_id = account_id
         self.transaction_id = transaction_id
         self.tags = tags
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "transaction",
