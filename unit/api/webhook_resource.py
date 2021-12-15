@@ -2,7 +2,8 @@ from unit.api.base_resource import BaseResource
 from unit.models.webhook import *
 from unit.models.codecs import DtoDecoder
 import hmac
-from hashlib import sha256
+from hashlib import sha1
+import base64
 
 
 class WebhookResource(BaseResource):
@@ -62,8 +63,9 @@ class WebhookResource(BaseResource):
 
     def verify(self, signature: str, secret: str, payload):
         mac = hmac.new(
-            secret.encode("utf-8"),
-            msg=payload.encode("utf-8"),
-            digestmod=sha256,
+            secret.encode(),
+            msg=json.dumps(payload, separators=(',', ':')).encode(),
+            digestmod=sha1,
         )
-        return mac.hexdigest()
+        res = base64.encodebytes(mac.digest()).decode().rstrip('\n')
+        return res == signature
