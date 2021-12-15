@@ -5,7 +5,7 @@ from unit.models import *
 class IndividualCustomerDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, date_of_birth: date, address: Address,
                  phone: Phone, email: str, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = 'individualCustomer'
         self.attributes = {"createdAt": created_at, "fullName": full_name, "dateOfBirth": date_of_birth,
@@ -27,8 +27,8 @@ class IndividualCustomerDTO(object):
 class BusinessCustomerDTO(object):
     def __init__(self, id: str, created_at: datetime, name: str, address: Address, phone: Phone,
                  state_of_incorporation: str, ein: str, entity_type: EntityType, contact: BusinessContact,
-                 authorized_users: [AuthorizedUser], dba: Optional[str], tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 authorized_users: [AuthorizedUser], dba: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = 'businessCustomer'
         self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
@@ -51,7 +51,7 @@ CustomerDTO = Union[IndividualCustomerDTO, BusinessCustomerDTO]
 
 class PatchIndividualCustomerRequest(UnitRequest):
     def __init__(self, customer_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
-                 email: Optional[str] = None, dba: Optional[str] = None, tags: Optional[dict[str, str]] = None):
+                 email: Optional[str] = None, dba: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
         self.customer_id = customer_id
         self.address = address
         self.phone = phone
@@ -59,7 +59,7 @@ class PatchIndividualCustomerRequest(UnitRequest):
         self.dba = dba
         self.tags = tags
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "individualCustomer",
@@ -90,8 +90,8 @@ class PatchIndividualCustomerRequest(UnitRequest):
 
 class PatchBusinessCustomerRequest(UnitRequest):
     def __init__(self, customer_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
-                 contact: Optional[BusinessContact] = None, authorized_users: Optional[list[AuthorizedUser]] = None,
-                 tags: Optional[dict[str, str]] = None):
+                 contact: Optional[BusinessContact] = None, authorized_users: Optional[List[AuthorizedUser]] = None,
+                 tags: Optional[Dict[str, str]] = None):
         self.customer_id = customer_id
         self.address = address
         self.phone = phone
@@ -99,7 +99,7 @@ class PatchBusinessCustomerRequest(UnitRequest):
         self.authorized_users = authorized_users
         self.tags = tags
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "businessCustomer",

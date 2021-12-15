@@ -28,7 +28,7 @@ class CreateCustomerToken(object):
         self.verification_code = verification_code
         self.expires_in = expires_in
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "customerToken",
@@ -62,7 +62,7 @@ class CreateCustomerTokenVerification(object):
         self.app_hash = app_hash
         self.language = language
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "customerTokenVerification",

@@ -4,8 +4,8 @@ from unit.models import *
 
 
 class FeeDTO(object):
-    def __init__(self, id: str, amount: int, description: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, amount: int, description: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "fee"
         self.attributes = {"amount": amount, "description": description, "tags": tags}
@@ -17,15 +17,15 @@ class FeeDTO(object):
 
 
 class CreateFeeRequest(object):
-    def __init__(self, amount: int, description: str, relationships: Optional[dict[str, Relationship]],
-                 tags: Optional[dict[str, str]] = None, idempotency_key: Optional[str] = None):
+    def __init__(self, amount: int, description: str, relationships: Optional[Dict[str, Relationship]],
+                 tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None):
         self.amount = amount
         self.description = description
         self.tags = tags
         self.idempotency_key = idempotency_key
         self.relationships = relationships
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "fee",

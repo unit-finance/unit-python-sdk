@@ -5,16 +5,16 @@ from unit.utils import date_utils
 from unit.models import *
 
 class BaseEvent(object):
-    def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.attributes = {"createdAt": created_at, "tags": tags}
         self.relationships = relationships
 
 
 class AccountClosedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, close_reason: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, close_reason: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'account.closed'
         self.attributes["closeReason"] = close_reason
@@ -26,8 +26,8 @@ class AccountClosedEvent(BaseEvent):
 
 
 class AccountFrozenEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, freeze_reason: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, freeze_reason: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'account.frozen'
         self.attributes["freezeReason"] = freeze_reason
@@ -39,8 +39,8 @@ class AccountFrozenEvent(BaseEvent):
 
 
 class ApplicationDeniedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'application.denied'
 
@@ -51,8 +51,8 @@ class ApplicationDeniedEvent(BaseEvent):
 
 
 class ApplicationPendingReviewEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'application.pendingReview'
 
@@ -63,8 +63,8 @@ class ApplicationPendingReviewEvent(BaseEvent):
 
 
 class ApplicationAwaitingDocumentsEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'application.awaitingDocuments'
 
@@ -76,7 +76,7 @@ class ApplicationAwaitingDocumentsEvent(BaseEvent):
 
 class AuthorizationCreatedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, card_last_4_digits: str, recurring: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'authorization.created'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -90,8 +90,8 @@ class AuthorizationCreatedEvent(BaseEvent):
 
 class AuthorizationRequestApprovedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, amount: str, status: str, approved_amount: str,
-                 partial_approval_allowed: str, merchant: dict[str, str], recurring: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 partial_approval_allowed: str, merchant: Dict[str, str], recurring: str,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'authorizationRequest.approved'
         self.attributes["amount"] = amount
@@ -113,8 +113,8 @@ class AuthorizationRequestApprovedEvent(BaseEvent):
 
 class AuthorizationRequestDeclinedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, amount: str, status: str, decline_reason: str,
-                 partial_approval_allowed: str, merchant: dict[str, str], recurring: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 partial_approval_allowed: str, merchant: Dict[str, str], recurring: str,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'authorizationRequest.declined'
         self.attributes["amount"] = amount
@@ -136,8 +136,8 @@ class AuthorizationRequestDeclinedEvent(BaseEvent):
 
 class AuthorizationRequestPendingEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, amount: str, status: str, partial_approval_allowed: str,
-                 merchant: dict[str, str], recurring: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 merchant: Dict[str, str], recurring: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'authorizationRequest.pending'
         self.attributes["amount"] = amount
@@ -155,8 +155,8 @@ class AuthorizationRequestPendingEvent(BaseEvent):
                                                 attributes["recurring"], attributes.get("tags"), relationships)
 
 class CardActivatedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'card.activated'
 
@@ -168,7 +168,7 @@ class CardActivatedEvent(BaseEvent):
 
 class CardStatusChangedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, new_status: str, previous_status: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'card.statusChanged'
         self.attributes["newStatus"] = new_status
@@ -181,8 +181,8 @@ class CardStatusChangedEvent(BaseEvent):
 
 
 class CheckDepositCreatedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, status: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'checkDeposit.created'
         self.attributes["status"] = status
@@ -193,8 +193,8 @@ class CheckDepositCreatedEvent(BaseEvent):
                                       attributes["status"], attributes.get("tags"), relationships)
 
 class CheckDepositClearingEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'checkDeposit.clearing'
         self.attributes["previousStatus"] = previous_status
@@ -206,8 +206,8 @@ class CheckDepositClearingEvent(BaseEvent):
 
 
 class CheckDepositSentEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'checkDeposit.sent'
         self.attributes["previousStatus"] = previous_status
@@ -219,8 +219,8 @@ class CheckDepositSentEvent(BaseEvent):
 
 
 class CheckDepositReturnedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'checkDeposit.returned'
         self.attributes["previousStatus"] = previous_status
@@ -232,8 +232,8 @@ class CheckDepositReturnedEvent(BaseEvent):
 
 
 class CustomerCreatedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'customer.created'
 
@@ -243,8 +243,8 @@ class CustomerCreatedEvent(BaseEvent):
                                     attributes.get("tags"), relationships)
 
 class DocumentApprovedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'document.approved'
 
@@ -255,7 +255,7 @@ class DocumentApprovedEvent(BaseEvent):
 
 class DocumentRejectedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, reason: str, reason_code: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'document.rejected'
         self.attributes["reason"] = reason
@@ -269,8 +269,8 @@ class DocumentRejectedEvent(BaseEvent):
 
 
 class PaymentClearingEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'payment.clearing'
         self.attributes["previousStatus"] = previous_status
@@ -281,8 +281,8 @@ class PaymentClearingEvent(BaseEvent):
                                     attributes.get("tags"), relationships)
 
 class PaymentSentEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'payment.sent'
         self.attributes["previousStatus"] = previous_status
@@ -293,8 +293,8 @@ class PaymentSentEvent(BaseEvent):
                                     attributes.get("tags"), relationships)
 
 class PaymentReturnedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'payment.returned'
         self.attributes["previousStatus"] = previous_status
@@ -305,8 +305,8 @@ class PaymentReturnedEvent(BaseEvent):
                                     attributes.get("tags"), relationships)
 
 class StatementsCreatedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, period: str, tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, created_at: datetime, period: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'statements.created'
         self.attributes["period"] = period
@@ -318,7 +318,7 @@ class StatementsCreatedEvent(BaseEvent):
 
 class TransactionCreatedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, summary: str, direction: str, amount: str,
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'transaction.created'
         self.attributes["summary"] = summary

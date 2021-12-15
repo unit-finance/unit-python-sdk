@@ -1,5 +1,5 @@
 import json
-from typing import TypeVar, Generic, Union, Optional, Literal
+from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 from datetime import datetime, date
 
 
@@ -15,12 +15,12 @@ class Relationship(object):
 T = TypeVar('T')
 
 class RelationshipArray(Generic[T]):
-    def __init__(self, l: list[T]):
+    def __init__(self, l: List[T]):
         self.relationships = l
 
 
 class UnitResponse(Generic[T]):
-    def __init__(self, data: Union[T, list[T]], included):
+    def __init__(self, data: Union[T, List[T]], included):
         self.data = data
         self.included = included
 
@@ -30,13 +30,13 @@ class UnitResponse(Generic[T]):
 
 
 class UnitRequest(object):
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         pass
 
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
-                 source: Optional[dict] = None):
+                 source: Optional[Dict] = None):
         self.title = title
         self.status = status
         self.detail = detail
@@ -48,11 +48,11 @@ class UnitErrorPayload(object):
 
 
 class UnitError(object):
-    def __init__(self, errors: list[UnitErrorPayload]):
+    def __init__(self, errors: List[UnitErrorPayload]):
         self.errors = errors
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         errors = []
         for err in data["errors"]:
             errors.append(
@@ -77,7 +77,7 @@ class FullName(object):
         self.last = last
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         FullName(data.get("first"), data.get("last"))
 
 
@@ -93,7 +93,7 @@ class Address(object):
         self.country = country
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return Address(data.get("street"), data.get("city"), data.get("state"),
                 data.get("postal_code"), data.get("country"), data.get("street2", None))
 
@@ -104,7 +104,7 @@ class Phone(object):
         self.number = number
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return Phone(data.get("countryCode"), data.get("number"))
 
 
@@ -115,7 +115,7 @@ class BusinessContact(object):
         self.phone = phone
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return BusinessContact(data.get("fullName"), data.get("email"), data.get("phone"))
 
 
@@ -135,7 +135,7 @@ class Officer(object):
         self.nationality = nationality
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return Officer(data.get("fullName"), data.get("dateOfBirth"), data.get("address"), data.get("phone"),
                 data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
                 data.get("nationality"))
@@ -157,7 +157,7 @@ class BeneficialOwner(object):
         self.percentage = percentage
 
     @staticmethod
-    def from_json_api(l: list):
+    def from_json_api(l: List):
         beneficial_owners = []
         for data in l:
             beneficial_owners.append(BeneficialOwner(data.get("fullName"), data.get("dateOfBirth"), data.get("address"),
@@ -173,7 +173,7 @@ class AuthorizedUser(object):
         self.phone = phone
 
     @staticmethod
-    def from_json_api(l: list):
+    def from_json_api(l: List):
         authorized_users = []
         for data in l:
             authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("email"), data.get("phone")))
@@ -187,7 +187,7 @@ class WireCounterparty(object):
         self.address = address
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return WireCounterparty(data["routingNumber"], data["accountNumber"], data["name"],
                                 Address.from_json_api(data["address"]))
 
@@ -199,7 +199,7 @@ class Counterparty(object):
         self.name = name
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return Counterparty(data["routingNumber"], data["accountNumber"], data["accountType"], data["name"])
 
 class Coordinates(object):
@@ -208,7 +208,7 @@ class Coordinates(object):
         self.latitude = latitude
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return Coordinates(data["longitude"], data["latitude"])
 
 
@@ -220,5 +220,5 @@ class Merchant(object):
         self.location = location
 
     @staticmethod
-    def from_json_api(data: dict):
+    def from_json_api(data: Dict):
         return Merchant(data["name"], data["type"], data["category"], data.get("location"))
