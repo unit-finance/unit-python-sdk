@@ -142,7 +142,6 @@ class AuthorizationRequestPendingEvent(BaseEvent):
         self.type = 'authorizationRequest.pending'
         self.attributes["amount"] = amount
         self.attributes["status"] = status
-        self.attributes["approvedAmount"] = approved_amount
         self.attributes["partialApprovalAllowed"] = partial_approval_allowed
         self.attributes["merchant"] = merchant
         self.attributes["recurring"] = recurring
@@ -152,9 +151,8 @@ class AuthorizationRequestPendingEvent(BaseEvent):
     def from_json_api(_id, _type, attributes, relationships):
         return AuthorizationRequestPendingEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
                                                 attributes["amount"], attributes["status"],
-                                                attributes["approvedAmount"], attributes["partialApprovalAllowed"],
-                                                attributes["merchant"], attributes["recurring"], attributes.get("tags"),
-                                                relationships)
+                                                attributes["partialApprovalAllowed"], attributes["merchant"],
+                                                attributes["recurring"], attributes.get("tags"), relationships)
 
 class CardActivatedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, tags: Optional[dict[str, str]],
