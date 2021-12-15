@@ -90,7 +90,7 @@ class PatchIndividualCustomerRequest(UnitRequest):
 
 class PatchBusinessCustomerRequest(UnitRequest):
     def __init__(self, customer_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
-                 contact: Optional[BusinessContact] = None, authorized_users: Optional[list[AuthorizedUser]] = None,
+                 contact: Optional[BusinessContact] = None, authorized_users: Optional[List[AuthorizedUser]] = None,
                  tags: Optional[Dict[str, str]] = None):
         self.customer_id = customer_id
         self.address = address
