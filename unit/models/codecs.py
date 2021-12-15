@@ -15,6 +15,7 @@ from unit.models.event import *
 from unit.models.counterparty import CounterpartyDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
+from unit.models.statement import StatementDTO
 from unit.models.atm_location import AtmLocationDTO
 from unit.models.bill_pay import BillerDTO
 from unit.models.api_token import APITokenDTO
@@ -116,6 +117,12 @@ mappings = {
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "accountStatementDTO": lambda _id, _type, attributes, relationships:
+        StatementDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "sandboxAccountStatement": lambda _id, _type, attributes, relationships:
+        StatementDTO.from_json_api(_id, _type, attributes, relationships),
+
         "customerBearerToken": lambda _id, _type, attributes, relationships:
         CustomerTokenDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -199,6 +206,7 @@ mappings = {
 
         "customer.created": lambda _id, _type, attributes, relationships:
         CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
         "webhook": lambda _id, _type, attributes, relationships:
         WebhookDTO.from_json_api(_id, _type, attributes, relationships),
 
