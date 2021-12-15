@@ -8,7 +8,7 @@ class AccountEndOfDayResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "account-end-of-day"
 
-    def list(self, params: AccountEndOfDayListParams = AccountEndOfDayListParams()) -> Union[UnitResponse[list[AccountEndOfDayDTO]], UnitError]:
+    def list(self, params: AccountEndOfDayListParams = AccountEndOfDayListParams()) -> Union[UnitResponse[List[AccountEndOfDayDTO]], UnitError]:
         parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
 
         if params.account_id != "":

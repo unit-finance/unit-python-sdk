@@ -8,7 +8,7 @@ from unit.models import *
 class CounterpartyDTO(object):
     def __init__(self, id: str, created_at: datetime, name: str, routing_number: str, bank: Optional[str],
                  account_number: str, account_type: str, type: str, permissions: str,
-                 relationships: [dict[str, Relationship]]):
+                 relationships: [Dict[str, Relationship]]):
         self.id = id
         self.type = "achCounterparty"
         self.attributes = {"createdAt": created_at, "name": name, "routingNumber": routing_number, "bank": bank,
@@ -25,7 +25,7 @@ class CounterpartyDTO(object):
 
 class CreateCounterpartyRequest(object):
     def __init__(self, name: str, routing_number: str, account_number: str, account_type: str, type: str,
-                 relationships: [dict[str, Relationship]]):
+                 relationships: [Dict[str, Relationship]]):
         self.name = name
         self.routing_number = routing_number
         self.account_number = account_number
@@ -33,7 +33,7 @@ class CreateCounterpartyRequest(object):
         self.type = type
         self.relationships = relationships
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "achCounterparty",
@@ -56,14 +56,14 @@ class CreateCounterpartyRequest(object):
 
 class CreateCounterpartyWithTokenRequest(object):
     def __init__(self, name: str, type: str, plaid_processor_token: str, verify_name: Optional[bool],
-                 relationships: [dict[str, Relationship]]):
+                 relationships: [Dict[str, Relationship]]):
         self.name = name
         self.type = type
         self.plaid_processor_token = plaid_processor_token
         self.verify_name = verify_name
         self.relationships = relationships
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "achCounterparty",
@@ -91,7 +91,7 @@ class PatchCounterpartyRequest(object):
         self.plaid_processor_token = plaid_processor_token
         self.verify_name = verify_name
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "counterparty",

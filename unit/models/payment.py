@@ -5,8 +5,8 @@ AchStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Retu
 
 class BasePayment(object):
     def __init__(self, id: str, created_at: datetime, direction: str, description: str, amount: int,
-                 reason: Optional[str], tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 reason: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.attributes = {"createdAt": created_at, "direction": direction, "description": description,
                            "amount": amount, "reason": reason, "tags": tags}
@@ -16,8 +16,8 @@ class BasePayment(object):
 class AchPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: Counterparty, direction: str,
                  description: str, amount: int, addenda: Optional[str], reason: Optional[str],
-                 settlement_date: Optional[datetime], tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 settlement_date: Optional[datetime], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
         self.type = 'achPayment'
         self.attributes["status"] = status
@@ -35,8 +35,8 @@ class AchPaymentDTO(BasePayment):
 
 class BookPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: str, direction: Optional[str], description: str, amount: int,
-                 reason: Optional[str], tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 reason: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
         self.type = 'bookPayment'
         self.attributes["status"] = status
@@ -49,8 +49,8 @@ class BookPaymentDTO(BasePayment):
 
 class WirePaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: WireCounterparty, direction: str,
-                 description: str, amount: int, reason: Optional[str], tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 description: str, amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
         self.type = 'wirePayment'
         self.attributes["status"] = status
@@ -68,8 +68,8 @@ class WirePaymentDTO(BasePayment):
 PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
 
 class CreatePaymentRequest(object):
-    def __init__(self, amount: int, description: str, relationships: dict[str, Relationship],
-                 idempotency_key: Optional[str], tags: Optional[dict[str, str]], direction: str = "Credit",
+    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
+                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
                  type: str = "achPayment"):
         self.type = type
         self.amount = amount
@@ -79,7 +79,7 @@ class CreatePaymentRequest(object):
         self.tags = tags
         self.relationships = relationships
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": self.type,
@@ -104,14 +104,14 @@ class CreatePaymentRequest(object):
         json.dumps(self.to_json_api())
 
 class CreateInlinePaymentRequest(CreatePaymentRequest):
-    def __init__(self, amount: int, description: str, counterparty: Counterparty, relationships: dict[str, Relationship],
-                 addenda: Optional[str], idempotency_key: Optional[str], tags: Optional[dict[str, str]],
+    def __init__(self, amount: int, description: str, counterparty: Counterparty, relationships: Dict[str, Relationship],
+                 addenda: Optional[str], idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
                  direction: str = "Credit"):
         CreatePaymentRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction)
         self.counterparty = counterparty
         self.addenda = addenda
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = CreatePaymentRequest.to_json_api(self)
         payload["data"]["attributes"]["counterparty"] = self.counterparty
 
@@ -121,14 +121,14 @@ class CreateInlinePaymentRequest(CreatePaymentRequest):
         return payload
 
 class CreateLinkedPaymentRequest(CreatePaymentRequest):
-    def __init__(self, amount: int, description: str, relationships: dict[str, Relationship], addenda: Optional[str],
+    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], addenda: Optional[str],
                  verify_counterparty_balance: Optional[bool], idempotency_key: Optional[str],
-                 tags: Optional[dict[str, str]], direction: str = "Credit"):
+                 tags: Optional[Dict[str, str]], direction: str = "Credit"):
         CreatePaymentRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction)
         self.addenda = addenda
         self.verify_counterparty_balance = verify_counterparty_balance
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = CreatePaymentRequest.to_json_api(self)
 
         if self.addenda:
@@ -140,15 +140,15 @@ class CreateLinkedPaymentRequest(CreatePaymentRequest):
         return payload
 
 class CreateVerifiedPaymentRequest(CreatePaymentRequest):
-    def __init__(self, amount: int, description: str, plaid_processor_token: str, relationships: dict[str, Relationship],
+    def __init__(self, amount: int, description: str, plaid_processor_token: str, relationships: Dict[str, Relationship],
                  counterparty_name: Optional[str], verify_counterparty_balance: Optional[bool],
-                 idempotency_key: Optional[str], tags: Optional[dict[str, str]], direction: str = "Credit"):
+                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit"):
         CreatePaymentRequest.__init__(self, amount, description, relationships, idempotency_key, tags)
         self.plaid_Processor_token = plaid_Processor_token
         self.counterparty_name = counterparty_name
         self.verify_counterparty_balance = verify_counterparty_balance
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = CreatePaymentRequest.to_json_api(self)
         payload["data"]["attributes"]["counterparty"] = self.counterparty
         payload["data"]["attributes"]["plaidProcessorToken"] = self.plaid_processor_token
@@ -163,20 +163,20 @@ class CreateVerifiedPaymentRequest(CreatePaymentRequest):
         return payload
 
 class CreateBookPaymentRequest(CreatePaymentRequest):
-    def __init__(self, amount: int, description: str, relationships: dict[str, Relationship],
-                 idempotency_key: Optional[str] = None, tags: Optional[dict[str, str]] = None,
+    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  direction: str = "Credit"):
         super().__init__(amount, description, relationships, idempotency_key, tags, direction, "bookPayment")
 
 class CreateWirePaymentRequest(CreatePaymentRequest):
     def __init__(self, amount: int, description: str, counterparty: WireCounterparty,
-                 relationships: dict[str, Relationship], idempotency_key: Optional[str], tags: Optional[dict[str, str]],
+                 relationships: Dict[str, Relationship], idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
                  direction: str = "Credit"):
         CreatePaymentRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction,
                                       "wirePayment")
         self.counterparty = counterparty
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = CreatePaymentRequest.to_json_api(self)
         payload["data"]["attributes"]["counterparty"] = self.counterparty
         return payload
@@ -185,11 +185,11 @@ CreatePaymentRequest = Union[CreateInlinePaymentRequest, CreateLinkedPaymentRequ
                              CreateBookPaymentRequest, CreateWirePaymentRequest]
 
 class PatchAchPaymentRequest(object):
-    def __init__(self, payment_id: str, tags: dict[str, str]):
+    def __init__(self, payment_id: str, tags: Dict[str, str]):
         self.payment_id = payment_id
         self.tags = tags
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "achPayment",
@@ -205,11 +205,11 @@ class PatchAchPaymentRequest(object):
         json.dumps(self.to_json_api())
 
 class PatchBookPaymentRequest(object):
-    def __init__(self, payment_id: str, tags: dict[str, str]):
+    def __init__(self, payment_id: str, tags: Dict[str, str]):
         self.payment_id = payment_id
         self.tags = tags
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "bookPayment",

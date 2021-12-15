@@ -30,7 +30,7 @@ class CreateWebhookRequest(object):
         self.token = token
         self.content_type = content_type
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "webhook",
@@ -58,7 +58,7 @@ class PatchWebhookRequest(object):
         self.content_type = content_type
         self.token = token
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "webhook",

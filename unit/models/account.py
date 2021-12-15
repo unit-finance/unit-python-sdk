@@ -9,8 +9,8 @@ CloseReason = Literal["ByCustomer", "Fraud"]
 class DepositAccountDTO(object):
     def __init__(self, id: str, created_at: datetime, name: str, deposit_product: str, routing_number: str,
                  account_number: str, currency: str, balance: int, hold: int, available: int, status: AccountStatus,
-                 tags: Optional[dict[str, str]], close_reason: Optional[CloseReason],
-                 relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], close_reason: Optional[CloseReason],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "depositAccount"
         self.attributes = {"name": name, "createdAt": created_at, "depositProduct": deposit_product,
@@ -33,14 +33,14 @@ AccountDTO = Union[DepositAccountDTO]
 
 
 class CreateDepositAccountRequest(UnitRequest):
-    def __init__(self, deposit_product: str, relationships: Optional[dict[str, Union[Relationship, RelationshipArray]]],
-                 tags: Optional[dict[str, str]] = None, idempotency_key: Optional[str] = None):
+    def __init__(self, deposit_product: str, relationships: Optional[Dict[str, Union[Relationship, RelationshipArray]]],
+                 tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None):
         self.deposit_product = deposit_product
         self.tags = tags
         self.idempotency_key = idempotency_key
         self.relationships = relationships
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "depositAccount",
@@ -64,12 +64,12 @@ class CreateDepositAccountRequest(UnitRequest):
 
 
 class PatchDepositAccountRequest(UnitRequest):
-    def __init__(self, account_id: str, deposit_product: Optional[str] = None, tags: Optional[dict[str, str]] = None):
+    def __init__(self, account_id: str, deposit_product: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
         self.account_id = account_id
         self.deposit_product = deposit_product
         self.tags = tags
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "depositAccount",
@@ -104,7 +104,7 @@ class CloseAccountRequest(UnitRequest):
         self.account_id = account_id
         self.reason = reason
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "accountClose",

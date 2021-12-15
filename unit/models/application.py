@@ -13,8 +13,8 @@ class IndividualApplicationDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
                  email: str, phone: Phone, status: ApplicationStatus, ssn: Optional[str], message: Optional[str],
                  ip: Optional[str], ein: Optional[str], dba: Optional[str],
-                 sole_proprietorship: Optional[bool], tags: Optional[dict[str, str]],
-                 relationships: Optional[dict[str, Relationship]]):
+                 sole_proprietorship: Optional[bool], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "individualApplication"
         self.attributes = {"createdAt": created_at, "fullName": full_name, "address": address,
@@ -41,7 +41,7 @@ class BusinessApplicationDTO(object):
                  status: ApplicationStatus, state_of_incorporation: str, entity_type: EntityType,
                  contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner], ssn: Optional[str],
                  message: Optional[str], ip: Optional[str], ein: Optional[str], dba: Optional[str],
-                 tags: Optional[dict[str, str]], relationships: Optional[dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "businessApplication"
         self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
@@ -79,7 +79,7 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.sole_proprietorship = sole_proprietorship
         self.ssn = ssn
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "individualApplication",
@@ -131,7 +131,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.ip = ip
         self.website = website
 
-    def to_json_api(self) -> dict:
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": "businessApplication",
