@@ -331,11 +331,22 @@ class TransactionCreatedEvent(BaseEvent):
                                        attributes["direction"], attributes["amount"], attributes.get("tags"),
                                        relationships)
 
+class AccountReopenedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime,tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'account.reopened'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AccountReopenedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("tags"),
+                                    relationships)
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationAwaitingDocumentsEvent,
                  ApplicationPendingReviewEvent, CardActivatedEvent, CardStatusChangedEvent,
                  AuthorizationCreatedEvent, AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent,
                  AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
                  CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
                  CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
-                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent]
+                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent]
 
