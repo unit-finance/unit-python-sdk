@@ -1,10 +1,9 @@
 import json
-from typing import Literal, Optional
 from unit.models import *
 
 
 class StatementDTO(object):
-    def __init__(self, id: str, _type: str, period: str, relationships: Optional[dict[str, Relationship]]):
+    def __init__(self, id: str, _type: str, period: str, relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = _type
         self.attributes = {"period": period}

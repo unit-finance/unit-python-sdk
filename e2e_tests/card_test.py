@@ -12,7 +12,7 @@ class CardE2eTests(unittest.TestCase):
     client = Unit("https://api.s.unit.sh", token)
     card_types = ["individualDebitCard", "businessDebitCard", "individualVirtualDebitCard", "businessVirtualDebitCard"]
 
-    def find_card_id(self, criteria: dict[str, str]):
+    def find_card_id(self, criteria: Dict[str, str]):
         def filter_func(card):
             for key, value in criteria.items():
                 if key not in card.attributes:

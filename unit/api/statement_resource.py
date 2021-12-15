@@ -27,7 +27,7 @@ class StatementResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[list[StatementDTO]], UnitError]:
+    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[StatementDTO]], UnitError]:
         response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
         if response.status_code == 200:
             data = response.json().get("data")
