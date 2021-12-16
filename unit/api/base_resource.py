@@ -11,7 +11,8 @@ class BaseResource(object):
         self.token = token
         self.headers = {
             "content-type": "application/vnd.api+json",
-            "authorization": f"Bearer {self.token}"
+            "authorization": f"Bearer {self.token}",
+            "user-agent": "unit-python-sdk"
         }
 
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
