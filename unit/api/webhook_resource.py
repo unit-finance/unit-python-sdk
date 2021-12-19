@@ -64,7 +64,7 @@ class WebhookResource(BaseResource):
     def verify(self, signature: str, secret: str, payload):
         mac = hmac.new(
             secret.encode(),
-            msg=json.dumps(payload, separators=(',', ':')).encode(),
+            msg=json.dumps(payload, separators=(',', ':'), ensure_ascii=False).encode('utf-8'),
             digestmod=sha1,
         )
         res = base64.encodebytes(mac.digest()).decode().rstrip('\n')
