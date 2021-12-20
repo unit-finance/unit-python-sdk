@@ -113,6 +113,12 @@ class CardE2eTests(unittest.TestCase):
         response = self.client.cards.update(request)
         self.assertTrue(response.data.type == "individualDebitCard")
 
+    def test_get_pin_status(self):
+        response = self.client.cards.list()
+        for card in response.data:
+            pin_status = self.client.cards.get_pin_status(card.id).data
+            self.assertTrue(pin_status.type == "pinStatus")
+
 
 if __name__ == '__main__':
     unittest.main()

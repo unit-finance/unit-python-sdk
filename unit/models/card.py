@@ -423,3 +423,15 @@ class ReplaceCardRequest(object):
 
         def __repr__(self):
             json.dumps(self.to_json_api())
+
+PinStatus = Literal["Set", "NotSet"]
+
+class PinStatusDTO(object):
+    def __init__(self, status: PinStatus):
+        self.type = "pinStatus"
+        self.attributes = {"status": status}
+
+    @staticmethod
+    def from_json_api(attributes):
+        return PinStatusDTO(attributes["status"])
+

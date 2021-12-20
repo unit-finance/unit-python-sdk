@@ -93,3 +93,12 @@ class CardResource(BaseResource):
             return UnitResponse[Card](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
+
+    def get_pin_status(self, card_id: str) -> Union[UnitResponse[PinStatusDTO], UnitError]:
+        response = super().get(f"{self.resource}/{card_id}/secure-data/pin/status")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[PinStatusDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
