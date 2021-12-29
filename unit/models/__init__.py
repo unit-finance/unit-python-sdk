@@ -78,7 +78,7 @@ class FullName(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        FullName(data.get("first"), data.get("last"))
+        return FullName(data.get("first"), data.get("last"))
 
 
 # todo: Alex - use typing.Literal for multi accepted values (e.g country)
