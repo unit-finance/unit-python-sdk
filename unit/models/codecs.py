@@ -332,8 +332,8 @@ class UnitEncoder(json.JSONEncoder):
         if isinstance(obj, Relationship):
             return {"data": obj.to_dict()}
         if isinstance(obj, Counterparty):
-            return {"routingNumber": obj.routingNumber, "accountNumber": obj.accountNumber,
-                    "accountType": obj.accountType, "name": obj.name}
+            return {"routingNumber": obj.routing_number, "accountNumber": obj.account_number,
+                    "accountType": obj.account_type, "name": obj.name}
         if isinstance(obj, Coordinates):
             return {"longitude": obj.longitude, "latitude": obj.latitude}
         return json.JSONEncoder.default(self, obj)
