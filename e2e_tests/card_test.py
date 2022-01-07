@@ -116,8 +116,9 @@ class CardE2eTests(unittest.TestCase):
     def test_get_pin_status(self):
         response = self.client.cards.list()
         for card in response.data:
-            pin_status = self.client.cards.get_pin_status(card.id).data
-            self.assertTrue(pin_status.type == "pinStatus")
+            if card.attributes["status"] != "Inactive":
+                pin_status = self.client.cards.get_pin_status(card.id).data
+                self.assertTrue(pin_status.type == "pinStatus")
 
 
 if __name__ == '__main__':
