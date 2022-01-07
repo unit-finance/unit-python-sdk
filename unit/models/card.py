@@ -423,3 +423,14 @@ class ReplaceCardRequest(object):
 
         def __repr__(self):
             json.dumps(self.to_json_api())
+
+class CardLimitsDTO(object):
+    def __init__(self, limits: Limits, daily_totals: Totals, monthly_totals: Totals):
+        self.type = "limits"
+        self.attributes = {"limits": limits, "dailyTotals": daily_totals, "monthlyTotals": monthly_totals}
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        limits = Limits.from_json_api(attributes.get("limits")) if attributes.get("limits") else None
+        return CardLimitsDTO(limits, Totals.from_json_api(attributes.get("dailyTotals")),
+                          Totals.from_json_api(attributes.get("monthlyTotals")))

@@ -222,3 +222,25 @@ class Merchant(object):
     @staticmethod
     def from_json_api(data: Dict):
         return Merchant(data["name"], data["type"], data["category"], data.get("location"))
+
+class Limits(object):
+    def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
+        self.daily_withdrawal = daily_withdrawal
+        self.daily_purchase = daily_purchase
+        self.monthly_withdrawal = monthly_withdrawal
+        self.monthly_purchase = monthly_purchase
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return Limits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
+                      data["monthlyPurchase"])
+
+class Totals(object):
+    def __init__(self, withdrawals: int, deposits: int, purchases: int):
+        self.withdrawals = withdrawals
+        self.deposits = deposits
+        self.purchases = purchases
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return Totals(data["withdrawals"], data["deposits"], data["purchases"])
