@@ -42,8 +42,8 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
+        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset, "filter[customerId]": customer_id})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")

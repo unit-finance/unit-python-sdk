@@ -10,3 +10,5 @@ venv/*
 *.pyc
 
 dist/
+
+.DS_Store
