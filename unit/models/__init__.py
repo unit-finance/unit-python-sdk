@@ -232,7 +232,7 @@ class CardLevelLimits(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Limits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
+        return CardLevelLimits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
                       data["monthlyPurchase"])
 
 class CardTotals(object):
@@ -243,4 +243,4 @@ class CardTotals(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Totals(data["withdrawals"], data["deposits"], data["purchases"])
+        return CardTotals(data["withdrawals"], data["deposits"], data["purchases"])
