@@ -26,13 +26,13 @@ class ApplicationResource(BaseResource):
         parameters = {"page[limit]": params.limit, "page[offset]": params.offset, "sort": params.sort}
 
         if params.query:
-            parameters["query"] = params.query
+            parameters["filter[query]"] = params.query
 
         if params.email:
-            parameters["email"] = params.email
+            parameters["filter[email]"] = params.email
 
         if params.tags:
-            parameters["tags"] = params.tags
+            parameters["filter[tags]"] = params.tags
 
         response = super().get(self.resource, parameters)
         if response.status_code == 200:
