@@ -223,7 +223,7 @@ class Merchant(object):
     def from_json_api(data: Dict):
         return Merchant(data["name"], data["type"], data["category"], data.get("location"))
 
-class Limits(object):
+class CardLevelLimits(object):
     def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
         self.daily_withdrawal = daily_withdrawal
         self.daily_purchase = daily_purchase
@@ -235,7 +235,7 @@ class Limits(object):
         return Limits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
                       data["monthlyPurchase"])
 
-class Totals(object):
+class CardTotals(object):
     def __init__(self, withdrawals: int, deposits: int, purchases: int):
         self.withdrawals = withdrawals
         self.deposits = deposits

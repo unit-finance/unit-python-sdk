@@ -425,7 +425,7 @@ class ReplaceCardRequest(object):
             json.dumps(self.to_json_api())
 
 class CardLimitsDTO(object):
-    def __init__(self, limits: Limits, daily_totals: Totals, monthly_totals: Totals):
+    def __init__(self, limits: CardLevelLimits, daily_totals: CardTotals, monthly_totals: CardTotals):
         self.type = "limits"
         self.attributes = {"limits": limits, "dailyTotals": daily_totals, "monthlyTotals": monthly_totals}
 
