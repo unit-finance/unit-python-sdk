@@ -11,17 +11,17 @@ class AccountEndOfDayResource(BaseResource):
     def list(self, params: AccountEndOfDayListParams = AccountEndOfDayListParams()) -> Union[UnitResponse[List[AccountEndOfDayDTO]], UnitError]:
         parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
 
-        if params.account_id != "":
-            parameters |= {"filter[accountId]": params.account_id}
+        if params.account_id:
+            parameters["filter[accountId]"] = params.account_id
 
-        if params.customer_id != "":
-            parameters |= {"filter[customerId]": params.customer_id}
+        if params.customer_id:
+            parameters["filter[customerId]"] = params.customer_id
 
-        if params.since != "":
-            parameters |= {"filter[since]": params.since}
+        if params.since:
+            parameters["filter[since]"] = params.since
 
-        if params.until != "":
-            parameters |= {"filter[until]": params.until}
+        if params.until:
+            parameters["filter[until]"] = params.until
 
         response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):

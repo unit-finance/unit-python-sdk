@@ -18,11 +18,12 @@ class AccountEndOfDayDTO(object):
 
 
 class AccountEndOfDayListParams(object):
-    def __init__(self, limit: int = 100, offset: int = 0, account_id: str = "", customer_id: str = "", since: str = "",
-                 until: str = ""):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, since: Optional[str] = None, until: Optional[str] = None):
         self.limit = limit
         self.offset = offset
         self.account_id = account_id
         self.customer_id = customer_id
         self.since = since
         self.until = until
+
