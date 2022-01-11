@@ -13,7 +13,7 @@ from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
-from unit.models.counterparty import CounterpartyDTO
+from unit.models.counterparty import CounterpartyDTO, CounterpartyBalanceDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
 from unit.models.statement import StatementDTO
@@ -232,6 +232,9 @@ mappings = {
         "accountEndOfDay": lambda _id, _type, attributes, relationships:
         AccountEndOfDayDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "counterpartyBalance": lambda _id, _type, attributes, relationships:
+        CounterpartyBalanceDTO.from_json_api(_id, _type, attributes, relationships),
+
         "limits": lambda _id, _type, attributes, relationships:
         CardLimitsDTO.from_json_api(_id, _type, attributes, relationships)
 
@@ -336,8 +339,8 @@ class UnitEncoder(json.JSONEncoder):
         if isinstance(obj, Relationship):
             return {"data": obj.to_dict()}
         if isinstance(obj, Counterparty):
-            return {"routingNumber": obj.routingNumber, "accountNumber": obj.accountNumber,
-                    "accountType": obj.accountType, "name": obj.name}
+            return {"routingNumber": obj.routing_number, "accountNumber": obj.account_number,
+                    "accountType": obj.account_type, "name": obj.name}
         if isinstance(obj, Coordinates):
             return {"longitude": obj.longitude, "latitude": obj.latitude}
         return json.JSONEncoder.default(self, obj)
