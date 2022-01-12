@@ -51,13 +51,13 @@ class AccountResource(BaseResource):
         parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
 
         if params.customer_id:
-            parameters["filter[customerId]"] = customer_id
+            parameters["filter[customerId]"] = params.customer_id
 
         if params.tags:
-            parameters["filter[tags]"] = tags
+            parameters["filter[tags]"] = params.tags
 
         if params.include:
-            parameters["include"] = include
+            parameters["include"] = params.include
 
         response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
