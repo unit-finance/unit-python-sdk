@@ -123,7 +123,7 @@ class CloseAccountRequest(UnitRequest):
 class AccountListParams(object):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
                  tags: Optional[object] = None, include: Optional[str] = None):
-        self.offest = offset
+        self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
         self.tags = tags

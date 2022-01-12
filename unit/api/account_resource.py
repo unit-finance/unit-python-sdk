@@ -48,7 +48,7 @@ class AccountResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def list(self, params: AccountListParams = AccountListParams()) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
-        parameters = {"page[limit]": params.limit, "page[offset]": params.offest}
+        parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
 
         if params.customer_id:
             parameters["filter[customerId]"] = params.customer_id
