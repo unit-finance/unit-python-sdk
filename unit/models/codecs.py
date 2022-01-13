@@ -7,7 +7,7 @@ from unit.models.application import IndividualApplicationDTO, BusinessApplicatio
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
-    BusinessVirtualDebitCardDTO, PinStatusDTO
+    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
@@ -237,6 +237,9 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
+
+        "limits": lambda _id, _type, attributes, relationships:
+        CardLimitsDTO.from_json_api(_id, _type, attributes, relationships)
 
     }
 
