@@ -33,8 +33,13 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def get(self, account_id: str) -> Union[UnitResponse[AccountDTO], UnitError]:
-        response = super().get(f"{self.resource}/{account_id}", None)
+    def get(self, account_id: str, include: Optional[str] = None) -> Union[UnitResponse[AccountDTO], UnitError]:
+        params = {}
+
+        if include:
+            params["include"] = include
+
+        response = super().get(f"{self.resource}/{account_id}", params)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
@@ -42,8 +47,19 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset, "filter[customerId]": customer_id})
+    def list(self, params: ListAccountParams = ListAccountParams()) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
+        parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
+
+        if params.customer_id:
+            parameters["filter[customerId]"] = params.customer_id
+
+        if params.tags:
+            parameters["filter[tags]"] = params.tags
+
+        if params.include:
+            parameters["include"] = params.include
+
+        response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
