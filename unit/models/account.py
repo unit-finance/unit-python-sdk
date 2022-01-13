@@ -120,7 +120,7 @@ class CloseAccountRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class AccountListParams(object):
+class ListAccountParams(object):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
                  tags: Optional[object] = None, include: Optional[str] = None):
         self.offset = offset
