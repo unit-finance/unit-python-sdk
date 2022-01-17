@@ -19,7 +19,7 @@ class CustomerVerificationTokenDTO(object):
         return CustomerVerificationTokenDTO(attributes["verificationToken"])
 
 
-class CreateCustomerToken(object):
+class CreateCustomerToken(UnitRequest):
     def __init__(self, customer_id: str, scope: str, verification_token: Optional[str] = None,
                  verification_code: Optional[str] = None, expires_in: Optional[int] = None):
         self.customer_id = customer_id
@@ -53,7 +53,8 @@ class CreateCustomerToken(object):
         json.dumps(self.to_json_api())
 
 
-class CreateCustomerTokenVerification(object):
+class CreateCustomerTokenVerification(UnitRequest):
+
     def __init__(self, customer_id: str, channel: str, phone: Optional[Phone] = None, app_hash: Optional[str] = None,
                  language: Optional[str] = None):
         self.customer_id = customer_id

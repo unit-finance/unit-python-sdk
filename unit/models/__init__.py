@@ -116,7 +116,7 @@ class BusinessContact(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return BusinessContact(data.get("fullName"), data.get("email"), data.get("phone"))
+        return BusinessContact(FullName.from_json_api(data.get("fullName")), data.get("email"), Phone.from_json_api(data.get("phone")))
 
 
 class Officer(object):

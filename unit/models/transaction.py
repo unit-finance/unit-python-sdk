@@ -113,7 +113,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
 class BookTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, description: str, addenda: Optional[str], counterparty: Counterparty,
-                 relationships: Optional[Dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.description = description
         self.type = 'bookTransaction'
@@ -124,7 +124,7 @@ class BookTransactionDTO(BaseTransactionDTO):
         return BookTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
             attributes["amount"], attributes["balance"], attributes["summary"],
-            Counterparty.from_json_api(attributes["counterparty"]), relationships)
+            Counterparty.from_json_api(attributes["counterparty"]), attributes.get("tags"), relationships)
 
 
 class PurchaseTransactionDTO(BaseTransactionDTO):
@@ -337,7 +337,7 @@ TransactionDTO = Union[OriginatedAchTransactionDTO, ReceivedAchTransactionDTO, R
                        ReturnedCheckDepositTransactionDTO]
 
 
-class PatchTransactionRequest(BaseTransactionDTO):
+class PatchTransactionRequest(BaseTransactionDTO, UnitRequest):
     def __init__(self, account_id: str, transaction_id: str, tags: Optional[Dict[str, str]] = None):
         self.account_id = account_id
         self.transaction_id = transaction_id
