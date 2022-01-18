@@ -22,7 +22,7 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: ApplicationListParams = ApplicationListParams()) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
+    def list(self, params: ListApplicationParams = ListApplicationParams()) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
         parameters = {"page[limit]": params.limit, "page[offset]": params.offset, "sort": params.sort}
 
         if params.query:

@@ -18,7 +18,7 @@ class ApplicationFormResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def get(self, application_form_id: str, include: Optional[str] = "") -> Union[UnitResponse[ApplicationFormDTO], UnitError]:
-        response = super().get(f"{self.resource}/{application_form_id}")
+        response = super().get(f"{self.resource}/{application_form_id}", {"include": include})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
@@ -26,12 +26,16 @@ class ApplicationFormResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[ApplicationFormDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, params: ListApplicationFormParams = ListApplicationFormParams()) -> Union[UnitResponse[List[ApplicationFormDTO]], UnitError]:
+        parameters = {"page[limit]": params.limit, "page[offset]": params.offset, "sort": params.sort}
+
+        if params.tags:
+            parameters["filter[tags]"] = params.tags
+
+        response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            included = response.json().get("included")
-            return UnitResponse[ApplicationFormDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+            return UnitResponse[ApplicationFormDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 

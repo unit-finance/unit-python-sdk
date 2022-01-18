@@ -196,7 +196,7 @@ class UploadDocumentRequest(object):
         self.is_back_side = is_back_side
 
 
-class ApplicationListParams(object):
+class ListApplicationParams(object):
     def __init__(self, offset: int = 0, limit: int = 100, query: Optional[str] = None ,email: Optional[str] = None,
                  tags: Optional[object] = None, sort: str = "-createdAt"):
         self.offset = offset

@@ -84,3 +84,11 @@ class CreateApplicationFormRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
+class ListApplicationFormParams(object):
+    def __init__(self, offset: int = 0, limit: int = 100, tags: Optional[object] = None, sort: str = "-createdAt"):
+        self.offset = offset
+        self.limit = limit
+        self.tags = tags
+        self.sort = sort
+
