@@ -33,6 +33,9 @@ class UnitRequest(object):
     def to_json_api(self) -> Dict:
         pass
 
+class UnitParams(object):
+    def to_dict(self) -> Dict:
+        pass
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,

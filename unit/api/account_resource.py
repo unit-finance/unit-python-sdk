@@ -48,18 +48,7 @@ class AccountResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def list(self, params: ListAccountParams = ListAccountParams()) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
-        parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
-
-        if params.customer_id:
-            parameters["filter[customerId]"] = params.customer_id
-
-        if params.tags:
-            parameters["filter[tags]"] = params.tags
-
-        if params.include:
-            parameters["include"] = params.include
-
-        response = super().get(self.resource, parameters)
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
