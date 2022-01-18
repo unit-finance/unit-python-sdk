@@ -41,8 +41,16 @@ class CounterpartyResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[CounterpartyDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, params: ListCounterpartyParams = ListCounterpartyParams()) -> Union[UnitResponse[List[CounterpartyDTO]], UnitError]:
+        parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
+
+        if params.customer_id:
+            parameters["filter[customerId]"] = params.customer_id
+
+        if params.tags:
+            parameters["filter[tags]"] = params.tags
+
+        response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[CounterpartyDTO](DtoDecoder.decode(data), None)
