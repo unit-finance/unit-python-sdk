@@ -31,31 +31,31 @@ class AccountE2eTests(unittest.TestCase):
                                               {"purpose": "checking"})
         return self.client.accounts.create(request)
 
-    # def test_create_deposit_account(self):
-    #     response = self.create_deposit_account()
-    #     self.assertTrue(response.data.type == "depositAccount")
-    #
-    # def test_create_joint_deposit_account(self):
-    #     customer_id1 = self.create_individual_customer()
-    #     customer_id2 = self.create_individual_customer()
-    #     request = CreateDepositAccountRequest("checking",
-    #                                           {"customers": RelationshipArray([
-    #                                             Relationship("customer", customer_id1),
-    #                                             Relationship("customer", customer_id2)])},
-    #                                           {"purpose": "checking"})
-    #     response = self.client.accounts.create(request)
-    #     self.assertTrue(response.data.type == "depositAccount")
-    #
-    # def test_get_account(self):
-    #     account_id = self.create_deposit_account().data.id
-    #     response = self.client.accounts.get(account_id, "customer")
-    #     self.assertTrue(response.data.type == "depositAccount" and isinstance(response.included, list))
-    #
-    # def test_list_accounts(self):
-    #     params = ListAccountParams(0,100, include="customer")
-    #     response = self.client.accounts.list(params)
-    #     for acc in response.data:
-    #         self.assertTrue(acc.type == "depositAccount")
+    def test_create_deposit_account(self):
+        response = self.create_deposit_account()
+        self.assertTrue(response.data.type == "depositAccount")
+
+    def test_create_joint_deposit_account(self):
+        customer_id1 = self.create_individual_customer()
+        customer_id2 = self.create_individual_customer()
+        request = CreateDepositAccountRequest("checking",
+                                              {"customers": RelationshipArray([
+                                                Relationship("customer", customer_id1),
+                                                Relationship("customer", customer_id2)])},
+                                              {"purpose": "checking"})
+        response = self.client.accounts.create(request)
+        self.assertTrue(response.data.type == "depositAccount")
+
+    def test_get_account(self):
+        account_id = self.create_deposit_account().data.id
+        response = self.client.accounts.get(account_id, "customer")
+        self.assertTrue(response.data.type == "depositAccount" and isinstance(response.included, list))
+
+    def test_list_accounts(self):
+        params = ListAccountParams(0,100, include="customer")
+        response = self.client.accounts.list(params)
+        for acc in response.data:
+            self.assertTrue(acc.type == "depositAccount")
 
     def test_limits_account(self):
         account_id = self.create_deposit_account().data.id
@@ -74,13 +74,13 @@ class AccountE2eTests(unittest.TestCase):
         response = self.client.accounts.reopen_account(account_id)
         self.assertTrue(response.data.type == "depositAccount")
 
-    # def test_update_account(self):
-    #     account_id = self.create_deposit_account().data.id
-    #     request = PatchDepositAccountRequest(account_id, tags={
-    #         "purpose": "tax",
-    #         "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
-    #     response = self.client.accounts.update(request)
-    #     self.assertTrue(response.data.type == "depositAccount")
+    def test_update_account(self):
+        account_id = self.create_deposit_account().data.id
+        request = PatchDepositAccountRequest(account_id, tags={
+            "purpose": "tax",
+            "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
+        response = self.client.accounts.update(request)
+        self.assertTrue(response.data.type == "depositAccount")
 
 
 if __name__ == '__main__':
