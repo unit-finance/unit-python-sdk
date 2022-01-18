@@ -35,7 +35,8 @@ class PurchaseAuthorizationRequestDTO(object):
 
 
 class PurchaseAuthorizationRequestListParams(object):
-    def __init__(self, limit: int = 100, offset: int = 0, account_id: str = "", customer_id: str = ""):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None):
         self.limit = limit
         self.offset = offset
         self.account_id = account_id

@@ -20,11 +20,11 @@ class AuthorizationRequestResource(BaseResource):
             -> Union[UnitResponse[List[PurchaseAuthorizationRequestDTO]], UnitError]:
         parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
 
-        if params.account_id != "":
-            parameters |= {"filter[accountId]": params.account_id}
+        if params.account_id:
+            parameters["filter[accountId]"] = params.account_id
 
-        if params.customer_id != "":
-            parameters |= {"filter[customerId]": params.customer_id}
+        if params.customer_id:
+            parameters["filter[customerId]"] = params.customer_id
 
         response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
