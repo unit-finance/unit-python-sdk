@@ -127,3 +127,14 @@ class PatchBusinessCustomerRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
+class ListCustomerParams(object):
+    def __init__(self, offset: int = 0, limit: int = 100, query: Optional[str] = None, email: Optional[str] = None,
+                 tags: Optional[object] = None, sort: Optional[str] = "-createdAt"):
+        self.offset = offset
+        self.limit = limit
+        self.query = query
+        self.email = email
+        self.tags = tags
+        self.sort = sort
+
