@@ -25,8 +25,10 @@ class AuthorizationDTO(object):
 
 
 class AuthorizationListParams(object):
-    def __init__(self, limit: int = 100, offset: int = 0, account_id: str = "", customer_id: str = "",
-                 card_id: str = "", since: str = "", until: str = ""):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, card_id: Optional[str] = None, since: Optional[str] = None,
+                 until: Optional[str] = None, include_non_authorized: Optional[bool] = False,
+                 status: Optional[str] = None):
         self.limit = limit
         self.offset = offset
         self.account_id = account_id
@@ -34,4 +36,6 @@ class AuthorizationListParams(object):
         self.card_id = card_id
         self.since = since
         self.until = until
+        self.include_non_authorized = include_non_authorized
+        self.status = status
 
