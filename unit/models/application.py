@@ -195,3 +195,15 @@ class UploadDocumentRequest(object):
         self.file_type = file_type
         self.is_back_side = is_back_side
 
+
+class ListApplicationParams(object):
+    def __init__(self, offset: int = 0, limit: int = 100, email: Optional[str] = None,
+                 tags: Optional[object] = None, query: Optional[str] = None,
+                 sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
+        self.offset = offset
+        self.limit = limit
+        self.email = email
+        self.query = query
+        self.sort = sort
+        self.tags = tags
+        self.include = include

@@ -22,8 +22,18 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100, email: Optional[str] = None, sort: Optional[str] = None) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset, "filter[email]": email, "sort": sort})
+    def list(self, params: ListApplicationParams = None) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
+        params = params or ListApplicationParams()
+        parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
+        if params.email:
+            parameters["filter[email]"] = params.email
+        if params.query:
+            parameters["filter[query]"] = params.query
+        if params.tags:
+            parameters["filter[tags]"] = params.tags
+        if params.sort:
+            parameters["sort"] = params.sort
+        response = super().get(self.resource, parameters)
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
