@@ -44,7 +44,7 @@ mappings = {
         DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
 
         "limits": lambda _id, _type, attributes, relationships:
-        AccountLimitsDTO.from_json_api(_type, attributes),
+        decode_limits(attributes),
 
         "individualDebitCard": lambda _id, _type, attributes, relationships:
         IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
@@ -240,10 +240,6 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
-
-        "limits": lambda _id, _type, attributes, relationships:
-        CardLimitsDTO.from_json_api(_id, _type, attributes, relationships)
-
     }
 
 
@@ -274,6 +270,13 @@ def split_json_api_array_response(payload):
     return dtos
 
 
+def decode_limits(attributes: Dict):
+    if "ach" in attributes.keys():
+        return AccountLimitsDTO.from_json_api(attributes)
+    else:
+        return CardLimitsDTO.from_json_api(attributes)
+
+
 class DtoDecoder(object):
     @staticmethod
     def decode(payload):
@@ -290,7 +293,6 @@ class DtoDecoder(object):
         else:
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
             return mappings[_type](_id, _type, attributes, relationships)
-
 
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):

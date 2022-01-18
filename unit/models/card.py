@@ -442,7 +442,8 @@ class CardLimitsDTO(object):
         self.attributes = {"limits": limits, "dailyTotals": daily_totals, "monthlyTotals": monthly_totals}
 
     @staticmethod
-    def from_json_api(_id, _type, attributes, relationships):
+    def from_json_api(attributes):
         limits = CardLevelLimits.from_json_api(attributes.get("limits")) if attributes.get("limits") else None
         return CardLimitsDTO(limits, CardTotals.from_json_api(attributes.get("dailyTotals")),
-                          CardTotals.from_json_api(attributes.get("monthlyTotals")))
+                             CardTotals.from_json_api(attributes.get("monthlyTotals")))
+
