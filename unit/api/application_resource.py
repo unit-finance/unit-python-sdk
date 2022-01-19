@@ -22,21 +22,12 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: ListApplicationParams = ListApplicationParams()) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
-        parameters = {"page[limit]": params.limit, "page[offset]": params.offset, "sort": params.sort}
-
-        if params.query:
-            parameters["filter[query]"] = params.query
-
-        if params.email:
-            parameters["filter[email]"] = params.email
-
-        if params.tags:
-            parameters["filter[tags]"] = params.tags
-
-        response = super().get(self.resource, parameters)
+    def list(self, params: ListApplicationParams = None) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
+        params = params or ListApplicationParams()
+        response = super().get(self.resource, params.to_dict())
         if response.status_code == 200:
             data = response.json().get("data")
+            included = response.json().get("included")
             return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())

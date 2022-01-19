@@ -54,7 +54,7 @@ class CreateCounterpartyRequest(object):
         json.dumps(self.to_json_api())
 
 
-class CreateCounterpartyWithTokenRequest(object):
+class CreateCounterpartyWithTokenRequest(UnitRequest):
     def __init__(self, name: str, type: str, plaid_processor_token: str, verify_name: Optional[bool],
                  relationships: [Dict[str, Relationship]]):
         self.name = name

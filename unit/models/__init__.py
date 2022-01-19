@@ -33,6 +33,9 @@ class UnitRequest(object):
     def to_json_api(self) -> Dict:
         pass
 
+class UnitParams(object):
+    def to_dict(self) -> Dict:
+        pass
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
@@ -116,7 +119,7 @@ class BusinessContact(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return BusinessContact(data.get("fullName"), data.get("email"), data.get("phone"))
+        return BusinessContact(FullName.from_json_api(data.get("fullName")), data.get("email"), Phone.from_json_api(data.get("phone")))
 
 
 class Officer(object):

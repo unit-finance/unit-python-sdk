@@ -196,13 +196,25 @@ class UploadDocumentRequest(object):
         self.is_back_side = is_back_side
 
 
-class ListApplicationParams(object):
-    def __init__(self, offset: int = 0, limit: int = 100, query: Optional[str] = None ,email: Optional[str] = None,
-                 tags: Optional[object] = None, sort: str = "-createdAt"):
+class ListApplicationParams(UnitParams):
+    def __init__(self, offset: int = 0, limit: int = 100, email: Optional[str] = None,
+                 tags: Optional[object] = None, query: Optional[str] = None,
+                 sort: Optional[Literal["createdAt", "-createdAt"]] = None):
         self.offset = offset
         self.limit = limit
-        self.query = query
         self.email = email
-        self.tags = tags
+        self.query = query
         self.sort = sort
+        self.tags = tags
 
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.email:
+            parameters["filter[email]"] = self.email
+        if self.query:
+            parameters["filter[query]"] = self.query
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.sort:
+            parameters["sort"] = self.sort
+        return parameters

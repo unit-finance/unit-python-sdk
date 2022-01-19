@@ -218,7 +218,7 @@ class CloseAccountRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class ListAccountParams(object):
+class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
                  tags: Optional[object] = None, include: Optional[str] = None):
         self.offset = offset
@@ -226,4 +226,13 @@ class ListAccountParams(object):
         self.customer_id = customer_id
         self.tags = tags
         self.include = include
-
+    
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.include:
+            parameters["include"] = self.include
+        return parameters
