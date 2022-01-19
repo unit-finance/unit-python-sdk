@@ -80,7 +80,3 @@ class AccountE2eTests(unittest.TestCase):
             "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
         response = self.client.accounts.update(request)
         self.assertTrue(response.data.type == "depositAccount")
-
-
-if __name__ == '__main__':
-    unittest.main()

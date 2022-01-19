@@ -14,7 +14,3 @@ class AccountEndOfDayE2eTests(unittest.TestCase):
         for a in response.data:
             self.assertTrue(a.type == "accountEndOfDay")
 
-
-if __name__ == '__main__':
-    unittest.main()
-

@@ -28,7 +28,3 @@ class APITokenE2eTests(unittest.TestCase):
         token = self.create_api_token()
         response = self.client.api_tokens.revoke(self.user_id, token.id)
         self.assertTrue(response.data == [])
-
-
-if __name__ == '__main__':
-    unittest.main()
