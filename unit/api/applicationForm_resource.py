@@ -26,13 +26,9 @@ class ApplicationFormResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: ListApplicationFormParams = ListApplicationFormParams()) -> Union[UnitResponse[List[ApplicationFormDTO]], UnitError]:
-        parameters = {"page[limit]": params.limit, "page[offset]": params.offset, "sort": params.sort}
-
-        if params.tags:
-            parameters["filter[tags]"] = params.tags
-
-        response = super().get(self.resource, parameters)
+    def list(self, params: ListApplicationFormParams = None) -> Union[UnitResponse[List[ApplicationFormDTO]], UnitError]:
+        params = params or ListApplicationFormParams()
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[ApplicationFormDTO](DtoDecoder.decode(data), None)

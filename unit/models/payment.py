@@ -226,3 +226,47 @@ class PatchBookPaymentRequest(object):
         json.dumps(self.to_json_api())
 
 PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
+
+class ListPaymentParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None ,
+                 customer_id: Optional[str] = None, tags: Optional[object] = None, status: Optional[str] = None,
+                 type: Optional[str] = None, direction: Optional[str] = None, since: Optional[str] = None,
+                 until: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
+                 include: Optional[str] = None):
+        self.limit = limit
+        self.offset = offset
+        self.account_id = account_id
+        self.customer_id = customer_id
+        self.tags = tags
+        self.status = status
+        self.type = type
+        self.direction = direction
+        self.since = since
+        self.until = until
+        self.sort = sort
+        self.include = include
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.status:
+            parameters["filter[status]"] = self.status
+        if self.type:
+            parameters["filter[type][]"] = self.type
+        if self.direction:
+            parameters["filter[direction]"] = self.direction
+        if self.since:
+            parameters["filter[since]"] = self.since
+        if self.until:
+            parameters["filter[until]"] = self.until
+        if self.sort:
+            parameters["sort"] = self.sort
+        if self.include:
+            parameters["include"] = self.include
+        return parameters
+

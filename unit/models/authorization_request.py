@@ -34,13 +34,21 @@ class PurchaseAuthorizationRequestDTO(object):
                                                attributes.get("tags"), relationships)
 
 
-class PurchaseAuthorizationRequestListParams(object):
+class ListPurchaseAuthorizationRequestParams(object):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None):
         self.limit = limit
         self.offset = offset
         self.account_id = account_id
         self.customer_id = customer_id
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        return parameters
 
 
 class ApproveAuthorizationRequest(object):

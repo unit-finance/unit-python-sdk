@@ -30,19 +30,9 @@ class CustomerResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: ListCustomerParams = ListCustomerParams()) -> Union[UnitResponse[List[CustomerDTO]], UnitError]:
-        parameters = {"page[limit]": params.limit, "page[offset]": params.offset, "sort": params.sort}
-
-        if params.query:
-            parameters["filter[query]"] = params.query
-
-        if params.email:
-            parameters["filter[email]"] = params.email
-
-        if params.tags:
-            parameters["filter[tags]"] = params.tags
-
-        response = super().get(self.resource, parameters)
+    def list(self, params: ListCustomerParams = None) -> Union[UnitResponse[List[CustomerDTO]], UnitError]:
+        params = params or ListCustomerParams()
+        response = super().get(self.resource, params.to_dict())
         if response.status_code == 200:
             data = response.json().get("data")
             return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)

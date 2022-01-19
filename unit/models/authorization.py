@@ -24,7 +24,7 @@ class AuthorizationDTO(object):
                                 attributes.get("tags"), relationships)
 
 
-class AuthorizationListParams(object):
+class ListAuthorizationParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, card_id: Optional[str] = None, since: Optional[str] = None,
                  until: Optional[str] = None, include_non_authorized: Optional[bool] = False,
@@ -39,3 +39,20 @@ class AuthorizationListParams(object):
         self.include_non_authorized = include_non_authorized
         self.status = status
 
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.card_id:
+            parameters["filter[cardId]"] = self.card_id
+        if self.include_non_authorized:
+            parameters["filter[includeNonAuthorized]"] = self.include_non_authorized
+        if self.status:
+            parameters["filter[status]"] = self.status
+        if self.since:
+            parameters["filter[since]"] = self.since
+        if self.until:
+            parameters["filter[until]"] = self.until
+        return parameters

@@ -355,3 +355,50 @@ class PatchTransactionRequest(BaseTransactionDTO, UnitRequest):
             payload["data"]["attributes"]["tags"] = self.tags
 
         return payload
+
+
+class ListTransactionParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, query: Optional[str] = None, tags: Optional[object] = None,
+                 since: Optional[str] = None, until: Optional[str] = None, card_id: Optional[str] = None,
+                 type: Optional[str] = None, exclude_fees: Optional[bool] = None,
+                 sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
+        self.limit = limit
+        self.offset = offset
+        self.account_id = account_id
+        self.customer_id = customer_id
+        self.query = query
+        self.tags = tags
+        self.since = since
+        self.until = until
+        self.card_id = card_id
+        self.type = type
+        self.exclude_fees = exclude_fees
+        self.sort = sort
+        self.include = include
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.query:
+            parameters["filter[query]"] = self.query
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.since:
+            parameters["filter[since]"] = self.since
+        if self.until:
+            parameters["filter[until]"] = self.until
+        if self.card_id:
+            parameters["filter[cardId]"] = self.card_id
+        if self.type:
+            parameters["filter[type][]"] = self.type
+        if self.exclude_fees:
+            parameters["filter[excludeFees]"] = self.exclude_fees
+        if self.sort:
+            parameters["sort"] = self.sort
+        if self.include:
+            parameters["include"] = self.include
+        return parameters

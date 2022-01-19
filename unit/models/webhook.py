@@ -80,3 +80,13 @@ class PatchWebhookRequest(object):
 
         return payload
 
+
+class ListWebhookParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0):
+        self.limit = limit
+        self.offset = offset
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        return parameters
+

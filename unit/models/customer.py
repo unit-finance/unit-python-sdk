@@ -128,13 +128,25 @@ class PatchBusinessCustomerRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class ListCustomerParams(object):
+class ListCustomerParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, query: Optional[str] = None, email: Optional[str] = None,
-                 tags: Optional[object] = None, sort: Optional[str] = "-createdAt"):
+                 tags: Optional[object] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None):
         self.offset = offset
         self.limit = limit
         self.query = query
         self.email = email
         self.tags = tags
         self.sort = sort
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.query:
+            parameters["filter[query]"] = self.query
+        if self.email:
+            parameters["filter[email]"] = self.email
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.sort:
+            parameters["sort"] = self.sort
+        return parameters
 

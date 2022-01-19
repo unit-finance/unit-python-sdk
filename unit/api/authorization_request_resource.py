@@ -16,17 +16,10 @@ class AuthorizationRequestResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: PurchaseAuthorizationRequestListParams = PurchaseAuthorizationRequestListParams()) \
+    def list(self, params: ListPurchaseAuthorizationRequestParams = None) \
             -> Union[UnitResponse[List[PurchaseAuthorizationRequestDTO]], UnitError]:
-        parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
-
-        if params.account_id:
-            parameters["filter[accountId]"] = params.account_id
-
-        if params.customer_id:
-            parameters["filter[customerId]"] = params.customer_id
-
-        response = super().get(self.resource, parameters)
+        params = params or ListPurchaseAuthorizationRequestParams()
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[PurchaseAuthorizationRequestDTO](DtoDecoder.decode(data), None)

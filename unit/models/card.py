@@ -448,7 +448,7 @@ class CardLimitsDTO(object):
                              CardTotals.from_json_api(attributes.get("monthlyTotals")))
 
 
-class ListCardParams(object):
+class ListCardParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, tags: Optional[object] = None, include: Optional[str] = None):
         self.offset = offset
@@ -457,4 +457,16 @@ class ListCardParams(object):
         self.customer_id = customer_id
         self.tags = tags
         self.include = include
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.until:
+            parameters["include"] = self.include
+        return parameters
 

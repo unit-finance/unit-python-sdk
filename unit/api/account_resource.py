@@ -42,7 +42,8 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: ListAccountParams = ListAccountParams()) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
+    def list(self, params: ListAccountParams = None) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
+        params = params or ListAccountParams()
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
