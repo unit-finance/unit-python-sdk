@@ -2,6 +2,7 @@ import os
 import unittest
 from unit import Unit
 from unit.models.webhook import *
+from unit.models.event import BaseEvent
 
 
 class WebhookE2eTests(unittest.TestCase):
@@ -45,6 +46,19 @@ class WebhookE2eTests(unittest.TestCase):
         response = self.client.webhooks.disable(w.id)
         self.assertTrue(response.data.type == "webhook" and response.data.attributes["status"] == "Disabled")
 
+    def test_verify_webhook(self):
+        payload = {"data": [{"id": "613457", "type": "authorizationRequest.pending",
+                             "attributes": {"createdAt":"2021-12-15T10:21:59.873Z", "amount": 2500, "available": 0,
+                                            "status":"Pending","partialApprovalAllowed": True,
+                                            "merchant": {"name": "Apple Inc.", "type": "1000"}, "recurring": False},
+                             "relationships":
+                                 {"authorizationRequest": {"data": {"id": "4474",
+                                                                    "type": "purchaseAuthorizationRequest"}},
+                                  "account": {"data": {"id": "49228", "type":"account"}},
+                                  "customer": {"data": {"id": "49430", "type": "customer"}},
+                                  "card": {"data": {"id": "26068", "type": "card"}}}}]}
+        res = self.client.webhooks.verify("kw+Zx3UcAWL/ujc1Px46GGzo0Gc=", "MyToken", payload)
+        self.assertTrue(res)
 
 if __name__ == '__main__':
     unittest.main()

@@ -423,3 +423,26 @@ class ReplaceCardRequest(object):
 
         def __repr__(self):
             json.dumps(self.to_json_api())
+
+PinStatus = Literal["Set", "NotSet"]
+
+class PinStatusDTO(object):
+    def __init__(self, status: PinStatus):
+        self.type = "pinStatus"
+        self.attributes = {"status": status}
+
+    @staticmethod
+    def from_json_api(attributes):
+        return PinStatusDTO(attributes["status"])
+
+
+class CardLimitsDTO(object):
+    def __init__(self, limits: CardLevelLimits, daily_totals: CardTotals, monthly_totals: CardTotals):
+        self.type = "limits"
+        self.attributes = {"limits": limits, "dailyTotals": daily_totals, "monthlyTotals": monthly_totals}
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        limits = CardLevelLimits.from_json_api(attributes.get("limits")) if attributes.get("limits") else None
+        return CardLimitsDTO(limits, CardTotals.from_json_api(attributes.get("dailyTotals")),
+                          CardTotals.from_json_api(attributes.get("monthlyTotals")))

@@ -54,7 +54,7 @@ class CreateCounterpartyRequest(object):
         json.dumps(self.to_json_api())
 
 
-class CreateCounterpartyWithTokenRequest(object):
+class CreateCounterpartyWithTokenRequest(UnitRequest):
     def __init__(self, name: str, type: str, plaid_processor_token: str, verify_name: Optional[bool],
                  relationships: [Dict[str, Relationship]]):
         self.name = name
@@ -108,4 +108,16 @@ class PatchCounterpartyRequest(object):
 
     def __repr__(self):
         json.dumps(self.to_json_api())
+
+
+class CounterpartyBalanceDTO(object):
+    def __init__(self, id: str, balance: int, available: int, relationships: [Dict[str, Relationship]]):
+        self.id = id
+        self.type = "counterpartyBalance"
+        self.attributes = {"balance": balance, "available": available}
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CounterpartyBalanceDTO(_id, attributes["balance"], attributes["available"], relationships)
 

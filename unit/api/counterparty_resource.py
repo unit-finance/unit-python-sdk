@@ -48,3 +48,11 @@ class CounterpartyResource(BaseResource):
             return UnitResponse[CounterpartyDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
+
+    def get_balance(self, counterparty_id: str) -> Union[UnitResponse[CounterpartyBalanceDTO], UnitError]:
+        response = super().get(f"{self.resource}/{counterparty_id}/balance")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[CounterpartyBalanceDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
