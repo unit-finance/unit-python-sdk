@@ -67,7 +67,7 @@ class WirePaymentDTO(BasePayment):
 
 PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
 
-class CreatePaymentBaseRequest(object):
+class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
                  type: str = "achPayment"):
