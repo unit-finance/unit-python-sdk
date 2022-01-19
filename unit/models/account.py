@@ -186,9 +186,9 @@ class CheckDepositAccountLimits(object):
 
 
 class AccountLimitsDTO(object):
-    def __init__(self, ach: AccountAchLimits, card: AccountCardLimits, deposit_account: CheckDepositAccountLimits):
+    def __init__(self, ach: AccountAchLimits, card: AccountCardLimits, check_deposit: CheckDepositAccountLimits):
         self.type = "limits"
-        self.attributes = {"ach": ach, "card": card, "depositAccount": deposit_account}
+        self.attributes = {"ach": ach, "card": card, "checkDeposit": check_deposit}
 
     @staticmethod
     def from_json_api(attributes):
