@@ -3,8 +3,10 @@ from datetime import timedelta
 from unit import Unit
 from unit.models.application import *
 
+token = os.environ.get('TOKEN')
+client = Unit("https://api.s.unit.sh", token)
+
 def create_individual_application():
-    client = Unit("https://api.s.unit.sh", token)
     request = CreateIndividualApplicationRequest(
         FullName("Jhon", "Doe"), date.today() - timedelta(days=20*365),
         Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"), "jone.doe1@unit-finance.com",
@@ -15,14 +17,10 @@ def create_individual_application():
     return client.applications.create(request)
 
 def test_create_individual_application():
-    client = Unit("https://api.s.unit.sh", token)
-
     app = create_individual_application()
     assert app.data.type == "individualApplication"
 
 def test_create_business_application():
-    client = Unit("https://api.s.unit.sh", token)
-
     request = CreateBusinessApplicationRequest(
         name="Acme Inc.",
         address=Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
@@ -45,38 +43,10 @@ def test_create_business_application():
     response = client.applications.create(request)
     assert response.data.type == "businessApplication"
 
-
-def test_get_applications():
-    client = Unit("https://api.s.unit.sh", token)
-
-    response = client.applications.get("72996")
-    assert response.data.type == "businessApplication" or response.data.type == "individualApplication"
-
-
-def test_list_applications():
-    client = Unit("https://api.s.unit.sh", token)
-
+def test_list_and_get_applications():
     response = client.applications.list()
     for app in response.data:
         assert app.type == "businessApplication" or app.type == "individualApplication"
-
-
-# def test_upload_application_document(self):
-#     app = self.create_individual_application()
-#     doc_id = app.included[0].id
-#     with open("../sample.pdf", 'rb') as file:
-#         request = UploadDocumentRequest(app.data.id, doc_id, file.read(), "pdf")
-#     response = client.applications.upload(request)
-#     self.assertTrue(response.data.type == "document")
-
-# def test_upload_application_back_document(self):
-#     token = os.environ.get("token")
-#     client = Unit("https://api.s.unit.sh", token)
-#     app = self.create_individual_application()
-#     doc_id = app.included[0].id
-#     with open("../sample.pdf", 'rb') as file:
-#         request = UploadDocumentRequest(app.data.id, doc_id, file.read(), "pdf", True)
-#     response = client.applications.upload(request)
-#     self.assertTrue(response.data.type == "document")
-
+        res = client.applications.get(app.id)
+        assert res.data.type == "businessApplication" or res.data.type == "individualApplication"
 
