@@ -361,7 +361,7 @@ class ListTransactionParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, query: Optional[str] = None, tags: Optional[object] = None,
                  since: Optional[str] = None, until: Optional[str] = None, card_id: Optional[str] = None,
-                 type: Optional[str] = None, exclude_fees: Optional[bool] = None,
+                 type: Optional[List[str]] = None, exclude_fees: Optional[bool] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
         self.limit = limit
         self.offset = offset
