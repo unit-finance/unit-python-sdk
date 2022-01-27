@@ -4,12 +4,12 @@ from unit.models import *
 AchStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 
 class BasePayment(object):
-    def __init__(self, id: str, created_at: datetime, direction: str, description: str, amount: int,
+    def __init__(self, id: str, created_at: datetime, status: AchStatus, direction: str, description: str, amount: int,
                  reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = id
-        self.attributes = {"createdAt": created_at, "direction": direction, "description": description,
-                           "amount": amount, "reason": reason, "tags": tags}
+        self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
+                           "description": description, "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
 
 
@@ -18,9 +18,8 @@ class AchPaymentDTO(BasePayment):
                  description: str, amount: int, addenda: Optional[str], reason: Optional[str],
                  settlement_date: Optional[datetime], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
-        BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
         self.type = 'achPayment'
-        self.attributes["status"] = status
         self.attributes["counterparty"] = counterparty
         self.attributes["addenda"] = addenda
         self.settlement_date = settlement_date
@@ -37,9 +36,8 @@ class BookPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: str, direction: Optional[str], description: str, amount: int,
                  reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
-        BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
         self.type = 'bookPayment'
-        self.attributes["status"] = status
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -51,9 +49,8 @@ class WirePaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: WireCounterparty, direction: str,
                  description: str, amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
-        BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
         self.type = 'wirePayment'
-        self.attributes["status"] = status
         self.attributes["counterparty"] = counterparty
         self.attributes["addenda"] = addenda
         self.attributes["settlementDate"] = settlement_date
@@ -65,7 +62,19 @@ class WirePaymentDTO(BasePayment):
                               attributes["description"], attributes["amount"], attributes.get("reason"),
                               attributes.get("tags"), relationships)
 
-PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
+class BillPaymentDTO(BasePayment):
+    def __init__(self, id: str, created_at: datetime, status: AchStatus, direction: str, description: str,
+                 amount: int, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
+        self.type = 'billPayment'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return BillPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                              attributes["direction"], attributes["description"], attributes["amount"],
+                              attributes.get("reason"), attributes.get("tags"), relationships)
+
+PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO]
 
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
