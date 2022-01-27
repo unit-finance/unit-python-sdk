@@ -6,8 +6,11 @@ ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview"]
 
 DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "CertificateOfIncorporation",
                        "EmployerIdentificationNumberConfirmation"]
+
 ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMismatch", "DOBMismatch", "ExpiredId",
                      "EINMismatch", "StateMismatch", "Other"]
+
+ApplicationTypes = Literal["individualApplication", "businessApplication"]
 
 class IndividualApplicationDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
@@ -218,4 +221,28 @@ class ListApplicationParams(UnitParams):
         if self.sort:
             parameters["sort"] = self.sort
         return parameters
-    
+
+
+class PatchApplicationRequest(UnitRequest):
+    def __init__(self, application_id: str, type: ApplicationTypes = "individualApplication",
+                 tags: Optional[Dict[str, str]] = None):
+        self.application_id = application_id
+        self.type = type
+        self.tags = tags
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": self.type,
+                "attributes": {}
+            }
+        }
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
