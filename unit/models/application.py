@@ -67,7 +67,8 @@ ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
 
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None, ssn = None):
+                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
+                 passport: str = None, nationality: str = None, ssn = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -78,6 +79,8 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.dba = dba
         self.sole_proprietorship = sole_proprietorship
         self.ssn = ssn
+        self.passport = passport
+        self.nationality = nationality
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -107,6 +110,12 @@ class CreateIndividualApplicationRequest(UnitRequest):
 
         if self.ssn:
             payload["data"]["attributes"]["ssn"] = self.ssn
+
+        if self.ssn:
+            payload["data"]["attributes"]["passport"] = self.passport
+
+        if self.ssn:
+            payload["data"]["attributes"]["nationality"] = self.nationality
 
         return payload
 
