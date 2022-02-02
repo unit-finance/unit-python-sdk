@@ -111,10 +111,10 @@ class CreateIndividualApplicationRequest(UnitRequest):
         if self.ssn:
             payload["data"]["attributes"]["ssn"] = self.ssn
 
-        if self.ssn:
+        if self.passport:
             payload["data"]["attributes"]["passport"] = self.passport
 
-        if self.ssn:
+        if self.nationality:
             payload["data"]["attributes"]["nationality"] = self.nationality
 
         return payload
