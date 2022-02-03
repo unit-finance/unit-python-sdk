@@ -332,6 +332,8 @@ class UnitEncoder(json.JSONEncoder):
             return addr
         if isinstance(obj, BusinessContact):
             return {"fullName": obj.full_name, "email": obj.email, "phone": obj.phone}
+        if isinstance(obj, AuthorizedUser):
+            return {"fullName": obj.full_name, "email": obj.email, "phone": obj.phone}
         if isinstance(obj, Officer):
             officer = {"fullName": obj.full_name, "dateOfBirth": date_utils.to_date_str(obj.date_of_birth),
                        "address": obj.address, "phone": obj.phone, "email": obj.email}
