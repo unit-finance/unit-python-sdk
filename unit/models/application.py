@@ -67,7 +67,8 @@ ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
 
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None, ssn = None):
+                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None, ssn = None,
+                 tags: Optional[Dict[str, str]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -78,6 +79,7 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.dba = dba
         self.sole_proprietorship = sole_proprietorship
         self.ssn = ssn
+        self.tags = tags
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -108,6 +110,9 @@ class CreateIndividualApplicationRequest(UnitRequest):
         if self.ssn:
             payload["data"]["attributes"]["ssn"] = self.ssn
 
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
         return payload
 
     def __repr__(self):
@@ -115,9 +120,22 @@ class CreateIndividualApplicationRequest(UnitRequest):
 
 
 class CreateBusinessApplicationRequest(UnitRequest):
-    def __init__(self, name: str, address: Address, phone: Phone, state_of_incorporation: str, ein: str,
-                 contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner],
-                 entity_type: EntityType, dba: str = None, ip: str = None, website: str = None):
+    def __init__(
+            self,
+            name: str,
+            address: Address,
+            phone: Phone,
+            state_of_incorporation: str,
+            ein: str,
+            contact: BusinessContact,
+            officer: Officer,
+            beneficial_owners: [BeneficialOwner],
+            entity_type: EntityType,
+            tags: Optional[Dict[str, str]] = None,
+            dba: str = None,
+            ip: str = None,
+            website: str = None,
+    ):
         self.name = name
         self.address = address
         self.phone = phone
@@ -130,8 +148,9 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.dba = dba
         self.ip = ip
         self.website = website
+        self.tags = tags
 
-    def to_json_api(self) -> Dict:
+    def to_json_api(self) -> dict:
         payload = {
             "data": {
                 "type": "businessApplication",
@@ -144,13 +163,16 @@ class CreateBusinessApplicationRequest(UnitRequest):
                     "contact": self.contact,
                     "officer": self.officer,
                     "beneficialOwners": self.beneficial_owners,
-                    "entityType": self.entity_type
-                }
+                    "entityType": self.entity_type,
+                },
             }
         }
 
         if self.dba:
             payload["data"]["attributes"]["dba"] = self.dba
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
 
         if self.ip:
             payload["data"]["attributes"]["ip"] = self.ip

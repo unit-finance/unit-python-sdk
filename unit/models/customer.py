@@ -43,7 +43,7 @@ class BusinessCustomerDTO(object):
             Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
             attributes["stateOfIncorporation"], attributes["ein"], attributes["entityType"],
             BusinessContact.from_json_api(attributes["contact"]),
-            [AuthorizedUser.from_json_api(user) for user in attributes["authorizedUsers"]],
+            AuthorizedUser.from_json_api(attributes["authorizedUsers"]),
             attributes.get("dba"), attributes.get("tags"), relationships)
 
 CustomerDTO = Union[IndividualCustomerDTO, BusinessCustomerDTO]
