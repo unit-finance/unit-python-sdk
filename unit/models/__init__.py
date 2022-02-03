@@ -176,7 +176,7 @@ class AuthorizedUser(object):
         self.phone = phone
 
     @staticmethod
-    def from_json_api(l: List):
+    def from_json_api(l: List) -> List:
         authorized_users = []
         for data in l:
             authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("email"), data.get("phone")))
