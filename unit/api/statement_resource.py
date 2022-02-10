@@ -15,7 +15,7 @@ class StatementResource(BaseResource):
 
         response = super().get(f"{self.resource}/{params.statement_id}/{params.output_type}", parameters)
         if response.status_code == 200:
-            return UnitResponse[str](response.text, None)
+            return UnitResponse[bytes](response.content, None)
         else:
             return UnitError.from_json_api(response.json())
 
