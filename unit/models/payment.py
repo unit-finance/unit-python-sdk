@@ -55,8 +55,6 @@ class WirePaymentDTO(BasePayment):
         self.type = 'wirePayment'
         self.attributes["status"] = status
         self.attributes["counterparty"] = counterparty
-        self.attributes["addenda"] = addenda
-        self.attributes["settlementDate"] = settlement_date
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -226,3 +224,16 @@ class PatchBookPaymentRequest(object):
         json.dumps(self.to_json_api())
 
 PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
+
+
+class ListPaymentsParams(object):
+    def __init__(self,
+        offset: int = 0,
+        limit: int = 100,
+        types: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None
+    ):
+        self.offset = offset
+        self.limit = limit
+        self.types = types
+        self.statuses = statuses

@@ -33,6 +33,20 @@ class PaymentE2eTests(unittest.TestCase):
         for id in payments_ids:
             response = self.client.payments.get(id)
             self.assertTrue("Payment" in response.data.type)
+    
+    def test_list_and_get_payments_filter_by_type(self):
+        params = ListPaymentsParams(types=["AchPayment", "WirePayment"])
+        response = self.client.payments.list(params)
+
+        for t in response.data:
+            self.assertTrue(t.type == "achPayment" or t.type == "wirePayment")
+
+    def test_list_and_get_payments_filter_by_status(self):
+        params = ListPaymentsParams(statuses=["Pending", "Sent"])
+        response = self.client.payments.list(params)
+
+        for t in response.data:
+            self.assertTrue(t.attributes["status"] == "Pending" or t.attributes["status"] == "Sent")
 
     def test_create_book_payment(self):
         response = self.create_book_payment()

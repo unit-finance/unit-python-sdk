@@ -35,8 +35,22 @@ class PaymentResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[PaymentDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, request: ListPaymentsParams) -> Union[UnitResponse[List[PaymentDTO]], UnitError]:
+
+        args = {
+            "page[limit]": request.limit,
+            "page[offset]": request.offset,
+        }
+        
+        if request.types:
+           for idx, type_filter in enumerate(request.types):
+               args[f"filter[type][{idx}]"] = type_filter
+        
+        if request.statuses:
+           for idx, status_filter in enumerate(request.statuses):
+               args[f"filter[status][{idx}]"] = status_filter
+
+        response = super().get(self.resource, args)
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
