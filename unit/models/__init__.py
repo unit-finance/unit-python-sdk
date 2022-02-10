@@ -263,4 +263,3 @@ class DeviceFingerprint(object):
     @classmethod
     def from_json_api(cls, data: Dict):
         return cls(value=data["value"], provider=data["provider"])
-    
