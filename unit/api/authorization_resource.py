@@ -34,9 +34,16 @@ class AuthorizationResource(BaseResource):
         if params.until != "":
             parameters |= {"filter[until]": params.until}
 
+        if params.status:
+            parameters |= {"filter[status]": params.status}
+
+        if params.include_non_authorized:
+            parameters |= {"filter[includeNonAuthorized]": "true"}
+
         response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
+            a = DtoDecoder.decode(data)
             return UnitResponse[AuthorizationDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())

@@ -15,11 +15,18 @@ class AuthorizationsE2eTests(unittest.TestCase):
             self.assertTrue(response.data.type == "authorization")
 
     def test_list_with_parameters(self):
-        params = AuthorizationListParams(10, 0, "", "49423")
+        params = AuthorizationListParams(status="Authorized")
         authorizations = self.client.authorizations.list(params)
-        for authorization in authorizations.data:
-            response = self.client.authorizations.get(authorization.id)
-            self.assertTrue(response.data.type == "authorization")
+
+        for t in authorizations.data:
+            self.assertTrue(t.attributes["status"] == "Authorized")
+    
+    def test_list_with_non_authorized(self):
+        params = AuthorizationListParams(include_non_authorized=True)
+        authorizations = self.client.authorizations.list(params)
+
+        for t in authorizations.data:
+            self.assertTrue(t.attributes["status"] == "Authorized")
 
     def test_list_with_wrong_parameters(self):
         params = AuthorizationListParams(10, 0, "", "-1")
