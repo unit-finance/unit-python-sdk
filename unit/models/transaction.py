@@ -355,3 +355,19 @@ class PatchTransactionRequest(BaseTransactionDTO, UnitRequest):
             payload["data"]["attributes"]["tags"] = self.tags
 
         return payload
+
+
+class ListTransactionsParams(object):
+    def __init__(self,
+        offset: int = 0,
+        limit: int = 100,
+        account_id: Optional[str] = None,
+        customer_id: Optional[str] = None,
+        types: Optional[List[str]] = None
+    ):
+        self.offset = offset
+        self.limit = limit
+        self.account_id = account_id
+        self.customer_id = customer_id
+        self.types = types
+

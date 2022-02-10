@@ -1,7 +1,7 @@
 import os
 import unittest
 from unit import Unit
-from unit.models.transaction import PatchTransactionRequest
+from unit.models.transaction import ListTransactionsParams, PatchTransactionRequest
 
 
 class TransactionE2eTests(unittest.TestCase):
@@ -19,6 +19,14 @@ class TransactionE2eTests(unittest.TestCase):
         for id in transaction_ids:
             response = self.client.transactions.get(id)
             self.assertTrue("Transaction" in response.data.type)
+
+    def test_list_and_get_transactions_filter_by_type(self):
+
+        params = ListTransactionsParams(types=["ReceivedAch", "Fee"])
+        response = self.client.transactions.list(params)
+
+        for t in response.data:
+            self.assertTrue(t.type == "receivedAchTransaction" or t.type == "feeTransaction")
 
     def test_update_transaction(self):
         response = self.client.transactions.list()
