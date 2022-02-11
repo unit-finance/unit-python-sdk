@@ -226,7 +226,7 @@ class PatchBookPaymentRequest(object):
 PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
 
 
-class ListPaymentsParams(object):
+class PaymentListParams(object):
     def __init__(self,
         offset: int = 0,
         limit: int = 100,

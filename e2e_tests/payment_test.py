@@ -36,7 +36,7 @@ class PaymentE2eTests(unittest.TestCase):
     
     def test_list_and_get_payments_filter_by_type(self):
         payments_ids = []
-        params = ListPaymentsParams(types=["AchPayment", "WirePayment"])
+        params = PaymentListParams(types=["AchPayment", "WirePayment"])
         response = self.client.payments.list(params)
 
         for t in response.data:
@@ -49,7 +49,7 @@ class PaymentE2eTests(unittest.TestCase):
 
     def test_list_and_get_payments_filter_by_status(self):
         payments_ids = []
-        params = ListPaymentsParams(statuses=["Pending", "Sent"])
+        params = PaymentListParams(statuses=["Pending", "Sent"])
         response = self.client.payments.list(params)
 
         for t in response.data:

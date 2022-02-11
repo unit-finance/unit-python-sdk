@@ -35,7 +35,7 @@ class PaymentResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, request: ListPaymentsParams) -> Union[UnitResponse[List[PaymentDTO]], UnitError]:
+    def list(self, request: PaymentListParams) -> Union[UnitResponse[List[PaymentDTO]], UnitError]:
 
         parameters = {
             "page[limit]": request.limit,
