@@ -22,11 +22,17 @@ class TransactionE2eTests(unittest.TestCase):
 
     def test_list_and_get_transactions_filter_by_type(self):
 
+        transaction_ids = []
         params = ListTransactionsParams(types=["ReceivedAch", "Fee"])
         response = self.client.transactions.list(params)
 
         for t in response.data:
             self.assertTrue(t.type == "receivedAchTransaction" or t.type == "feeTransaction")
+            transaction_ids.append(t.id)
+
+        for id in transaction_ids:
+            response = self.client.transactions.get(id)
+            self.assertTrue(response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction")
 
     def test_update_transaction(self):
         response = self.client.transactions.list()
