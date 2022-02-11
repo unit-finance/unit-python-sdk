@@ -2,7 +2,7 @@ import os
 import unittest
 from datetime import timedelta
 from unit import Unit
-from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard
+from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, CardsListParams
 from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
 
@@ -72,6 +72,15 @@ class CardE2eTests(unittest.TestCase):
         response = self.client.cards.list()
         for card in response.data:
             self.assertTrue(card.type in self.card_types)
+            
+    def test_list_cards_with_account_and_deposit_account(self):
+        # TODO: Change this values for something valid in the sandbox
+        customer_id = "144006"
+        account_id = "169760"
+        params = CardsListParams(customer_id=customer_id, account_id=account_id)
+        response = self.client.cards.list(params)
+        for card in response.data:
+            self.assertTrue(card.relationships["customer"].id == customer_id and card.relationships["account"].id)
 
     def test_freeze_and_unfreeze_card(self):
         card_id = self.find_card_id({"status": "Active"})

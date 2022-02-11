@@ -446,3 +446,10 @@ class CardLimitsDTO(object):
         limits = CardLevelLimits.from_json_api(attributes.get("limits")) if attributes.get("limits") else None
         return CardLimitsDTO(limits, CardTotals.from_json_api(attributes.get("dailyTotals")),
                           CardTotals.from_json_api(attributes.get("monthlyTotals")))
+
+class CardsListParams(object):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: str = None, customer_id: str = None):
+        self.limit = limit
+        self.offset = offset
+        self.account_id = account_id
+        self.customer_id = customer_id
