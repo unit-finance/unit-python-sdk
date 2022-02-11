@@ -357,7 +357,7 @@ class PatchTransactionRequest(BaseTransactionDTO, UnitRequest):
         return payload
 
 
-class ListTransactionsParams(object):
+class TransactionListParams(object):
     def __init__(self,
         offset: int = 0,
         limit: int = 100,

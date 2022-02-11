@@ -2,7 +2,7 @@ from unit.api.base_resource import BaseResource
 from unit.models.transaction import *
 from unit.models.codecs import DtoDecoder
 from unit.models.transaction import *
-from unit.api.transaction_resource import ListTransactionsParams
+from unit.api.transaction_resource import TransactionListParams
 
 
 
@@ -20,7 +20,7 @@ class TransactionResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, request: ListTransactionsParams) -> Union[UnitResponse[List[TransactionDTO]], UnitError]:
+    def list(self, request: TransactionListParams) -> Union[UnitResponse[List[TransactionDTO]], UnitError]:
 
         parameters = {
             "page[limit]": request.limit,
