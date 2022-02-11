@@ -33,7 +33,8 @@ class AuthorizationsE2eTests(unittest.TestCase):
         authorizations = self.client.authorizations.list(params)
 
         for authorization in authorizations.data:
-            self.assertTrue(authorization.attributes["status"] == "Authorized")
+            response = self.client.authorizations.get(authorization.id)
+            self.assertTrue(response.data.attributes["status"] == "Authorized")
 
     def test_list_with_wrong_parameters(self):
         params = AuthorizationListParams(10, 0, "", "-1")
