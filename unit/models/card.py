@@ -447,7 +447,7 @@ class CardLimitsDTO(object):
         return CardLimitsDTO(limits, CardTotals.from_json_api(attributes.get("dailyTotals")),
                           CardTotals.from_json_api(attributes.get("monthlyTotals")))
 
-class CardsListParams(object):
+class CardListParams(object):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: str = None, customer_id: str = None):
         self.limit = limit
         self.offset = offset

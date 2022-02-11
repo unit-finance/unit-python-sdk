@@ -85,7 +85,7 @@ class CardResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, request: CardsListParams) -> Union[UnitResponse[List[Card]], UnitError]:
+    def list(self, request: CardListParams) -> Union[UnitResponse[List[Card]], UnitError]:
 
         parameters = {
             "page[limit]": request.limit, 
