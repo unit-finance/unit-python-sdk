@@ -22,18 +22,18 @@ class TransactionResource(BaseResource):
 
     def list(self, request: ListTransactionsParams) -> Union[UnitResponse[List[TransactionDTO]], UnitError]:
 
-        args = {
+        parameters = {
             "page[limit]": request.limit,
             "page[offset]": request.offset,
             "filter[accountId]": request.account_id,
-            "filter[customerId]": request.customer_id
+            "filter[customerId]": request.customer_id,
         }
 
         if request.types:
            for idx, type_filter in enumerate(request.types):
-               args[f"filter[type][{idx}]"] = type_filter        
+               parameters[f"filter[type][{idx}]"] = type_filter        
 
-        response = super().get(self.resource, args)
+        response = super().get(self.resource, parameters)
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")

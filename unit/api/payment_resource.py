@@ -37,20 +37,20 @@ class PaymentResource(BaseResource):
 
     def list(self, request: ListPaymentsParams) -> Union[UnitResponse[List[PaymentDTO]], UnitError]:
 
-        args = {
+        parameters = {
             "page[limit]": request.limit,
             "page[offset]": request.offset,
         }
         
         if request.types:
            for idx, type_filter in enumerate(request.types):
-               args[f"filter[type][{idx}]"] = type_filter
+               parameters[f"filter[type][{idx}]"] = type_filter
         
         if request.statuses:
            for idx, status_filter in enumerate(request.statuses):
-               args[f"filter[status][{idx}]"] = status_filter
+               parameters[f"filter[status][{idx}]"] = status_filter
 
-        response = super().get(self.resource, args)
+        response = super().get(self.resource, parameters)
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
