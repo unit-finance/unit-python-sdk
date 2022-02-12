@@ -6,8 +6,8 @@ from unit.utils import date_utils
 
 class AuthorizationDTO(object):
     def __init__(self, id: str, created_at: datetime, amount: int, card_last_4_digits: str, merchant_name: str,
-                 merchant_type: int, merchant_category: str, status: str, merchant_location: Optional[str], recurring: bool,
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 merchant_type: int, merchant_category: str, merchant_location: Optional[str], recurring: bool,
+                 status: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "authorization"
         self.attributes = {"createdAt": created_at, "amount": amount, "status": status, "cardLast4Digits": card_last_4_digits,
@@ -20,8 +20,8 @@ class AuthorizationDTO(object):
         return AuthorizationDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["amount"],
                                 attributes["cardLast4Digits"], attributes["merchant"]["name"],
                                 attributes["merchant"]["type"], attributes["merchant"]["category"],
-                                attributes["status"],
                                 attributes["merchant"].get("location"), attributes["recurring"],
+                                attributes["status"],
                                 attributes.get("tags"), relationships)
 
 
