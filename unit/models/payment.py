@@ -230,6 +230,8 @@ class PaymentListParams(object):
     def __init__(self,
         offset: int = 0,
         limit: int = 100,
+        customer_id: Optional[str] = None,
+        account_id: Optional[str] = None,
         types: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None
     ):
@@ -237,3 +239,5 @@ class PaymentListParams(object):
         self.limit = limit
         self.types = types
         self.statuses = statuses
+        self.customer_id = customer_id
+        self.account_id = account_id

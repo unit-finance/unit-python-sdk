@@ -40,6 +40,8 @@ class PaymentResource(BaseResource):
         parameters = {
             "page[limit]": request.limit,
             "page[offset]": request.offset,
+            "filter[accountId]": request.account_id,
+            "filter[customerId]": request.customer_id,
         }
         
         if request.types:
