@@ -24,3 +24,15 @@ class GetStatementParams(object):
         self.language = language
         self.customer_id = customer_id
 
+
+class StatementListParams(object):
+    def __init__(self,
+        offset: int = 0,
+        limit: int = 100,
+        account_id: Optional[str] = None,
+        customer_id: Optional[str] = None,
+    ):
+        self.offset = offset
+        self.limit = limit
+        self.account_id = account_id
+        self.customer_id = customer_id

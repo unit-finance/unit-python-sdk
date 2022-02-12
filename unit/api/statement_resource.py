@@ -28,13 +28,16 @@ class StatementResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def list(
-            self, offset: int = 0, limit: int = 100, account_id: str = None
+            self, request: StatementListParams
     ) -> Union[UnitResponse[List[StatementDTO]], UnitError]:
         params = {
-            "page[limit]": limit, "page[offset]": offset
+            "page[limit]": request.limit,
+            "page[offset]": request.offset,
+            "filter[accountId]": request.account_id,
+            "filter[customerId]": request.customer_id,
         }
-        if account_id:
-            params["filter[accountId]"] = account_id
+        
+
         response = super().get(self.resource, params)
         if response.status_code == 200:
             data = response.json().get("data")
