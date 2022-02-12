@@ -43,7 +43,6 @@ class AuthorizationResource(BaseResource):
         response = super().get(self.resource, parameters)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            a = DtoDecoder.decode(data)
             return UnitResponse[AuthorizationDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
