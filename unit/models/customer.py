@@ -51,12 +51,14 @@ CustomerDTO = Union[IndividualCustomerDTO, BusinessCustomerDTO]
 
 class PatchIndividualCustomerRequest(UnitRequest):
     def __init__(self, customer_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
-                 email: Optional[str] = None, dba: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
+                 email: Optional[str] = None, dba: Optional[str] = None,
+                 authorized_users: Optional[List[AuthorizedUser]] = None, tags: Optional[Dict[str, str]] = None):
         self.customer_id = customer_id
         self.address = address
         self.phone = phone
         self.email = email
         self.dba = dba
+        self.authorized_users = authorized_users
         self.tags = tags
 
     def to_json_api(self) -> Dict:
@@ -78,6 +80,9 @@ class PatchIndividualCustomerRequest(UnitRequest):
 
         if self.dba:
             payload["data"]["attributes"]["dba"] = self.dba
+
+        if self.authorized_users:
+            payload["data"]["attributes"]["authorizedUsers"] = self.authorized_users
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
