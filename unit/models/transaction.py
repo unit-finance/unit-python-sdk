@@ -394,7 +394,8 @@ class ListTransactionParams(UnitParams):
         if self.card_id:
             parameters["filter[cardId]"] = self.card_id
         if self.type:
-            parameters["filter[type][]"] = self.type
+            for idx, type_filter in enumerate(self.type):
+                parameters[f"filter[type][{idx}]"] = type_filter
         if self.exclude_fees:
             parameters["filter[excludeFees]"] = self.exclude_fees
         if self.sort:

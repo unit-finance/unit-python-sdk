@@ -11,15 +11,15 @@ class TransactionE2eTests(unittest.TestCase):
     def test_list_and_get_transactions(self):
         transaction_ids = []
         response = self.client.transactions.list(
-            ListTransactionParams(100,0,type=["Book", "ReceivedAch"]))
+            ListTransactionParams(100, 0, type=["Fee", "ReceivedAch"]))
 
         for t in response.data:
-            self.assertTrue("Transaction" in t.type)
+            self.assertTrue(t.type == "receivedAchTransaction" or t.type == "feeTransaction")
             transaction_ids.append(t.id)
 
         for id in transaction_ids:
             response = self.client.transactions.get(id)
-            self.assertTrue("Transaction" in response.data.type)
+            self.assertTrue(response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction")
 
     def test_update_transaction(self):
         response = self.client.transactions.list()
