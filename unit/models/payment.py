@@ -2,16 +2,18 @@ from unit.utils import date_utils
 from unit.models import *
 
 AchStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
+PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
+PaymentDirections = Literal["Debit", "Credit"]
+
 
 class BasePayment(object):
-    def __init__(self, id: str, created_at: datetime, direction: str, description: str, amount: int,
+    def __init__(self, id: str, created_at: datetime, direction: PaymentDirections, description: str, amount: int,
                  reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.attributes = {"createdAt": created_at, "direction": direction, "description": description,
                            "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
-
 
 class AchPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: Counterparty, direction: str,
@@ -55,8 +57,6 @@ class WirePaymentDTO(BasePayment):
         self.type = 'wirePayment'
         self.attributes["status"] = status
         self.attributes["counterparty"] = counterparty
-        self.attributes["addenda"] = addenda
-        self.attributes["settlementDate"] = settlement_date
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -160,7 +160,6 @@ class CreateVerifiedPaymentRequest(CreatePaymentBaseRequest):
         if verify_counterparty_balance:
             payload["data"]["attributes"]["verifyCounterpartyBalance"] = self.verify_counterparty_balance
 
-
         return payload
 
 class CreateBookPaymentRequest(CreatePaymentBaseRequest):
@@ -228,9 +227,10 @@ class PatchBookPaymentRequest(object):
 PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
 
 class ListPaymentParams(UnitParams):
-    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None ,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None, status: Optional[str] = None,
-                 type: Optional[List[str]] = None, direction: Optional[str] = None, since: Optional[str] = None,
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, tags: Optional[object] = None,
+                 status: Optional[List[AchStatus]] = None, type: Optional[List[PaymentTypes]] = None,
+                 direction: Optional[List[PaymentDirections]] = None, since: Optional[str] = None,
                  until: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
                  include: Optional[str] = None):
         self.limit = limit
@@ -255,11 +255,14 @@ class ListPaymentParams(UnitParams):
         if self.tags:
             parameters["filter[tags]"] = self.tags
         if self.status:
-            parameters["filter[status]"] = self.status
+            for idx, status_filter in enumerate(self.status):
+                parameters[f"filter[status][{idx}]"] = status_filter
         if self.type:
-            parameters["filter[type][]"] = self.type
+            for idx, type_filter in enumerate(self.type):
+                parameters[f"filter[type][{idx}]"] = type_filter
         if self.direction:
-            parameters["filter[direction]"] = self.direction
+            for idx, direction_filter in enumerate(self.direction):
+                parameters[f"filter[direction][{idx}]"] = direction_filter
         if self.since:
             parameters["filter[since]"] = self.since
         if self.until:
