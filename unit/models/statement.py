@@ -27,7 +27,7 @@ class GetStatementParams(object):
 
 class ListStatementParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, customer_id: Optional[str] = None,
-                 account_id: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None):
+                 account_id: Optional[str] = None, sort: Optional[Literal["period", "-period"]] = None):
         self.limit = limit
         self.offset = offset
         self.customer_id = customer_id
