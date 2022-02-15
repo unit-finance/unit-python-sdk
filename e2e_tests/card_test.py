@@ -68,6 +68,11 @@ class CardE2eTests(unittest.TestCase):
          response = self.client.cards.get(card_id)
          self.assertTrue(response.data.type in self.card_types)
 
+    def test_get_debit_card_include_customer(self):
+         card_id = self.create_individual_debit_card().data.id
+         response = self.client.cards.get(card_id, "customer")
+         self.assertTrue(response.data.type in self.card_types and response.included is not None)
+
     def test_list_cards(self):
         response = self.client.cards.list()
         for card in response.data:

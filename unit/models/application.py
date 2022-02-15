@@ -220,7 +220,7 @@ class ListApplicationParams(UnitParams):
         self.query = query
         self.sort = sort
         self.tags = tags
-        
+
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
         if self.email:
@@ -232,4 +232,3 @@ class ListApplicationParams(UnitParams):
         if self.sort:
             parameters["sort"] = self.sort
         return parameters
-    

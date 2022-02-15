@@ -77,7 +77,7 @@ class CardResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def get(self, card_id: str, include: Optional[str] = "") -> Union[UnitResponse[Card], UnitError]:
-        response = super().get(f"{self.resource}/{card_id}")
+        response = super().get(f"{self.resource}/{card_id}", {"include": include})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
@@ -85,8 +85,9 @@ class CardResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[Card]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, params: ListCardParams = None) -> Union[UnitResponse[List[Card]], UnitError]:
+        params = params or ListCardParams()
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")

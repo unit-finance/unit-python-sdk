@@ -121,3 +121,20 @@ class CounterpartyBalanceDTO(object):
     def from_json_api(_id, _type, attributes, relationships):
         return CounterpartyBalanceDTO(_id, attributes["balance"], attributes["available"], relationships)
 
+
+class ListCounterpartyParams(UnitParams):
+    def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
+                 tags: Optional[object] = None):
+        self.offset = offset
+        self.limit = limit
+        self.customer_id = customer_id
+        self.tags = tags
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        return parameters
+
