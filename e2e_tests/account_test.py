@@ -8,6 +8,7 @@ from unit.models.application import CreateIndividualApplicationRequest
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
+
 def create_individual_customer():
     request = CreateIndividualApplicationRequest(
         FullName("Jhon", "Doe"), date.today() - timedelta(days=20 * 365),
@@ -22,6 +23,7 @@ def create_individual_customer():
 
     return ""
 
+
 def create_deposit_account():
     customer_id = create_individual_customer()
     request = CreateDepositAccountRequest("checking",
@@ -29,9 +31,11 @@ def create_deposit_account():
                                           {"purpose": "checking"})
     return client.accounts.create(request)
 
+
 def test_create_deposit_account():
     response = create_deposit_account()
     assert response.data.type == "depositAccount"
+
 
 def test_create_joint_deposit_account():
     customer_id1 = create_individual_customer()
@@ -44,20 +48,24 @@ def test_create_joint_deposit_account():
     response = client.accounts.create(request)
     assert response.data.type == "depositAccount"
 
+
 def test_get_account():
     account_id = create_deposit_account().data.id
-    response = client.accounts.get(account_id)
-    assert response.data.type == "depositAccount"
+    response = client.accounts.get(account_id, "customer")
+    assert response.data.type == "depositAccount" and isinstance(response.included, list)
+
 
 def test_list_accounts():
     response = client.accounts.list()
     for acc in response.data:
         assert acc.type == "depositAccount"
 
+
 def test_limits_account():
     account_id = create_deposit_account().data.id
     response = client.accounts.limits(account_id)
     assert response.data.type == "limits"
+
 
 def test_close_and_reopen_account():
     account_id = create_deposit_account().data.id
@@ -71,6 +79,7 @@ def test_close_and_reopen_account():
     response = client.accounts.reopen_account(account_id)
     assert response.data.type == "depositAccount"
 
+
 def test_update_account():
     account_id = create_deposit_account().data.id
     request = PatchDepositAccountRequest(account_id, tags={
@@ -78,3 +87,4 @@ def test_update_account():
         "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
     response = client.accounts.update(request)
     assert response.data.type == "depositAccount"
+

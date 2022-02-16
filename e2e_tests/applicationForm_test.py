@@ -17,11 +17,12 @@ def test_create_application_form():
 
 def test_get_application_form():
     application_form_id = create_create_application_form().data.id
-    response = client.applicationForms.get(application_form_id)
+    response = client.applicationForms.get(application_form_id, "application")
     assert response.data.type == "applicationForm"
 
 def test_list_application_form():
     response = client.applicationForms.list()
     for app in response.data:
         assert app.type == "applicationForm"
+
 

@@ -34,3 +34,8 @@ def test_decline_request():
     response = client.authorization_requests.decline(request)
     assert response.data.type == "purchaseAuthorizationRequest"
 
+test_list_and_get_authorization_requests()
+test_list_with_wrong_parameters()
+test_list_with_parameters()
+test_approve_request()
+test_decline_request()

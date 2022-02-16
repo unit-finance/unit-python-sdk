@@ -35,6 +35,38 @@ def test_create_book_payment():
     response = create_book_payment()
     assert response.data.type == "bookPayment"
 
+def test_list_and_get_payments_filter_by_type():
+    payments_ids = []
+    params = ListPaymentParams(type=["AchPayment", "WirePayment"])
+    response = client.payments.list(params)
+
+    for t in response.data:
+        assert t.type == "achPayment" or t.type == "wirePayment"
+        payments_ids.append(t.id)
+
+    for id in payments_ids:
+        response = client.payments.get(id)
+        assert response.data.type == "achPayment" or response.data.type == "wirePayment"
+
+
+def test_list_and_get_payments_filter_by_status():
+    payments_ids = []
+    params = ListPaymentParams(status=["Pending", "Sent"])
+    response = client.payments.list(params)
+
+    for t in response.data:
+        assert t.attributes["status"] == "Pending" or t.attributes["status"] == "Sent"
+        payments_ids.append(t.id)
+
+    for id in payments_ids:
+        response = client.payments.get(id)
+        assert response.data.attributes["status"] == "Pending" or response.data.attributes["status"] == "Sent"
+
+
+def test_create_book_payment():
+    response = create_book_payment()
+    assert response.data.type == "bookPayment"
+
 def test_update_book_payment():
     payment_id = create_book_payment().data.id
     tags = {"purpose": "test"}

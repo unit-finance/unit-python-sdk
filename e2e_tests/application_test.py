@@ -1,4 +1,5 @@
 import os
+import unittest
 from datetime import timedelta
 from unit import Unit
 from unit.models.application import *
@@ -11,7 +12,8 @@ def create_individual_application():
         FullName("Jhon", "Doe"), date.today() - timedelta(days=20*365),
         Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"), "jone.doe1@unit-finance.com",
         Phone("1", "2025550108"),
-        ssn="000000003"
+        ssn="000000003",
+        device_fingerprints=[device_fingerprint]
     )
 
     return client.applications.create(request)

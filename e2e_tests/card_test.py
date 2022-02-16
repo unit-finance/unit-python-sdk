@@ -11,6 +11,7 @@ client = Unit("https://api.s.unit.sh", token)
 
 card_types = ["individualDebitCard", "businessDebitCard", "individualVirtualDebitCard", "businessVirtualDebitCard"]
 
+
 def find_card_id(criteria: Dict[str, str]):
     def filter_func(card):
         for key, value in criteria.items():
@@ -24,6 +25,7 @@ def find_card_id(criteria: Dict[str, str]):
     response = client.cards.list()
     filtered = list(filter(filter_func, response.data))
     return filtered[0].id if len(filtered) > 0 else ""
+
 
 def create_individual_customer():
     request = CreateIndividualApplicationRequest(
@@ -39,12 +41,14 @@ def create_individual_customer():
 
     return ""
 
+
 def create_deposit_account():
     customer_id = create_individual_customer()
     request = CreateDepositAccountRequest("checking",
                                           {"customer": Relationship("customer", customer_id)},
                                           {"purpose": "checking"})
     return client.accounts.create(request)
+
 
 def create_individual_debit_card():
     account_id = create_deposit_account().data.id
@@ -58,19 +62,29 @@ def create_individual_debit_card():
     })
     return client.cards.create(request)
 
+
 def test_create_individual_debit_card():
     response = create_individual_debit_card()
     assert response.data.type == "individualDebitCard"
+
 
 def test_get_debit_card():
      card_id = create_individual_debit_card().data.id
      response = client.cards.get(card_id)
      assert response.data.type in card_types
 
+
 def test_list_cards():
     response = client.cards.list()
     for card in response.data:
         assert card.type in card_types
+
+
+def test_get_debit_card_include_customer():
+     card_id = create_individual_debit_card().data.id
+     response = client.cards.get(card_id, "customer")
+     assert response.data.type in card_types and response.included is not None
+
 
 def test_freeze_and_unfreeze_card():
     card_id = find_card_id({"status": "Active"})
@@ -79,10 +93,12 @@ def test_freeze_and_unfreeze_card():
     response = client.cards.unfreeze(card_id)
     assert response.data.attributes["status"] != "Frozen"
 
+
 def test_close_card():
     card_id = find_card_id({"status": "Active"})
     response = client.cards.close(card_id)
     assert response.data.attributes["status"] == "ClosedByCustomer"
+
 
 def test_replace_card():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
@@ -90,20 +106,24 @@ def test_replace_card():
     response = client.cards.replace(card_id, address)
     assert response.data.type == "individualDebitCard"
 
+
 def test_close_card():
     card_id = find_card_id({"status": "Active"})
     response = client.cards.close(card_id)
     assert response.data.type in card_types
+
 
 def test_report_stolen_card():
     card_id = find_card_id({"status": "Active"})
     response = client.cards.report_stolen(card_id)
     assert response.data.type in card_types
 
+
 def test_report_lost_card():
     card_id = find_card_id({"status": "Active"})
     response = client.cards.report_lost(card_id)
     assert response.data.type in card_types
+
 
 def test_update_individual_card():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
@@ -112,6 +132,7 @@ def test_update_individual_card():
     response = client.cards.update(request)
     assert response.data.type == "individualDebitCard"
 
+
 def test_get_pin_status():
     response = client.cards.list()
     for card in response.data:
@@ -119,7 +140,9 @@ def test_get_pin_status():
             pin_status = client.cards.get_pin_status(card.id).data
             assert pin_status.type == "pinStatus"
 
+
 def test_card_limits():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
     response = client.cards.limits(card_id)
     assert response.data.type == "limits"
+

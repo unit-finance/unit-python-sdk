@@ -8,22 +8,9 @@ class AccountEndOfDayResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "account-end-of-day"
 
-    def list(self, params: AccountEndOfDayListParams = AccountEndOfDayListParams()) -> Union[UnitResponse[List[AccountEndOfDayDTO]], UnitError]:
-        parameters = {"page[limit]": params.limit, "page[offset]": params.offset}
-
-        if params.account_id != "":
-            parameters |= {"filter[accountId]": params.account_id}
-
-        if params.customer_id != "":
-            parameters |= {"filter[customerId]": params.customer_id}
-
-        if params.since != "":
-            parameters |= {"filter[since]": params.since}
-
-        if params.until != "":
-            parameters |= {"filter[until]": params.until}
-
-        response = super().get(self.resource, parameters)
+    def list(self, params: ListAccountEndOfDayParams = None) -> Union[UnitResponse[List[AccountEndOfDayDTO]], UnitError]:
+        params = params or ListAccountEndOfDayParams()
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountEndOfDayDTO](DtoDecoder.decode(data), None)

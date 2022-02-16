@@ -33,13 +33,8 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def get(self, account_id: str, include: Optional[str] = None) -> Union[UnitResponse[AccountDTO], UnitError]:
-        params = {}
-
-        if include:
-            params["include"] = include
-
-        response = super().get(f"{self.resource}/{account_id}", params)
+    def get(self, account_id: str, include: Optional[str] = "") -> Union[UnitResponse[AccountDTO], UnitError]:
+        response = super().get(f"{self.resource}/{account_id}", {"include": include})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
@@ -47,7 +42,8 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: ListAccountParams = ListAccountParams()) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
+    def list(self, params: ListAccountParams = None) -> Union[UnitResponse[List[AccountDTO]], UnitError]:
+        params = params or ListAccountParams()
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")

@@ -24,3 +24,23 @@ class GetStatementParams(object):
         self.language = language
         self.customer_id = customer_id
 
+
+class ListStatementParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, customer_id: Optional[str] = None,
+                 account_id: Optional[str] = None, sort: Optional[Literal["period", "-period"]] = None):
+        self.limit = limit
+        self.offset = offset
+        self.customer_id = customer_id
+        self.account_id = account_id
+        self.sort = sort
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.sort:
+            parameters["sort"] = self.sort
+        return parameters
+

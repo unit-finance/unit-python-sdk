@@ -7,6 +7,9 @@ class AtmLocationResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "atm-locations"
 
+    """
+    UnitEncoder must be imported here and not in the model class to no cause circular importing.
+    """
     def get(self, request: GetAtmLocationParams) -> Union[UnitResponse[List[AtmLocationDTO]], UnitError]:
         params = {}
 
