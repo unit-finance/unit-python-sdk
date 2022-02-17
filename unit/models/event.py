@@ -304,6 +304,18 @@ class PaymentReturnedEvent(BaseEvent):
         return PaymentReturnedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["previousStatus"],
                                     attributes.get("tags"), relationships)
 
+class PaymentRejectedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'payment.rejected'
+        self.attributes["previousStatus"] = previous_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentReturnedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["previousStatus"],
+                                    attributes.get("tags"), relationships)
+
 class StatementsCreatedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, period: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -348,5 +360,6 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
                  CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
                  CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
-                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent]
+                 PaymentReturnedEvent, PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent,
+                 AccountReopenedEvent]
 
