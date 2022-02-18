@@ -466,7 +466,7 @@ class ListCardParams(UnitParams):
             parameters["filter[accountId]"] = self.account_id
         if self.tags:
             parameters["filter[tags]"] = self.tags
-        if self.until:
+        if self.include:
             parameters["include"] = self.include
         return parameters
 
