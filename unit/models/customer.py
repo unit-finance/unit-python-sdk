@@ -5,12 +5,13 @@ from unit.models import *
 class IndividualCustomerDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, date_of_birth: date, address: Address,
                  phone: Phone, email: str, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 authorized_users: [AuthorizedUser], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = 'individualCustomer'
         self.attributes = {"createdAt": created_at, "fullName": full_name, "dateOfBirth": date_of_birth,
                            "address": address, "phone": phone, "email": email, "ssn": ssn, "passport": passport,
-                           "nationality": nationality, "tags": tags}
+                           "nationality": nationality, "authorizedUsers": authorized_users, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -20,7 +21,7 @@ class IndividualCustomerDTO(object):
             FullName.from_json_api(attributes["fullName"]), date_utils.to_date(attributes["dateOfBirth"]),
             Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
             attributes["email"], attributes.get("ssn"), attributes.get("passport"), attributes.get("nationality"),
-            attributes.get("tags"), relationships
+            AuthorizedUser.from_json_api(attributes["authorizedUsers"]), attributes.get("tags"), relationships
         )
 
 

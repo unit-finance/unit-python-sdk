@@ -86,6 +86,9 @@ class FullName(object):
         self.first = first
         self.last = last
 
+    def __str__(self):
+        return f"{self.first} {self.last}"
+
     @staticmethod
     def from_json_api(data: Dict):
         return FullName(data.get("first"), data.get("last"))
