@@ -2,10 +2,10 @@ import json
 from typing import Literal
 from unit.models import *
 
-AchReturnReason = Literal["Unauthorized"]
+AchReturnReason = Literal["InsufficientFunds", "Unauthorized"]
 
 
-class ReturnReceivedAchTransactionRequest(object):
+class ReturnReceivedAchTransactionRequest(UnitRequest):
     def __init__(self, transaction_id: str, reason: AchReturnReason, relationships: [Dict[str, Relationship]]):
         self.transaction_id = transaction_id
         self.reason = reason
