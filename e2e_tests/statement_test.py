@@ -26,5 +26,3 @@ def test_list_and_get_statements():
         params = GetStatementParams(s.id, "pdf")
         pdf_statement = client.statements.get(params).data
         assert "PDF" in pdf_statement
-
-test_list_and_get_statements()
