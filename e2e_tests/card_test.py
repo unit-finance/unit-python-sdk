@@ -16,7 +16,7 @@ def find_card_id(criteria: Dict[str, str]):
     def filter_func(card):
         for key, value in criteria.items():
             if key not in card.attributes:
-                if getattr(card,key) != value:
+                if getattr(card, key) != value:
                     return False
             elif card.attributes[key] != value:
                 return False
@@ -69,9 +69,9 @@ def test_create_individual_debit_card():
 
 
 def test_get_debit_card():
-     card_id = create_individual_debit_card().data.id
-     response = client.cards.get(card_id)
-     assert response.data.type in card_types
+    card_id = create_individual_debit_card().data.id
+    response = client.cards.get(card_id)
+    assert response.data.type in card_types
 
 
 def test_list_cards():
@@ -81,9 +81,9 @@ def test_list_cards():
 
 
 def test_get_debit_card_include_customer():
-     card_id = create_individual_debit_card().data.id
-     response = client.cards.get(card_id, "customer")
-     assert response.data.type in card_types and response.included is not None
+    card_id = create_individual_debit_card().data.id
+    response = client.cards.get(card_id, "customer")
+    assert response.data.type in card_types and response.included is not None
 
 
 def test_freeze_and_unfreeze_card():
@@ -145,14 +145,3 @@ def test_card_limits():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
     response = client.cards.limits(card_id)
     assert response.data.type == "limits"
-
-test_card_limits()
-test_get_pin_status()
-test_update_individual_card()
-test_report_lost_card()
-test_close_card()
-test_create_individual_debit_card()
-test_report_stolen_card()
-test_freeze_and_unfreeze_card()
-test_get_debit_card_include_customer()
-test_replace_card()
