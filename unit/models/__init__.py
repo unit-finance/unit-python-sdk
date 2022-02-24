@@ -37,6 +37,13 @@ class UnitParams(object):
     def to_dict(self) -> Dict:
         pass
 
+class RawUnitObject(object):
+    def __init__(self, _id, _type, attributes, relationships):
+        self.id = _id
+        self.type = _type
+        self.attributes = attributes
+        self.relationships = relationships
+
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
                  source: Optional[Dict] = None):

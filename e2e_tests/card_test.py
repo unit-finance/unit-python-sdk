@@ -146,3 +146,13 @@ def test_card_limits():
     response = client.cards.limits(card_id)
     assert response.data.type == "limits"
 
+test_card_limits()
+test_get_pin_status()
+test_update_individual_card()
+test_report_lost_card()
+test_close_card()
+test_create_individual_debit_card()
+test_report_stolen_card()
+test_freeze_and_unfreeze_card()
+test_get_debit_card_include_customer()
+test_replace_card()
