@@ -229,7 +229,7 @@ class WireTransactionDTO(BaseTransactionDTO):
         return WireTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
                                   attributes["amount"], attributes["balance"], attributes["summary"],
                                   Counterparty.from_json_api(attributes["counterparty"]), attributes["description"],
-                                  attributes["senderReference"], attributes["referenceForBeneficiary"],
+                                  attributes.get("senderReference"), attributes.get("referenceForBeneficiary"),
                                   attributes.get("tags"), relationships)
 
 
