@@ -1,8 +1,9 @@
 import os
 import unittest
+import requests
 from datetime import timedelta
 from unit import Unit
-from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard
+from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams
 from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
 
@@ -11,6 +12,11 @@ client = Unit("https://api.s.unit.sh", token)
 
 card_types = ["individualDebitCard", "businessDebitCard", "individualVirtualDebitCard", "businessVirtualDebitCard"]
 
+headers = {
+            "content-type": "application/vnd.api+json",
+            "authorization": f"Bearer {token}",
+            "user-agent": "unit-python-sdk"
+        }
 
 def find_card_id(criteria: Dict[str, str]):
     def filter_func(card):
@@ -22,9 +28,14 @@ def find_card_id(criteria: Dict[str, str]):
                 return False
         return True
 
-    response = client.cards.list()
+    response = client.cards.list(ListCardParams(0,1000))
     filtered = list(filter(filter_func, response.data))
-    return filtered[0].id if len(filtered) > 0 else ""
+
+    if len(filtered) > 0:
+        return filtered[0].id
+    else:
+        response = create_individual_debit_card()
+        return response.data.id
 
 
 def create_individual_customer():
@@ -60,11 +71,18 @@ def create_individual_debit_card():
             }
         }
     })
-    return client.cards.create(request)
+    response = client.cards.create(request)
+    res = requests.post(f"https://api.s.unit.sh/sandbox/cards/{response.data.id}/activate/", headers=headers)
+
+    if res.status_code != 200:
+        print("Failed to activate card")
+
+    return response
 
 
 def test_create_individual_debit_card():
     response = create_individual_debit_card()
+    print(response.data.attributes["status"])
     assert response.data.type == "individualDebitCard"
 
 
@@ -75,9 +93,11 @@ def test_get_debit_card():
 
 
 def test_list_cards():
-    response = client.cards.list()
+    response = client.cards.list(ListCardParams(0, 1000))
     for card in response.data:
         assert card.type in card_types
+        if card.attributes["status"] == "Inactive":
+            res = requests.post(f"https://api.s.unit.sh/sandbox/cards/{card.id}/activate/", headers=headers)
 
 
 def test_get_debit_card_include_customer():
@@ -145,3 +165,4 @@ def test_card_limits():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
     response = client.cards.limits(card_id)
     assert response.data.type == "limits"
+
