@@ -7,7 +7,7 @@ token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
 def get_customer_by_type(type: str):
-    response = client.customers.list()
+    response = client.customers.list(ListCustomerParams(0,1000))
     for c in response.data:
         if c.type == type:
             return c
