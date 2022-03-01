@@ -48,11 +48,12 @@ class AccountE2eTests(unittest.TestCase):
 
     def test_get_account(self):
         account_id = self.create_deposit_account().data.id
-        response = self.client.accounts.get(account_id)
-        self.assertTrue(response.data.type == "depositAccount")
+        response = self.client.accounts.get(account_id, "customer")
+        self.assertTrue(response.data.type == "depositAccount" and isinstance(response.included, list))
 
     def test_list_accounts(self):
-        response = self.client.accounts.list()
+        params = ListAccountParams(0,100, include="customer")
+        response = self.client.accounts.list(params)
         for acc in response.data:
             self.assertTrue(acc.type == "depositAccount")
 

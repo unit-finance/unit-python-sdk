@@ -1,7 +1,7 @@
 import os
 import unittest
 from unit import Unit
-from unit.models.applicationForm import CreateApplicationFormRequest
+from unit.models.applicationForm import CreateApplicationFormRequest, ListApplicationFormParams
 
 
 class ApplicationFormE2eTests(unittest.TestCase):
@@ -20,11 +20,12 @@ class ApplicationFormE2eTests(unittest.TestCase):
 
     def test_get_application_form(self):
         application_form_id = self.create_create_application_form().data.id
-        response = self.client.applicationForms.get(application_form_id)
+        response = self.client.applicationForms.get(application_form_id, "application")
         self.assertTrue(response.data.type == "applicationForm")
 
     def test_list_application_form(self):
-        response = self.client.applicationForms.list()
+        params = ListApplicationFormParams(0, 69, sort="createdAt")
+        response = self.client.applicationForms.list(params)
         for app in response.data:
             self.assertTrue(app.type == "applicationForm")
 
