@@ -57,7 +57,6 @@ class ReturnedAchTransactionDTO(BaseTransactionDTO):
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'returnedAchTransaction'
-        self.attributes["addenda"] = addenda
         self.attributes["companyName"] = company_name
         self.attributes["counterpartyRoutingNumber"] = counterparty_routing_number
         self.attributes["reason"] = reason
@@ -113,7 +112,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
 class BookTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, description: str, addenda: Optional[str], counterparty: Counterparty,
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]] = {}, relationships: Optional[Dict[str, Relationship]] = {}):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.description = description
         self.type = 'bookTransaction'
@@ -122,9 +121,12 @@ class BookTransactionDTO(BaseTransactionDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return BookTransactionDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes["summary"],
-            Counterparty.from_json_api(attributes["counterparty"]), attributes.get("tags"), relationships)
+            id=_id, created_at=date_utils.to_datetime(attributes["createdAt"]), direction=attributes["direction"],
+            amount=attributes["amount"], balance=attributes["balance"], summary=attributes["summary"],
+            description=attributes["summary"], addenda=None,
+            counterparty=Counterparty.from_json_api(attributes["counterparty"]),
+            tags=attributes.get("tags"), relationships=relationships
+        )
 
 
 class PurchaseTransactionDTO(BaseTransactionDTO):
