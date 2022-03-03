@@ -113,8 +113,8 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
 
 class BookTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, counterparty: Counterparty, tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 summary: str, counterparty: Counterparty, tags: Optional[Dict[str, str]] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'bookTransaction'
         self.attributes["counterparty"] = counterparty
@@ -122,9 +122,11 @@ class BookTransactionDTO(BaseTransactionDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return BookTransactionDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes["summary"],
-            Counterparty.from_json_api(attributes["counterparty"]), attributes.get("tags"), relationships)
+            id=_id, created_at=date_utils.to_datetime(attributes["createdAt"]), direction=attributes["direction"],
+            amount=attributes["amount"], balance=attributes["balance"], summary=attributes["summary"],
+            counterparty=Counterparty.from_json_api(attributes["counterparty"]),
+            tags=attributes.get("tags"), relationships=relationships
+        )
 
 
 class PurchaseTransactionDTO(BaseTransactionDTO):
