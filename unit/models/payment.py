@@ -54,7 +54,7 @@ class WirePaymentDTO(BasePayment):
                  description: str, amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
-        self.type = 'wirePayment'
+        self.type = "wirePayment"
         self.attributes["status"] = status
         self.attributes["counterparty"] = counterparty
 
@@ -66,6 +66,30 @@ class WirePaymentDTO(BasePayment):
                               attributes.get("tags"), relationships)
 
 PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
+
+AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned"]
+
+class AchReceivedPaymentDTO(object):
+    def __init__(self, id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: str,
+                 completion_date: datetime, return_reason: Optional[str], description: str, amount: int,
+                 addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
+                 sec_code: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        self.type = "achReceivedPayment"
+        self.attributes = {"createdAt": created_at, "status": status, "wasAdvanced": was_advanced,
+                           "completionDate": completion_date, "returnReason": return_reason, "description": description,
+                           "amount": amount, "addenda": addenda, "companyName": company_name,
+                           "counterpartyRoutingNumber": counterparty_routing_number, "traceNumber": trace_number,
+                           "secCode": sec_code, "tags": tags}
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AchReceivedPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                     attributes.get("wasAdvanced"), attributes.get("completionDate"),
+                                     attributes.get("returnReason"), attributes.get("description"),
+                                     attributes.get("amount"), attributes.get("addenda"), attributes.get("companyName"),
+                                     attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
+                                     attributes.get("secCode"), attributes.get("tags"), relationships)
 
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
@@ -273,3 +297,37 @@ class ListPaymentParams(UnitParams):
             parameters["include"] = self.include
         return parameters
 
+class ListReceivedPaymentParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, tags: Optional[object] = None,
+                 status: Optional[List[AchStatus]] = None, direction: Optional[List[PaymentDirections]] = None,
+                 include_completed: Optional[bool] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
+                 include: Optional[str] = None):
+        self.limit = limit
+        self.offset = offset
+        self.account_id = account_id
+        self.customer_id = customer_id
+        self.tags = tags
+        self.status = status
+        self.include_completed = include_completed
+        self.sort = sort
+        self.include = include
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.include_completed:
+            parameters["filter[includeCompleted]"] = self.include_completed
+        if self.status:
+            for idx, status_filter in enumerate(self.status):
+                parameters[f"filter[status][{idx}]"] = status_filter
+        if self.sort:
+            parameters["sort"] = self.sort
+        if self.include:
+            parameters["include"] = self.include
+        return parameters
