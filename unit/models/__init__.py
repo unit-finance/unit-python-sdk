@@ -98,7 +98,7 @@ class Address(object):
     @staticmethod
     def from_json_api(data: Dict):
         return Address(data.get("street"), data.get("city"), data.get("state"),
-                data.get("postal_code"), data.get("country"), data.get("street2", None))
+                data.get("postalCode"), data.get("country"), data.get("street2", None))
 
 
 class Phone(object):
