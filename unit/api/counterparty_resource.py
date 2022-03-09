@@ -41,10 +41,19 @@ class CounterpartyResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[CounterpartyDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, params: ListCounterpartyParams = None) -> Union[UnitResponse[List[CounterpartyDTO]], UnitError]:
+        params = params or ListCounterpartyParams()
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[CounterpartyDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def get_balance(self, counterparty_id: str) -> Union[UnitResponse[CounterpartyBalanceDTO], UnitError]:
+        response = super().get(f"{self.resource}/{counterparty_id}/balance")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[CounterpartyBalanceDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())

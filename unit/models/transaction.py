@@ -113,7 +113,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
 class BookTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, description: str, addenda: Optional[str], counterparty: Counterparty,
-                 relationships: Optional[Dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.description = description
         self.type = 'bookTransaction'
@@ -124,7 +124,7 @@ class BookTransactionDTO(BaseTransactionDTO):
         return BookTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
             attributes["amount"], attributes["balance"], attributes["summary"],
-            Counterparty.from_json_api(attributes["counterparty"]), relationships)
+            Counterparty.from_json_api(attributes["counterparty"]), attributes.get("tags"), relationships)
 
 
 class PurchaseTransactionDTO(BaseTransactionDTO):
@@ -214,23 +214,29 @@ class CardReversalTransactionDTO(BaseTransactionDTO):
 
 class WireTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, counterparty: Counterparty, description: str, sender_reference: str,
-                 reference_for_beneficiary: str, tags: Optional[Dict[str, str]],
+                 summary: str, counterparty: Counterparty, description: str, 
+                 originator_to_beneficiary_information: str, sender_reference: str,
+                 reference_for_beneficiary: str, beneficiary_information: str,
+                 beneficiary_advice_information: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'wireTransaction'
         self.attributes["description"] = description
         self.attributes["counterparty"] = counterparty
+        self.attributes["originatorToBeneficiaryInformation"] = originator_to_beneficiary_information
         self.attributes["senderReference"] = sender_reference
         self.attributes["referenceForBeneficiary"] = reference_for_beneficiary
+        self.attributes["beneficiaryInformation"] = beneficiary_information
+        self.attributes["beneficiaryAdviceInformation"] = beneficiary_advice_information
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return WireTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-                                  attributes["amount"], attributes["balance"], attributes["summary"],
-                                  Counterparty.from_json_api(attributes["counterparty"]), attributes["description"],
-                                  attributes["senderReference"], attributes["referenceForBeneficiary"],
-                                  attributes.get("tags"), relationships)
+                                attributes["amount"], attributes["balance"], attributes["summary"],
+                                Counterparty.from_json_api(attributes["counterparty"]), attributes["description"],
+                                attributes.get("originatorToBeneficiaryInformation"), attributes.get("senderReference"), 
+                                attributes.get("referenceForBeneficiary"), attributes.get("beneficiaryInformation"),
+                                attributes.get("beneficiaryAdviceInformation"), attributes.get("tags"), relationships)
 
 
 class ReleaseTransactionDTO(BaseTransactionDTO):
@@ -337,7 +343,7 @@ TransactionDTO = Union[OriginatedAchTransactionDTO, ReceivedAchTransactionDTO, R
                        ReturnedCheckDepositTransactionDTO]
 
 
-class PatchTransactionRequest(BaseTransactionDTO):
+class PatchTransactionRequest(BaseTransactionDTO, UnitRequest):
     def __init__(self, account_id: str, transaction_id: str, tags: Optional[Dict[str, str]] = None):
         self.account_id = account_id
         self.transaction_id = transaction_id
@@ -355,3 +361,51 @@ class PatchTransactionRequest(BaseTransactionDTO):
             payload["data"]["attributes"]["tags"] = self.tags
 
         return payload
+
+
+class ListTransactionParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, query: Optional[str] = None, tags: Optional[object] = None,
+                 since: Optional[str] = None, until: Optional[str] = None, card_id: Optional[str] = None,
+                 type: Optional[List[str]] = None, exclude_fees: Optional[bool] = None,
+                 sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
+        self.limit = limit
+        self.offset = offset
+        self.account_id = account_id
+        self.customer_id = customer_id
+        self.query = query
+        self.tags = tags
+        self.since = since
+        self.until = until
+        self.card_id = card_id
+        self.type = type
+        self.exclude_fees = exclude_fees
+        self.sort = sort
+        self.include = include
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.query:
+            parameters["filter[query]"] = self.query
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.since:
+            parameters["filter[since]"] = self.since
+        if self.until:
+            parameters["filter[until]"] = self.until
+        if self.card_id:
+            parameters["filter[cardId]"] = self.card_id
+        if self.type:
+            for idx, type_filter in enumerate(self.type):
+                parameters[f"filter[type][{idx}]"] = type_filter
+        if self.exclude_fees:
+            parameters["filter[excludeFees]"] = self.exclude_fees
+        if self.sort:
+            parameters["sort"] = self.sort
+        if self.include:
+            parameters["include"] = self.include
+        return parameters

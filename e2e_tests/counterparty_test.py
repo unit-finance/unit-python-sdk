@@ -31,7 +31,8 @@ class CounterpartyE2eTests(unittest.TestCase):
         self.assertTrue(response.data.type == "achCounterparty")
 
     def test_counterparty_list(self):
-        response = self.client.counterparty.list()
+        params = ListCounterpartyParams(0,100,tags={})
+        response = self.client.counterparty.list(params)
         for c in response.data:
             self.assertTrue(c.type == "achCounterparty")
 

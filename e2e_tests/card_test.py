@@ -68,6 +68,11 @@ class CardE2eTests(unittest.TestCase):
          response = self.client.cards.get(card_id)
          self.assertTrue(response.data.type in self.card_types)
 
+    def test_get_debit_card_include_customer(self):
+         card_id = self.create_individual_debit_card().data.id
+         response = self.client.cards.get(card_id, "customer")
+         self.assertTrue(response.data.type in self.card_types and response.included is not None)
+
     def test_list_cards(self):
         response = self.client.cards.list()
         for card in response.data:
@@ -112,6 +117,18 @@ class CardE2eTests(unittest.TestCase):
         request = PatchIndividualDebitCard(card_id, address)
         response = self.client.cards.update(request)
         self.assertTrue(response.data.type == "individualDebitCard")
+
+    def test_get_pin_status(self):
+        response = self.client.cards.list()
+        for card in response.data:
+            if card.attributes["status"] != "Inactive":
+                pin_status = self.client.cards.get_pin_status(card.id).data
+                self.assertTrue(pin_status.type == "pinStatus")
+
+    def test_card_limits(self):
+        card_id = self.find_card_id({"type": "individualDebitCard", "status": "Active"})
+        response = self.client.cards.limits(card_id)
+        self.assertTrue(response.data.type == "limits")
 
 
 if __name__ == '__main__':

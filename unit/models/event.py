@@ -142,7 +142,6 @@ class AuthorizationRequestPendingEvent(BaseEvent):
         self.type = 'authorizationRequest.pending'
         self.attributes["amount"] = amount
         self.attributes["status"] = status
-        self.attributes["approvedAmount"] = approved_amount
         self.attributes["partialApprovalAllowed"] = partial_approval_allowed
         self.attributes["merchant"] = merchant
         self.attributes["recurring"] = recurring
@@ -152,9 +151,8 @@ class AuthorizationRequestPendingEvent(BaseEvent):
     def from_json_api(_id, _type, attributes, relationships):
         return AuthorizationRequestPendingEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
                                                 attributes["amount"], attributes["status"],
-                                                attributes["approvedAmount"], attributes["partialApprovalAllowed"],
-                                                attributes["merchant"], attributes["recurring"], attributes.get("tags"),
-                                                relationships)
+                                                attributes["partialApprovalAllowed"], attributes["merchant"],
+                                                attributes["recurring"], attributes.get("tags"), relationships)
 
 class CardActivatedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
@@ -333,11 +331,34 @@ class TransactionCreatedEvent(BaseEvent):
                                        attributes["direction"], attributes["amount"], attributes.get("tags"),
                                        relationships)
 
+class AccountReopenedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime,tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'account.reopened'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AccountReopenedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("tags"),
+                                    relationships)
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationAwaitingDocumentsEvent,
                  ApplicationPendingReviewEvent, CardActivatedEvent, CardStatusChangedEvent,
                  AuthorizationCreatedEvent, AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent,
                  AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
                  CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
                  CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
-                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent]
+                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent]
 
+
+class ListEventParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, type: Optional[List[str]] = None):
+        self.limit = limit
+        self.offset = offset
+        self.type = type
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.type:
+            parameters["filter[type][]"] = self.type
+        return parameters

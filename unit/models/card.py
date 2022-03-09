@@ -423,3 +423,50 @@ class ReplaceCardRequest(object):
 
         def __repr__(self):
             json.dumps(self.to_json_api())
+
+PinStatus = Literal["Set", "NotSet"]
+
+class PinStatusDTO(object):
+    def __init__(self, status: PinStatus):
+        self.type = "pinStatus"
+        self.attributes = {"status": status}
+
+    @staticmethod
+    def from_json_api(attributes):
+        return PinStatusDTO(attributes["status"])
+
+
+class CardLimitsDTO(object):
+    def __init__(self, limits: CardLevelLimits, daily_totals: CardTotals, monthly_totals: CardTotals):
+        self.type = "limits"
+        self.attributes = {"limits": limits, "dailyTotals": daily_totals, "monthlyTotals": monthly_totals}
+
+    @staticmethod
+    def from_json_api(attributes):
+        limits = CardLevelLimits.from_json_api(attributes.get("limits")) if attributes.get("limits") else None
+        return CardLimitsDTO(limits, CardTotals.from_json_api(attributes.get("dailyTotals")),
+                             CardTotals.from_json_api(attributes.get("monthlyTotals")))
+
+
+class ListCardParams(UnitParams):
+    def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, tags: Optional[object] = None, include: Optional[str] = None):
+        self.offset = offset
+        self.limit = limit
+        self.account_id = account_id
+        self.customer_id = customer_id
+        self.tags = tags
+        self.include = include
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.include:
+            parameters["include"] = self.include
+        return parameters
+

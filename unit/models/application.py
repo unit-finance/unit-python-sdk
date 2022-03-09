@@ -67,7 +67,9 @@ ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
 
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None, ssn = None):
+                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
+                 passport: str = None, nationality: str = None, ssn = None,
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -78,6 +80,10 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.dba = dba
         self.sole_proprietorship = sole_proprietorship
         self.ssn = ssn
+        self.passport = passport
+        self.nationality = nationality
+        self.device_fingerprints = device_fingerprints
+        self.idempotency_key = idempotency_key
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -107,6 +113,18 @@ class CreateIndividualApplicationRequest(UnitRequest):
 
         if self.ssn:
             payload["data"]["attributes"]["ssn"] = self.ssn
+
+        if self.passport:
+            payload["data"]["attributes"]["passport"] = self.passport
+
+        if self.nationality:
+            payload["data"]["attributes"]["nationality"] = self.nationality
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        if self.device_fingerprints:
+            payload["data"]["attributes"]["deviceFingerprints"] = [e.to_json_api() for e in self.device_fingerprints]
 
         return payload
 
@@ -195,3 +213,26 @@ class UploadDocumentRequest(object):
         self.file_type = file_type
         self.is_back_side = is_back_side
 
+
+class ListApplicationParams(UnitParams):
+    def __init__(self, offset: int = 0, limit: int = 100, email: Optional[str] = None,
+                 tags: Optional[object] = None, query: Optional[str] = None,
+                 sort: Optional[Literal["createdAt", "-createdAt"]] = None):
+        self.offset = offset
+        self.limit = limit
+        self.email = email
+        self.query = query
+        self.sort = sort
+        self.tags = tags
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.email:
+            parameters["filter[email]"] = self.email
+        if self.query:
+            parameters["filter[query]"] = self.query
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.sort:
+            parameters["sort"] = self.sort
+        return parameters

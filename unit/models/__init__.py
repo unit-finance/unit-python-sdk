@@ -33,6 +33,9 @@ class UnitRequest(object):
     def to_json_api(self) -> Dict:
         pass
 
+class UnitParams(object):
+    def to_dict(self) -> Dict:
+        pass
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
@@ -116,7 +119,7 @@ class BusinessContact(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return BusinessContact(data.get("fullName"), data.get("email"), data.get("phone"))
+        return BusinessContact(FullName.from_json_api(data.get("fullName")), data.get("email"), Phone.from_json_api(data.get("phone")))
 
 
 class Officer(object):
@@ -222,3 +225,41 @@ class Merchant(object):
     @staticmethod
     def from_json_api(data: Dict):
         return Merchant(data["name"], data["type"], data["category"], data.get("location"))
+
+class CardLevelLimits(object):
+    def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
+        self.daily_withdrawal = daily_withdrawal
+        self.daily_purchase = daily_purchase
+        self.monthly_withdrawal = monthly_withdrawal
+        self.monthly_purchase = monthly_purchase
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return CardLevelLimits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
+                      data["monthlyPurchase"])
+
+class CardTotals(object):
+    def __init__(self, withdrawals: int, deposits: int, purchases: int):
+        self.withdrawals = withdrawals
+        self.deposits = deposits
+        self.purchases = purchases
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return CardTotals(data["withdrawals"], data["deposits"], data["purchases"])
+
+
+class DeviceFingerprint(object):
+    def __init__(self, value: str, provider: str = "iovation"):
+        self.value = value
+        self.provider = provider
+
+    def to_json_api(self):
+        return {
+            "value": self.value,
+            "provider": self.provider,
+        }
+
+    @classmethod
+    def from_json_api(cls, data: Dict):
+        return cls(value=data["value"], provider=data["provider"])
