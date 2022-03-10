@@ -9,8 +9,9 @@ class TransactionResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "transactions"
 
-    def get(self, transaction_id: str) -> Union[UnitResponse[TransactionDTO], UnitError]:
-        response = super().get(f"{self.resource}/{transaction_id}")
+    def get(self, transaction_id: str, account_id: str) -> Union[UnitResponse[TransactionDTO], UnitError]:
+        params = {"filter[accountId]": account_id}
+        response = super().get(f"{self.resource}/{transaction_id}", params)
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")

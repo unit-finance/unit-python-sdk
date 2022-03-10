@@ -2,7 +2,7 @@ import json
 from typing import Literal
 from unit.models import *
 
-AchReturnReason = Literal["InsufficientFunds", "Unauthorized"]
+AchReturnReason = Literal["InsufficientFunds", "Unauthorized", "UncollectedFunds"]
 
 
 class ReturnReceivedAchTransactionRequest(UnitRequest):
