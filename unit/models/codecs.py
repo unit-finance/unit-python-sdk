@@ -215,6 +215,9 @@ mappings = {
         "payment.returned": lambda _id, _type, attributes, relationships:
         PaymentReturnedEvent.from_json_api(_id, _type, attributes, relationships),
 
+        "payment.rejected": lambda _id, _type, attributes, relationships:
+        PaymentRejectedEvent.from_json_api(_id, _type, attributes, relationships),
+
         "statements.created": lambda _id, _type, attributes, relationships:
         StatementsCreatedEvent.from_json_api(_id, _type, attributes, relationships),
 
@@ -223,6 +226,9 @@ mappings = {
 
         "customer.created": lambda _id, _type, attributes, relationships:
         CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "customer.updated": lambda _id, _type, attributes, relationships:
+        CustomerUpdatedEvent.from_json_api(_id, _type, attributes, relationships),
 
         "account.reopened": lambda _id, _type, attributes, relationships:
         AccountReopenedEvent.from_json_api(_id, _type, attributes, relationships),
