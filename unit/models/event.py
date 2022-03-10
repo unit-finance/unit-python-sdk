@@ -242,6 +242,19 @@ class CustomerCreatedEvent(BaseEvent):
         return CustomerCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
                                     attributes.get("tags"), relationships)
 
+
+class CustomerUpdatedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'customer.updated'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CustomerCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                    attributes.get("tags"), relationships)
+
+
 class DocumentApprovedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -328,15 +341,15 @@ class PaymentReturnedEvent(BaseEvent):
                                     attributes.get("tags"), relationships)
 
 class PaymentRejectedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+    def __init__(self, id: str, created_at: datetime, reason: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'payment.rejected'
-        self.attributes["previousStatus"] = previous_status
+        self.attributes["reason"] = previous_status
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return PaymentReturnedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["previousStatus"],
+        return PaymentReturnedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["reason"],
                                     attributes.get("tags"), relationships)
 
 class StatementsCreatedEvent(BaseEvent):
