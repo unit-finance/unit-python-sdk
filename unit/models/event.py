@@ -345,7 +345,7 @@ class PaymentRejectedEvent(BaseEvent):
                  relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'payment.rejected'
-        self.attributes["reason"] = previous_status
+        self.attributes["reason"] = reason
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
