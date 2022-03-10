@@ -193,6 +193,9 @@ mappings = {
         "payment.clearing": lambda _id, _type, attributes, relationships:
         PaymentClearingEvent.from_json_api(_id, _type, attributes, relationships),
 
+        "payment.created": lambda _id, _type, attributes, relationships:
+        PaymentCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
         "payment.sent": lambda _id, _type, attributes, relationships:
         PaymentSentEvent.from_json_api(_id, _type, attributes, relationships),
 

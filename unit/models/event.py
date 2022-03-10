@@ -267,6 +267,29 @@ class DocumentRejectedEvent(BaseEvent):
                                      attributes["reason"], attributes["reasonCode"], attributes.get("tags"),
                                      relationships)
 
+class PaymentCreatedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'payment.created'
+        self.attributes["status"] = status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentClearingEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                    attributes.get("tags"), relationships)
+
+class PaymentRejectedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'payment.created'
+        self.attributes["status"] = status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentClearingEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                    attributes.get("tags"), relationships)
 
 class PaymentClearingEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
