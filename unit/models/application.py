@@ -69,7 +69,8 @@ class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
                  ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
                  passport: str = None, nationality: str = None, ssn = None,
-                 device_fingerprints: Optional[List[DeviceFingerprint]] = None):
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None, 
+                 tags: Optional[Dict[str, str]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -83,6 +84,8 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.passport = passport
         self.nationality = nationality
         self.device_fingerprints = device_fingerprints
+        self.idempotency_key = idempotency_key
+        self.tags = tags
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -119,8 +122,14 @@ class CreateIndividualApplicationRequest(UnitRequest):
         if self.nationality:
             payload["data"]["attributes"]["nationality"] = self.nationality
 
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
         if self.device_fingerprints:
             payload["data"]["attributes"]["deviceFingerprints"] = [e.to_json_api() for e in self.device_fingerprints]
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags 
 
         return payload
 
