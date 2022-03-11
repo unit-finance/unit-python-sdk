@@ -70,10 +70,10 @@ PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
 AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned"]
 
 class AchReceivedPaymentDTO(object):
-    def __init__(self, id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: str,
-                 completion_date: datetime, return_reason: Optional[str], description: str, amount: int,
+    def __init__(self, id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: bool,
+                 completion_date: datetime, return_reason: Optional[str], amount: int, description: str,
                  addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
-                 sec_code: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 sec_code: Optional[str], tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.type = "achReceivedPayment"
         self.attributes = {"createdAt": created_at, "status": status, "wasAdvanced": was_advanced,
                            "completionDate": completion_date, "returnReason": return_reason, "description": description,
@@ -85,9 +85,9 @@ class AchReceivedPaymentDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AchReceivedPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                                     attributes.get("wasAdvanced"), attributes.get("completionDate"),
-                                     attributes.get("returnReason"), attributes.get("description"),
-                                     attributes.get("amount"), attributes.get("addenda"), attributes.get("companyName"),
+                                     attributes["wasAdvanced"], attributes["completionDate"],
+                                     attributes.get("returnReason"),attributes["amount"], attributes["description"],
+                                     attributes.get("addenda"), attributes.get("companyName"),
                                      attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
                                      attributes.get("secCode"), attributes.get("tags"), relationships)
 
