@@ -1,11 +1,11 @@
 from unit.utils import date_utils
 from unit.models import *
 
-AchStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
+PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 
 class BasePayment(object):
-    def __init__(self, id: str, created_at: datetime, status: AchStatus, direction: str, description: str, amount: int,
-                 reason: Optional[str], tags: Optional[Dict[str, str]],
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
+                 amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
@@ -14,7 +14,7 @@ class BasePayment(object):
 
 
 class AchPaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: Counterparty, direction: str,
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, counterparty: Counterparty, direction: str,
                  description: str, amount: int, addenda: Optional[str], reason: Optional[str],
                  settlement_date: Optional[datetime], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -33,8 +33,8 @@ class AchPaymentDTO(BasePayment):
                              attributes.get("tags"), relationships)
 
 class BookPaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: str, direction: Optional[str], description: str, amount: int,
-                 reason: Optional[str], tags: Optional[Dict[str, str]],
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: Optional[str], description: str,
+                 amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
         self.type = 'bookPayment'
@@ -46,8 +46,8 @@ class BookPaymentDTO(BasePayment):
                               attributes.get("reason"), attributes.get("tags"), relationships)
 
 class WirePaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: AchStatus, counterparty: WireCounterparty, direction: str,
-                 description: str, amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, counterparty: WireCounterparty,
+                 direction: str, description: str, amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
         self.type = 'wirePayment'
@@ -63,7 +63,7 @@ class WirePaymentDTO(BasePayment):
                               attributes.get("tags"), relationships)
 
 class BillPaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: AchStatus, direction: str, description: str,
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
                  amount: int, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
         self.type = 'billPayment'
