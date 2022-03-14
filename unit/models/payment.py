@@ -237,7 +237,7 @@ PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
 class ListPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, tags: Optional[object] = None,
-                 status: Optional[List[AchStatus]] = None, type: Optional[List[PaymentTypes]] = None,
+                 status: Optional[List[PaymentStatus]] = None, type: Optional[List[PaymentTypes]] = None,
                  direction: Optional[List[PaymentDirections]] = None, since: Optional[str] = None,
                  until: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
                  include: Optional[str] = None):
