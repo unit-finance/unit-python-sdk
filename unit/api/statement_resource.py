@@ -27,15 +27,9 @@ class StatementResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(
-            self, offset: int = 0, limit: int = 100, account_id: str = None
-    ) -> Union[UnitResponse[List[StatementDTO]], UnitError]:
-        params = {
-            "page[limit]": limit, "page[offset]": offset
-        }
-        if account_id:
-            params["filter[accountId]"] = account_id
-        response = super().get(self.resource, params)
+    def list(self, params: ListStatementParams = None) -> Union[UnitResponse[List[StatementDTO]], UnitError]:
+        params = params or ListStatementParams()
+        response = super().get(self.resource, params.to_dict())
         if response.status_code == 200:
             data = response.json().get("data")
             return UnitResponse[StatementDTO](DtoDecoder.decode(data), None)
