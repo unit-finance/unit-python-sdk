@@ -3,24 +3,19 @@ import unittest
 from unit import Unit
 from unit.models.bill_pay import *
 
+token = os.environ.get('TOKEN')
+client = Unit("https://api.s.unit.sh", token)
 
-class BillPayE2eTests(unittest.TestCase):
-    token = os.environ.get("token")
-    client = Unit("https://api.s.unit.sh", token)
+def test_get_billers():
+    request = GetBillersParams("Electric")
+    response = client.billPays.get(request)
+    for b in response.data:
+        assert b.type == "biller"
 
-    def test_get_billers(self):
-        request = GetBillersParams("Electric")
-        response = self.client.billPays.get(request)
-        for b in response.data:
-            self.assertTrue(b.type == "biller")
+def test_get_billers_with_page_param():
+    request = GetBillersParams("Electric", 1)
+    response = client.billPays.get(request)
+    for b in response.data:
+        assert b.type == "biller"
 
-    def test_get_billers_with_page_param(self):
-        request = GetBillersParams("Electric", 1)
-        response = self.client.billPays.get(request)
-        for b in response.data:
-            self.assertTrue(b.type == "biller")
-
-
-if __name__ == '__main__':
-    unittest.main()
 
