@@ -259,7 +259,7 @@ class ListApplicationParams(UnitParams):
             parameters["sort"] = self.sort
         return parameters
 
-class ApproveApplicationSB(UnitRequest):
+class ApproveApplicationSBRequest(UnitRequest):
     def __init__(self, application_id: str):
         self.application_id = application_id
 
