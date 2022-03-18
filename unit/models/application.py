@@ -262,6 +262,7 @@ class ListApplicationParams(UnitParams):
             parameters["sort"] = self.sort
         return parameters
 
+
 class PatchApplicationRequest(UnitRequest):
     def __init__(self, application_id: str, type: ApplicationTypes = "individualApplication",
                  tags: Optional[Dict[str, str]] = None):
@@ -285,3 +286,21 @@ class PatchApplicationRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
+class ApproveApplicationSB(UnitRequest):
+    def __init__(self, application_id: str):
+        self.application_id = application_id
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "applicationApprove",
+                "attributes": {
+                    "reason": "sandbox"
+                }
+            }
+        }
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())

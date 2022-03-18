@@ -71,3 +71,20 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def approve_sb(self, request: ApproveApplicationSB):
+        url = f"sandbox/{self.resource}/{request.application_id}/approve"
+
+        payload = request.to_json_api()
+        response = super().post(url, payload)
+
+        if response.ok:
+            data = response.json().get("data")
+            included = response.json().get("included")
+            return UnitResponse(data, included)
+            # TODO need DTOs for this response
+            # if data["type"] == "individualApplication":
+            #     return UnitResponse[IndividualApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+            # else:
+            #     return UnitResponse[BusinessApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+        else:
+            return UnitError.from_json_api(response.json())
