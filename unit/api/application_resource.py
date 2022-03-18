@@ -71,7 +71,7 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def approve_sb(self, request: ApproveApplicationSB):
+    def approve_sb(self, request: ApproveApplicationSBRequest):
         url = f"sandbox/{self.resource}/{request.application_id}/approve"
 
         payload = request.to_json_api()

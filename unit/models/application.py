@@ -287,7 +287,7 @@ class PatchApplicationRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class ApproveApplicationSB(UnitRequest):
+class ApproveApplicationSBRequest(UnitRequest):
     def __init__(self, application_id: str):
         self.application_id = application_id
 
