@@ -258,3 +258,21 @@ class ListApplicationParams(UnitParams):
         if self.sort:
             parameters["sort"] = self.sort
         return parameters
+
+class ApproveApplicationSB(UnitRequest):
+    def __init__(self, application_id: str):
+        self.application_id = application_id
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "applicationApprove",
+                "attributes": {
+                    "reason": "sandbox"
+                }
+            }
+        }
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
