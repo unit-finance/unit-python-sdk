@@ -24,7 +24,8 @@ class TransactionResource(BaseResource):
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
-            return UnitResponse[TransactionDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+            meta = response.json().get("meta")
+            return UnitResponse[TransactionDTO](DtoDecoder.decode(data), DtoDecoder.decode(included), meta)
         else:
             return UnitError.from_json_api(response.json())
 

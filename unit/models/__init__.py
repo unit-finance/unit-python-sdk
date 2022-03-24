@@ -18,11 +18,11 @@ class RelationshipArray(Generic[T]):
     def __init__(self, l: List[T]):
         self.relationships = l
 
-
 class UnitResponse(Generic[T]):
-    def __init__(self, data: Union[T, List[T]], included):
+    def __init__(self, data: Union[T, List[T]], included, meta = None):
         self.data = data
         self.included = included
+        self.meta = meta
 
     @staticmethod
     def from_json_api(data: str):

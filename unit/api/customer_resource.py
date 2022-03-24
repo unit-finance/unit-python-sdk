@@ -35,6 +35,7 @@ class CustomerResource(BaseResource):
         response = super().get(self.resource, params.to_dict())
         if response.status_code == 200:
             data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            meta = response.json().get("meta")
+            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None, meta)
         else:
             return UnitError.from_json_api(response.json())
