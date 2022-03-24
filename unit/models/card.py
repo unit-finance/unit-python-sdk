@@ -70,15 +70,15 @@ class IndividualVirtualDebitCardDTO(object):
 class BusinessVirtualDebitCardDTO(object):
     def __init__(self, id: str, created_at: datetime, last_4_digits: str, expiration_date: str, ssn: str,
                  full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, passport: Optional[str], nationality: Optional[str],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 status: CardStatus, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None):
         self.id = id
         self.type = "businessVirtualDebitCard"
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
                            "ssn": ssn, "fullName": full_name, "dateOfBirth": date_of_birth, "address": address,
                            "phone": phone, "email": email, "status": status, "passport": passport,
                            "nationality": nationality}
-        self.relationships = relationships
+        self.relationships = relationships or {}
 
     def from_json_api(_id, _type, attributes, relationships):
         return BusinessVirtualDebitCardDTO(
@@ -93,7 +93,7 @@ class BusinessVirtualDebitCardDTO(object):
 Card = Union[IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO]
 
 
-class CreateIndividualDebitCard(object):
+class CreateIndividualDebitCard(UnitRequest):
     def __init__(self, relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
                  design: Optional[str] = None, idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None):
@@ -129,7 +129,7 @@ class CreateIndividualDebitCard(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
-class CreateBusinessDebitCard(object):
+class CreateBusinessDebitCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  status: CardStatus, shipping_address: Optional[Address], ssn: Optional[str], passport: Optional[str],
                  nationality: Optional[str], design: Optional[str], idempotency_key: Optional[str],
@@ -190,7 +190,7 @@ class CreateBusinessDebitCard(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
-class CreateIndividualVirtualDebitCard(object):
+class CreateIndividualVirtualDebitCard(UnitRequest):
     def __init__(self, relationships: Dict[str, Relationship], idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None):
         self.idempotency_key = idempotency_key
@@ -218,11 +218,11 @@ class CreateIndividualVirtualDebitCard(object):
         json.dumps(self.to_json_api())
 
 
-class CreateBusinessVirtualDebitCard(object):
+class CreateBusinessVirtualDebitCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
-                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 status: CardStatus, ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -233,8 +233,8 @@ class CreateBusinessVirtualDebitCard(object):
         self.passport = passport
         self.nationality = nationality
         self.idempotency_key = idempotency_key
-        self.tags = tags
-        self.relationships = relationships
+        self.tags = tags or {}
+        self.relationships = relationships or {}
 
     def to_json_api(self) -> Dict:
         payload = {
