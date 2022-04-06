@@ -33,6 +33,29 @@ class AchPaymentDTO(BasePayment):
                              attributes["amount"], attributes.get("addenda"), attributes.get("reason"), settlement_date,
                              attributes.get("tags"), relationships)
 
+class SimulateIncomingAchPaymentDTO(BasePayment):
+    def __init__(self, id: str, created_at: datetime, status: AchStatus, direction: str,
+                 description: str, amount: int, reason: Optional[str],
+                 settlement_date: Optional[datetime], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
+        self.type = 'achPayment'
+        self.attributes["status"] = status
+        self.settlement_date = settlement_date
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return BasePayment(
+            _id,
+            date_utils.to_datetime(attributes["createdAt"]),
+            attributes.get("direction"),
+            attributes["description"],
+            attributes["amount"],
+            attributes.get("reason"),
+            attributes.get("tags"),
+            relationships
+        )
+
 class BookPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: Optional[str], description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
@@ -169,6 +192,20 @@ class CreateLinkedPaymentRequest(CreatePaymentBaseRequest):
 
         if self.verify_counterparty_balance:
             payload["data"]["attributes"]["verifyCounterpartyBalance"] = self.verify_counterparty_balance
+
+        return payload
+
+class SimulateIncomingAchRequest(CreatePaymentBaseRequest):
+    def __init__(
+        self, amount: int, description: str,
+        relationships: Dict[str, Relationship],
+        direction: str = "Credit"
+    ):
+        CreatePaymentBaseRequest.__init__(self, amount, description, relationships, None, None, direction)
+        self.verify_counterparty_balance = False
+
+    def to_json_api(self) -> Dict:
+        payload = CreatePaymentBaseRequest.to_json_api(self)
 
         return payload
 

@@ -9,8 +9,8 @@ from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO, BillPaymentDTO, \
+    SimulateIncomingAchPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
