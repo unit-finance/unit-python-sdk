@@ -94,11 +94,12 @@ Card = Union[IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebi
 
 
 class CreateIndividualDebitCard(UnitRequest):
-    def __init__(self, relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
-                 design: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+    def __init__(self, relationships: Dict[str, Relationship], limits: Optional[Cardlimits] = None,
+                 shipping_address: Optional[Address] = None, design: Optional[str] = None,
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
         self.shipping_address = shipping_address
         self.design = design
+        self.limits = limits
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
@@ -114,6 +115,9 @@ class CreateIndividualDebitCard(UnitRequest):
 
         if self.shipping_address:
             payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
 
         if self.design:
             payload["data"]["attributes"]["design"] = self.design
@@ -131,23 +135,25 @@ class CreateIndividualDebitCard(UnitRequest):
 
 class CreateBusinessDebitCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, shipping_address: Optional[Address], ssn: Optional[str], passport: Optional[str],
-                 nationality: Optional[str], design: Optional[str], idempotency_key: Optional[str],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 status: CardStatus, limits: Optional[CardLimits] = None,  shipping_address: Optional[Address] = None,
+                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 design: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
         self.phone = phone
         self.email = email
         self.status = status
+        self.limits = limits
         self.shipping_address = shipping_address
         self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
         self.design = design
         self.idempotency_key = idempotency_key
-        self.tags = tags
-        self.relationships = relationships
+        self.tags = tags or {}
+        self.relationships = relationships or {}
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -166,6 +172,9 @@ class CreateBusinessDebitCard(UnitRequest):
 
         if self.shipping_address:
             payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
 
         if self.ssn:
             payload["data"]["attributes"]["ssn"] = self.ssn
@@ -192,8 +201,9 @@ class CreateBusinessDebitCard(UnitRequest):
 
 class CreateIndividualVirtualDebitCard(UnitRequest):
     def __init__(self, relationships: Dict[str, Relationship], idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 limits: Optional[CardLimits] = None, tags: Optional[Dict[str, str]] = None):
         self.idempotency_key = idempotency_key
+        self.limits = limits
         self.tags = tags
         self.relationships = relationships
 
@@ -209,6 +219,9 @@ class CreateIndividualVirtualDebitCard(UnitRequest):
         if self.idempotency_key:
             payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
 
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
+
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
@@ -220,7 +233,8 @@ class CreateIndividualVirtualDebitCard(UnitRequest):
 
 class CreateBusinessVirtualDebitCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 status: CardStatus, limits: Optional[CardLimits] = None, ssn: Optional[str] = None,
+                 passport: Optional[str] = None, nationality: Optional[str] = None,
                  idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  relationships: Optional[Dict[str, Relationship]] = None):
         self.full_name = full_name
@@ -231,6 +245,7 @@ class CreateBusinessVirtualDebitCard(UnitRequest):
         self.status = status
         self.ssn = ssn
         self.passport = passport
+        self.limits = limits
         self.nationality = nationality
         self.idempotency_key = idempotency_key
         self.tags = tags or {}
@@ -253,6 +268,9 @@ class CreateBusinessVirtualDebitCard(UnitRequest):
 
         if self.ssn:
             payload["data"]["attributes"]["ssn"] = self.ssn
+
+        if self.limits:
+            limits["data"]["attributes"]["limits"] = self.limits
 
         if self.passport:
             payload["data"]["attributes"]["passport"] = self.passport
