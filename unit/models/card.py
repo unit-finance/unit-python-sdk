@@ -94,7 +94,7 @@ Card = Union[IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebi
 
 
 class CreateIndividualDebitCard(UnitRequest):
-    def __init__(self, relationships: Dict[str, Relationship], limits: Optional[Cardlimits] = None,
+    def __init__(self, relationships: Dict[str, Relationship], limits: Optional[CardLevelLimits] = None,
                  shipping_address: Optional[Address] = None, design: Optional[str] = None,
                  idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
         self.shipping_address = shipping_address
@@ -135,7 +135,7 @@ class CreateIndividualDebitCard(UnitRequest):
 
 class CreateBusinessDebitCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, limits: Optional[CardLimits] = None,  shipping_address: Optional[Address] = None,
+                 status: CardStatus, limits: Optional[CardLevelLimits] = None,  shipping_address: Optional[Address] = None,
                  ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
                  design: Optional[str] = None, idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None):
@@ -201,7 +201,7 @@ class CreateBusinessDebitCard(UnitRequest):
 
 class CreateIndividualVirtualDebitCard(UnitRequest):
     def __init__(self, relationships: Dict[str, Relationship], idempotency_key: Optional[str] = None,
-                 limits: Optional[CardLimits] = None, tags: Optional[Dict[str, str]] = None):
+                 limits: Optional[CardLevelLimits] = None, tags: Optional[Dict[str, str]] = None):
         self.idempotency_key = idempotency_key
         self.limits = limits
         self.tags = tags
@@ -233,7 +233,7 @@ class CreateIndividualVirtualDebitCard(UnitRequest):
 
 class CreateBusinessVirtualDebitCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, limits: Optional[CardLimits] = None, ssn: Optional[str] = None,
+                 status: CardStatus, limits: Optional[CardLevelLimits] = None, ssn: Optional[str] = None,
                  passport: Optional[str] = None, nationality: Optional[str] = None,
                  idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  relationships: Optional[Dict[str, Relationship]] = None):
@@ -293,12 +293,13 @@ class CreateBusinessVirtualDebitCard(UnitRequest):
 CreateCardRequest = Union[CreateIndividualDebitCard, CreateBusinessDebitCard, CreateIndividualVirtualDebitCard,
                           CreateBusinessVirtualDebitCard]
 
-class PatchIndividualDebitCard(object):
+class PatchIndividualDebitCard(UnitRequest):
     def __init__(self,card_id: str, shipping_address: Optional[Address] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 limits: CardLevelLimits = None, tags: Optional[Dict[str, str]] = None):
         self.card_id = card_id
         self.shipping_address = shipping_address
         self.design = design
+        self.limits = limits
         self.tags = tags
 
     def to_json_api(self) -> Dict:
@@ -312,6 +313,9 @@ class PatchIndividualDebitCard(object):
         if self.shipping_address:
             payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
 
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
+
         if self.design:
             payload["data"]["attributes"]["design"] = self.design
 
@@ -324,12 +328,13 @@ class PatchIndividualDebitCard(object):
         json.dumps(self.to_json_api())
 
 
-class PatchBusinessDebitCard(object):
+class PatchBusinessDebitCard(UnitRequest):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 limits: CardLevelLimits = None, tags: Optional[Dict[str, str]] = None):
         self.card_id = card_id
         self.shipping_address = shipping_address
+        self.limits = limits
         self.design = design
         self.tags = tags
 
@@ -343,6 +348,9 @@ class PatchBusinessDebitCard(object):
 
         if self.shipping_address:
             payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
 
         if self.address:
             payload["data"]["attributes"]["address"] = self.address
@@ -364,9 +372,10 @@ class PatchBusinessDebitCard(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
-class PatchIndividualVirtualDebitCard(object):
-    def __init__(self, card_id: str, tags: Optional[Dict[str, str]] = None):
+class PatchIndividualVirtualDebitCard(UnitRequest):
+    def __init__(self, card_id: str, limits: CardLevelLimits = None, tags: Optional[Dict[str, str]] = None):
         self.card_id = card_id
+        self.limits = limits
         self.tags = tags
 
     def to_json_api(self) -> Dict:
@@ -377,6 +386,9 @@ class PatchIndividualVirtualDebitCard(object):
             }
         }
 
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
+
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
@@ -385,11 +397,12 @@ class PatchIndividualVirtualDebitCard(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
-class PatchBusinessVirtualDebitCard(object):
+class PatchBusinessVirtualDebitCard(UnitRequest):
     def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
-                 email: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
+                 email: Optional[str] = None, limits: CardLevelLimits = None, tags: Optional[Dict[str, str]] = None):
         self.card_id = card_id
         self.address = address
+        self.limits = limits
         self.phone = phone
         self.email = email
         self.tags = tags
@@ -401,6 +414,9 @@ class PatchBusinessVirtualDebitCard(object):
                 "attributes": {},
             }
         }
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
 
         if self.address:
             payload["data"]["attributes"]["address"] = self.address

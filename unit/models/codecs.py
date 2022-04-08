@@ -305,6 +305,13 @@ class DtoDecoder(object):
 
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):
+        if isinstance(obj, CardLevelLimits):
+            return {
+                "dailyWithdrawal": obj.daily_withdrawal,
+                "dailyPurchase": obj.daily_purchase,
+                "monthlyWithdrawal": obj.monthly_withdrawal,
+                "monthlyPurchase": obj.monthly_purchase
+            }
         if isinstance(obj, FullName):
             return {"first": obj.first, "last": obj.last}
         if isinstance(obj, Phone):
