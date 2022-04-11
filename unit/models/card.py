@@ -270,7 +270,7 @@ class CreateBusinessVirtualDebitCard(UnitRequest):
             payload["data"]["attributes"]["ssn"] = self.ssn
 
         if self.limits:
-            limits["data"]["attributes"]["limits"] = self.limits
+            payload["data"]["attributes"]["limits"] = self.limits
 
         if self.passport:
             payload["data"]["attributes"]["passport"] = self.passport
