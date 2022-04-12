@@ -389,8 +389,7 @@ class PatchIndividualVirtualDebitCard(UnitRequest):
         if self.limits:
             payload["data"]["attributes"]["limits"] = self.limits
 
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
+        payload["data"]["attributes"]["tags"] = self.tags or {}
 
         return payload
 
@@ -427,8 +426,7 @@ class PatchBusinessVirtualDebitCard(UnitRequest):
         if self.email:
             payload["data"]["attributes"]["email"] = self.email
 
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
+        payload["data"]["attributes"]["tags"] = self.tags or {}
 
         return payload
 
