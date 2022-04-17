@@ -57,7 +57,6 @@ class ReturnedAchTransactionDTO(BaseTransactionDTO):
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'returnedAchTransaction'
-        self.attributes["addenda"] = addenda
         self.attributes["companyName"] = company_name
         self.attributes["counterpartyRoutingNumber"] = counterparty_routing_number
         self.attributes["reason"] = reason
@@ -65,10 +64,9 @@ class ReturnedAchTransactionDTO(BaseTransactionDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return ReturnedAchTransactionDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes["summary"], attributes["companyName"],
-            attributes["counterpartyName"], attributes["counterpartyRoutingNumber"], attributes["reason"],
-            attributes.get("tags"), relationships)
+            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"], attributes["amount"],
+            attributes["balance"], attributes["summary"], attributes["companyName"], attributes["counterpartyName"],
+            attributes["counterpartyRoutingNumber"], attributes["reason"], attributes.get("tags"), relationships)
 
 
 class ReturnedReceivedAchTransactionDTO(BaseTransactionDTO):
@@ -117,7 +115,7 @@ class BookTransactionDTO(BaseTransactionDTO):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.description = description
         self.type = 'bookTransaction'
-        self.attributes["counterpart"] = counterparty
+        self.attributes["counterparty"] = counterparty
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -150,22 +148,24 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
 class AtmTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, card_last_4_digits: str, atm_name: str, atm_location: Optional[str], surcharge: int,
+                 interchange: Optional[int], card_network: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'atmTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
         self.attributes["atmName"] = atm_name
         self.attributes["atmLocation"] = atm_location
-        self.attributes["recurring"] = recurring
+        self.attributes["surcharge"] = surcharge
+        self.attributes["interchange"] = interchange
+        self.attributes["cardNetwork"] = card_network
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AtmTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
                                  attributes["amount"], attributes["balance"], attributes["summary"],
-                                 attributes["cardLast4Digits"],
-                                 attributes["atmName"], attributes.get("atmLocation"), attributes["surcharge"],
-                                 attributes.get("tags"),
-                                 relationships)
+                                 attributes["cardLast4Digits"], attributes["atmName"], attributes.get("atmLocation"),
+                                 attributes["surcharge"], attributes.get("interchange"), attributes.get("cardNetwork"),
+                                 attributes.get("tags"), relationships)
 
 
 class FeeTransactionDTO(BaseTransactionDTO):
@@ -183,17 +183,31 @@ class FeeTransactionDTO(BaseTransactionDTO):
 
 class CardTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, card_last_4_digits: int, tags: Optional[Dict[str, str]],
+                 summary: str, card_last_4_digits: int, merchant: Merchant, recurring: Optional[bool],
+                 interchange: Optional[int], payment_method: Optional[str], digital_wallet: Optional[str],
+                 card_verification_data: Optional[Dict], card_network: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'cardTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
+        self.attributes["merchant"] = merchant
+        self.attributes["recurring"] = recurring
+        self.attributes["interchange"] = interchange
+        self.attributes["paymentMethod"] = payment_method
+        self.attributes["digitalWallet"] = digital_wallet
+        self.attributes["cardVerificationData"] = card_verification_data
+        self.attributes["cardNetwork"] = card_network
+
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CardTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
                                   attributes["amount"], attributes["balance"], attributes["summary"],
-                                  attributes["cardLast4Digits"], attributes.get("tags"), relationships)
+                                  attributes["cardLast4Digits"], Merchant.from_json_api(attributes["merchant"]),
+                                  attributes.get("recurring"), attributes.get("interchange"),
+                                  attributes.get("paymentMethod"), attributes.get("digitalWallet"),
+                                  attributes.get("cardVerificationData"), attributes.get("cardNetwork"),
+                                  attributes.get("tags"), relationships)
 
 
 class CardReversalTransactionDTO(BaseTransactionDTO):
