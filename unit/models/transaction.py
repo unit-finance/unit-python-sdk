@@ -60,6 +60,7 @@ class ReturnedAchTransactionDTO(BaseTransactionDTO):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'returnedAchTransaction'
         self.attributes["companyName"] = company_name
+        self.attributes["counterpartyName"] = counterparty_name
         self.attributes["counterpartyRoutingNumber"] = counterparty_routing_number
         self.attributes["reason"] = reason
 
