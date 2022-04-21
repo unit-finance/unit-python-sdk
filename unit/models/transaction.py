@@ -131,8 +131,8 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, card_last_4_digits: str, merchant: Merchant, coordinates: Coordinates, recurring: bool,
                  interchange: Optional[int], ecommerce: bool, card_present: bool, payment_method: Optional[str],
-                 digital_wallet: str, card_verification_data,  tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 digital_wallet: str, card_verification_data, card_network: Optional[str],
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -145,6 +145,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
         self.attributes["paymentMethod"] = payment_method
         self.attributes["digitalWallet"] = digital_wallet
         self.attributes["cardVerificationData"] = card_verification_data
+        self.attributes["cardNetwork"] = card_network
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -154,7 +155,8 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
             Merchant.from_json_api(attributes["merchant"]), Coordinates.from_json_api(attributes["coordinates"]),
             attributes["recurring"], attributes.get("interchange"), attributes.get("ecommerce"),
             attributes.get("cardPresent"), attributes.get("paymentMethod"), attributes.get("digitalWallet"),
-            attributes.get("cardVerificationData"), attributes.get("tags"), relationships)
+            attributes.get("cardVerificationData"), attributes.get("cardNetwork"), attributes.get("tags"),
+            relationships)
 
 
 class AtmTransactionDTO(BaseTransactionDTO):
