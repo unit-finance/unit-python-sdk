@@ -195,7 +195,7 @@ class FeeTransactionDTO(BaseTransactionDTO):
 
 class CardTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, card_last_4_digits: int, merchant: Merchant, recurring: Optional[bool],
+                 summary: str, card_last_4_digits: str, merchant: Merchant, recurring: Optional[bool],
                  interchange: Optional[int], payment_method: Optional[str], digital_wallet: Optional[str],
                  card_verification_data: Optional[Dict], card_network: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -224,7 +224,7 @@ class CardTransactionDTO(BaseTransactionDTO):
 
 class CardReversalTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, card_last_4_digits: int, tags: Optional[Dict[str, str]],
+                 summary: str, card_last_4_digits: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'cardReversalTransaction'
