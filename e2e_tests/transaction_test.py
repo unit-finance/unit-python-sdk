@@ -201,6 +201,7 @@ def test_card_transaction():
 
     assert transaction.id == id
     assert transaction.attributes["interchange"] == 2.43
+    assert transaction.attributes["recurring"] is False
     assert transaction.attributes["paymentMethod"] == "Contactless"
     assert transaction.attributes["cardNetwork"] == "Visa"
     assert transaction.attributes["digitalWallet"] == "Apple"
@@ -256,6 +257,82 @@ def test_atm_transaction():
     assert transaction.attributes["surcharge"] == 10
     assert transaction.attributes["interchange"] == 15.2
     assert transaction.attributes["cardNetwork"] == "Allpoint"
+
+def test_purchase_transaction():
+    purchase_transaction_api_response = {
+          "type": "purchaseTransaction",
+          "id": "51",
+          "attributes": {
+            "createdAt": "2020-09-08T12:41:43.360Z",
+            "direction": "Debit",
+            "amount": 2500,
+            "balance": 10523,
+            "summary": "Car rental",
+            "cardLast4Digits": "2282",
+            "merchant": {
+              "name": "Europcar Mobility Group",
+              "type": 3381,
+              "category": "EUROP CAR",
+              "location": "Cupertino, CA"
+            },
+            "coordinates": {
+              "longitude": -77.0364,
+              "latitude": 38.8951
+            },
+            "recurring": False,
+            "interchange": 2.43,
+            "ecommerce": False,
+            "cardPresent": True,
+            "paymentMethod": "Contactless",
+            "digitalWallet": "Apple",
+            "cardVerificationData": {
+              "verificationMethod": "CVV2"
+            },
+            "cardNetwork": "Visa"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "3"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "11"
+              }
+            },
+            "authorization": {
+              "data": {
+                "type": "authorization",
+                "id": "40"
+              }
+            }
+          }
+        }
+
+    id = purchase_transaction_api_response["id"]
+    attributes = purchase_transaction_api_response["attributes"]
+    relationships = purchase_transaction_api_response["relationships"]
+    _type = purchase_transaction_api_response["type"]
+
+    transaction = PurchaseTransactionDTO.from_json_api(id, _type, attributes, relationships)
+
+    assert transaction.id == id
+    assert transaction.attributes["interchange"] == 2.43
+    assert transaction.attributes["ecommerce"] is False
+    assert transaction.attributes["recurring"] is False
+    assert transaction.attributes["cardPresent"] is True
+    assert transaction.attributes["cardNetwork"] == "Visa"
+    assert transaction.attributes["digitalWallet"] == "Apple"
+    assert transaction.attributes["paymentMethod"] == "Contactless"
 
 
 def test_list_and_get_transactions_with_type():
