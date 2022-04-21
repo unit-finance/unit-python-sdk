@@ -1,7 +1,7 @@
 import os
 import unittest
 from unit import Unit
-from unit.models.transaction import PatchTransactionRequest, ListTransactionParams, WireTransactionDTO
+from unit.models.transaction import *
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -150,6 +150,114 @@ def test_receiving_wire_transaction():
     assert transaction.attributes["counterparty"].routing_number == "812345678"
     assert transaction.attributes["senderReference"] == "Test"
 
+
+def test_card_transaction():
+    card_transaction_api_response = {
+          "type": "cardTransaction",
+          "id": "410",
+          "attributes": {
+            "createdAt": "2020-09-20T12:41:43.360Z",
+            "direction": "Debit",
+            "amount": 10,
+            "balance": 89480,
+            "summary": "Card transaction details",
+            "cardLast4Digits": "2282",
+            "merchant": {
+              "name": "Europcar Mobility Group",
+              "type": 3381,
+              "category": "EUROP CAR",
+              "location": "Cupertino, CA"
+            },
+            "recurring": False,
+            "interchange": 2.43,
+            "paymentMethod": "Contactless",
+            "digitalWallet": "Apple",
+            "cardVerificationData": {
+              "verificationMethod": "CVV2"
+            },
+            "cardNetwork": "Visa"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "1001"
+              }
+            }
+          }
+        }
+    id = card_transaction_api_response["id"]
+    attributes = card_transaction_api_response["attributes"]
+    relationships = card_transaction_api_response["relationships"]
+    _type = card_transaction_api_response["type"]
+
+    transaction = CardTransactionDTO.from_json_api(id, _type, attributes, relationships)
+
+    assert transaction.id == id
+    assert transaction.attributes["interchange"] == 2.43
+    assert transaction.attributes["paymentMethod"] == "Contactless"
+    assert transaction.attributes["cardNetwork"] == "Visa"
+    assert transaction.attributes["digitalWallet"] == "Apple"
+    assert transaction.attributes["cardVerificationData"]["verificationMethod"] == "CVV2"
+
+def test_atm_transaction():
+    atm_transaction_api_response = {
+          "type": "atmTransaction",
+          "id": "1432",
+          "attributes": {
+            "createdAt": "2020-07-05T15:49:36.864Z",
+            "direction": "Credit",
+            "amount": 10000,
+            "balance": 12000,
+            "summary": "ATM deposit",
+            "cardLast4Digits": "2282",
+            "atmName": "First National Bank",
+            "atmLocation": "Masontown, PA 15461",
+            "surcharge": 10,
+            "interchange": 15.2,
+            "cardNetwork": "Allpoint"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "depositAccount",
+                "id": "1000"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "3"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "11"
+              }
+            }
+          }
+        }
+
+    id = atm_transaction_api_response["id"]
+    attributes = atm_transaction_api_response["attributes"]
+    relationships = atm_transaction_api_response["relationships"]
+    _type = atm_transaction_api_response["type"]
+
+    transaction = AtmTransactionDTO.from_json_api(id, _type, attributes, relationships)
+
+    assert transaction.id == id
+    assert transaction.attributes["surcharge"] == 10
+    assert transaction.attributes["interchange"] == 15.2
+    assert transaction.attributes["cardNetwork"] == "Allpoint"
+
+
 def test_list_and_get_transactions_with_type():
     transaction_ids = []
     response = client.transactions.list(ListTransactionParams(100, 0, type=["Fee", "ReceivedAch"]))
@@ -161,3 +269,4 @@ def test_list_and_get_transactions_with_type():
     for id in transaction_ids:
         response = client.transactions.get(id)
         assert response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction"
+
