@@ -307,7 +307,7 @@ class PaymentCreatedEvent(BaseEvent):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return PaymentClearingEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+        return PaymentCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
                                     attributes.get("tags"), relationships)
 
 class PaymentRejectedEvent(BaseEvent):
