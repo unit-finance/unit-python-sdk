@@ -314,7 +314,7 @@ class PaymentRejectedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, status: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
-        self.type = 'payment.created'
+        self.type = 'payment.rejected'
         self.attributes["status"] = status
 
     @staticmethod
