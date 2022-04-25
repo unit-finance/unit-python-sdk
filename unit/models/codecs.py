@@ -9,7 +9,7 @@ from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -109,6 +109,12 @@ mappings = {
         "returnedCheckDepositTransaction": lambda _id, _type, attributes, relationships:
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
+        PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
+        RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
         "achPayment": lambda _id, _type, attributes, relationships:
         AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -117,6 +123,9 @@ mappings = {
 
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "billPayment": lambda _id, _type, attributes, relationships:
+        BillPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
