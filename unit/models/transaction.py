@@ -113,10 +113,9 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
 
 class BookTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, description: str, addenda: Optional[str], counterparty: Counterparty,
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 summary: str, counterparty: Counterparty, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
-        self.description = description
         self.type = 'bookTransaction'
         self.attributes["counterparty"] = counterparty
 
@@ -132,7 +131,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
                  summary: str, card_last_4_digits: str, merchant: Merchant, coordinates: Coordinates, recurring: bool,
                  interchange: Optional[int], ecommerce: bool, card_present: bool, payment_method: Optional[str],
-                 digital_wallet: str, card_verification_data, card_network: Optional[str],
+                 digital_wallet: Optional[str], card_verification_data, card_network: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
