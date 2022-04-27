@@ -308,9 +308,9 @@ class ListPaymentParams(UnitParams):
 class ListReceivedPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, tags: Optional[object] = None,
-                 status: Optional[List[AchStatus]] = None, direction: Optional[List[PaymentDirections]] = None,
-                 include_completed: Optional[bool] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
-                 include: Optional[str] = None):
+                 status: Optional[List[AchReceivedPaymentStatus]] = None,
+                 direction: Optional[List[PaymentDirections]] = None, include_completed: Optional[bool] = None,
+                 sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
         self.limit = limit
         self.offset = offset
         self.account_id = account_id
