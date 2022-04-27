@@ -139,6 +139,7 @@ def test_receiving_wire_transaction():
             }
         }
     }
+
     id = wire_transaction_api_response["id"]
     attributes = wire_transaction_api_response["attributes"]
     relationships = wire_transaction_api_response["relationships"]
