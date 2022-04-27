@@ -348,7 +348,7 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
                  CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
                  CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
-                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent]
+                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent, RawUnitObject]
 
 
 class ListEventParams(UnitParams):

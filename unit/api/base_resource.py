@@ -1,7 +1,6 @@
 import json
 from typing import Optional, Dict
 import requests
-
 from unit.models.codecs import UnitEncoder
 
 
