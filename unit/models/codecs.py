@@ -23,6 +23,7 @@ from unit.models.api_token import APITokenDTO
 from unit.models.authorization import AuthorizationDTO
 from unit.models.authorization_request import PurchaseAuthorizationRequestDTO
 from unit.models.account_end_of_day import AccountEndOfDayDTO
+from unit.models.benificial_owner import BenificialOwnerDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -249,7 +250,10 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
-    }
+
+        "beneficialOwner": lambda _id, _type, attributes, relationships:
+        BenificialOwnerDTO.from_json_api(attributes),
+}
 
 
 def split_json_api_single_response(payload: Dict):
