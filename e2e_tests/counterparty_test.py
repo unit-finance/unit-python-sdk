@@ -24,7 +24,7 @@ def test_delete_counterparty():
 
 def test_get_counterparty():
     counterparty_id = create_counterparty().data.id
-    response = client.counterparty.get("2345")
+    response = client.counterparty.get(counterparty_id)
     assert response.data.type == "achCounterparty"
 
 
