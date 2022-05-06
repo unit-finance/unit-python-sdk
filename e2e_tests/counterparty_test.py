@@ -24,7 +24,7 @@ def test_delete_counterparty():
 
 def test_get_counterparty():
     counterparty_id = create_counterparty().data.id
-    response = client.counterparty.get(counterparty_id)
+    response = client.counterparty.get("2345")
     assert response.data.type == "achCounterparty"
 
 
@@ -147,3 +147,4 @@ def test_counterparty_dto():
     assert counterparty.attributes["type"] == counterparty_api_response["attributes"]["type"]
     assert counterparty.attributes["name"] == counterparty_api_response["attributes"]["name"]
 
+test_get_counterparty()
