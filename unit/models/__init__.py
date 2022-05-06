@@ -37,6 +37,13 @@ class UnitParams(object):
     def to_dict(self) -> Dict:
         pass
 
+class RawUnitObject(object):
+    def __init__(self, _id, _type, attributes, relationships):
+        self.id = _id
+        self.type = _type
+        self.attributes = attributes
+        self.relationships = relationships
+
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
                  source: Optional[Dict] = None):
@@ -98,7 +105,7 @@ class Address(object):
     @staticmethod
     def from_json_api(data: Dict):
         return Address(data.get("street"), data.get("city"), data.get("state"),
-                data.get("postal_code"), data.get("country"), data.get("street2", None))
+                data.get("postalCode"), data.get("country"), data.get("street2", None))
 
 
 class Phone(object):
@@ -247,3 +254,19 @@ class CardTotals(object):
     @staticmethod
     def from_json_api(data: Dict):
         return CardTotals(data["withdrawals"], data["deposits"], data["purchases"])
+
+
+class DeviceFingerprint(object):
+    def __init__(self, value: str, provider: str = "iovation"):
+        self.value = value
+        self.provider = provider
+
+    def to_json_api(self):
+        return {
+            "value": self.value,
+            "provider": self.provider,
+        }
+
+    @classmethod
+    def from_json_api(cls, data: Dict):
+        return cls(value=data["value"], provider=data["provider"])

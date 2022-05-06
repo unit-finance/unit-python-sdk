@@ -9,7 +9,7 @@ from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -44,7 +44,7 @@ mappings = {
         DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
 
         "limits": lambda _id, _type, attributes, relationships:
-        AccountLimitsDTO.from_json_api(_type, attributes),
+        decode_limits(attributes),
 
         "individualDebitCard": lambda _id, _type, attributes, relationships:
         IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
@@ -109,6 +109,12 @@ mappings = {
         "returnedCheckDepositTransaction": lambda _id, _type, attributes, relationships:
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
+        PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
+        RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
         "achPayment": lambda _id, _type, attributes, relationships:
         AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -117,6 +123,9 @@ mappings = {
 
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "billPayment": lambda _id, _type, attributes, relationships:
+        BillPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
@@ -240,10 +249,6 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
-
-        "limits": lambda _id, _type, attributes, relationships:
-        CardLimitsDTO.from_json_api(_id, _type, attributes, relationships)
-
     }
 
 
@@ -274,6 +279,18 @@ def split_json_api_array_response(payload):
     return dtos
 
 
+def decode_limits(attributes: Dict):
+    if "ach" in attributes.keys():
+        return AccountLimitsDTO.from_json_api(attributes)
+    else:
+        return CardLimitsDTO.from_json_api(attributes)
+
+def mapping_wraper(_id, _type, attributes, relationships):
+    if _type in mappings:
+        return mappings[_type](_id, _type, attributes, relationships)
+    else:
+        return RawUnitObject(_id, _type, attributes, relationships)
+
 class DtoDecoder(object):
     @staticmethod
     def decode(payload):
@@ -284,13 +301,12 @@ class DtoDecoder(object):
             dtos = split_json_api_array_response(payload)
             response = []
             for _id, _type, attributes, relationships in dtos:
-                response.append(mappings[_type](_id, _type, attributes, relationships))
+                response.append(mapping_wraper(_id, _type, attributes, relationships))
 
             return response
         else:
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
-            return mappings[_type](_id, _type, attributes, relationships)
-
+            return mapping_wraper(_id, _type, attributes, relationships)
 
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):

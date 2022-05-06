@@ -28,8 +28,9 @@ class WebhookResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[WebhookDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, params: ListWebhookParams = None) -> Union[UnitResponse[List[WebhookDTO]], UnitError]:
+        params = params or ListWebhookParams()
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[WebhookDTO](DtoDecoder.decode(data), None)
