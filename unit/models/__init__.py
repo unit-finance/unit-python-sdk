@@ -46,12 +46,13 @@ class RawUnitObject(object):
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
-                 source: Optional[Dict] = None):
+                 source: Optional[Dict] = None, code: Optional[str] = None):
         self.title = title
         self.status = status
         self.detail = detail
         self.details = details
         self.source = source
+        self.code = code
 
     def __str__(self):
         return self.detail
@@ -67,7 +68,7 @@ class UnitError(object):
         for err in data["errors"]:
             errors.append(
                 UnitErrorPayload(err.get("title"), err.get("status"), err.get("detail", None),
-                                 err.get("details", None), err.get("source", None))
+                                 err.get("details", None), err.get("source", None), err.get("code", None))
             )
 
         return UnitError(errors)
