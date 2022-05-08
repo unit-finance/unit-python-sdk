@@ -1,5 +1,6 @@
 import os
 import unittest
+from datetime import datetime
 from unit import Unit
 from unit.models.api_token import CreateAPITokenRequest
 
@@ -8,7 +9,7 @@ client = Unit("https://api.s.unit.sh", token)
 user_id = "252"
 
 def create_api_token():
-    request = CreateAPITokenRequest(user_id, "Test token", "customers applications", "2022-07-01T13:47:17.000Z")
+    request = CreateAPITokenRequest(user_id, "Test token", "customers applications", datetime(2022, 7, 1, 13, 47, 17)) #"2022-07-01T13:47:17.000Z")
     return client.api_tokens.create(request).data
 
 def test_list_api_tokens():

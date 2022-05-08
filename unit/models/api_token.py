@@ -23,7 +23,7 @@ class CreateAPITokenRequest(object):
         self.user_id = user_id
         self.description = description
         self.scope = scope
-        self.expiration = expiration
+        self.expiration = date_utils.from_datetime(expiration)
         self.source_ip = source_ip
 
     def to_json_api(self) -> Dict:
