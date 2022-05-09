@@ -2,6 +2,7 @@ import os
 import unittest
 from unit import Unit
 from unit.models.transaction import *
+from unit.models.codecs import mappings
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -89,7 +90,6 @@ def test_sending_wire_transaction():
     assert transaction.attributes["counterparty"].routing_number == "812345678"
     assert transaction.attributes["referenceForBeneficiary"] == "Test"
 
-
 def test_receiving_wire_transaction():
     wire_transaction_api_response = {
         "type": "wireTransaction",
@@ -150,7 +150,6 @@ def test_receiving_wire_transaction():
     assert transaction.id == id
     assert transaction.attributes["counterparty"].routing_number == "812345678"
     assert transaction.attributes["senderReference"] == "Test"
-
 
 def test_card_transaction():
     card_transaction_api_response = {
@@ -335,7 +334,6 @@ def test_purchase_transaction():
     assert transaction.attributes["digitalWallet"] == "Apple"
     assert transaction.attributes["paymentMethod"] == "Contactless"
 
-
 def test_list_and_get_transactions_with_type():
     transaction_ids = []
     response = client.transactions.list(ListTransactionParams(100, 0, type=["Fee", "ReceivedAch"]))
@@ -348,3 +346,28 @@ def test_list_and_get_transactions_with_type():
         response = client.transactions.get(id)
         assert response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction"
 
+
+def test_codecs_transactions():
+    import inspect
+    import unit.models.transaction as foo
+
+    classes = []
+
+    p = 'unit.models.transaction.'
+    for name, obj in inspect.getmembers(foo):
+        if inspect.isclass(obj):
+            try:
+                s = str(obj)
+                if 'Transaction' in s and 'DTO' in s and 'Base' not in s:
+                    i = s.index(p) + len(p)
+                    j = s.index('DTO\'>')
+                    classes.append(s[i:j])
+            except e:
+                print(e)
+                continue
+
+
+    transactions = [x.lower() for x in mappings if "Transaction" in x]
+    for c in classes:
+        if c.lower() not in transactions:
+            assert False
