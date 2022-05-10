@@ -189,9 +189,6 @@ mappings = {
         "authorizationRequest.approved": lambda _id, _type, attributes, relationships:
         AuthorizationRequestApprovedEvent.from_json_api(_id, _type, attributes, relationships),
 
-        "document.approved": lambda _id, _type, attributes, relationships:
-        DocumentApprovedEvent.from_json_api(_id, _type, attributes, relationships),
-
         "document.rejected": lambda _id, _type, attributes, relationships:
         DocumentRejectedEvent.from_json_api(_id, _type, attributes, relationships),
 
