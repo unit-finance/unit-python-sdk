@@ -402,7 +402,7 @@ class StatementsCreatedEvent(BaseEvent):
                                     attributes.get("tags"), relationships)
 
 class TransactionCreatedEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, summary: str, direction: str, amount: str,
+    def __init__(self, id: str, created_at: datetime, summary: str, direction: str, amount: int,
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'transaction.created'
