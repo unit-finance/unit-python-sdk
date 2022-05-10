@@ -111,8 +111,8 @@ mappings = {
         "returnedCheckDepositTransaction": lambda _id, _type, attributes, relationships:
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
-        "paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
-        PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+        #"paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
+        #PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
         RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
@@ -176,6 +176,9 @@ mappings = {
 
         "authorization.created": lambda _id, _type, attributes, relationships:
         AuthorizationCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "authorization.declined": lambda _id, _type, attributes, relationships:
+        AuthorizationDeclinedEvent.from_json_api(_id, _type, attributes, relationships),
 
         "authorizationRequest.declined": lambda _id, _type, attributes, relationships:
         AuthorizationRequestDeclinedEvent.from_json_api(_id, _type, attributes, relationships),

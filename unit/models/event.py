@@ -89,6 +89,25 @@ class AuthorizationCanceledEvent(BaseEvent):
                                           attributes["recurring"], attributes.get("tags"),
                                           relationships)
 
+class AuthorizationDeclinedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, amount: int, card_last_4_digits: str, merchant: Dict[str, str],
+                 reason: str, recurring: str, tags: Optional[Dict[str, str]] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'authorization.declined'
+        self.attributes["cardLast4Digits"] = card_last_4_digits
+        self.attributes["amount"] = amount
+        self.attributes["reason"] = reason
+        self.attributes["merchant"] = merchant
+        self.attributes["recurring"] = recurring
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AuthorizationDeclinedEvent(
+            id=_id, created_at=date_utils.to_datetime(attributes["createdAt"]),
+            amount=attributes["amount"], card_last_4_digits=attributes["cardLast4Digits"],
+            merchant=attributes["merchant"], reason=attributes.get("reason"), recurring=attributes["recurring"],
+            tags=attributes.get("tags"), relationships=relationships)
 
 class AuthorizationCreatedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, amount: int, card_last_4_digits: str, merchant: Dict[str, str],
