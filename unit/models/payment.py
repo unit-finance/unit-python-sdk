@@ -34,7 +34,7 @@ class AchPaymentDTO(BasePayment):
                              attributes.get("tags"), relationships)
 
 class SimulateIncomingAchPaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: AchStatus, direction: str,
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str,
                  description: str, amount: int, reason: Optional[str],
                  settlement_date: Optional[datetime], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -87,7 +87,7 @@ class WirePaymentDTO(BasePayment):
 class BillPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
                  amount: int, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
-        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, tags, relationships)
         self.type = 'billPayment'
 
     @staticmethod
