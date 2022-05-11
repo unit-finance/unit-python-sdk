@@ -456,7 +456,7 @@ def test_chargeback_transaction():
     assert transaction.attributes["direction"] == "Debit"
     assert transaction.attributes["balance"] == 12000
     assert transaction.attributes["summary"] == "Chargeback for dispute #1337"
-    assert transaction.attributes["counterparty"] is not None
+    assert transaction.attributes["counterparty"].routing_number == "812345678"
 
 def test_reward_transaction():
     reward_transaction_api_response = {
@@ -532,7 +532,7 @@ def test_reward_transaction():
     assert transaction.attributes["balance"] == 113000
     assert transaction.attributes["summary"] == "My Reward 8"
     assert transaction.attributes["tags"] is not None
-    assert transaction.attributes["receiverCounterparty"] is not None
+    assert transaction.attributes["receiverCounterparty"].routing_number == "091311229"
 
 
 
