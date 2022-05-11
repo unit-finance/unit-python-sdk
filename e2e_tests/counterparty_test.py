@@ -146,4 +146,3 @@ def test_counterparty_dto():
     assert counterparty.attributes["permissions"] == counterparty_api_response["attributes"]["permissions"]
     assert counterparty.attributes["type"] == counterparty_api_response["attributes"]["type"]
     assert counterparty.attributes["name"] == counterparty_api_response["attributes"]["name"]
-
