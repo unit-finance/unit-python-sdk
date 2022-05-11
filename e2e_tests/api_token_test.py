@@ -23,6 +23,11 @@ def test_create_api_token():
     api_token = create_api_token()
     assert api_token.type == "apiToken"
 
+def test_create_api_token_prev_version( ):
+    request = CreateAPITokenRequest(user_id, "Test token", "customers applications", "2022-07-01T13:47:17.000Z")
+    api_token = client.api_tokens.create(request).data
+    assert api_token.type == "apiToken"
+
 def test_delete_api_token():
     api_token = create_api_token()
     response = client.api_tokens.revoke(user_id, api_token.id)
