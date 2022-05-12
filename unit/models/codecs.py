@@ -116,6 +116,15 @@ mappings = {
         "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
         RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "rewardTransaction": lambda _id, _type, attributes, relationships:
+        RewardTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "paymentCanceledTransaction": lambda _id, _type, attributes, relationships:
+        PaymentCanceledTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "chargebackTransaction": lambda _id, _type, attributes, relationships:
+        ChargebackTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
         "achPayment": lambda _id, _type, attributes, relationships:
         AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
