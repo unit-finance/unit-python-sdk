@@ -6,7 +6,7 @@ from unit.models.codecs import UnitEncoder
 
 class BaseResource(object):
     def __init__(self, api_url, token):
-        self.api_url = api_url
+        self.api_url = api_url.rstrip("/")
         self.token = token
         self.headers = {
             "content-type": "application/vnd.api+json",
