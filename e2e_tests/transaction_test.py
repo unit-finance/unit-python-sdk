@@ -349,25 +349,20 @@ def test_list_and_get_transactions_with_type():
 
 def test_codecs_transactions():
     import inspect
-    import unit.models.transaction as foo
+    import unit.models.transaction as umt
 
     classes = []
 
-    p = 'unit.models.transaction.'
-    for name, obj in inspect.getmembers(foo):
-        if inspect.isclass(obj):
-            try:
-                s = str(obj)
-                if 'Transaction' in s and 'DTO' in s and 'Base' not in s:
-                    i = s.index(p) + len(p)
-                    j = s.index('DTO\'>')
-                    classes.append(s[i:j])
-            except e:
-                print(e)
-                continue
+
+    for name, obj in inspect.getmembers(umt):
+        try:
+            if 'Transaction' in name and 'DTO' in name and 'Base' not in name and name != 'TransactionDTO':
+                classes.append(name.replace('DTO', ''))
+        except Exception as e:
+            print(e)
+            continue
 
 
-    transactions = [x.lower() for x in mappings if "Transaction" in x]
-    for c in classes:
-        if c.lower() not in transactions:
-            assert False
+    transactions = [x for x in mappings if "Transaction" in x]
+
+    assert len(transactions) == len(classes)
