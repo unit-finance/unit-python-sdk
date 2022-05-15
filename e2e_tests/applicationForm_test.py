@@ -8,7 +8,9 @@ card_types = ["individualDebitCard", "businessDebitCard", "individualVirtualDebi
 
 def create_create_application_form():
     request = CreateApplicationFormRequest(tags={"userId": "106a75e9-de77-4e25-9561-faffe59d7814"},
-                                           allowed_application_types=["Individual"])
+                                           allowed_application_types=["Individual"],
+                                           application_details={"jwtSubject": "test4"})
+
     return client.applicationForms.create(request)
 
 def test_create_application_form():
