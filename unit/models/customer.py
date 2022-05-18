@@ -12,7 +12,7 @@ class IndividualCustomerDTO(object):
                  phone: Phone, email: str, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]],
                  authorized_users: Optional[List[AuthorizedUser]], status: CustomerStatus,
-                 archive_reason: Optioanl[ArchiveReason]):
+                 archive_reason: Optional[ArchiveReason]):
         self.id = id
         self.type = 'individualCustomer'
         self.attributes = {"createdAt": created_at, "fullName": full_name, "dateOfBirth": date_of_birth,
