@@ -1,6 +1,8 @@
 from unit.utils import date_utils
 from unit.models import *
 
+ArchiveReason = Literal["Inactive", "FraudACHActivity", "FraudCardActivity", "FraudCheckActivity",
+                        "FraudApplicationHistory", "FraudAccountActivity", "FraudClientIdentified"]
 
 class IndividualCustomerDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, date_of_birth: date, address: Address,
@@ -150,3 +152,24 @@ class ListCustomerParams(UnitParams):
             parameters["sort"] = self.sort
         return parameters
 
+
+class ArchiveCustomerRequest(UnitRequest):
+    def __init__(self, customer_id: str, reason: Optional[ArchiveReason] = None):
+        self.customer_id = customer_id
+        self.reason = reason
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "archiveCustomer",
+                "attributes": {}
+            }
+        }
+
+        if self.reason:
+            payload["data"]["attributes"]["reason"] = self.reason
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
