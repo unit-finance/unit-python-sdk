@@ -184,11 +184,19 @@ class AuthorizedUser(object):
         self.phone = phone
 
     @staticmethod
-    def from_json_api(l: List):
-        authorized_users = []
-        for data in l:
-            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("email"), data.get("phone")))
-        return authorized_users
+    def from_json_api(data):
+        if data is None:
+            return None
+
+        if data is []:
+            return []
+
+        if type(data) is dict:
+            return AuthorizedUser(FullName.from_json_api(data.get("fullName")), data.get("email"),
+                              Phone.from_json_api(data.get("phone")))
+
+        return [AuthorizedUser(FullName.from_json_api(d.get("fullName")), d.get("email"),
+                              Phone.from_json_api(d.get("phone"))) for d in data]
 
 class WireCounterparty(object):
     def __init__(self, routing_number: str, account_number: str, name: str, address: Address):
