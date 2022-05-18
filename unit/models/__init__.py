@@ -178,7 +178,7 @@ class BeneficialOwner(object):
 
 
 class AuthorizedUser(object):
-    def __init__(self, full_name: FullName, email: str, phone: Phone, jwtSubject: Optional[str]):
+    def __init__(self, full_name: FullName, email: str, phone: Phone, jwt_subject: Optional[str]):
         self.full_name = full_name
         self.email = email
         self.phone = phone
