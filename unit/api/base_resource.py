@@ -26,6 +26,7 @@ class BaseResource(object):
         return requests.patch(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
     def delete(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
+        params = json.dumps(params, cls=UnitEncoder) if params is not None else None
         return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
     def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):

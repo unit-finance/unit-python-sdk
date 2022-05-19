@@ -39,3 +39,25 @@ def test_list_customers():
     response = client.customers.list()
     for customer in response.data:
         assert customer.type == "individualCustomer" or customer.type == "businessCustomer"
+
+def test_add_authorized_users():
+    individual_customer_id = get_customer_by_type("individualCustomer").id
+    req = AddAuthorizedUsersRequest(individual_customer_id, [
+        {
+            "fullName": FullName("Erlich", "Backman"),
+            "email": "erlich@piedpiper.com",
+            "phone": Phone("1", "1234567890")
+        }])
+    response = client.customers.add_authorized_users(req)
+    # test if Erlich in authorized_users
+    assert response.data.type == "IndividualCustomer"
+
+def test_remmove_authorized_users():
+    individual_customer_id = get_customer_by_type("individualCustomer").id
+    req = RemoveAuthorizedUsersRequest(individual_customer_id, [
+        "erlich@piedpiper.com"
+    ])
+    response = client.customers.remove_authorized_users(req)
+    assert response.data.type == "IndividualCustomer"
+
+test_remmove_authorized_users()

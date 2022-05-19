@@ -173,3 +173,46 @@ class ArchiveCustomerRequest(UnitRequest):
 
     def __repr__(self):
         json.dumps(self.to_json_api())
+
+
+class AddAuthorizedUsersRequest(UnitRequest):
+    def __init__(self, customer_id: str, authorized_users: List[AuthorizedUser]):
+        self.customer_id = customer_id
+        self.authorized_users = authorized_users
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "addAuthorizedUsers",
+                "attributes": {
+                    "authorizedUsers": self.authorized_users
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class RemoveAuthorizedUsersRequest(UnitRequest):
+    def __init__(self, customer_id: str, authorized_users_emails: List[str]):
+        self.customer_id = customer_id
+        self.authorized_users_emails = authorized_users_emails
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "removeAuthorizedUsers",
+                "attributes": {
+                    "authorizedUsersEmails": self.authorized_users_emails
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
