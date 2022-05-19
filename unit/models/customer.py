@@ -172,3 +172,24 @@ class ListCustomerParams(UnitParams):
             parameters["sort"] = self.sort
         return parameters
 
+
+class ArchiveCustomerRequest(UnitRequest):
+    def __init__(self, customer_id: str, reason: Optional[ArchiveReason] = None):
+        self.customer_id = customer_id
+        self.reason = reason
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "archiveCustomer",
+                "attributes": {}
+            }
+        }
+
+        if self.reason:
+            payload["data"]["attributes"]["reason"] = self.reason
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
