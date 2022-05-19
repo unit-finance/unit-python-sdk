@@ -21,6 +21,7 @@ unit/api/event_resource.py
 unit/api/fee_resource.py
 unit/api/institution_resource.py
 unit/api/payment_resource.py
+unit/api/received_payment_resource.py
 unit/api/returnAch_resource.py
 unit/api/statement_resource.py
 unit/api/transaction_resource.py
