@@ -10,5 +10,6 @@ venv/*
 *.pyc
 
 dist/
+e2e_tests/files
 
 .DS_Store
