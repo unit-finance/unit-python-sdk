@@ -178,17 +178,26 @@ class BeneficialOwner(object):
 
 
 class AuthorizedUser(object):
-    def __init__(self, full_name: FullName, email: str, phone: Phone):
+    def __init__(self, full_name: FullName, email: str, phone: Phone, jwt_subject: Optional[str]):
         self.full_name = full_name
         self.email = email
         self.phone = phone
+        self.jwt_subject = jwt_subject
 
     @staticmethod
-    def from_json_api(l: List):
-        authorized_users = []
-        for data in l:
-            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("email"), data.get("phone")))
-        return authorized_users
+    def from_json_api(data):
+        if data is None:
+            return None
+
+        if data is []:
+            return []
+
+        if type(data) is dict:
+            return AuthorizedUser(FullName.from_json_api(data.get("fullName")), data.get("email"),
+                              Phone.from_json_api(data.get("phone")), data.get("jwtSubject"))
+
+        return [AuthorizedUser(FullName.from_json_api(d.get("fullName")), d.get("email"),
+                              Phone.from_json_api(d.get("phone")), d.get("jwtSubject")) for d in data]
 
 class WireCounterparty(object):
     def __init__(self, routing_number: str, account_number: str, name: str, address: Address):
