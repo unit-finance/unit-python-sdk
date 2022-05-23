@@ -71,11 +71,12 @@ class ApplicationFormSettingsOverride(object):
 class CreateApplicationFormRequest(UnitRequest):
     def __init__(self, tags: Optional[Dict[str, str]] = None,
                  application_details: Optional[ApplicationFormPrefill] = None,
-                 allowed_application_types: [AllowedApplicationTypes] = None,
-                 settings_override: Optional[ApplicationFormSettingsOverride] = None):
+                 allowed_application_types: Optional[List[AllowedApplicationTypes]] = None,
+                 settings_override: Optional[ApplicationFormSettingsOverride] = None, lang: Optional[str] = None):
         self.tags = tags
         self.application_details = application_details
         self.allowed_application_types = allowed_application_types
+        self.lang = lang
         self.settings_override = settings_override
 
     def to_json_api(self) -> Dict:
@@ -90,13 +91,22 @@ class CreateApplicationFormRequest(UnitRequest):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.application_details:
-            payload["data"]["attributes"]["applicantDetails"] = self.application_details
+            if type(self.application_details) is dict:
+                ad = self.application_details
+            else:
+                v = vars(self.application_details)
+                ad = dict((k, v) for k, v in v.items() if v is not None)
+
+            payload["data"]["attributes"]["applicantDetails"] = ad
 
         if self.allowed_application_types:
             payload["data"]["attributes"]["allowedApplicationTypes"] = self.allowed_application_types
 
         if self.settings_override:
             payload["data"]["attributes"]["settingsOverride"] = self.settings_override
+
+        if self.lang:
+            payload["data"]["attributes"]["lang"] = self.lang
 
         return payload
 
