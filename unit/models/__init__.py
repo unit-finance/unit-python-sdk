@@ -2,6 +2,18 @@ import json
 from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 from datetime import datetime, date
 
+def to_camel_case(snake_str):
+    components = snake_str.lstrip('_').split('_')
+    # We capitalize the first letter of each component except the first one
+    # with the 'title' method and join them together.
+    return components[0] + ''.join(x.title() for x in components[1:])
+
+def dto_to_dict(dto):
+    if type(dto) is dict:
+        return dto
+    else:
+        v = vars(dto)
+        return dict((to_camel_case(k), val) for k, val in v.items() if val is not None)
 
 class Relationship(object):
     def __init__(self, _type: str, _id: str):
@@ -91,6 +103,9 @@ class FullName(object):
     def from_json_api(data: Dict):
         return FullName(data.get("first"), data.get("last"))
 
+    def to_dict(self):
+        return dto_to_dict(self)
+
 
 # todo: Alex - use typing.Literal for multi accepted values (e.g country)
 class Address(object):
@@ -107,6 +122,9 @@ class Address(object):
     def from_json_api(data: Dict):
         return Address(data.get("street"), data.get("city"), data.get("state"),
                 data.get("postalCode"), data.get("country"), data.get("street2", None))
+
+    def to_dict(self):
+        return dto_to_dict(self)
 
 
 class Phone(object):

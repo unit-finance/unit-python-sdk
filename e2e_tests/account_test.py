@@ -88,3 +88,4 @@ def test_update_account():
     response = client.accounts.update(request)
     assert response.data.type == "depositAccount"
 
+test_create_deposit_account()
