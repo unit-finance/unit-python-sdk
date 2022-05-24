@@ -95,7 +95,7 @@ class CreateApplicationFormRequest(UnitRequest):
                 ad = self.application_details
             else:
                 v = vars(self.application_details)
-                ad = dict((k, v) for k, v in v.items() if v is not None)
+                ad = dict((k, val) for k, val in v.items() if val is not None)
 
             payload["data"]["attributes"]["applicantDetails"] = ad
 

@@ -32,7 +32,7 @@ def test_create_application_form_with_prefill():
     assert response.data.type == "applicationForm"
 
 def test_get_application_form():
-    application_form_id = create_create_application_form().data.id
+    application_form_id = create_application_form().data.id
     response = client.applicationForms.get(application_form_id, "application")
     assert response.data.type == "applicationForm"
 
