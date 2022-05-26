@@ -20,8 +20,11 @@ class Relationship(object):
         self.type = _type
         self.id = _id
 
-    def to_dict(self):
-        return {"data": {"type": self.type, "id": self.id}}
+    def to_dict(self, nested: Optional[bool] = True):
+        if nested:
+            return {"data": {"type": self.type, "id": self.id}}
+        else:
+            return {"type": self.type, "id": self.id}
 
 
 T = TypeVar('T')
@@ -31,7 +34,7 @@ class RelationshipArray(Generic[T]):
         self.relationships = l
 
     def to_dict(self):
-        return {"data": list(map(lambda r: r.to_dict(), self.relationships))}
+        return {"data": list(map(lambda r: r.to_dict(False), self.relationships))}
 
 
 class UnitResponse(Generic[T]):
