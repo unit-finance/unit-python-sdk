@@ -21,7 +21,7 @@ class Relationship(object):
         self.id = _id
 
     def to_dict(self):
-        return {"type": self.type, "id": self.id}
+        return {"data": {"type": self.type, "id": self.id}}
 
 
 T = TypeVar('T')
@@ -29,6 +29,9 @@ T = TypeVar('T')
 class RelationshipArray(Generic[T]):
     def __init__(self, l: List[T]):
         self.relationships = l
+
+    def to_dict(self):
+        return {"data": list(map(lambda r: r.to_dict(), self.relationships))}
 
 
 class UnitResponse(Generic[T]):

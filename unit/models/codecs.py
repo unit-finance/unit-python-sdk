@@ -387,7 +387,11 @@ class UnitEncoder(json.JSONEncoder):
         try:
             j = json.JSONEncoder.default(self, obj)
         except:
-            j = dto_to_dict(obj)
+            if hasattr(obj, 'to_dict'):
+                j = obj.to_dict()
+            else:
+                j = dto_to_dict(obj)
+
         return j
 
 
