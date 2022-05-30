@@ -222,7 +222,10 @@ class Coordinates(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Coordinates(data["longitude"], data["latitude"])
+        if data:
+            return Coordinates(data["longitude"], data["latitude"])
+        else:
+            return None
 
 
 class Merchant(object):
