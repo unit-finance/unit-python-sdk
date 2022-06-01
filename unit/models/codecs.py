@@ -276,8 +276,7 @@ def split_json_api_single_response(payload: Dict):
         relationships = dict()
         for k, v in payload.get("relationships").items():
             if isinstance(v["data"], list):
-                # todo: alex handle cases when relationships are in a form of array (e.g. jointAccount or documents)
-                continue
+                relationships[k] = RelationshipArray(v["data"])
             else:
                 relationships[k] = Relationship(v["data"]["type"], v["data"]["id"])
 
