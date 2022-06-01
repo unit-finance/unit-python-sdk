@@ -88,3 +88,29 @@ def test_update_account():
     response = client.accounts.update(request)
     assert response.data.type == "depositAccount"
 
+def test_get_deposit_products():
+    response = client.accounts.list()
+    for acc in response.data:
+        deposit_products = client.accounts.get_deposit_products(acc.id).data
+        for dp in deposit_products:
+            assert dp.type == "accountDepositProduct"
+
+def add_owners():
+    account_id = create_deposit_account().data.id
+    customer_ids = [create_individual_customer(), create_individual_customer()]
+    return client.accounts.add_owners(AccountOwnersRequest(account_id,
+                                                                    RelationshipArray.from_ids_array("customer",
+                                                                                                     customer_ids)))
+
+def test_add_owners():
+    response = add_owners()
+    assert response.data.type == "depositAccount"
+
+
+def test_remove_owners():
+    response = add_owners()
+    assert response.data.type == "depositAccount"
+    account_id = response.data.id
+    response = client.accounts.remove_owners(AccountOwnersRequest(account_id, response.data.relationships.customers))
+    assert response.data.type == "depositAccount"
+

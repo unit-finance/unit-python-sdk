@@ -4,7 +4,7 @@ from datetime import datetime, date
 from unit.utils import date_utils
 from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
-from unit.models.account import DepositAccountDTO, AccountLimitsDTO
+from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
@@ -262,6 +262,9 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
+
+        "accountDepositProduct": lambda _id, _type, attributes, relationships:
+        AccountDepositProductDTO.from_json_api(attributes),
     }
 
 

@@ -35,8 +35,12 @@ class RelationshipArray(Generic[T], UnitDTO):
     def __init__(self, l: List[T]):
         self.relationships = l
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
         return {"data": list(map(lambda r: r.to_dict(False), self.relationships))}
+
+    @staticmethod
+    def from_ids_array(type: str, ids: List[str]):
+        return RelationshipArray(list(map(lambda id: Relationship(type, id), ids)))
 
 
 class UnitResponse(Generic[T]):

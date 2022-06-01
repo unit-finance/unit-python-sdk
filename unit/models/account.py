@@ -236,3 +236,27 @@ class ListAccountParams(UnitParams):
         if self.include:
             parameters["include"] = self.include
         return parameters
+
+
+
+class AccountOwnersRequest(UnitRequest):
+    def __init__(self, account_id: str, customers: Optional[RelationshipArray] = None):
+        self.account_id = account_id
+        self.customers = customers
+
+    def to_json_api(self) -> Dict:
+        return self.customers.to_dict()
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class AccountDepositProductDTO(object):
+    def __init__(self, name: str):
+        self.id = id
+        self.type = "accountDepositProduct"
+        self.attributes = {"name": name}
+
+    @staticmethod
+    def from_json_api(attributes):
+        return AccountDepositProductDTO(attributes["name"])
