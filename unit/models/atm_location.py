@@ -3,7 +3,7 @@ from unit.models import *
 
 
 class AtmLocationDTO(object):
-    def __init__(self, network: int, location_name: str, coordinates: Coordinates, address: Address, distance: int,
+    def __init__(self, network: int, location_name: str, coordinates: Coordinates, address: Address, distance: float,
                  surcharge_free: bool, accept_deposits: bool):
         self.type = "atmLocation"
         self.attributes = {"network": network, "locationName": location_name, "coordinates": coordinates,

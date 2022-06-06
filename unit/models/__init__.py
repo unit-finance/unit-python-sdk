@@ -247,7 +247,7 @@ class Counterparty(UnitDTO):
         return Counterparty(data["routingNumber"], data["accountNumber"], data["accountType"], data["name"])
 
 class Coordinates(UnitDTO):
-    def __init__(self, longitude: int, latitude: int):
+    def __init__(self, longitude: float, latitude: float):
         self.longitude = longitude
         self.latitude = latitude
 
