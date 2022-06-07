@@ -229,7 +229,7 @@ class Coordinates(object):
 
 
 class Merchant(object):
-    def __init__(self, name: str, type: int, category: str, location: Optional[str]):
+    def __init__(self, name: str, type: int, category: Optional[str], location: Optional[str]):
         self.name = name
         self.type = type
         self.category = category
@@ -237,7 +237,7 @@ class Merchant(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Merchant(data["name"], data["type"], data["category"], data.get("location"))
+        return Merchant(data["name"], data["type"], data.get("category"), data.get("location"))
 
 class CardLevelLimits(object):
     def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
