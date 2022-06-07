@@ -177,6 +177,9 @@ mappings = {
         "authorization.created": lambda _id, _type, attributes, relationships:
         AuthorizationCreatedEvent.from_json_api(_id, _type, attributes, relationships),
 
+        "authorization.canceled": lambda _id, _type, attributes, relationships:
+        AuthorizationCanceledEvent.from_json_api(_id, _type, attributes, relationships),
+
         "authorization.declined": lambda _id, _type, attributes, relationships:
         AuthorizationDeclinedEvent.from_json_api(_id, _type, attributes, relationships),
 
