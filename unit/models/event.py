@@ -348,5 +348,17 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
                  CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
                  CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
-                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent]
+                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent, RawUnitObject]
 
+
+class ListEventParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, type: Optional[List[str]] = None):
+        self.limit = limit
+        self.offset = offset
+        self.type = type
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.type:
+            parameters["filter[type][]"] = self.type
+        return parameters

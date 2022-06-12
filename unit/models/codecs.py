@@ -9,7 +9,8 @@ from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -44,7 +45,7 @@ mappings = {
         DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
 
         "limits": lambda _id, _type, attributes, relationships:
-        AccountLimitsDTO.from_json_api(_type, attributes),
+        decode_limits(attributes),
 
         "individualDebitCard": lambda _id, _type, attributes, relationships:
         IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
@@ -109,6 +110,21 @@ mappings = {
         "returnedCheckDepositTransaction": lambda _id, _type, attributes, relationships:
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
+        PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
+        RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "rewardTransaction": lambda _id, _type, attributes, relationships:
+        RewardTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "paymentCanceledTransaction": lambda _id, _type, attributes, relationships:
+        PaymentCanceledTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "chargebackTransaction": lambda _id, _type, attributes, relationships:
+        ChargebackTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
         "achPayment": lambda _id, _type, attributes, relationships:
         AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -117,6 +133,12 @@ mappings = {
 
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "billPayment": lambda _id, _type, attributes, relationships:
+        BillPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "achReceivedPayment": lambda _id, _type, attributes, relationships:
+        AchReceivedPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
@@ -240,10 +262,6 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
-
-        "limits": lambda _id, _type, attributes, relationships:
-        CardLimitsDTO.from_json_api(_id, _type, attributes, relationships)
-
     }
 
 
@@ -274,6 +292,18 @@ def split_json_api_array_response(payload):
     return dtos
 
 
+def decode_limits(attributes: Dict):
+    if "ach" in attributes.keys():
+        return AccountLimitsDTO.from_json_api(attributes)
+    else:
+        return CardLimitsDTO.from_json_api(attributes)
+
+def mapping_wraper(_id, _type, attributes, relationships):
+    if _type in mappings:
+        return mappings[_type](_id, _type, attributes, relationships)
+    else:
+        return RawUnitObject(_id, _type, attributes, relationships)
+
 class DtoDecoder(object):
     @staticmethod
     def decode(payload):
@@ -284,69 +314,19 @@ class DtoDecoder(object):
             dtos = split_json_api_array_response(payload)
             response = []
             for _id, _type, attributes, relationships in dtos:
-                response.append(mappings[_type](_id, _type, attributes, relationships))
+                response.append(mapping_wraper(_id, _type, attributes, relationships))
 
             return response
         else:
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
-            return mappings[_type](_id, _type, attributes, relationships)
-
+            return mapping_wraper(_id, _type, attributes, relationships)
 
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, FullName):
-            return {"first": obj.first, "last": obj.last}
-        if isinstance(obj, Phone):
-            return {"countryCode": obj.country_code, "number": obj.number}
-        if isinstance(obj, Address):
-            addr = {
-                "street": obj.street,
-                "city": obj.city,
-                "state": obj.state,
-                "postalCode": obj.postal_code,
-                "country": obj.country
-            }
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        if hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        else:
+            return json.JSONEncoder.default(self, obj)
 
-            if obj.street2 is not None:
-                addr["street2"] = obj.street2
-            return addr
-        if isinstance(obj, BusinessContact):
-            return {"fullName": obj.full_name, "email": obj.email, "phone": obj.phone}
-        if isinstance(obj, Officer):
-            officer = {"fullName": obj.full_name, "dateOfBirth": date_utils.to_date_str(obj.date_of_birth),
-                       "address": obj.address, "phone": obj.phone, "email": obj.email}
-            if obj.status is not None:
-                officer["status"] = obj.status
-            if obj.title is not None:
-                officer["title"] = obj.title
-            if obj.ssn is not None:
-                officer["ssn"] = obj.ssn
-            if obj.passport is not None:
-                officer["passport"] = obj.passport
-            if obj.nationality is not None:
-                officer["nationality"] = obj.nationality
-            return officer
-        if isinstance(obj, BeneficialOwner):
-            beneficial_owner = {"fullName": obj.full_name, "dateOfBirth": date_utils.to_date_str(obj.date_of_birth),
-                                "address": obj.address, "phone": obj.phone, "email": obj.email}
-            if obj.status is not None:
-                beneficial_owner["status"] = obj.status
-            if obj.ssn is not None:
-                beneficial_owner["ssn"] = obj.ssn
-            if obj.passport is not None:
-                beneficial_owner["passport"] = obj.passport
-            if obj.nationality is not None:
-                beneficial_owner["nationality"] = obj.nationality
-            if obj.percentage is not None:
-                beneficial_owner["percentage"] = obj.percentage
-            return beneficial_owner
-        if isinstance(obj, RelationshipArray):
-            return {"data": list(map(lambda r: r.to_dict(), obj.relationships))}
-        if isinstance(obj, Relationship):
-            return {"data": obj.to_dict()}
-        if isinstance(obj, Counterparty):
-            return {"routingNumber": obj.routing_number, "accountNumber": obj.account_number,
-                    "accountType": obj.account_type, "name": obj.name}
-        if isinstance(obj, Coordinates):
-            return {"longitude": obj.longitude, "latitude": obj.latitude}
-        return json.JSONEncoder.default(self, obj)

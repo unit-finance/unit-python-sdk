@@ -25,13 +25,16 @@ class CounterpartyDTO(object):
 
 class CreateCounterpartyRequest(object):
     def __init__(self, name: str, routing_number: str, account_number: str, account_type: str, type: str,
-                 relationships: [Dict[str, Relationship]]):
+                 relationships: [Dict[str, Relationship]], tags: Optional[object] = None,
+                 idempotency_key: Optional[str] = None):
         self.name = name
         self.routing_number = routing_number
         self.account_number = account_number
         self.account_type = account_type
         self.type = type
         self.relationships = relationships
+        self.tags = tags
+        self.idempotency_key = idempotency_key
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -48,6 +51,12 @@ class CreateCounterpartyRequest(object):
             }
         }
 
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
         return payload
 
     def __repr__(self):
@@ -55,13 +64,17 @@ class CreateCounterpartyRequest(object):
 
 
 class CreateCounterpartyWithTokenRequest(UnitRequest):
-    def __init__(self, name: str, type: str, plaid_processor_token: str, verify_name: Optional[bool],
-                 relationships: [Dict[str, Relationship]]):
+    def __init__(self, name: str, type: str, plaid_processor_token: str, relationships: [Dict[str, Relationship]],
+                 verify_name: Optional[bool] = None, permissions: Optional[str] = None, tags: Optional[object] = None,
+                 idempotency_key: Optional[str] = None):
         self.name = name
         self.type = type
         self.plaid_processor_token = plaid_processor_token
         self.verify_name = verify_name
+        self.permissions = permissions
         self.relationships = relationships
+        self.tags = tags
+        self.idempotency_key = idempotency_key
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -79,6 +92,16 @@ class CreateCounterpartyWithTokenRequest(UnitRequest):
         if self.verify_name:
             payload["data"]["attributes"]["verifyName"] = self.verify_name
 
+        if self.permissions:
+            payload["data"]["attributes"]["permissions"] = self.permissions
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+
         return payload
 
     def __repr__(self):
@@ -86,10 +109,13 @@ class CreateCounterpartyWithTokenRequest(UnitRequest):
 
 
 class PatchCounterpartyRequest(object):
-    def __init__(self, counterparty_id: str, plaid_processor_token: str, verify_name: Optional[bool] = False):
+    def __init__(self, counterparty_id: str, plaid_processor_token: str, verify_name: Optional[bool] = None,
+                 permissions: Optional[str] = None, tags: Optional[object] = None):
         self.counterparty_id = counterparty_id
         self.plaid_processor_token = plaid_processor_token
         self.verify_name = verify_name
+        self.permissions = permissions
+        self.tags = tags
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -103,6 +129,12 @@ class PatchCounterpartyRequest(object):
 
         if self.verify_name:
             payload["data"]["attributes"]["verifyName"] = self.verify_name
+
+        if self.permissions:
+            payload["data"]["attributes"]["permissions"] = self.permissions
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
 
         return payload
 
@@ -120,4 +152,21 @@ class CounterpartyBalanceDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CounterpartyBalanceDTO(_id, attributes["balance"], attributes["available"], relationships)
+
+
+class ListCounterpartyParams(UnitParams):
+    def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
+                 tags: Optional[object] = None):
+        self.offset = offset
+        self.limit = limit
+        self.customer_id = customer_id
+        self.tags = tags
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        return parameters
 

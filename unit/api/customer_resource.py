@@ -30,9 +30,19 @@ class CustomerResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, offset: int = 0, limit: int = 100) -> Union[UnitResponse[List[CustomerDTO]], UnitError]:
-        response = super().get(self.resource, {"page[limit]": limit, "page[offset]": offset})
+    def list(self, params: ListCustomerParams = None) -> Union[UnitResponse[List[CustomerDTO]], UnitError]:
+        params = params or ListCustomerParams()
+        response = super().get(self.resource, params.to_dict())
         if response.status_code == 200:
+            data = response.json().get("data")
+            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def archive(self, request: ArchiveCustomerRequest) -> Union[UnitResponse[CustomerDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.customer_id}/archive", payload)
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
         else:

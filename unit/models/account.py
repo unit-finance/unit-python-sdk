@@ -89,14 +89,112 @@ class PatchDepositAccountRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class AccountLimitsDTO(object):
-    def __init__(self, ach: object, card: object):
-        self.type = "limits"
-        self.attributes = {"ach": ach, "card": card}
+class AchTotals(object):
+    def __init__(self, debits: int, credits: int):
+        self.debits = debits
+        self.credits = credits
 
     @staticmethod
-    def from_json_api(_type, attributes):
-        return AccountLimitsDTO(attributes["ach"], attributes["card"])
+    def from_json_api(data: Dict):
+        return AchTotals(data["debits"], data["credits"])
+
+
+class AchLimits(object):
+    def __init__(self, daily_debit: int, daily_credit: int, monthly_debit: int, monthly_credit: int,
+                 daily_debit_soft: int, monthly_debit_soft: int):
+        self.daily_debit = daily_debit
+        self.daily_credit = daily_credit
+        self.monthly_debit = monthly_debit
+        self.monthly_credit = monthly_credit
+        self.daily_debit_soft = daily_debit_soft
+        self.monthly_debit_soft = monthly_debit_soft
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return AchLimits(data["dailyDebit"], data["dailyCredit"], data["monthlyDebit"], data["monthlyCredit"],
+                         data["dailyDebitSoft"], data["monthlyDebitSoft"])
+
+
+class AccountAchLimits(object):
+    def __init__(self, limits: AchLimits, totals_daily: AchTotals, totals_monthly: AchTotals):
+        self.limits = limits
+        self.totals_daily = totals_daily
+        self.totals_monthly = totals_monthly
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return AccountAchLimits(AchLimits.from_json_api(data["limits"]), AchTotals.from_json_api(data["totalsDaily"]),
+                         AchTotals.from_json_api(data["totalsMonthly"]))
+
+
+class CardLimits(object):
+    def __init__(self, daily_withdrawal: int, daily_deposit: int, daily_purchase: int, daily_card_transaction: int):
+        self.daily_withdrawal = daily_withdrawal
+        self.daily_deposit = daily_deposit
+        self.daily_purchase = daily_purchase
+        self.daily_card_transaction = daily_card_transaction
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return CardLimits(data["dailyWithdrawal"], data["dailyDeposit"],
+                          data["dailyPurchase"], data["dailyCardTransaction"])
+
+class CardTotals(object):
+    def __init__(self, withdrawals: int, deposits: int, purchases: int, card_transactions: int):
+        self.withdrawals = withdrawals
+        self.deposits = deposits
+        self.purchases = purchases
+        self.card_transactions = card_transactions
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return CardTotals(data["withdrawals"], data["deposits"], data["purchases"], data["cardTransactions"])
+
+class AccountCardLimits(object):
+    def __init__(self, limits: CardLimits, totals_daily: CardTotals):
+        self.limits = limits
+        self.totals_daily = totals_daily
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return AccountCardLimits(CardLimits.from_json_api(data["limits"]),
+                                 CardTotals.from_json_api(data["totalsDaily"]))
+
+
+class CheckDepositLimits(object):
+    def __init__(self, daily: int, monthly: int, daily_soft: int, monthly_soft: int):
+        self.daily = daily
+        self.monthly = monthly
+        self.daily_soft = daily_soft
+        self.monthly_soft = monthly_soft
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return CheckDepositLimits(data["daily"], data["monthly"], data["dailySoft"], data["monthlySoft"])
+
+
+class CheckDepositAccountLimits(object):
+    def __init__(self, limits: CheckDepositLimits, totals_daily: int, totals_monthly: int):
+        self.limits = limits
+        self.totals_daily = totals_daily
+        self.totals_monthly = totals_monthly
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return CheckDepositAccountLimits(CheckDepositLimits.from_json_api(data["limits"]), data["totalsDaily"],
+                                         data["totalsMonthly"])
+
+
+class AccountLimitsDTO(object):
+    def __init__(self, ach: AccountAchLimits, card: AccountCardLimits, check_deposit: CheckDepositAccountLimits):
+        self.type = "limits"
+        self.attributes = {"ach": ach, "card": card, "checkDeposit": check_deposit}
+
+    @staticmethod
+    def from_json_api(attributes):
+        return AccountLimitsDTO(AccountAchLimits.from_json_api(attributes["ach"]),
+                                AccountCardLimits.from_json_api(attributes["card"]),
+                                CheckDepositAccountLimits.from_json_api(attributes["checkDeposit"]))
 
 
 class CloseAccountRequest(UnitRequest):

@@ -2,22 +2,16 @@ import os
 import unittest
 from unit import Unit
 from unit.models.fee import *
-from e2e_tests.account_test import AccountE2eTests
+from e2e_tests.account_test import create_deposit_account
 
+token = os.environ.get('TOKEN')
+client = Unit("https://api.s.unit.sh", token)
 
-class FeeE2eTests(unittest.TestCase):
-    def test_create_individual_application(self):
-        token = os.environ.get("token")
-        client = Unit("https://api.s.unit.sh", token)
+def test_create_individual_application():
+    deposit_account_id = create_deposit_account().data.id
 
-        AccountTests = AccountE2eTests()
-        deposit_account_id = AccountTests.create_deposit_account().data.id
+    request = CreateFeeRequest(150, "test fee", {"account": Relationship("depositAccount", deposit_account_id)})
+    response = client.fees.create(request)
+    assert response.data.type == "fee"
 
-        request = CreateFeeRequest(150, "test fee", {"account": Relationship("depositAccount", deposit_account_id)})
-        response = client.fees.create(request)
-        self.assertTrue(response.data.type == "fee")
-
-
-if __name__ == '__main__':
-    unittest.main()
 
