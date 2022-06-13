@@ -30,7 +30,8 @@ class CheckDepositResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: ListCheckDepositParams = ListCheckDepositParams()) -> Union[UnitResponse[List[CheckDepositDTO]], UnitError]:
+    def list(self, params: ListCheckDepositParams = None) -> Union[UnitResponse[List[CheckDepositDTO]], UnitError]:
+        params = params or ListCheckDepositParams()
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")

@@ -103,7 +103,6 @@ class CardResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-
     def limits(self, card_id: str) -> Union[UnitResponse[CardLimitsDTO], UnitError]:
         response = super().get(f"{self.resource}/{card_id}/limits")
         if super().is_20x(response.status_code):

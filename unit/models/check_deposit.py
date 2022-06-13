@@ -1,9 +1,13 @@
 import json
-from typing import Optional, IO
+from unit.utils import date_utils
+from typing import Optional, IO, Literal
 from unit.models import *
 
+CheckDepositStatus = Literal["AwaitingImages", "AwaitingFrontImage", "AwaitingBackImage", "Pending", "PendingReview",
+                             "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
+
 class CheckDepositDTO(object):
-    def __init__(self, id: str, created_at: datetime, status: str, reason: str, description: str, amount: str,
+    def __init__(self, id: str, created_at: datetime, status: str, description: str, amount: str, reason: Optional[str],
                  check_number: Optional[str], counterparty: Optional[CheckCounterparty], settlement_date: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
@@ -16,14 +20,14 @@ class CheckDepositDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CheckDepositDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                               attributes["reason"], attributes["description"], attributes["amount"],
+                               attributes["description"], attributes["amount"], attributes.get("reason"),
                                attributes.get("checkNumber"),
                                CheckCounterparty.from_json_api(attributes.get("counterparty")),
                                attributes.get("settlementDate"), attributes.get("tags"), relationships)
 
 
 class CreateCheckDepositRequest(UnitRequest):
-    def __init__(self, amount: int, relationships: Dict[str, Relationship], description: Optional[str] = None,
+    def __init__(self, amount: int, relationships: Dict[str, Relationship], description: str,
                  tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None ):
         self.amount = amount
         self.description = description
@@ -37,13 +41,11 @@ class CreateCheckDepositRequest(UnitRequest):
                 "type": "checkDeposit",
                 "attributes": {
                     "amount": self.amount,
+                    "description": self.description
                 },
                 "relationships": self.relationships
             }
         }
-
-        if self.description:
-            payload["data"]["attributes"]["description"] = self.description
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags

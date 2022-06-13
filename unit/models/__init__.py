@@ -313,4 +313,7 @@ class CheckCounterparty(object):
 
     @staticmethod
     def from_json_api(data: Dict):
+        if not data:
+            return None
+
         return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
