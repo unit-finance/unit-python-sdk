@@ -1,6 +1,8 @@
 import json
 from unit.models import *
 from datetime import datetime, date
+
+from unit.models.reward import RewardDTO
 from unit.utils import date_utils
 from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
@@ -269,6 +271,10 @@ mappings = {
 
         "beneficialOwner": lambda _id, _type, attributes, relationships:
         BenificialOwnerDTO.from_json_api(attributes),
+
+        "reward": lambda _id, _type, attributes, relationships:
+        RewardDTO.from_json_api(_id, attributes, relationships),
+
 }
 
 
