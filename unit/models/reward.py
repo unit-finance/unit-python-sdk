@@ -10,16 +10,16 @@ RELATED_RESOURCES = Literal["customer", "account", "transaction"]
 
 
 class RewardDTO(object):
-    def __init__(self, id: str, amount: int, description: str, tags: Optional[Dict[str, str]] = None,
+    def __init__(self, id: str, amount: int, description: str, status: str, tags: Optional[Dict[str, str]] = None,
                  relationships: Optional[Dict[str, Relationship]] = None):
         self.id = id
         self.type = "reward"
-        self.attributes = {"amount": amount, "description": description, "tags": tags}
+        self.attributes = {"amount": amount, "description": description, "status": status, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
     def from_json_api(_id, attributes, relationships):
-        return RewardDTO(_id, attributes["amount"], attributes["description"], attributes.get("tags"), relationships)
+        return RewardDTO(_id, attributes["amount"], attributes["description"], attributes["status"], attributes.get("tags"), relationships)
 
 
 class CreateRewardRequest(UnitRequest):
@@ -28,7 +28,7 @@ class CreateRewardRequest(UnitRequest):
         amount: int,
         description: str,
         receiving_account_id: str,
-        rewarded_transaction_id: Optional[str],
+        rewarded_transaction_id: Optional[str] = None,
         funding_account_id: Optional[str] = None,
         idempotency_key: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None
@@ -42,17 +42,16 @@ class CreateRewardRequest(UnitRequest):
         self.idempotency_key = idempotency_key
         self.tags = tags
 
-    def to_json_api(self) -> Dict:
-        relationships = {
-            "receivingAccount": Relationship(_type="depositAccount", _id=self.receiving_account_id)
+        self.relationships = {
+            "receivingAccount": Relationship(_type="depositaccount", _id=self.receiving_account_id)
         }
-
         if self.rewarded_transaction_id:
-            relationships["rewardedTransaction"] = Relationship(_type="transaction", _id=self.rewarded_transaction_id)
+            self.relationships["rewardedTransaction"] = Relationship(_type="transaction", _id=self.rewarded_transaction_id)
 
         if self.funding_account_id:
-            relationships["fundingAccount"] = Relationship(_type="depositAccount", _id=self.funding_account_id)
+            self.relationships["fundingAccount"] = Relationship(_type="depositAccount", _id=self.funding_account_id)
 
+    def to_json_api(self) -> Dict:
         payload = {
             "data": {
                 "type": self.type,
@@ -60,7 +59,7 @@ class CreateRewardRequest(UnitRequest):
                     "amount": self.amount,
                     "description": self.description
                 },
-                "relationships": relationships
+                "relationships": self.relationships
             }
         }
 
