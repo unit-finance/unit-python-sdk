@@ -31,7 +31,7 @@ class PaymentResource(BaseResource):
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
-            return UnitResponse[PaymentDTO](DtoDecoder.decode(data), DtoDecoder.decode(data))
+            return UnitResponse[PaymentDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
 
@@ -41,7 +41,7 @@ class PaymentResource(BaseResource):
         if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
-            return UnitResponse[PaymentDTO](DtoDecoder.decode(data), DtoDecoder.decode(data))
+            return UnitResponse[PaymentDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
 

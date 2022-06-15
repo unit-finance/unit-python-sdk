@@ -1,7 +1,3 @@
-import json
-from unit.models import *
-from datetime import datetime, date
-from unit.utils import date_utils
 from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO
@@ -24,6 +20,7 @@ from unit.models.api_token import APITokenDTO
 from unit.models.authorization import AuthorizationDTO
 from unit.models.authorization_request import PurchaseAuthorizationRequestDTO
 from unit.models.account_end_of_day import AccountEndOfDayDTO
+from unit.models.dispute import DisputeDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -262,6 +259,9 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
+
+        "dispute": lambda _id, _type, attributes, relationships:
+        DisputeDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 

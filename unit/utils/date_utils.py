@@ -2,6 +2,9 @@ from datetime import date, datetime
 
 
 def to_datetime(dt: str):
+    if dt is None:
+        return None
+
     return datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S.%f%z")
 
 def from_datetime(dt: datetime):
