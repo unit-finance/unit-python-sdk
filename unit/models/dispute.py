@@ -2,19 +2,15 @@ from unit.utils import date_utils
 from unit.models import *
 
 
-def remove_none(dict):
-    return {k: v for k, v in dict.items() if v is not None}
-
-
 class DisputeDTO(object):
     def __init__(self, id: str, source: str, status: str, status_history: Optional[List[str]], description: str,
                  created_at: datetime, updated_at: Optional[datetime], amount: str, decision_reason: Optional[str],
                  relationships):
         self.id = id
         self.type = 'dispute'
-        self.attributes = remove_none({"source": source, "status": status, "statusHistory": status_history,
+        self.attributes = {"source": source, "status": status, "statusHistory": status_history,
                                        "description": description, "createdAt": created_at, "updatedAt": updated_at,
-                                       "amount": amount, "decisionReason": decision_reason})
+                                       "amount": amount, "decisionReason": decision_reason}
         self.relationships = relationships
 
     @staticmethod

@@ -56,7 +56,6 @@ def test_sending_wire_transaction():
 
     assert dispute.id == id
     assert dispute.attributes["amount"] == attributes["amount"]
-    assert "statusHistory" not in dispute.attributes.keys()
 
 def test_list_disputes():
     disputes_ids = []
