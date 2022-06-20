@@ -557,7 +557,7 @@ def test_codecs_transactions():
 
     for name, obj in inspect.getmembers(umt):
         try:
-            if 'Transaction' in name and 'DTO' in name and 'Base' not in name and name != 'TransactionDTO':
+            if 'TransactionDTO' in name and 'Base' not in name and name != 'TransactionDTO':
                 classes.append(name.replace('DTO', ''))
         except Exception as e:
             print(e)
