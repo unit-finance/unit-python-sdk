@@ -1,8 +1,7 @@
 import os
-import unittest
 from unit import Unit
 from unit.models.transaction import *
-from unit.models.codecs import mappings
+from unit.models.codecs import DtoDecoder, mappings
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -90,6 +89,7 @@ def test_sending_wire_transaction():
     assert transaction.attributes["counterparty"].routing_number == "812345678"
     assert transaction.attributes["referenceForBeneficiary"] == "Test"
 
+
 def test_receiving_wire_transaction():
     wire_transaction_api_response = {
         "type": "wireTransaction",
@@ -150,6 +150,7 @@ def test_receiving_wire_transaction():
     assert transaction.id == id
     assert transaction.attributes["counterparty"].routing_number == "812345678"
     assert transaction.attributes["senderReference"] == "Test"
+
 
 def test_card_transaction():
     card_transaction_api_response = {
@@ -333,6 +334,206 @@ def test_purchase_transaction():
     assert transaction.attributes["cardNetwork"] == "Visa"
     assert transaction.attributes["digitalWallet"] == "Apple"
     assert transaction.attributes["paymentMethod"] == "Contactless"
+
+def test_payment_canceled_transaction():
+    payment_canceled_transaction_api_response = {
+          "type": "paymentCanceledTransaction",
+          "id": "185",
+          "attributes": {
+            "createdAt": "2022-02-02T13:11:22.404Z",
+            "amount": 7000,
+            "direction": "Credit",
+            "balance": 1702108,
+            "summary": "Cancellation of: 184  |  Payment Id: 18"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10002"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10001"
+              }
+            },
+            "customers": {
+              "data": [
+                {
+                  "type": "customer",
+                  "id": "10001"
+                }
+              ]
+            },
+            "relatedTransaction": {
+              "data": {
+                "type": "transaction",
+                "id": "184"
+              }
+            }
+          }
+        }
+
+    id = payment_canceled_transaction_api_response["id"]
+    _type = payment_canceled_transaction_api_response["type"]
+
+    transaction = DtoDecoder.decode(payment_canceled_transaction_api_response)
+
+    assert transaction.id == id
+    assert transaction.type == _type
+    assert transaction.attributes["amount"] == 7000
+    assert transaction.attributes["direction"] == "Credit"
+    assert transaction.attributes["balance"] == 1702108
+    assert transaction.attributes["summary"] == "Cancellation of: 184  |  Payment Id: 18"
+
+def test_chargeback_transaction():
+    chargeback_transaction_api_response = {
+          "type": "chargebackTransaction",
+          "id": "9547",
+          "attributes": {
+            "createdAt": "2020-07-05T15:49:36.864Z",
+            "direction": "Debit",
+            "amount": 1000,
+            "balance": 12000,
+            "summary": "Chargeback for dispute #1337",
+            "counterparty": {
+              "name": "Jane Smith",
+              "routingNumber": "812345678",
+              "accountNumber": "10039",
+              "accountType": "Checking"
+            },
+            "tags": {
+              "internalId": "abc1345"
+            }
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10035"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "10000"
+              }
+            },
+            "customers": {
+              "data": [
+                {
+                  "type": "customer",
+                  "id": "10000"
+                }
+              ]
+            },
+            "counterpartyAccount": {
+              "data": {
+                "type": "account",
+                "id": "10036"
+              }
+            },
+            "chargeback": {
+              "data": {
+                "type": "payment",
+                "id": "10530"
+              }
+            }
+          }
+        }
+
+    id = chargeback_transaction_api_response["id"]
+    _type = chargeback_transaction_api_response["type"]
+
+    transaction = DtoDecoder.decode(chargeback_transaction_api_response)
+
+    assert transaction.id == id
+    assert transaction.type == _type
+    assert transaction.attributes["amount"] == 1000
+    assert transaction.attributes["direction"] == "Debit"
+    assert transaction.attributes["balance"] == 12000
+    assert transaction.attributes["summary"] == "Chargeback for dispute #1337"
+    assert transaction.attributes["counterparty"].routing_number == "812345678"
+
+def test_reward_transaction():
+    reward_transaction_api_response = {
+            "type": "rewardTransaction",
+            "id": "51",
+            "attributes": {
+                "createdAt": "2022-04-05T10:46:34.371Z",
+                "receiverCounterparty": {
+                    "name": "Unit Finance Inc.",
+                    "routingNumber": "091311229",
+                    "accountNumber": "864800000000",
+                    "accountType": "Checking"
+                },
+                "amount": 800,
+                "direction": "Credit",
+                "balance": 113000,
+                "summary": "My Reward 8",
+                "tags": {
+                    "customer_type": "vip"
+                }
+            },
+            "relationships": {
+                "account": {
+                    "data": {
+                        "type": "account",
+                        "id": "10001"
+                    }
+                },
+                "customer": {
+                    "data": {
+                        "type": "customer",
+                        "id": "10000"
+                    }
+                },
+                "customers": {
+                    "data": [
+                        {
+                            "type": "customer",
+                            "id": "10000"
+                        }
+                    ]
+                },
+                "org": {
+                    "data": {
+                        "type": "org",
+                        "id": "1"
+                    }
+                },
+                "reward": {
+                    "data": {
+                        "type": "reward",
+                        "id": "1"
+                    }
+                },
+                "receiverAccount": {
+                    "data": {
+                        "type": "account",
+                        "id": "10000"
+                    }
+                }
+            }
+        }
+
+    id = reward_transaction_api_response["id"]
+    _type = reward_transaction_api_response["type"]
+
+    transaction = DtoDecoder.decode(reward_transaction_api_response)
+
+    assert transaction.id == id
+    assert transaction.type == _type
+    assert transaction.attributes["amount"] == 800
+    assert transaction.attributes["direction"] == "Credit"
+    assert transaction.attributes["balance"] == 113000
+    assert transaction.attributes["summary"] == "My Reward 8"
+    assert transaction.attributes["tags"] is not None
+    assert transaction.attributes["receiverCounterparty"].routing_number == "091311229"
+
+
 
 def test_list_and_get_transactions_with_type():
     transaction_ids = []

@@ -27,7 +27,7 @@ def test_create_individual_application():
     app = create_individual_application()
     assert app.data.type == "individualApplication"
 
-def test_create_business_application():
+def create_business_application():
     request = CreateBusinessApplicationRequest(
         name="Acme Inc.",
         address=Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
@@ -47,7 +47,10 @@ def test_create_business_application():
         ]
     )
 
-    response = client.applications.create(request)
+    return client.applications.create(request)
+
+def test_create_business_application():
+    response = create_business_application()
     assert response.data.type == "businessApplication"
 
 def test_list_and_get_applications():
@@ -56,3 +59,14 @@ def test_list_and_get_applications():
         assert app.type == "businessApplication" or app.type == "individualApplication"
         res = client.applications.get(app.id)
         assert res.data.type == "businessApplication" or res.data.type == "individualApplication"
+
+def test_update_individual_application():
+    app = create_individual_application()
+    updated = client.applications.update(PatchApplicationRequest(app.data.id, tags={"patch": "test-patch"}))
+    assert updated.data.type == "individualApplication"
+
+def test_update_bussiness_application():
+    app = create_business_application()
+    updated = client.applications.update(PatchApplicationRequest(app.data.id, "businessApplication",
+                                                                      tags={"patch": "test-patch"}))
+    assert updated.data.type == "businessApplication"
