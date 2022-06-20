@@ -125,6 +125,9 @@ mappings = {
         "chargebackTransaction": lambda _id, _type, attributes, relationships:
         ChargebackTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "cardReversalTransaction": lambda _id, _type, attributes, relationships:
+        CardReversalTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
         "achPayment": lambda _id, _type, attributes, relationships:
         AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
