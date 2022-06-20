@@ -1,7 +1,3 @@
-import json
-from datetime import datetime, date
-from typing import Literal, Optional
-from unit.utils import date_utils
 from unit.models import *
 
 ApplicationFormStage = Literal["ChooseBusinessOrIndividual", "EnterIndividualInformation",
@@ -10,7 +6,7 @@ ApplicationFormStage = Literal["ChooseBusinessOrIndividual", "EnterIndividualInf
                                "EnterSoleProprietorshipInformation", "SoleProprietorshipApplicationCreated"]
 
 
-class ApplicationFormPrefill(object):
+class ApplicationFormPrefill(UnitDTO):
     def __init__(self, application_type: Optional[str], full_name: Optional[FullName], ssn: Optional[str],
                  passport: Optional[str], nationality: Optional[str], date_of_birth: Optional[date],
                  email: Optional[str], name: Optional[str], state_of_incorporation: Optional[str],
@@ -37,7 +33,7 @@ class ApplicationFormPrefill(object):
         self.phone = phone
 
 
-class ApplicationFormDTO(object):
+class ApplicationFormDTO(UnitDTO):
     def __init__(self, id: str, url: str, stage: ApplicationFormStage, applicant_details: ApplicationFormPrefill,
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
@@ -53,7 +49,8 @@ class ApplicationFormDTO(object):
 
 AllowedApplicationTypes = Union["Individual", "Business", "SoleProprietorship"]
 
-class ApplicationFormSettingsOverride(object):
+
+class ApplicationFormSettingsOverride(UnitDTO):
     def __init__(self, redirect_url: str, privacy_policy_url: str, electronic_disclosures_url: str,
                  deposit_terms_url: str, client_terms_url: str, cardholder_terms_url: str, cash_advanced_terms_url: str,
                  debit_card_disclosure_url: str, additional_disclosures: [Dict[str, str]]):
@@ -91,19 +88,13 @@ class CreateApplicationFormRequest(UnitRequest):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.application_details:
-            if type(self.application_details) is dict:
-                ad = self.application_details
-            else:
-                v = vars(self.application_details)
-                ad = dict((k, val) for k, val in v.items() if val is not None)
-
-            payload["data"]["attributes"]["applicantDetails"] = ad
+            payload["data"]["attributes"]["applicantDetails"] = self.application_details.to_dict()
 
         if self.allowed_application_types:
             payload["data"]["attributes"]["allowedApplicationTypes"] = self.allowed_application_types
 
         if self.settings_override:
-            payload["data"]["attributes"]["settingsOverride"] = self.settings_override
+            payload["data"]["attributes"]["settingsOverride"] = self.settings_override.to_dict()
 
         if self.lang:
             payload["data"]["attributes"]["lang"] = self.lang
