@@ -240,7 +240,7 @@ class ListAccountParams(UnitParams):
 
 
 class AccountOwnersRequest(UnitRequest):
-    def __init__(self, account_id: str, customers: Optional[RelationshipArray] = None):
+    def __init__(self, account_id: str, customers: RelationshipArray):
         self.account_id = account_id
         self.customers = customers
 
@@ -253,7 +253,6 @@ class AccountOwnersRequest(UnitRequest):
 
 class AccountDepositProductDTO(object):
     def __init__(self, name: str):
-        self.id = id
         self.type = "accountDepositProduct"
         self.attributes = {"name": name}
 
