@@ -2,16 +2,18 @@ import json
 from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 from datetime import datetime, date
 
+
 def to_camel_case(snake_str):
     components = snake_str.lstrip('_').split('_')
     # We capitalize the first letter of each component except the first one
     # with the 'title' method and join them together.
     return components[0] + ''.join(x.title() for x in components[1:])
 
+
 class UnitDTO(object):
     def to_dict(self):
         if type(self) is dict:
-            return dto
+            return self
         else:
             v = vars(self)
             return dict((to_camel_case(k), val) for k, val in v.items() if val is not None)
@@ -30,6 +32,7 @@ class Relationship(UnitDTO):
 
 
 T = TypeVar('T')
+
 
 class RelationshipArray(Generic[T], UnitDTO):
     def __init__(self, l: List[T]):
@@ -67,9 +70,11 @@ class UnitRequest(object):
     def to_json_api(self) -> Dict:
         pass
 
+
 class UnitParams(object):
     def to_dict(self) -> Dict:
         pass
+
 
 class RawUnitObject(UnitDTO):
     def __init__(self, _id, _type, attributes, relationships):
@@ -81,6 +86,7 @@ class RawUnitObject(UnitDTO):
     def to_dict(self):
         v = vars(self.attributes)
         return dict((to_camel_case(k), val) for k, val in v.items() if val is not None)
+
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
@@ -119,6 +125,7 @@ class UnitError(object):
 Status = Literal["Approved", "Denied", "PendingReview"]
 Title = Literal["CEO", "COO", "CFO", "President"]
 EntityType = Literal["Corporation", "LLC", "Partnership"]
+
 
 class FullName(UnitDTO):
     def __init__(self, first: str, last: str):
