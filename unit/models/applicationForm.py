@@ -88,7 +88,7 @@ class CreateApplicationFormRequest(UnitRequest):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.application_details:
-            payload["data"]["attributes"]["applicantDetails"] = self.application_details.to_dict()
+            payload["data"]["attributes"]["applicantDetails"] = self.application_details
 
         if self.allowed_application_types:
             payload["data"]["attributes"]["allowedApplicationTypes"] = self.allowed_application_types

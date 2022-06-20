@@ -11,3 +11,5 @@ def test_list_account_end_of_day():
     response = client.account_end_of_day.list(params)
     for a in response.data:
         assert a.type == "accountEndOfDay"
+
+test_list_account_end_of_day()
