@@ -94,7 +94,7 @@ class CreateApplicationFormRequest(UnitRequest):
             payload["data"]["attributes"]["allowedApplicationTypes"] = self.allowed_application_types
 
         if self.settings_override:
-            payload["data"]["attributes"]["settingsOverride"] = self.settings_override.to_dict()
+            payload["data"]["attributes"]["settingsOverride"] = self.settings_override
 
         if self.lang:
             payload["data"]["attributes"]["lang"] = self.lang
