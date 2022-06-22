@@ -1,9 +1,10 @@
 from unit.utils import date_utils
 from unit.models import *
 
+DisputeStatus = Literal["InvestigationStarted", "ProvisionallyCredited", "Denied", "ResolvedLost", "ResolvedWon"]
 
 class DisputeDTO(object):
-    def __init__(self, id: str, source: str, status: str, status_history: Optional[List[str]], description: str,
+    def __init__(self, id: str, source: str, status: str, status_history: Optional[List[DisputeStatus]], description: str,
                  created_at: datetime, updated_at: Optional[datetime], amount: str, decision_reason: Optional[str],
                  relationships):
         self.id = id

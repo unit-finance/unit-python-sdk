@@ -5,7 +5,7 @@ from unit.models.codecs import DtoDecoder
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
-def test_sending_wire_transaction():
+def test_dispute_dto():
     dispute_api_response = {
         "type": "dispute",
         "id": "36",
