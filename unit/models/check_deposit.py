@@ -59,12 +59,12 @@ class CreateCheckDepositRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 class ListCheckDepositParams(UnitParams):
-    def __init__(self, offset: int = 0, limit: int = 100, check_deposit_id: Optional[str] = None,
+    def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, tags: Optional[object] = None,
                  sort: Optional[str] = None, include: Optional[str] = None):
         self.offset = offset
         self.limit = limit
-        self.check_deposit_id = check_deposit_id
+        self.account_id = account_id
         self.customer_id = customer_id
         self.tags = tags
         self.sort = sort
