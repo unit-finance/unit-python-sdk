@@ -16,13 +16,13 @@ class CheckDepositResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def get(self, account_id: str, include: Optional[str] = None) -> Union[UnitResponse[CheckDepositDTO], UnitError]:
+    def get(self, check_deposit_id: str, include: Optional[str] = None) -> Union[UnitResponse[CheckDepositDTO], UnitError]:
         params = {}
 
         if include:
             params["include"] = include
 
-        response = super().get(f"{self.resource}/{account_id}", params)
+        response = super().get(f"{self.resource}/{check_deposit_id}", params)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
@@ -42,7 +42,7 @@ class CheckDepositResource(BaseResource):
 
     def update(self, request: PatchCheckDepositRequest) -> Union[UnitResponse[CheckDepositDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().patch(f"{self.resource}/{request.account_id}", payload)
+        response = super().patch(f"{self.resource}/{request.check_deposit_id}", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[CheckDepositDTO](DtoDecoder.decode(data), None)
@@ -50,7 +50,7 @@ class CheckDepositResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def upload(self, request: UploadCheckDepositDocumentRequest):
-        url = f"{self.resource}/{request.application_id}/{request.side}"
+        url = f"{self.resource}/{request.check_deposit_id}/{request.side}"
 
         headers = {"Content-Type": "image/jpeg"}
 
