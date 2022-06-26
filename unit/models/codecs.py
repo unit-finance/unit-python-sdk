@@ -20,6 +20,7 @@ from unit.models.api_token import APITokenDTO
 from unit.models.authorization import AuthorizationDTO
 from unit.models.authorization_request import PurchaseAuthorizationRequestDTO
 from unit.models.account_end_of_day import AccountEndOfDayDTO
+from unit.models.check_deposit import CheckDepositDTO
 from unit.models.dispute import DisputeDTO
 
 mappings = {
@@ -121,6 +122,9 @@ mappings = {
 
         "chargebackTransaction": lambda _id, _type, attributes, relationships:
         ChargebackTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "cardReversalTransaction": lambda _id, _type, attributes, relationships:
+        CardReversalTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "achPayment": lambda _id, _type, attributes, relationships:
         AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
@@ -259,6 +263,9 @@ mappings = {
 
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
+
+        "checkDeposit": lambda _id, _type, attributes, relationships:
+        CheckDepositDTO.from_json_api(_id, _type, attributes, relationships),
 
         "dispute": lambda _id, _type, attributes, relationships:
         DisputeDTO.from_json_api(_id, _type, attributes, relationships),
