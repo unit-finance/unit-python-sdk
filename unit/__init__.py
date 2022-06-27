@@ -20,6 +20,7 @@ from unit.api.authorization_resource import AuthorizationResource
 from unit.api.authorization_request_resource import AuthorizationRequestResource
 from unit.api.account_end_of_day_resource import AccountEndOfDayResource
 from unit.api.checkDeposit_resource import CheckDepositResource
+from unit.api.dispute_resource import DisputeResource
 
 __all__ = ["api", "models", "utils"]
 
@@ -48,3 +49,4 @@ class Unit(object):
         self.authorization_requests = AuthorizationRequestResource(api_url, token)
         self.account_end_of_day = AccountEndOfDayResource(api_url, token)
         self.checkDeposits = CheckDepositResource(api_url, token)
+        self.disputes = DisputeResource(api_url, token)
