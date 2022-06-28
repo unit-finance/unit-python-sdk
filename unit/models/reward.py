@@ -43,7 +43,7 @@ class CreateRewardRequest(UnitRequest):
         self.tags = tags
 
         self.relationships = {
-            "receivingAccount": Relationship(_type="depositaccount", _id=self.receiving_account_id)
+            "receivingAccount": Relationship(_type="depositAccount", _id=self.receiving_account_id)
         }
         if self.rewarded_transaction_id:
             self.relationships["rewardedTransaction"] = Relationship(_type="transaction", _id=self.rewarded_transaction_id)
