@@ -152,7 +152,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
         return PurchaseTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
             attributes["amount"], attributes["balance"], attributes["summary"], attributes["cardLast4Digits"],
-            Merchant.from_json_api(attributes["merchant"]), Coordinates.from_json_api(attributes["coordinates"]),
+            Merchant.from_json_api(attributes["merchant"]), Coordinates.from_json_api(attributes.get("coordinates", { "latitude": None, "longitude": None })),
             attributes["recurring"], attributes.get("interchange"), attributes.get("ecommerce"),
             attributes.get("cardPresent"), attributes.get("paymentMethod"), attributes.get("digitalWallet"),
             attributes.get("cardVerificationData"), attributes.get("cardNetwork"), attributes.get("tags"),
