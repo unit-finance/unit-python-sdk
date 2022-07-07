@@ -335,6 +335,72 @@ def test_purchase_transaction():
     assert transaction.attributes["digitalWallet"] == "Apple"
     assert transaction.attributes["paymentMethod"] == "Contactless"
 
+def test_purchase_transaction_without_coordinates():
+    purchase_transaction_api_response = {
+          "type": "purchaseTransaction",
+          "id": "51",
+          "attributes": {
+            "createdAt": "2020-09-08T12:41:43.360Z",
+            "direction": "Debit",
+            "amount": 2500,
+            "balance": 10523,
+            "summary": "Car rental",
+            "cardLast4Digits": "2282",
+            "merchant": {
+              "name": "Europcar Mobility Group",
+              "type": 3381,
+              "category": "EUROP CAR",
+              "location": "Cupertino, CA"
+            },
+            "recurring": False,
+            "interchange": 2.43,
+            "ecommerce": False,
+            "cardPresent": True,
+            "paymentMethod": "Contactless",
+            "digitalWallet": "Apple",
+            "cardVerificationData": {
+              "verificationMethod": "CVV2"
+            },
+            "cardNetwork": "Visa"
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "10001"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "3"
+              }
+            },
+            "card": {
+              "data": {
+                "type": "card",
+                "id": "11"
+              }
+            },
+            "authorization": {
+              "data": {
+                "type": "authorization",
+                "id": "40"
+              }
+            }
+          }
+        }
+
+    id = purchase_transaction_api_response["id"]
+    attributes = purchase_transaction_api_response["attributes"]
+    relationships = purchase_transaction_api_response["relationships"]
+    _type = purchase_transaction_api_response["type"]
+
+    transaction = PurchaseTransactionDTO.from_json_api(id, _type, attributes, relationships)
+
+    assert transaction.id == id
+    assert transaction.attributes["interchange"] == 2.43
+
 def test_payment_canceled_transaction():
     payment_canceled_transaction_api_response = {
           "type": "paymentCanceledTransaction",
