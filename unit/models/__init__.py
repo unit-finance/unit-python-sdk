@@ -260,6 +260,9 @@ class Coordinates(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
+        if not data:
+            return None
+
         return Coordinates(data["longitude"], data["latitude"])
 
 
