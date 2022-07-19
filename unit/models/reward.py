@@ -88,6 +88,7 @@ class ListRewardsParams(UnitParams):
         until: Optional[datetime] = None,
         sort: Optional[SORT_ORDERS] = None,
         include: Optional[List[RELATED_RESOURCES]] = None,
+        tags: Optional[object] = None,
     ):
         self.limit = limit
         self.offset = offset
@@ -101,6 +102,7 @@ class ListRewardsParams(UnitParams):
         self.until = until
         self.sort = sort
         self.include = include
+        self.tags = tags
 
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
@@ -132,4 +134,8 @@ class ListRewardsParams(UnitParams):
         if self.sort:
             parameters["sort"] = self.sort
 
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+
         return parameters
+

@@ -1,9 +1,7 @@
-from typing import Union, List
-
+from typing import Union, List, Optional
 from unit.api.base_resource import BaseResource
 from unit.models import UnitResponse, UnitError
 from unit.models.reward import RewardDTO, ListRewardsParams, CreateRewardRequest
-
 from unit.models.codecs import DtoDecoder
 
 
@@ -21,11 +19,12 @@ class RewardResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def get(self, reward_id: str) -> Union[UnitResponse[RewardDTO], UnitError]:
+    def get(self, reward_id: str, include: Optional[str] = "") -> Union[UnitResponse[RewardDTO], UnitError]:
         response = super().get(f"{self.resource}/{reward_id}")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[RewardDTO](DtoDecoder.decode(data), None)
+            included = response.json().get("included")
+            return UnitResponse[RewardDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
 
@@ -34,6 +33,7 @@ class RewardResource(BaseResource):
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[List[RewardDTO]](DtoDecoder.decode(data), None)
+            included = response.json().get("included")
+            return UnitResponse[List[RewardDTO]](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
