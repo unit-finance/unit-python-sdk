@@ -20,7 +20,7 @@ class RewardResource(BaseResource):
             return UnitError.from_json_api(response.json())
 
     def get(self, reward_id: str, include: Optional[str] = "") -> Union[UnitResponse[RewardDTO], UnitError]:
-        response = super().get(f"{self.resource}/{reward_id}")
+        response = super().get(f"{self.resource}/{reward_id}", {"include": include})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")

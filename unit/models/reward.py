@@ -2,6 +2,7 @@ import json
 from typing import Optional, Literal, Dict, List
 from datetime import datetime
 from unit.models import Relationship, UnitRequest, UnitParams
+from unit.utils import create_relationship, create_deposit_account_relationship
 
 SORT_ORDERS = Literal["created_at", "-created_at"]
 RELATED_RESOURCES = Literal["customer", "account", "transaction"]
@@ -39,15 +40,18 @@ class CreateRewardRequest(UnitRequest):
         self.funding_account_id = funding_account_id
         self.idempotency_key = idempotency_key
         self.tags = tags
+        self.relationships = {}
 
-        self.relationships = {
-            "receivingAccount": Relationship(_type="depositAccount", _id=self.receiving_account_id)
-        }
+        if self.receiving_account_id:
+            self.relationships.update(
+                create_deposit_account_relationship(self.receiving_account_id, "receivingAccount"))
+
         if self.rewarded_transaction_id:
-            self.relationships["rewardedTransaction"] = Relationship(_type="transaction", _id=self.rewarded_transaction_id)
+            self.relationships.update(
+                create_relationship("transaction", self.rewarded_transaction_id, "rewardedTransaction"))
 
         if self.funding_account_id:
-            self.relationships["fundingAccount"] = Relationship(_type="depositAccount", _id=self.funding_account_id)
+            self.relationships.update(create_deposit_account_relationship(self.receiving_account_id, "fundingAccount"))
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -128,7 +132,7 @@ class ListRewardsParams(UnitParams):
         if self.since:
             parameters["filter[since]"] = self.since
 
-        if self.unitl:
+        if self.until:
             parameters["filter[until]"] = self.until
 
         if self.sort:
