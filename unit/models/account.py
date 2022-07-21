@@ -1,5 +1,4 @@
 from unit.utils import date_utils
-
 from unit.models import *
 
 AccountStatus = Literal["Open", "Closed"]

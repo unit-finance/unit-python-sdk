@@ -274,6 +274,9 @@ class Coordinates(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
+        if not data:
+            return None
+
         return Coordinates(data["longitude"], data["latitude"])
 
 
@@ -325,3 +328,16 @@ class DeviceFingerprint(UnitDTO):
     @classmethod
     def from_json_api(cls, data: Dict):
         return cls(value=data["value"], provider=data["provider"])
+
+class CheckCounterparty(object):
+    def __init__(self, routing_number: str, account_number: str, name: str):
+        self.routing_number = routing_number
+        self.account_number = account_number
+        self.name = name
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if not data:
+            return None
+
+        return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
