@@ -219,12 +219,16 @@ class CloseAccountRequest(UnitRequest):
 
 class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None, include: Optional[str] = None):
+                 tags: Optional[object] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
+                 from_balance: Optional[int] = None, to_balance: Optional[int] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
         self.tags = tags
         self.include = include
+        self.status = status
+        self.from_balance = from_balance
+        self.to_balance = to_balance
     
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
@@ -234,4 +238,10 @@ class ListAccountParams(UnitParams):
             parameters["filter[tags]"] = self.tags
         if self.include:
             parameters["include"] = self.include
+        if self.status:
+            parameters["filter[status]"] = self.status
+        if self.from_balance:
+            parameters["filter[fromBalance]"] = self.from_balance
+        if self.to_balance:
+            parameters["filter[toBalance]"] = self.to_balance
         return parameters
