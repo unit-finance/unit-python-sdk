@@ -20,7 +20,6 @@ def test_create_reward():
 
     reward = client.rewards.get(reward_id, "account, transaction, customer")
     assert reward.data.type == "reward"
-    # assert reward.included is not None
 
 
 def test_list_rewards():
