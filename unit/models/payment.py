@@ -78,10 +78,11 @@ PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
 AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned"]
 
 class AchReceivedPaymentDTO(object):
-    def __init__(self, id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: bool,
+    def __init__(self, _id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: bool,
                  completion_date: datetime, return_reason: Optional[str], amount: int, description: str,
                  addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
                  sec_code: Optional[str], tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        self.id = _id
         self.type = "achReceivedPayment"
         self.attributes = {"createdAt": created_at, "status": status, "wasAdvanced": was_advanced,
                            "completionDate": completion_date, "returnReason": return_reason, "description": description,
