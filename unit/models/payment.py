@@ -5,14 +5,16 @@ PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"
 PaymentDirections = Literal["Debit", "Credit"]
 PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 
+
 class BasePayment(object):
-    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
+    def __init__(self, _id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
-        self.id = id
+        self._id = _id
         self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
                            "description": description, "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
+
 
 class AchPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, counterparty: Counterparty, direction: str,
@@ -20,7 +22,7 @@ class AchPaymentDTO(BasePayment):
                  settlement_date: Optional[datetime], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
-        self.type = 'achPayment'
+        self._type = 'achPayment'
         self.attributes["counterparty"] = counterparty
         self.attributes["addenda"] = addenda
         self.settlement_date = settlement_date
@@ -38,7 +40,7 @@ class BookPaymentDTO(BasePayment):
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
-        self.type = 'bookPayment'
+        self._type = 'bookPayment'
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -47,11 +49,11 @@ class BookPaymentDTO(BasePayment):
                               attributes.get("reason"), attributes.get("tags"), relationships)
 
 class WirePaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, counterparty: WireCounterparty,
+    def __init__(self, _id: str, created_at: datetime, status: PaymentStatus, counterparty: WireCounterparty,
                  direction: str, description: str, amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
-        BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
-        self.type = "wirePayment"
+        BasePayment.__init__(self, _id, created_at, status, direction, description, amount, reason, tags, relationships)
+        self._type = "wirePayment"
         self.attributes["counterparty"] = counterparty
 
     @staticmethod
@@ -62,10 +64,10 @@ class WirePaymentDTO(BasePayment):
                               attributes.get("tags"), relationships)
 
 class BillPaymentDTO(BasePayment):
-    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
-                 amount: int, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
-        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships)
-        self.type = 'billPayment'
+    def __init__(self, _id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
+                 amount: int, reason: Optional[str], tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        BasePayment.__init__(self, _id, created_at, status, direction, description, amount, reason, tags, relationships)
+        self._type = 'billPayment'
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -73,17 +75,19 @@ class BillPaymentDTO(BasePayment):
                               attributes["direction"], attributes["description"], attributes["amount"],
                               attributes.get("reason"), attributes.get("tags"), relationships)
 
+
 PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO]
 
 AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned"]
+
 
 class AchReceivedPaymentDTO(object):
     def __init__(self, _id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: bool,
                  completion_date: datetime, return_reason: Optional[str], amount: int, description: str,
                  addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
                  sec_code: Optional[str], tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
-        self.id = _id
-        self.type = "achReceivedPayment"
+        self._id = _id
+        self._type = "achReceivedPayment"
         self.attributes = {"createdAt": created_at, "status": status, "wasAdvanced": was_advanced,
                            "completionDate": completion_date, "returnReason": return_reason, "description": description,
                            "amount": amount, "addenda": addenda, "companyName": company_name,
@@ -100,11 +104,12 @@ class AchReceivedPaymentDTO(object):
                                      attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
                                      attributes.get("secCode"), attributes.get("tags"), relationships)
 
+
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
-                 type: str = "achPayment"):
-        self.type = type
+                 _type: str = "achPayment"):
+        self._type = _type
         self.amount = amount
         self.description = description
         self.direction = direction
@@ -115,7 +120,7 @@ class CreatePaymentBaseRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": self.type,
+                "type": self._type,
                 "attributes": {
                     "amount": self.amount,
                     "direction": self.direction,
@@ -262,7 +267,7 @@ PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
 class ListPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, tags: Optional[object] = None,
-                 status: Optional[List[PaymentStatus]] = None, type: Optional[List[PaymentTypes]] = None,
+                 status: Optional[List[PaymentStatus]] = None, _type: Optional[List[PaymentTypes]] = None,
                  direction: Optional[List[PaymentDirections]] = None, since: Optional[str] = None,
                  until: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
                  include: Optional[str] = None):
@@ -272,7 +277,7 @@ class ListPaymentParams(UnitParams):
         self.customer_id = customer_id
         self.tags = tags
         self.status = status
-        self.type = type
+        self._type = _type
         self.direction = direction
         self.since = since
         self.until = until
@@ -290,8 +295,8 @@ class ListPaymentParams(UnitParams):
         if self.status:
             for idx, status_filter in enumerate(self.status):
                 parameters[f"filter[status][{idx}]"] = status_filter
-        if self.type:
-            for idx, type_filter in enumerate(self.type):
+        if self._type:
+            for idx, type_filter in enumerate(self._type):
                 parameters[f"filter[type][{idx}]"] = type_filter
         if self.direction:
             for idx, direction_filter in enumerate(self.direction):

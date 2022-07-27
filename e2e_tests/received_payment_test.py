@@ -43,8 +43,10 @@ def test_sending_wire_transaction():
     relationships = ach_received_payment_api_response["relationships"]
     _type = ach_received_payment_api_response["type"]
 
-    payment = AchReceivedPaymentDTO.from_json_api(id, _type, attributes, relationships)
+    payment = AchReceivedPaymentDTO.from_json_api(_id, _type, attributes, relationships)
 
+    assert payment._id == _id
+    assert payment._type == _type
     assert payment.attributes["wasAdvanced"] is False
     assert payment.attributes["traceNumber"] == "123456789123456"
     assert payment.relationships["account"]["data"]["id"] == "163575"
