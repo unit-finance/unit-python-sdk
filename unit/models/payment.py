@@ -4,6 +4,7 @@ from unit.models import *
 PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
 PaymentDirections = Literal["Debit", "Credit"]
 PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
+RecurringStatus = Literal["Active", "Completed", "Disabled"]
 
 class BasePayment(object):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
@@ -99,6 +100,181 @@ class AchReceivedPaymentDTO(object):
                                      attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
                                      attributes.get("secCode"), attributes.get("tags"), relationships)
 
+class RecurringCreditAchPaymentDTO(object):
+    def __init__(self, _id: str, created_at: datetime, update_at: datetime, amount: int, description: str,
+                 addenda: Optional[str], status: RecurringStatus, number_of_payments: int, schedule: Schedule,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        self.id = _id
+        self.type = "recurringCreditAchPayment"
+        self.attributes = {"createdAt": created_at, "updatedAt": update_at, "amount": amount,
+                           "description": description, "addenda": addenda, "status": status,
+                           "numberOfPayments": number_of_payments, "schedule": schedule, "tags": tags}
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RecurringCreditAchPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                            date_utils.to_datetime(attributes["updatedAt"]), attributes["amount"],
+                                            attributes["description"], attributes.get("addenda"), attributes["status"],
+                                            attributes["numberOfPayments"],
+                                            Schedule.from_json_api(attributes["schedule"]), attributes.get("tags"),
+                                            relationships)
+
+
+class RecurringCreditBookPaymentDTO(object):
+    def __init__(self, _id: str, created_at: datetime, update_at: datetime, amount: int, description: str,
+                 addenda: Optional[str], status: RecurringStatus, number_of_payments: int, schedule: Schedule,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        self.id = _id
+        self.type = "recurringCreditBookPayment"
+        self.attributes = {"createdAt": created_at, "updatedAt": update_at, "amount": amount,
+                           "description": description, "addenda": addenda, "status": status,
+                           "numberOfPayments": number_of_payments, "schedule": schedule, "tags": tags}
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RecurringCreditBookPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                            date_utils.to_datetime(attributes["updatedAt"]), attributes["amount"],
+                                            attributes["description"], attributes.get("addenda"), attributes["status"],
+                                            attributes["numberOfPayments"],
+                                            Schedule.from_json_api(attributes["schedule"]), attributes.get("tags"),
+                                            relationships)
+
+
+class RecurringCreditAchPaymentDTO(object):
+    def __init__(self, _id: str, created_at: datetime, update_at: datetime, amount: int, description: str,
+                 addenda: Optional[str], status: RecurringStatus, number_of_payments: int, schedule: Schedule,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        self.id = _id
+        self.type = "recurringCreditAchPayment"
+        self.attributes = {"createdAt": created_at, "updatedAt": update_at, "amount": amount,
+                           "description": description, "addenda": addenda, "status": status,
+                           "numberOfPayments": number_of_payments, "schedule": schedule, "tags": tags}
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RecurringCreditAchPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                            date_utils.to_datetime(attributes["updatedAt"]), attributes["amount"],
+                                            attributes["description"], attributes.get("addenda"), attributes["status"],
+                                            attributes["numberOfPayments"],
+                                            Schedule.from_json_api(attributes["schedule"]), attributes.get("tags"),
+                                            relationships)
+
+
+RecurringCreditPaymentDTO = Union[RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO]
+
+
+class CreateRecurringCreditAchPaymentRequest(UnitRequest):
+    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
+                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
+                 type: str = "achPayment"):
+        self.type = type
+        self.amount = amount
+        self.description = description
+        self.direction = direction
+        self.idempotency_key = idempotency_key
+        self.tags = tags
+        self.relationships = relationships
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": self.type,
+                "attributes": {
+                    "amount": self.amount,
+                    "direction": self.direction,
+                    "description": self.description
+                },
+                "relationships": self.relationships
+            }
+        }
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+class CreateRecurringCreditPaymentBaseRequest(UnitRequest):
+    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], schedule: CreateSchedule,
+                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
+                 _type: str = "recurringCreditAchPayment"):
+        self.type = _type
+        self.amount = amount
+        self.description = description
+        self.schedule = schedule
+        self.idempotency_key = idempotency_key
+        self.tags = tags
+        self.relationships = relationships
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": self.type,
+                "attributes": {
+                    "amount": self.amount,
+                    "description": self.description,
+                    "schedule": self.schedule
+                },
+                "relationships": self.relationships
+            }
+        }
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class CreateRecurringCreditAchPaymentRequest(CreateRecurringCreditPaymentBaseRequest):
+    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], schedule: CreateSchedule,
+        addenda: Optional[str], idempotency_key: Optional[str], tags: Optional[Dict[str, str]]):
+        CreateRecurringCreditPaymentBaseRequest.__init__(self, amount, description, relationships, schedule,
+                                                         idempotency_key, tags)
+        self.addenda = addenda
+
+    def to_json_api(self) -> Dict:
+        payload = CreateRecurringCreditPaymentBaseRequest.to_json_api(self)
+
+        if self.addenda:
+            payload["data"]["attributes"]["addenda"] = self.addenda
+
+        return payload
+
+
+class CreateRecurringCreditBookPaymentRequest(CreateRecurringCreditPaymentBaseRequest):
+    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], schedule: CreateSchedule,
+        transaction_summary_override: Optional[str], idempotency_key: Optional[str], tags: Optional[Dict[str, str]]):
+        CreateRecurringCreditPaymentBaseRequest.__init__(self, amount, description, relationships, schedule,
+                                                         idempotency_key, tags, "recurringBookPayment")
+        self.transaction_summary_override = transaction_summary_override
+
+    def to_json_api(self) -> Dict:
+        payload = CreateRecurringCreditPaymentBaseRequest.to_json_api(self)
+
+        if self.transaction_summary_override:
+            payload["data"]["attributes"]["transactionSummaryOverride"] = self.transaction_summary_override
+
+        return payload
+
+
+CreateRecurringCreditPaymentRequest = Union[CreateRecurringCreditAchPaymentRequest,
+                                            CreateRecurringCreditBookPaymentRequest]
+
+
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
@@ -186,10 +362,10 @@ class CreateVerifiedPaymentRequest(CreatePaymentBaseRequest):
         payload["data"]["attributes"]["counterparty"] = self.counterparty
         payload["data"]["attributes"]["plaidProcessorToken"] = self.plaid_processor_token
 
-        if counterparty_name:
+        if self.counterparty_name:
             payload["data"]["attributes"]["counterpartyName"] = self.counterparty_name
 
-        if verify_counterparty_balance:
+        if self.verify_counterparty_balance:
             payload["data"]["attributes"]["verifyCounterpartyBalance"] = self.verify_counterparty_balance
 
         return payload
