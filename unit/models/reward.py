@@ -12,7 +12,7 @@ class RewardDTO(object):
     def __init__(self, _id: str, created_at: datetime, amount: int, description: str, status: RewardStatus,
                  reject_reason: Optional[str], tags: Optional[Dict[str, str]] = None,
                  relationships: Optional[Dict[str, Relationship]] = None):
-        self._id = _id
+        self.id = _id
         self.type = "reward"
         self.attributes = {"createdAt": created_at, "amount": amount, "description": description, "status": status,
                            "rejectReason": reject_reason, "tags": tags}
