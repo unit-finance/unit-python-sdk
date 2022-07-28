@@ -7,6 +7,8 @@ from unit.models.application import *
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
+ApplicationTypes = ["individualApplication", "businessApplication", "trustApplication"]
+
 def create_individual_application():
     device_fingerprint = DeviceFingerprint.from_json_api({
         "provider": "iovation",
@@ -56,16 +58,16 @@ def test_create_business_application():
 def test_list_and_get_applications():
     response = client.applications.list()
     for app in response.data:
-        assert app.type == "businessApplication" or app.type == "individualApplication"
+        assert app.type in ApplicationTypes
         res = client.applications.get(app.id)
-        assert res.data.type == "businessApplication" or res.data.type == "individualApplication"
+        assert res.data.type in ApplicationTypes
 
 def test_update_individual_application():
     app = create_individual_application()
     updated = client.applications.update(PatchApplicationRequest(app.data.id, tags={"patch": "test-patch"}))
     assert updated.data.type == "individualApplication"
 
-def test_update_bussiness_application():
+def test_update_business_application():
     app = create_business_application()
     updated = client.applications.update(PatchApplicationRequest(app.data.id, "businessApplication",
                                                                       tags={"patch": "test-patch"}))
