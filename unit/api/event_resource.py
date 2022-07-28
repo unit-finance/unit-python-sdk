@@ -18,8 +18,7 @@ class EventResource(BaseResource):
 
     def list(self, params: ListEventParams = None) -> Union[UnitResponse[List[EventDTO]], UnitError]:
         params = params or ListEventParams()
-        response = super().get(self.resource)
-        # response = super().get(self.resource, params.to_dict())
+        response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[EventDTO](DtoDecoder.decode(data), None)
