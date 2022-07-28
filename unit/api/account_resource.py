@@ -85,3 +85,30 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def get_deposit_products(self, account_id: str) -> Union[UnitResponse[List[AccountDepositProductDTO]], UnitError]:
+        response = super().get(f"{self.resource}/{account_id}/deposit-products")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[List[AccountDepositProductDTO]](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def add_owners(self, request: AccountOwnersRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.account_id}/relationships/customers", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def remove_owners(self, request: AccountOwnersRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().delete(f"{self.resource}/{request.account_id}/relationships/customers", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+
