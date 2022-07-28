@@ -6,7 +6,7 @@ token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
 
-def test_sending_wire_transaction():
+def test_received_payment_response():
     ach_received_payment_api_response = {
       "type": "achReceivedPayment",
       "id": "1337",
