@@ -106,7 +106,7 @@ def test_add_owners():
     response = add_owners()
     assert response.data.type == "depositAccount"
     assert response.data.relationships["customers"].data is not None
-    assert len(response.data.relationships["customers"].relationships) == 3
+    assert len(response.data.relationships["customers"].data) == 3
 
 
 def test_remove_owners():
