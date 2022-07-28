@@ -450,13 +450,17 @@ class CardLimitsDTO(object):
 
 class ListCardParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None, include: Optional[str] = None):
+                 customer_id: Optional[str] = None, tags: Optional[object] = None, include: Optional[str] = None,
+                 sort: Optional[Literal["createdAt", "-createdAt"]] = None,
+                 status: Optional[List[CardStatus]] = None):
         self.offset = offset
         self.limit = limit
         self.account_id = account_id
         self.customer_id = customer_id
         self.tags = tags
         self.include = include
+        self.sort = sort
+        self.status = status
 
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
@@ -468,5 +472,10 @@ class ListCardParams(UnitParams):
             parameters["filter[tags]"] = self.tags
         if self.include:
             parameters["include"] = self.include
+        if self.sort:
+            parameters["sort"] = self.sort
+        if self.status:
+            for idx, status_filter in enumerate(self.status):
+                parameters[f"filter[status][{idx}]"] = status_filter
         return parameters
 

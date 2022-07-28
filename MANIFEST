@@ -25,6 +25,7 @@ unit/api/institution_resource.py
 unit/api/payment_resource.py
 unit/api/received_payment_resource.py
 unit/api/returnAch_resource.py
+unit/api/reward_resource.py
 unit/api/statement_resource.py
 unit/api/transaction_resource.py
 unit/api/webhook_resource.py
@@ -50,6 +51,7 @@ unit/models/fee.py
 unit/models/institution.py
 unit/models/payment.py
 unit/models/returnAch.py
+unit/models/reward.py
 unit/models/statement.py
 unit/models/transaction.py
 unit/models/webhook.py
