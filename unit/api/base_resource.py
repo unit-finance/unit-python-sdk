@@ -4,7 +4,7 @@ import backoff
 from typing import Optional, Dict
 from unit.models.codecs import UnitEncoder
 
-retries = 3
+retries = 1
 max_time = 300
 
 
@@ -14,7 +14,7 @@ def fatal_code(e):
 
 
 class BaseResource(object):
-    def __init__(self, api_url, token, retries_amount=3):
+    def __init__(self, api_url, token, retries_amount=retries):
         global retries
 
         self.api_url = api_url.rstrip("/")
