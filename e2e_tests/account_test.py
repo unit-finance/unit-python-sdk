@@ -113,7 +113,7 @@ def test_remove_owners():
     response = add_owners()
     assert response.data.type == "depositAccount"
     account_id = response.data.id
-    last_owner_id = response.data.relationships["customers"].relationships.pop().id # An account should have at least one owner
+    last_owner_id = response.data.relationships["customers"].data.pop().id # An account should have at least one owner
     response = client.accounts.remove_owners(AccountOwnersRequest(account_id, response.data.relationships["customers"]))
     assert response.data.type == "depositAccount"
     assert response.data.relationships.get("customer").id == last_owner_id
