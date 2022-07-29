@@ -301,7 +301,7 @@ class CustomerUpdatedEvent(BaseEvent):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CustomerCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+        return CustomerUpdatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
                                     attributes.get("tags"), relationships)
 
 
