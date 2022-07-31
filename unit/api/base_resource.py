@@ -4,7 +4,7 @@ import backoff
 from typing import Optional, Dict
 from unit.models.codecs import UnitEncoder
 
-retries = 1
+retries = 0
 max_time = 300
 
 
