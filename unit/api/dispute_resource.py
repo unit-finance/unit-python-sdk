@@ -1,6 +1,6 @@
 from unit.api.base_resource import BaseResource
 from unit.models.dispute import *
-from unit.models.codecs import DtoDecoder
+from unit.models.unit_objects import UnitResponse
 
 
 class DisputeResource(BaseResource):
@@ -9,20 +9,8 @@ class DisputeResource(BaseResource):
         self.resource = "disputes"
 
     def get(self, dispute_id: str) -> Union[UnitResponse[DisputeDTO], UnitError]:
-        response = super().get(f"{self.resource}/{dispute_id}")
-        if response.status_code == 200:
-            data = response.json().get("data")
-            return UnitResponse[DisputeDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().get(f"{self.resource}/{dispute_id}", return_type=DisputeDTO)
 
     def list(self, params: ListDisputeParams = None) -> Union[UnitResponse[List[DisputeDTO]], UnitError]:
         params = params or ListDisputeParams()
-        response = super().get(self.resource, params.to_dict())
-        if response.status_code == 200:
-            data = response.json().get("data")
-            return UnitResponse[DisputeDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
-
-
+        return super().get(self.resource, params.to_dict(), return_type=List[DisputeDTO])

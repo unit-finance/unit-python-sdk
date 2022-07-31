@@ -1,6 +1,6 @@
 from unit.api.base_resource import BaseResource
 from unit.models.account_end_of_day import *
-from unit.models.codecs import DtoDecoder
+from unit.models.unit_objects import UnitResponse
 
 
 class AccountEndOfDayResource(BaseResource):
@@ -10,10 +10,5 @@ class AccountEndOfDayResource(BaseResource):
 
     def list(self, params: ListAccountEndOfDayParams = None) -> Union[UnitResponse[List[AccountEndOfDayDTO]], UnitError]:
         params = params or ListAccountEndOfDayParams()
-        response = super().get(self.resource, params.to_dict())
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[AccountEndOfDayDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().get(self.resource, params.to_dict(), return_type=List[AccountEndOfDayDTO])
 

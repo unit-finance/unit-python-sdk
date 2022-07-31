@@ -1,6 +1,6 @@
 from unit.api.base_resource import BaseResource
 from unit.models.customerToken import *
-from unit.models.codecs import DtoDecoder
+from unit.models.unit_objects import UnitResponse
 
 
 class CustomerTokenResource(BaseResource):
@@ -10,20 +10,10 @@ class CustomerTokenResource(BaseResource):
 
     def create_token(self, request: CreateCustomerToken) -> Union[UnitResponse[CustomerTokenDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{request.customer_id}/token", payload)
+        return super().post(f"{self.resource}/{request.customer_id}/token", payload, return_type=CustomerTokenDTO)
 
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerTokenDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
-
-    def create_token_verification(self, request: CreateCustomerTokenVerification) -> Union[UnitResponse[CustomerVerificationTokenDTO], UnitError]:
+    def create_token_verification(self, request: CreateCustomerTokenVerification) ->\
+            Union[UnitResponse[CustomerVerificationTokenDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{request.customer_id}/token/verification", payload)
-
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerVerificationTokenDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().post(f"{self.resource}/{request.customer_id}/token/verification", payload,
+                            return_type=CustomerVerificationTokenDTO)

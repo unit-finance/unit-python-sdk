@@ -73,3 +73,6 @@ def test_update_book_payment():
     request = PatchBookPaymentRequest(payment_id, tags)
     response = client.payments.update(request)
     assert response.data.type == "bookPayment"
+
+
+test_create_book_payment()

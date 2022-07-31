@@ -1,112 +1,52 @@
 from unit.api.base_resource import BaseResource
 from unit.models.card import *
-from unit.models.codecs import DtoDecoder
+from unit.models.unit_objects import UnitResponse
+
+ReturnType = Union[UnitResponse[Card], UnitError]
 
 
 class CardResource(BaseResource):
     def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+        super().__init__(api_url, token, return_type=Card)
         self.resource = "cards"
 
-    def create(self, request: CreateCardRequest) -> Union[UnitResponse[Card], UnitError]:
+    def create(self, request: CreateCardRequest) -> ReturnType:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().post(self.resource, payload)
 
-    def report_stolen(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
-        response = super().post(f"{self.resource}/{card_id}/report-stolen")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+    def report_stolen(self, card_id: str) -> ReturnType:
+        return super().post(f"{self.resource}/{card_id}/report-stolen")
 
-    def report_lost(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
-        response = super().post(f"{self.resource}/{card_id}/report-lost")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+    def report_lost(self, card_id: str) -> ReturnType:
+        return super().post(f"{self.resource}/{card_id}/report-lost")
 
-    def close(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
-        response = super().post(f"{self.resource}/{card_id}/close")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+    def close(self, card_id: str) -> ReturnType:
+        return super().post(f"{self.resource}/{card_id}/close")
 
-    def freeze(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
-        response = super().post(f"{self.resource}/{card_id}/freeze")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+    def freeze(self, card_id: str) -> ReturnType:
+        return super().post(f"{self.resource}/{card_id}/freeze")
 
-    def unfreeze(self, card_id: str) -> Union[UnitResponse[Card], UnitError]:
-        response = super().post(f"{self.resource}/{card_id}/unfreeze")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+    def unfreeze(self, card_id: str) -> ReturnType:
+        return super().post(f"{self.resource}/{card_id}/unfreeze")
 
-    def replace(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]], UnitError]:
+    def replace(self, card_id: str, shipping_address: Optional[Address]) -> ReturnType:
         request = ReplaceCardRequest(shipping_address)
         payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{card_id}/replace", payload)
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().post(f"{self.resource}/{card_id}/replace", payload)
 
-    def update(self, request: PatchCardRequest) -> Union[UnitResponse[Card], UnitError]:
+    def update(self, request: PatchCardRequest) -> ReturnType:
         payload = request.to_json_api()
-        response = super().patch(f"{self.resource}/{request.card_id}", payload)
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[Card](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().patch(f"{self.resource}/{request.card_id}", payload)
 
-    def get(self, card_id: str, include: Optional[str] = "") -> Union[UnitResponse[Card], UnitError]:
-        response = super().get(f"{self.resource}/{card_id}", {"include": include})
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            included = response.json().get("included")
-            return UnitResponse[Card](DtoDecoder.decode(data), DtoDecoder.decode(included))
-        else:
-            return UnitError.from_json_api(response.json())
+    def get(self, card_id: str, include: Optional[str] = "") -> ReturnType:
+        return super().get(f"{self.resource}/{card_id}", {"include": include})
 
     def list(self, params: ListCardParams = None) -> Union[UnitResponse[List[Card]], UnitError]:
         params = params or ListCardParams()
-        response = super().get(self.resource, params.to_dict())
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            included = response.json().get("included")
-            return UnitResponse[Card](DtoDecoder.decode(data), DtoDecoder.decode(included))
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().get(self.resource, params.to_dict(), return_type=List[Card])
 
     def get_pin_status(self, card_id: str) -> Union[UnitResponse[PinStatusDTO], UnitError]:
-        response = super().get(f"{self.resource}/{card_id}/secure-data/pin/status")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[PinStatusDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().get(f"{self.resource}/{card_id}/secure-data/pin/status", return_type=PinStatusDTO)
 
     def limits(self, card_id: str) -> Union[UnitResponse[CardLimitsDTO], UnitError]:
-        response = super().get(f"{self.resource}/{card_id}/limits")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CardLimitsDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().get(f"{self.resource}/{card_id}/limits", return_type=CardLimitsDTO)

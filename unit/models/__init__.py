@@ -1,6 +1,6 @@
 import json
 from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
-from datetime import datetime, date
+from datetime import date, datetime
 
 
 def to_camel_case(snake_str):
@@ -40,16 +40,6 @@ class RelationshipArray(Generic[T], UnitDTO):
 
     def to_dict(self):
         return {"data": list(map(lambda r: r.to_dict(False), self.relationships))}
-
-
-class UnitResponse(Generic[T]):
-    def __init__(self, data: Union[T, List[T]], included):
-        self.data = data
-        self.included = included
-
-    @staticmethod
-    def from_json_api(data: str):
-        pass
 
 
 class UnitRequest(object):
