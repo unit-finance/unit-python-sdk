@@ -5,8 +5,7 @@ from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -109,7 +108,7 @@ mappings = {
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
-        PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+        PaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
         RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
@@ -305,28 +304,34 @@ def decode_limits(attributes: Dict):
     else:
         return CardLimitsDTO.from_json_api(attributes)
 
-def mapping_wraper(_id, _type, attributes, relationships):
+
+def mapping_wrapper(_id, _type, attributes, relationships):
     if _type in mappings:
         return mappings[_type](_id, _type, attributes, relationships)
     else:
         return RawUnitObject(_id, _type, attributes, relationships)
+
 
 class DtoDecoder(object):
     @staticmethod
     def decode(payload):
         if payload is None:
             return None
-        # if response contains a list of dtos
+
         if isinstance(payload, list):
             dtos = split_json_api_array_response(payload)
             response = []
             for _id, _type, attributes, relationships in dtos:
-                response.append(mapping_wraper(_id, _type, attributes, relationships))
+                response.append(mapping_wrapper(_id, _type, attributes, relationships))
 
             return response
         else:
+            if not hasattr(payload, 'keys') or "type" not in payload.keys():
+                return payload
+
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
-            return mapping_wraper(_id, _type, attributes, relationships)
+            return mapping_wrapper(_id, _type, attributes, relationships)
+
 
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):

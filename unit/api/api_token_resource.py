@@ -1,34 +1,22 @@
 from unit.api.base_resource import BaseResource
 from unit.models.api_token import *
-from unit.models.codecs import DtoDecoder
+from unit.models.unit_objects import UnitResponse
+
+ReturnType = Union[UnitResponse[APITokenDTO], UnitError]
 
 
 class APITokenResource(BaseResource):
     def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+        super().__init__(api_url, token, return_type=APITokenDTO)
         self.resource = "users"
 
-    def create(self, request: CreateAPITokenRequest) -> Union[UnitResponse[APITokenDTO], UnitError]:
+    def create(self, request: CreateAPITokenRequest) -> ReturnType:
         payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{request.user_id}/api-tokens", payload)
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[APITokenDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().post(f"{self.resource}/{request.user_id}/api-tokens", payload)
 
     def list(self, user_id: str) -> Union[UnitResponse[List[APITokenDTO]], UnitError]:
-        response = super().get(f"{self.resource}/{user_id}/api-tokens")
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[APITokenDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().get(f"{self.resource}/{user_id}/api-tokens", return_type=List[APITokenDTO])
 
-    def revoke(self, user_id: str, token_id: str) -> Union[UnitResponse, UnitError]:
-        response = super().delete(f"{self.resource}/{user_id}/api-tokens/{token_id}")
-        if super().is_20x(response.status_code):
-            return UnitResponse([], None)
-        else:
-            return UnitError.from_json_api(response.json())
+    def revoke(self, user_id: str, token_id: str) -> ReturnType:
+        return super().delete(f"{self.resource}/{user_id}/api-tokens/{token_id}")
 

@@ -1,16 +1,17 @@
 from unit.api.base_resource import BaseResource
 from unit.models.atm_location import *
-from unit.models.codecs import DtoDecoder, UnitEncoder
+from unit.models.codecs import UnitEncoder
+from unit.models.unit_objects import UnitResponse
+
+ReturnType = Union[UnitResponse[List[AtmLocationDTO]], UnitError]
+
 
 class AtmLocationResource(BaseResource):
     def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+        super().__init__(api_url, token, return_type=AtmLocationDTO)
         self.resource = "atm-locations"
 
-    """
-    UnitEncoder must be imported here and not in the model class to no cause circular importing.
-    """
-    def get(self, request: GetAtmLocationParams) -> Union[UnitResponse[List[AtmLocationDTO]], UnitError]:
+    def get(self, request: GetAtmLocationParams) -> ReturnType:
         params = {}
 
         if request.coordinates:
@@ -25,10 +26,5 @@ class AtmLocationResource(BaseResource):
         if request.search_radius:
             params["filter[searchRadius]"] = request.search_radius
 
-        response = super().get(self.resource, params)
-        if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[AtmLocationDTO](DtoDecoder.decode(data), None)
-        else:
-            return UnitError.from_json_api(response.json())
+        return super().get(self.resource, params)
 

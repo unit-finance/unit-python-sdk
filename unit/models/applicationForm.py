@@ -34,9 +34,9 @@ class ApplicationFormPrefill(UnitDTO):
 
 
 class ApplicationFormDTO(UnitDTO):
-    def __init__(self, id: str, url: str, stage: ApplicationFormStage, applicant_details: ApplicationFormPrefill,
+    def __init__(self, _id: str, url: str, stage: ApplicationFormStage, applicant_details: ApplicationFormPrefill,
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
-        self.id = id
+        self.id = _id
         self.type = "applicationForm"
         self.attributes = {"url": url, "stage": stage, "applicantDetails": applicant_details, "tags": tags}
         self.relationships = relationships

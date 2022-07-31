@@ -3,14 +3,12 @@ from unit.models import *
 from typing import IO
 
 ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview"]
-
 DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "CertificateOfIncorporation",
                        "EmployerIdentificationNumberConfirmation"]
-
 ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMismatch", "DOBMismatch", "ExpiredId",
                      "EINMismatch", "StateMismatch", "Other"]
-
 ApplicationTypes = Literal["individualApplication", "businessApplication"]
+
 
 class IndividualApplicationDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
@@ -220,6 +218,11 @@ class UploadDocumentRequest(object):
         self.file = file
         self.file_type = file_type
         self.is_back_side = is_back_side
+
+    def to_dict(self):
+        content_types = {"jpeg": "image/jpeg", "png": "image/png", "pdf": "application/pdf"}
+        headers = {"Content-Type": content_types[self.file_type]}
+        return headers
 
 
 class ListApplicationParams(UnitParams):

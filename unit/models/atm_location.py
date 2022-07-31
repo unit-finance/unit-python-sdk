@@ -1,4 +1,3 @@
-import json
 from unit.models import *
 
 
@@ -25,4 +24,3 @@ class GetAtmLocationParams(object):
         self.coordinates = coordinates
         self.postal_code = postal_code
         self.address = address
-

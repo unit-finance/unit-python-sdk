@@ -19,3 +19,11 @@ class GetBillersParams(object):
         self.name = name
         self.page = page
 
+    def to_dict(self):
+        parameters = {"name": self.name}
+
+        if self.page:
+            parameters["page"] = self.page
+
+        return parameters
+

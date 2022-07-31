@@ -6,6 +6,7 @@ from unit.models.statement import GetStatementParams, ListStatementParams
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
+
 def test_list_and_get_statements():
     statements = client.statements.list(ListStatementParams(2)).data
     for s in statements:

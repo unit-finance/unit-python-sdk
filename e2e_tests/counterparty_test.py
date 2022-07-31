@@ -7,20 +7,24 @@ from e2e_tests.account_test import create_individual_customer
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
+
 def create_counterparty():
     customer_id = create_individual_customer()
     request = CreateCounterpartyRequest("Joe Doe", "123456789", "123", "Checking", "Person",
                                         {"customer": Relationship("customer", customer_id)})
     return client.counterparty.create(request)
 
+
 def test_create_counterparty():
     response = create_counterparty()
     assert response.data.type == "achCounterparty"
+
 
 def test_delete_counterparty():
     counterparty_id = create_counterparty().data.id
     response = client.counterparty.delete(counterparty_id)
     assert response.data == []
+
 
 def test_get_counterparty():
     counterparty_id = create_counterparty().data.id
@@ -34,7 +38,7 @@ def test_counterparty_list():
         assert c.type == "achCounterparty"
 
 
-def test_create_couterparty():
+def test_create_counterparty():
     create_counterparty_json = {
         "data": {
             "type": "achCounterparty",
@@ -70,7 +74,7 @@ def test_create_couterparty():
     assert payload["data"]["type"] == create_counterparty_json["data"]["type"]
 
 
-def test_create_with_token_couterparty():
+def test_create_with_token_counterparty():
     create_counterparty_json = {
          "data": {
             "type": "achCounterparty",
@@ -107,6 +111,7 @@ def test_create_with_token_couterparty():
     assert payload["data"]["attributes"]["permissions"] == create_counterparty_json["data"]["attributes"]["permissions"]
     assert payload["data"]["attributes"]["tags"] == create_counterparty_json["data"]["attributes"]["tags"]
 
+
 def test_counterparty_dto():
     counterparty_api_response = {
           "type": "achCounterparty",
@@ -131,14 +136,14 @@ def test_counterparty_dto():
           }
     }
 
-    id = counterparty_api_response["id"]
+    _id = counterparty_api_response["id"]
     attributes = counterparty_api_response["attributes"]
     relationships = counterparty_api_response["relationships"]
     _type = counterparty_api_response["type"]
 
-    counterparty = CounterpartyDTO.from_json_api(id, _type, attributes, relationships)
+    counterparty = CounterpartyDTO.from_json_api(_id, _type, attributes, relationships)
 
-    assert counterparty.id == id
+    assert counterparty.id == _id
     assert counterparty.attributes["bank"] == counterparty_api_response["attributes"]["bank"]
     assert counterparty.attributes["accountNumber"] == counterparty_api_response["attributes"]["accountNumber"]
     assert counterparty.attributes["routingNumber"] == counterparty_api_response["attributes"]["routingNumber"]
@@ -146,3 +151,4 @@ def test_counterparty_dto():
     assert counterparty.attributes["permissions"] == counterparty_api_response["attributes"]["permissions"]
     assert counterparty.attributes["type"] == counterparty_api_response["attributes"]["type"]
     assert counterparty.attributes["name"] == counterparty_api_response["attributes"]["name"]
+
