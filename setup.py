@@ -12,7 +12,7 @@ setup(
     keywords=['unit', 'finance', 'banking',
               'banking-as-a-service', 'API', 'SDK'],
     install_requires=[
-        'requests'
+        'requests', 'backoff'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
