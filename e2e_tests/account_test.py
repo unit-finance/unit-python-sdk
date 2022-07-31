@@ -87,4 +87,3 @@ def test_update_account():
         "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
     response = client.accounts.update(request)
     assert response.data.type == "depositAccount"
-
