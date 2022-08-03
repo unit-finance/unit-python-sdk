@@ -89,7 +89,11 @@ def test_update_account():
     assert response.data.type == "depositAccount"
 
 def test_get_deposit_products():
+    response = create_deposit_account()
+    assert response.data.type == "depositAccount"
     response = client.accounts.list()
+    assert len(response.data) > 0
+
     for acc in response.data:
         deposit_products = client.accounts.get_deposit_products(acc.id).data
         for dp in deposit_products:
