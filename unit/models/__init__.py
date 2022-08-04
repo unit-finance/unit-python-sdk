@@ -36,10 +36,20 @@ T = TypeVar('T')
 
 class RelationshipArray(Generic[T], UnitDTO):
     def __init__(self, l: List[T]):
-        self.relationships = l
+        relationships = []
+        for r in l:
+            if isinstance(r, Relationship):
+                relationships.append(r)
+            else:
+                relationships.append(Relationship(r["type"], r["id"]))
+        self.data = relationships
 
-    def to_dict(self):
-        return {"data": list(map(lambda r: r.to_dict(False), self.relationships))}
+    def to_dict(self) -> Dict:
+        return {"data": list(map(lambda r: r.to_dict(False), self.data))}
+
+    @staticmethod
+    def from_ids_array(type: str, ids: List[str]):
+        return RelationshipArray(list(map(lambda id: Relationship(type, id), ids)))
 
 
 class UnitResponse(Generic[T]):

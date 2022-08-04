@@ -1,6 +1,6 @@
 from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
-from unit.models.account import DepositAccountDTO, AccountLimitsDTO
+from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
@@ -264,6 +264,9 @@ mappings = {
         "pinStatus": lambda _id, _type, attributes, relationships:
         PinStatusDTO.from_json_api(attributes),
 
+        "accountDepositProduct": lambda _id, _type, attributes, relationships:
+        AccountDepositProductDTO.from_json_api(attributes),
+
         "checkDeposit": lambda _id, _type, attributes, relationships:
         CheckDepositDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -280,8 +283,7 @@ def split_json_api_single_response(payload: Dict):
         relationships = dict()
         for k, v in payload.get("relationships").items():
             if isinstance(v["data"], list):
-                # todo: alex handle cases when relationships are in a form of array (e.g. jointAccount or documents)
-                continue
+                relationships[k] = RelationshipArray(v["data"])
             else:
                 relationships[k] = Relationship(v["data"]["type"], v["data"]["id"])
 
