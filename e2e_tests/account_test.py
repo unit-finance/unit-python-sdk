@@ -88,3 +88,36 @@ def test_update_account():
     response = client.accounts.update(request)
     assert response.data.type == "depositAccount"
 
+def test_get_deposit_products():
+    response = create_deposit_account()
+    assert response.data.type == "depositAccount"
+    response = client.accounts.list()
+    assert len(response.data) > 0
+
+    for acc in response.data:
+        deposit_products = client.accounts.get_deposit_products(acc.id).data
+        for dp in deposit_products:
+            assert dp.type == "accountDepositProduct"
+
+def add_owners():
+    account_id = create_deposit_account().data.id
+    customer_ids = [create_individual_customer(), create_individual_customer()]
+    return client.accounts.add_owners(AccountOwnersRequest(account_id,
+                                                                    RelationshipArray.from_ids_array("customer",
+                                                                                                     customer_ids)))
+
+def test_add_owners():
+    response = add_owners()
+    assert response.data.type == "depositAccount"
+    assert response.data.relationships["customers"].data is not None
+    assert len(response.data.relationships["customers"].data) == 3
+
+
+def test_remove_owners():
+    response = add_owners()
+    assert response.data.type == "depositAccount"
+    account_id = response.data.id
+    last_owner_id = response.data.relationships["customers"].data.pop().id # An account should have at least one owner
+    response = client.accounts.remove_owners(AccountOwnersRequest(account_id, response.data.relationships["customers"]))
+    assert response.data.type == "depositAccount"
+    assert response.data.relationships.get("customer").id == last_owner_id

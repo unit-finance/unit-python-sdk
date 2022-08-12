@@ -57,8 +57,9 @@ class BaseResource(object):
                           max_tries=retries,
                           max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
-    def delete(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
-        return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
+    def delete(self, resource: str, data: Dict = None, headers: Optional[Dict[str, str]] = None):
+        data = json.dumps(data, cls=UnitEncoder) if data is not None else None
+        return requests.delete(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
                           fatal_code,
@@ -78,5 +79,4 @@ class BaseResource(object):
 
     def is_20x(self, status: int):
         return status == 200 or status == 201 or status == 204
-
 
