@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class CounterpartyResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "counterparties"
 
     def create(self, request: Union[CreateCounterpartyRequest, CreateCounterpartyWithTokenRequest]) -> Union[UnitResponse[CounterpartyDTO], UnitError]:

@@ -5,7 +5,7 @@ from typing import Optional, Dict
 from unit.models.codecs import UnitEncoder
 
 retries = 0
-max_time = 300
+MAX_DURATION = 300
 
 
 def fatal_code(e):
@@ -14,7 +14,7 @@ def fatal_code(e):
 
 
 class BaseResource(object):
-    def __init__(self, api_url, token, retries_amount=retries):
+    def __init__(self, api_url, token, retries_amount):
         global retries
 
         self.api_url = api_url.rstrip("/")
@@ -29,7 +29,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           fatal_code,
                           max_tries=retries,
-                          max_time=max_time,
+                          max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
@@ -37,7 +37,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           fatal_code,
                           max_tries=retries,
-                          max_time=max_time,
+                          max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
     def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -46,7 +46,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           fatal_code,
                           max_tries=retries,
-                          max_time=max_time,
+                          max_time="",
                           jitter=backoff.random_jitter)
     def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -55,7 +55,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           fatal_code,
                           max_tries=retries,
-                          max_time=max_time,
+                          max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
     def delete(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
         return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
@@ -63,7 +63,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           fatal_code,
                           max_tries=retries,
-                          max_time=max_time,
+                          max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
     def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
