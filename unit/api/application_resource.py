@@ -8,17 +8,14 @@ class ApplicationResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "applications"
 
-    def create(self, request: Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest]) -> Union[UnitResponse[ApplicationDTO], UnitError]:
+    def create(self, request: CreateApplicationRequest) -> Union[UnitResponse[ApplicationDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(self.resource, payload)
 
         if response.ok:
             data = response.json().get("data")
             included = response.json().get("included")
-            if data["type"] == "individualApplication":
-                return UnitResponse[IndividualApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
-            else:
-                return UnitResponse[BusinessApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
 
