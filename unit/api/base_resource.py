@@ -8,9 +8,29 @@ retries = 0
 MAX_DURATION = 300
 
 
-def fatal_code(e):
+def backoff_handler(e):
     code = e.status_code
-    return 500 <= code < 600 or code == 408 or code == 429
+    return (is_timeout(code) or is_rete_limit(code) or is_server_error(code)) and idempotency_key_is_not_present(e)
+
+
+def is_timeout(code):
+    return code == 408
+
+
+def is_rete_limit(code):
+    return code == 429
+
+
+def is_server_error(code):
+    return 500 <= code <= 599
+
+
+def idempotency_key_is_not_present(e):
+    body = json.loads(e.request.body)
+    if body is None:
+        return True
+
+    return body["data"]["attributes"].get("idempotencyKey") is None
 
 
 class BaseResource(object):
@@ -27,7 +47,7 @@ class BaseResource(object):
         retries = retries_amount
 
     @backoff.on_predicate(backoff.expo,
-                          fatal_code,
+                          backoff_handler,
                           max_tries=retries,
                           max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
@@ -35,7 +55,7 @@ class BaseResource(object):
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
-                          fatal_code,
+                          backoff_handler,
                           max_tries=retries,
                           max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
@@ -44,7 +64,7 @@ class BaseResource(object):
         return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
-                          fatal_code,
+                          backoff_handler,
                           max_tries=retries,
                           max_time="",
                           jitter=backoff.random_jitter)
@@ -53,7 +73,7 @@ class BaseResource(object):
         return requests.patch(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
-                          fatal_code,
+                          backoff_handler,
                           max_tries=retries,
                           max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
@@ -62,7 +82,7 @@ class BaseResource(object):
         return requests.delete(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
-                          fatal_code,
+                          backoff_handler,
                           max_tries=retries,
                           max_time=MAX_DURATION,
                           jitter=backoff.random_jitter)
