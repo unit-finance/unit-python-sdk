@@ -3,6 +3,7 @@ import unittest
 from datetime import timedelta
 from unit import Unit
 from unit.models.application import *
+from e2e_tests.helpers.helpers import *
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -51,9 +52,23 @@ def create_business_application():
 
     return client.applications.create(request)
 
+
 def test_create_business_application():
     response = create_business_application()
     assert response.data.type == "businessApplication"
+
+
+def create_trust_application():
+    request = CreateTrustApplicationRequest("Trust me Inc.", "CA", "Revocable", "Salary", "123456789",
+                                            create_grantor(), create_trustee(), create_beneficiaries(),
+                                            create_trust_contact(), tags={"test": "test1"})
+    return client.applications.create(request)
+
+
+def test_create_trust_application():
+    response = create_trust_application()
+    assert response.data.type == "trustApplication"
+
 
 def test_list_and_get_applications():
     response = client.applications.list()
@@ -72,3 +87,6 @@ def test_update_business_application():
     updated = client.applications.update(PatchApplicationRequest(app.data.id, "businessApplication",
                                                                       tags={"patch": "test-patch"}))
     assert updated.data.type == "businessApplication"
+
+
+test_create_trust_application()
