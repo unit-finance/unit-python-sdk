@@ -30,7 +30,7 @@ class AchPaymentDTO(BasePayment):
     def from_json_api(_id, _type, attributes, relationships):
         settlement_date = date_utils.to_date(attributes.get("settlementDate")) if attributes.get("settlementDate") else None
         return AchPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                             attributes["counterparty"], attributes["direction"], attributes["description"],
+                             Counterparty.from_json_api(attributes["counterparty"]), attributes["direction"], attributes["description"],
                              attributes["amount"], attributes.get("addenda"), attributes.get("reason"), settlement_date,
                              attributes.get("tags"), relationships)
 
@@ -353,7 +353,7 @@ class CreateVerifiedPaymentRequest(CreatePaymentBaseRequest):
                  counterparty_name: Optional[str], verify_counterparty_balance: Optional[bool],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit"):
         CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags)
-        self.plaid_Processor_token = plaid_Processor_token
+        self.plaid_Processor_token = plaid_processor_token
         self.counterparty_name = counterparty_name
         self.verify_counterparty_balance = verify_counterparty_balance
 
