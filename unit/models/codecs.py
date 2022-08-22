@@ -5,7 +5,8 @@ from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO, \
+    RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
@@ -140,6 +141,12 @@ mappings = {
 
         "achReceivedPayment": lambda _id, _type, attributes, relationships:
         AchReceivedPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "recurringCreditAchPayment": lambda _id, _type, attributes, relationships:
+        RecurringCreditAchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "recurringCreditBookPayment": lambda _id, _type, attributes, relationships:
+        RecurringCreditBookPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),

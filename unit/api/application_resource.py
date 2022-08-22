@@ -1,5 +1,10 @@
+from typing import Union, List
+
 from unit.api.base_resource import BaseResource
-from unit.models.application import *
+from unit.models import UnitResponse, UnitError
+from unit.models.application import CreateIndividualApplicationRequest, CreateBusinessApplicationRequest, \
+    BusinessApplicationDTO, IndividualApplicationDTO, ApplicationDTO, ListApplicationParams, UploadDocumentRequest, \
+    ApplicationDocumentDTO, PatchApplicationRequest
 from unit.models.codecs import DtoDecoder
 
 

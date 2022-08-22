@@ -289,6 +289,7 @@ class Merchant(UnitDTO):
     def from_json_api(data: Dict):
         return Merchant(data["name"], data["type"], data["category"], data.get("location"))
 
+
 class CardLevelLimits(UnitDTO):
     def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
         self.daily_withdrawal = daily_withdrawal
@@ -299,7 +300,8 @@ class CardLevelLimits(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return CardLevelLimits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
-                      data["monthlyPurchase"])
+                               data["monthlyPurchase"])
+
 
 class CardTotals(UnitDTO):
     def __init__(self, withdrawals: int, deposits: int, purchases: int):
@@ -327,6 +329,7 @@ class DeviceFingerprint(UnitDTO):
     def from_json_api(cls, data: Dict):
         return cls(value=data["value"], provider=data["provider"])
 
+
 class CheckCounterparty(object):
     def __init__(self, routing_number: str, account_number: str, name: str):
         self.routing_number = routing_number
@@ -353,4 +356,14 @@ class Schedule(object):
     def from_json_api(data: Dict):
         return Schedule(date_utils.to_datetime(data["startTime"]), date_utils.to_datetime(data.get("endTime")),
                         data("dayOfMonth"), data["interval"], data["nextScheduledAction"])
+
+
+class CreateSchedule(object):
+    def __init__(self, interval: str, day_of_month: int, start_time: Optional[datetime] = None,
+                 end_time: Optional[datetime] = None, total_number_of_payments: Optional[int] = None):
+        self.start_time = start_time
+        self.end_time = end_time
+        self.day_of_month = day_of_month
+        self.interval = interval
+        self.total_number_of_payments = total_number_of_payments
 

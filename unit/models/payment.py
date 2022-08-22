@@ -202,8 +202,9 @@ class CreateRecurringCreditAchPaymentRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class CreateRecurringCreditPaymentBaseRequest(UnitRequest):
-    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], schedule: CreateSchedule,
+    def __init__(self, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
                  _type: str = "recurringCreditAchPayment"):
         self.type = _type
@@ -240,9 +241,10 @@ class CreateRecurringCreditPaymentBaseRequest(UnitRequest):
 
 
 class CreateRecurringCreditAchPaymentRequest(CreateRecurringCreditPaymentBaseRequest):
-    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], schedule: CreateSchedule,
-        addenda: Optional[str], idempotency_key: Optional[str], tags: Optional[Dict[str, str]]):
-        CreateRecurringCreditPaymentBaseRequest.__init__(self, amount, description, relationships, schedule,
+    def __init__(self, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
+                 addenda: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None):
+        CreateRecurringCreditPaymentBaseRequest.__init__(self, amount, description, schedule, relationships,
                                                          idempotency_key, tags)
         self.addenda = addenda
 
@@ -257,8 +259,9 @@ class CreateRecurringCreditAchPaymentRequest(CreateRecurringCreditPaymentBaseReq
 
 class CreateRecurringCreditBookPaymentRequest(CreateRecurringCreditPaymentBaseRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], schedule: CreateSchedule,
-        transaction_summary_override: Optional[str], idempotency_key: Optional[str], tags: Optional[Dict[str, str]]):
-        CreateRecurringCreditPaymentBaseRequest.__init__(self, amount, description, relationships, schedule,
+                 transaction_summary_override: Optional[str], idempotency_key: Optional[str],
+                 tags: Optional[Dict[str, str]]):
+        CreateRecurringCreditPaymentBaseRequest.__init__(self, amount, description, schedule, relationships,
                                                          idempotency_key, tags, "recurringBookPayment")
         self.transaction_summary_override = transaction_summary_override
 
@@ -514,4 +517,51 @@ class ListReceivedPaymentParams(UnitParams):
             parameters["sort"] = self.sort
         if self.include:
             parameters["include"] = self.include
+        return parameters
+
+
+class ListRecurringPaymentParams(UnitParams):
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+                 customer_id: Optional[str] = None, tags: Optional[object] = None,
+                 status: Optional[List[AchReceivedPaymentStatus]] = None,
+                 _type: Optional[List[str]] = None, from_start_time: Optional[str] = None,
+                 to_start_time: Optional[str] = None,  from_end_time: Optional[str] = None,
+                 to_end_time: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None):
+        self.limit = limit
+        self.offset = offset
+        self.account_id = account_id
+        self.customer_id = customer_id
+        self.tags = tags
+        self.status = status
+        self._type = _type
+        self.from_start_time = from_start_time
+        self.to_start_time = to_start_time
+        self.from_end_time = from_end_time
+        self.to_end_time = to_end_time
+        self.sort = sort
+
+    def to_dict(self) -> Dict:
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.status:
+            for idx, status_filter in enumerate(self.status):
+                parameters[f"filter[status][{idx}]"] = status_filter
+        if self._type:
+            for idx, type_filter in enumerate(self._type):
+                parameters[f"filter[type][{idx}]"] = type_filter
+        if self.from_start_time:
+            parameters["filter[fromStartTime]"] = self.from_start_time
+        if self.to_start_time:
+            parameters["filter[toStartTime]"] = self.to_start_time
+        if self.from_end_time:
+            parameters["filter[fromEndTime]"] = self.from_end_time
+        if self.to_end_time:
+            parameters["filter[toEndTime]"] = self.to_end_time
+        if self.sort:
+            parameters["sort"] = self.sort
         return parameters
