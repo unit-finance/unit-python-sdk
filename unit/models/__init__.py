@@ -2,8 +2,6 @@ import json
 from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 from datetime import datetime, date
 
-from unit.utils import date_utils
-
 
 def to_camel_case(snake_str):
     components = snake_str.lstrip('_').split('_')
@@ -342,28 +340,3 @@ class CheckCounterparty(object):
             return None
 
         return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
-
-
-class Schedule(object):
-    def __init__(self, start_time: datetime, end_time: datetime, day_of_month: int, interval: str, next_scheduled_action: str):
-        self.start_time = start_time
-        self.end_time = end_time
-        self.day_of_month = day_of_month
-        self.interval = interval
-        self.next_scheduled_action = next_scheduled_action
-
-    @staticmethod
-    def from_json_api(data: Dict):
-        return Schedule(date_utils.to_datetime(data["startTime"]), date_utils.to_datetime(data.get("endTime")),
-                        data("dayOfMonth"), data["interval"], data["nextScheduledAction"])
-
-
-class CreateSchedule(object):
-    def __init__(self, interval: str, day_of_month: int, start_time: Optional[datetime] = None,
-                 end_time: Optional[datetime] = None, total_number_of_payments: Optional[int] = None):
-        self.start_time = start_time
-        self.end_time = end_time
-        self.day_of_month = day_of_month
-        self.interval = interval
-        self.total_number_of_payments = total_number_of_payments
-

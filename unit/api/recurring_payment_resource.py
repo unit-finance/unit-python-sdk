@@ -10,7 +10,7 @@ class RecurringPaymentResource(BaseResource):
 
     def create(self, request: CreateRecurringCreditPaymentRequest) -> Union[UnitResponse[RecurringCreditPaymentDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(f"{self.resource}/{request.payment_id}", payload)
+        response = super().post(f"{self.resource}", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[RecurringCreditPaymentDTO](DtoDecoder.decode(data), None)

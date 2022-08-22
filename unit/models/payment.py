@@ -1,10 +1,38 @@
-from unit.utils import date_utils
 from unit.models import *
+from unit.utils import date_utils
 
 PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
 PaymentDirections = Literal["Debit", "Credit"]
 PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 RecurringStatus = Literal["Active", "Completed", "Disabled"]
+
+
+class Schedule(UnitDTO):
+    def __init__(self, start_time: datetime, end_time: datetime, day_of_month: int, interval: str,
+                 next_scheduled_action: str, total_number_of_payments: int):
+        self.start_time = start_time
+        self.end_time = end_time
+        self.day_of_month = day_of_month
+        self.interval = interval
+        self.next_scheduled_action = next_scheduled_action
+        self.total_number_of_payments = total_number_of_payments
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return Schedule(date_utils.to_date(data["startTime"]), date_utils.to_date(data.get("endTime")),
+                        data.get("dayOfMonth"), data["interval"], data["nextScheduledAction"],
+                        data.get("totalNumberOfPayments"))
+
+
+class CreateSchedule(UnitDTO):
+    def __init__(self, interval: str, day_of_month: int, start_time: Optional[datetime] = None,
+                 end_time: Optional[datetime] = None, total_number_of_payments: Optional[int] = None):
+        self.start_time = start_time
+        self.end_time = end_time
+        self.day_of_month = day_of_month
+        self.interval = interval
+        self.total_number_of_payments = total_number_of_payments
+
 
 class BasePayment(object):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
@@ -14,6 +42,7 @@ class BasePayment(object):
         self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
                            "description": description, "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
+
 
 class AchPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, counterparty: Counterparty, direction: str,
@@ -258,11 +287,11 @@ class CreateRecurringCreditAchPaymentRequest(CreateRecurringCreditPaymentBaseReq
 
 
 class CreateRecurringCreditBookPaymentRequest(CreateRecurringCreditPaymentBaseRequest):
-    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], schedule: CreateSchedule,
-                 transaction_summary_override: Optional[str], idempotency_key: Optional[str],
-                 tags: Optional[Dict[str, str]]):
+    def __init__(self, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
+                 transaction_summary_override: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None):
         CreateRecurringCreditPaymentBaseRequest.__init__(self, amount, description, schedule, relationships,
-                                                         idempotency_key, tags, "recurringBookPayment")
+                                                         idempotency_key, tags, "recurringCreditBookPayment")
         self.transaction_summary_override = transaction_summary_override
 
     def to_json_api(self) -> Dict:

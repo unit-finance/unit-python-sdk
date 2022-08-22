@@ -1,8 +1,9 @@
 import json
 from datetime import datetime, date
-from typing import Optional
+from typing import Optional, Dict
+
+from unit.models import Relationship, UnitParams, UnitRequest
 from unit.utils import date_utils
-from unit.models import *
 
 
 class CounterpartyDTO(object):
