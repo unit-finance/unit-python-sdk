@@ -8,7 +8,7 @@ CheckDepositStatus = Literal["AwaitingImages", "AwaitingFrontImage", "AwaitingBa
 
 class CheckDepositDTO(object):
     def __init__(self, id: str, created_at: datetime, status: str, description: str, amount: str, reason: Optional[str],
-                 check_number: Optional[str], counterparty: Optional[CheckCounterparty], settlement_date: Optional[str],
+                 check_number: Optional[str], counterparty: Optional[CheckCounterparty], settlement_date: Optional[date],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "checkDeposit"
@@ -23,7 +23,7 @@ class CheckDepositDTO(object):
                                attributes["description"], attributes["amount"], attributes.get("reason"),
                                attributes.get("checkNumber"),
                                CheckCounterparty.from_json_api(attributes.get("counterparty")),
-                               attributes.get("settlementDate"), attributes.get("tags"), relationships)
+                               date_utils.to_date(attributes.get("settlementDate")), attributes.get("tags"), relationships)
 
 
 class CreateCheckDepositRequest(UnitRequest):
