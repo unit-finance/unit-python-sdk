@@ -5,13 +5,15 @@ from unit.models.codecs import DtoDecoder
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
+
 def test_dispute_dto():
     dispute_api_response = {
         "type": "dispute",
         "id": "36",
         "attributes": {
           "source": "DebitCard",
-          "status": [
+          "status": "ResolvedWon",
+          "statusHistory": [
             {
               "type": "InvestigationStarted",
               "updatedAt": "2022-02-23T12:15:47.386Z"
@@ -57,6 +59,7 @@ def test_dispute_dto():
     assert dispute.id == id
     assert dispute.attributes["amount"] == attributes["amount"]
 
+
 def test_list_disputes():
     disputes_ids = []
     response = client.disputes.list()
@@ -67,4 +70,7 @@ def test_list_disputes():
     for id in disputes_ids:
         response = client.disputes.get(id)
         assert response.data.type == "dispute"
+
+
+test_dispute_dto()
 

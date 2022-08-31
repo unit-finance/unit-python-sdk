@@ -3,20 +3,40 @@ from unit.models import *
 
 DisputeStatus = Literal["InvestigationStarted", "ProvisionallyCredited", "Denied", "ResolvedLost", "ResolvedWon"]
 
+
+class DisputeStatusHistory(object):
+    def __init__(self, _type: DisputeStatus, updated_at: datetime):
+        self.type = _type
+        self.updated_at = updated_at
+
+    @staticmethod
+    def from_json(data):
+        if data is None:
+            return None
+
+        dispute_statuses = []
+        for history in data:
+            dispute_statuses.append(DisputeStatusHistory(history["type"], date_utils.to_datetime(history["updatedAt"])))
+
+        return dispute_statuses
+
+
 class DisputeDTO(object):
-    def __init__(self, id: str, source: str, status: str, status_history: Optional[List[DisputeStatus]], description: str,
-                 created_at: datetime, updated_at: Optional[datetime], amount: str, decision_reason: Optional[str],
+    def __init__(self, _id: str, source: str, status: DisputeStatus,
+                 status_history: Optional[List[DisputeStatusHistory]], description: str, created_at: datetime,
+                 updated_at: Optional[datetime], amount: str, decision_reason: Optional[str],
                  relationships):
-        self.id = id
+        self.id = _id
         self.type = 'dispute'
         self.attributes = {"source": source, "status": status, "statusHistory": status_history,
-                                       "description": description, "createdAt": created_at, "updatedAt": updated_at,
-                                       "amount": amount, "decisionReason": decision_reason}
+                           "description": description, "createdAt": created_at, "updatedAt": updated_at,
+                           "amount": amount, "decisionReason": decision_reason}
         self.relationships = relationships
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return DisputeDTO(_id, attributes.get("source"), attributes.get("status"), attributes.get("statusHistory"),
+        return DisputeDTO(_id, attributes.get("source"), attributes.get("status"),
+                          DisputeStatusHistory.from_json(attributes.get("statusHistory")),
                           attributes.get("description"), date_utils.to_datetime(attributes["createdAt"]),
                           date_utils.to_datetime(attributes.get("updatedAt")), attributes.get("amount"),
                           attributes.get("decisionReason"), relationships)
