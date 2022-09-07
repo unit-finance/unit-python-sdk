@@ -277,15 +277,19 @@ class Coordinates(UnitDTO):
 
 
 class Merchant(UnitDTO):
-    def __init__(self, name: str, type: int, category: str, location: Optional[str]):
+    def __init__(self, name: str, _type: int, category: str, location: Optional[str]):
         self.name = name
-        self.type = type
+        self.type = _type
         self.category = category
         self.location = location
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Merchant(data["name"], data["type"], data["category"], data.get("location"))
+        if data is None:
+            return None
+
+        return Merchant(data.get("name"), data.get("type"), data.get("category"), data.get("location"))
+
 
 class CardLevelLimits(UnitDTO):
     def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
