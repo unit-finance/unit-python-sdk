@@ -21,7 +21,7 @@ def create_individual_application():
         Phone("1", "2025550108"),
         ssn="000000003",
         device_fingerprints=[device_fingerprint],
-        idempotency_key=uuid.uuid1().__str__()
+        idempotency_key=str(uuid.uuid1())
     )
 
     return client.applications.create(request)
