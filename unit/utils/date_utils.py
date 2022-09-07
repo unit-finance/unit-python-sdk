@@ -11,6 +11,9 @@ def from_datetime(dt: datetime):
     return dt.isoformat(timespec='milliseconds') + "Z"
 
 def to_date(d: str):
+    if d is None:
+        return None
+
     return date.fromisoformat(d)
 
 
