@@ -285,10 +285,10 @@ class Merchant(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
-        if data is None:
-            return None
+        if data:
+            return Merchant(data["name"], data["type"], data["category"], data.get("location"))
 
-        return Merchant(data.get("name"), data.get("type"), data.get("category"), data.get("location"))
+        return None
 
 
 class CardLevelLimits(UnitDTO):

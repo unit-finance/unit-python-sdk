@@ -129,10 +129,10 @@ class BookTransactionDTO(BaseTransactionDTO):
 
 class PurchaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, card_last_4_digits: str, merchant: Optional[Merchant],
-                 coordinates: Optional[Coordinates], recurring: bool, interchange: Optional[int], ecommerce: bool,
-                 card_present: bool, payment_method: Optional[str], digital_wallet: Optional[str],
-                 card_verification_data, card_network: Optional[str], tags: Optional[Dict[str, str]],
+                 summary: str, card_last_4_digits: str, merchant: Merchant, coordinates: Optional[Coordinates],
+                 recurring: bool, interchange: Optional[int], ecommerce: bool, card_present: bool,
+                 payment_method: Optional[str], digital_wallet: Optional[str], card_verification_data,
+                 card_network: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
@@ -153,7 +153,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
         return PurchaseTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
             attributes["amount"], attributes["balance"], attributes["summary"], attributes["cardLast4Digits"],
-            Merchant.from_json_api(attributes.get("merchant")), Coordinates.from_json_api(attributes.get("coordinates")),
+            Merchant.from_json_api(attributes["merchant"]), Coordinates.from_json_api(attributes.get("coordinates")),
             attributes["recurring"], attributes.get("interchange"), attributes.get("ecommerce"),
             attributes.get("cardPresent"), attributes.get("paymentMethod"), attributes.get("digitalWallet"),
             attributes.get("cardVerificationData"), attributes.get("cardNetwork"), attributes.get("tags"),
