@@ -9,7 +9,7 @@ class CheckDepositResource(BaseResource):
 
     def create(self, request: CreateCheckDepositRequest) -> Union[UnitResponse[CheckDepositDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post_create(self.resource, payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[CheckDepositDTO](DtoDecoder.decode(data), None)

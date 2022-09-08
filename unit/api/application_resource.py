@@ -10,7 +10,7 @@ class ApplicationResource(BaseResource):
 
     def create(self, request: Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest]) -> Union[UnitResponse[ApplicationDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post_create(self.resource, payload)
 
         if response.ok:
             data = response.json().get("data")

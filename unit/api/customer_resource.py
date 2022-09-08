@@ -21,7 +21,6 @@ class CustomerResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-
     def get(self, customer_id: str) -> Union[UnitResponse[CustomerDTO], UnitError]:
         response = super().get(f"{self.resource}/{customer_id}")
         if response.status_code == 200:

@@ -10,7 +10,7 @@ class PaymentResource(BaseResource):
 
     def create(self, request: CreatePaymentRequest) -> Union[UnitResponse[PaymentDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post_create(self.resource, payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[PaymentDTO](DtoDecoder.decode(data), None)

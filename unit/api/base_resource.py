@@ -7,10 +7,13 @@ from unit.models.codecs import UnitEncoder
 retries = 0
 
 
+def backoff_idempotency_key_handler(e):
+    return backoff_handler(e) and idempotency_key_is_present(e)
+
+
 def backoff_handler(e):
     code = e.status_code
-    status = is_timeout(code) or is_rete_limit(code) or is_server_error(code)
-    return status and idempotency_key_is_not_present(e)
+    return is_timeout(code) or is_rete_limit(code) or is_server_error(code)
 
 
 def is_timeout(code):
@@ -25,12 +28,12 @@ def is_server_error(code):
     return 500 <= code <= 599
 
 
-def idempotency_key_is_not_present(e):
+def idempotency_key_is_present(e):
     body = json.loads(e.request.body)
     if body is None:
-        return True
+        return False
 
-    return body["data"]["attributes"].get("idempotencyKey") is None
+    return body["data"]["attributes"].get("idempotencyKey") is not None
 
 
 class BaseResource(object):
@@ -58,6 +61,15 @@ class BaseResource(object):
                           max_tries=retries,
                           jitter=backoff.random_jitter)
     def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
+        data = json.dumps(data, cls=UnitEncoder) if data is not None else None
+        return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))\
+
+
+    @backoff.on_predicate(backoff.expo,
+                          backoff_idempotency_key_handler,
+                          max_tries=retries,
+                          jitter=backoff.random_jitter)
+    def post_create(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
         return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
