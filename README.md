@@ -56,7 +56,6 @@ Fetching a customer
 ```python
     import os
     from unit import Unit
-    from unit.models.customer import *
 
     token = os.environ.get("token")
     api_url = os.environ.get("api_url")
@@ -64,4 +63,20 @@ Fetching a customer
     unit = Unit(api_url, token)
     customer = unit.customers.list().data[0]
     print(customer.id)
+```
+
+## Retry
+You can read about retries here: https://docs.unit.co/#retries.
+
+the default amount of retries is 0.
+
+Unit initialization with retries:
+```python
+    import os
+    from unit import Unit
+
+    token = os.environ.get("token")
+    api_url = os.environ.get("api_url")
+
+    unit = Unit(api_url, token, retries=3)
 ```
