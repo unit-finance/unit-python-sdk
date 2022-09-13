@@ -277,16 +277,17 @@ class Coordinates(UnitDTO):
 
 
 class Merchant(UnitDTO):
-    def __init__(self, name: str, _type: int, category: str, location: Optional[str]):
+    def __init__(self, name: str, _type: int, category: str, location: Optional[str], _id: Optional[str]):
         self.name = name
         self.type = _type
         self.category = category
         self.location = location
+        self.id = _id
 
     @staticmethod
     def from_json_api(data: Dict):
         if data:
-            return Merchant(data["name"], data["type"], data["category"], data.get("location"))
+            return Merchant(data["name"], data["type"], data["category"], data.get("location"), data.get("id"))
 
         return None
 

@@ -7,18 +7,21 @@ PurchaseAuthorizationRequestStatus = Literal["Pending", "Approved", "Declined"]
 DeclineReason = Literal["AccountClosed", "CardExceedsAmountLimit", "DoNotHonor", "InsufficientFunds", "InvalidMerchant",
                         "ReferToCardIssuer", "RestrictedCard", "Timeout", "TransactionNotPermittedToCardholder"]
 
+
 class PurchaseAuthorizationRequestDTO(object):
     def __init__(self, id: str, created_at: datetime, amount: int, status: PurchaseAuthorizationRequestStatus,
                  partial_approval_allowed: str, approved_amount: Optional[int], decline_reason: Optional[DeclineReason],
                  merchant_name: str, merchant_type: int, merchant_category: str, merchant_location: Optional[str],
-                 recurring: bool, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 recurring: bool, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]],
+                 merchant_id: Optional[str]):
         self.id = id
         self.type = "purchaseAuthorizationRequest"
         self.attributes = {"createdAt": created_at, "amount": amount, "status": status,
                            "partialApprovalAllowed": partial_approval_allowed, "approvedAmount": approved_amount,
                            "declineReason": decline_reason, "merchant": { "name": merchant_name, "type": merchant_type,
                                                                           "category": merchant_category,
-                                                                          "location": merchant_location},
+                                                                          "location": merchant_location,
+                                                                          "id": merchant_id},
                            "recurring": recurring, "tags": tags}
         self.relationships = relationships
 
@@ -31,7 +34,7 @@ class PurchaseAuthorizationRequestDTO(object):
                                                attributes["merchant"]["name"], attributes["merchant"]["type"],
                                                attributes["merchant"]["category"],
                                                attributes["merchant"].get("location"), attributes["recurring"],
-                                               attributes.get("tags"), relationships)
+                                               attributes.get("tags"), relationships, attributes["merchant"].get("id"))
 
 
 class ListPurchaseAuthorizationRequestParams(object):
