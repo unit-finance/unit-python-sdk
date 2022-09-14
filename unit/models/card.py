@@ -480,7 +480,7 @@ class ListCardParams(UnitParams):
         return parameters
 
 class GetMobileWalletPayloadRequest():
-    def __init__(self, card_id: str, signed_nonce: str, secure_path: Optional[str] = "https://secure.api.s.unit.sh/"):
+    def __init__(self, card_id: str, signed_nonce: str, secure_path: Optional[str] = "https://secure.api.s.unit.sh"):
         self.card_id = card_id
         self.signed_nonce = signed_nonce
         self.secure_path = secure_path
