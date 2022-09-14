@@ -2,8 +2,8 @@ from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
-from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
-    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
+from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
+    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, MobileWalletPayload
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
@@ -109,7 +109,7 @@ mappings = {
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
-        PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+        PaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
         RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
@@ -272,6 +272,9 @@ mappings = {
 
         "dispute": lambda _id, _type, attributes, relationships:
         DisputeDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "mobileWalletPayload": lambda _id, _type, attributes, relationships:
+        MobileWalletPayloadDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 

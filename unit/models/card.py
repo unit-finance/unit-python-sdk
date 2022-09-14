@@ -479,3 +479,32 @@ class ListCardParams(UnitParams):
                 parameters[f"filter[status][{idx}]"] = status_filter
         return parameters
 
+class GetMobileWalletPayloadRequest():
+    def __init__(self, card_id: str, signed_nonce: str, secure_path: Optional[str] = "https://secure.api.s.unit.sh/"):
+        self.card_id = card_id
+        self.signed_nonce = signed_nonce
+        self.secure_path = secure_path
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "attributes": {
+                    "signedNonce": self.signed_nonce
+                }
+            }
+        }
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class MobileWalletPayloadDTO(object):
+    def __init__(self, payload: str):
+        self.type = "mobileWalletPayload"
+        self.attributes = {"payload": payload}
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return MobileWalletPayloadDTO(attributes["payload"])
+
