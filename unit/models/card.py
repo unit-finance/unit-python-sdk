@@ -80,17 +80,21 @@ class BusinessVirtualDebitCardDTO(object):
                            "nationality": nationality}
         self.relationships = relationships
 
+    @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return BusinessVirtualDebitCardDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
             attributes["expirationDate"], attributes["ssn"], FullName.from_json_api(attributes["fullName"]),
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
-            attributes.get("passport"), attributes.get("nationality"), relationships
-        )
+            attributes.get("passport"), attributes.get("nationality"), relationships)
 
 
-Card = Union[IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO]
+BusinessVirtualCreditCardDTO = BusinessVirtualDebitCardDTO
+
+
+Card = Union[IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO,
+             BusinessVirtualCreditCardDTO]
 
 
 class CreateIndividualDebitCard(object):

@@ -50,6 +50,7 @@ def test_create_joint_deposit_account():
 
 
 def test_get_account():
+    r = client.accounts.get("27573")
     account_id = create_deposit_account().data.id
     response = client.accounts.get(account_id, "customer")
     assert response.data.type == "depositAccount" and isinstance(response.included, list)
