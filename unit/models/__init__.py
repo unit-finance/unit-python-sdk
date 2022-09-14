@@ -146,9 +146,11 @@ class Address(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Address(data.get("street"), data.get("city"), data.get("state"),
-                data.get("postalCode"), data.get("country"), data.get("street2", None))
+        if data:
+            return Address(data.get("street"), data.get("city"), data.get("state"),
+                           data.get("postalCode"), data.get("country"), data.get("street2", None))
 
+        return None
 
 class Phone(UnitDTO):
     def __init__(self, country_code: str, number: str):
