@@ -165,3 +165,7 @@ def test_card_limits():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
     response = client.cards.limits(card_id)
     assert response.data.type == "limits"
+
+def test_get_test():
+    response = client.cards.get("12433")
+    assert response.data.type == "limits"

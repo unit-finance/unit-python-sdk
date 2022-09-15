@@ -1,6 +1,31 @@
 import json
 from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 from datetime import datetime, date
+from unit.utils import date_utils
+
+
+def attribute_to_object(attributes):
+    for k in attributes.keys():
+        if k == "address" or k == "shippingAddress":
+            attributes[k] = Address.from_json_api(attributes[k])
+        if k == "fullName":
+            attributes[k] = FullName.from_json_api(attributes[k])
+        if k == "phone":
+            attributes[k] = Phone.from_json_api(attributes[k])
+        if k == "counterParty":
+            attributes[k] = Counterparty.from_json_api(attributes[k])
+        if k == "createdAt" or k == "updatedAt":
+            attributes[k] = date_utils.to_datetime(attributes[k])
+        if k == "officer":
+            attributes[k] = Officer.from_json_api(attributes[k])
+        if k == "contact":
+            attributes[k] = BusinessContact.from_json_api(attributes[k])
+        if k == "beneficialOwners":
+            attributes[k] = BeneficialOwner.from_json_api(attributes[k])
+        # if k == "":
+        #     attributes[k] = .from_json_api(attributes[k])
+
+    return attributes
 
 
 def to_camel_case(snake_str):
@@ -191,8 +216,8 @@ class Officer(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return Officer(data.get("fullName"), data.get("dateOfBirth"), data.get("address"), data.get("phone"),
-                data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
-                data.get("nationality"))
+                       data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
+                       data.get("nationality"))
 
 
 class BeneficialOwner(UnitDTO):
@@ -215,8 +240,9 @@ class BeneficialOwner(UnitDTO):
         beneficial_owners = []
         for data in l:
             beneficial_owners.append(BeneficialOwner(data.get("fullName"), data.get("dateOfBirth"), data.get("address"),
-                data.get("phone"), data.get("email"), data.get("status"), data.get("ssn"),
-                data.get("passport"), data.get("nationality"), data.get("percentage")))
+                                                     data.get("phone"), data.get("email"), data.get("status"),
+                                                     data.get("ssn"), data.get("passport"), data.get("nationality"),
+                                                     data.get("percentage")))
         return beneficial_owners
 
 
