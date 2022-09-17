@@ -23,7 +23,7 @@ class CounterpartyDTO(object):
                                attributes["accountType"], attributes["type"], attributes["permissions"], relationships)
 
 
-class CreateCounterpartyRequest(object):
+class CreateCounterpartyRequest(UnitRequest):
     def __init__(self, name: str, routing_number: str, account_number: str, account_type: str, type: str,
                  relationships: [Dict[str, Relationship]], tags: Optional[object] = None,
                  idempotency_key: Optional[str] = None):
