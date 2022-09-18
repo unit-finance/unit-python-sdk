@@ -2,19 +2,10 @@ from unit.models import *
 from unit.utils import date_utils
 
 
-class APITokenDTO(object):
-    def __init__(self, id: str, created_at: datetime, description: str, expiration: datetime, token: Optional[str],
-                 source_ip: Optional[str]):
-        self.id = id
-        self.type = "apiToken"
-        self.attributes = {"createdAt": created_at, "description": description, "expiration": expiration,
-                           "token": token, "sourceIp": source_ip}
-
+class APITokenDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return APITokenDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["description"],
-                           date_utils.to_datetime(attributes["expiration"]), attributes.get("token"),
-                           attributes.get("sourceIp"))
+        return APITokenDTO(_id, _type, attributes_to_object(attributes), relationships)
 
 
 class CreateAPITokenRequest(object):

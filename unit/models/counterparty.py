@@ -1,26 +1,10 @@
-import json
-from datetime import datetime, date
-from typing import Optional
-from unit.utils import date_utils
 from unit.models import *
 
 
-class CounterpartyDTO(object):
-    def __init__(self, id: str, created_at: datetime, name: str, routing_number: str, bank: Optional[str],
-                 account_number: str, account_type: str, type: str, permissions: str,
-                 relationships: [Dict[str, Relationship]]):
-        self.id = id
-        self.type = "achCounterparty"
-        self.attributes = {"createdAt": created_at, "name": name, "routingNumber": routing_number, "bank": bank,
-                           "accountNumber": account_number, "accountType": account_type, "type": type,
-                           "permissions": permissions}
-        self.relationships = relationships
-
+class CounterpartyDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CounterpartyDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"],
-                               attributes["routingNumber"], attributes.get("bank"), attributes["accountNumber"],
-                               attributes["accountType"], attributes["type"], attributes["permissions"], relationships)
+        return CounterpartyDTO(_id, _type, attributes_to_object(attributes), relationships)
 
 
 class CreateCounterpartyRequest(object):
@@ -64,11 +48,11 @@ class CreateCounterpartyRequest(object):
 
 
 class CreateCounterpartyWithTokenRequest(UnitRequest):
-    def __init__(self, name: str, type: str, plaid_processor_token: str, relationships: [Dict[str, Relationship]],
+    def __init__(self, name: str, _type: str, plaid_processor_token: str, relationships: [Dict[str, Relationship]],
                  verify_name: Optional[bool] = None, permissions: Optional[str] = None, tags: Optional[object] = None,
                  idempotency_key: Optional[str] = None):
         self.name = name
-        self.type = type
+        self.type = _type
         self.plaid_processor_token = plaid_processor_token
         self.verify_name = verify_name
         self.permissions = permissions
@@ -100,7 +84,6 @@ class CreateCounterpartyWithTokenRequest(UnitRequest):
 
         if self.idempotency_key:
             payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
-
 
         return payload
 
@@ -142,16 +125,10 @@ class PatchCounterpartyRequest(object):
         json.dumps(self.to_json_api())
 
 
-class CounterpartyBalanceDTO(object):
-    def __init__(self, id: str, balance: int, available: int, relationships: [Dict[str, Relationship]]):
-        self.id = id
-        self.type = "counterpartyBalance"
-        self.attributes = {"balance": balance, "available": available}
-        self.relationships = relationships
-
+class CounterpartyBalanceDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CounterpartyBalanceDTO(_id, attributes["balance"], attributes["available"], relationships)
+        return CounterpartyBalanceDTO(_id, _type, attributes_to_object(attributes), relationships)
 
 
 class ListCounterpartyParams(UnitParams):

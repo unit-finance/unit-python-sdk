@@ -1,22 +1,16 @@
 from unit.models import *
 
-class CustomerTokenDTO(object):
-    def __init__(self, token: str, expires_in: int):
-        self.type = "customerBearerToken"
-        self.attributes = {"token": token, "expiresIn": expires_in}
 
+class CustomerTokenDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CustomerTokenDTO(attributes["token"], attributes["expiresIn"])
+        return CustomerTokenDTO(_id, _type, attributes_to_object(attributes), relationships)
 
-class CustomerVerificationTokenDTO(object):
-    def __init__(self, verification_token: str):
-        self.type = "customerTokenVerification"
-        self.attributes = {"verificationToken": verification_token}
 
+class CustomerVerificationTokenDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CustomerVerificationTokenDTO(attributes["verificationToken"])
+        return CustomerVerificationTokenDTO(_id, _type, attributes_to_object(attributes), relationships)
 
 
 class CreateCustomerToken(UnitRequest):

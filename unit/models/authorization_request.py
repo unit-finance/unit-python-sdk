@@ -1,5 +1,3 @@
-import json
-from typing import Optional, Literal
 from unit.models import *
 from unit.utils import date_utils
 
@@ -8,33 +6,14 @@ DeclineReason = Literal["AccountClosed", "CardExceedsAmountLimit", "DoNotHonor",
                         "ReferToCardIssuer", "RestrictedCard", "Timeout", "TransactionNotPermittedToCardholder"]
 
 
-class PurchaseAuthorizationRequestDTO(object):
-    def __init__(self, id: str, created_at: datetime, amount: int, status: PurchaseAuthorizationRequestStatus,
-                 partial_approval_allowed: str, approved_amount: Optional[int], decline_reason: Optional[DeclineReason],
-                 merchant_name: str, merchant_type: int, merchant_category: str, merchant_location: Optional[str],
-                 recurring: bool, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]],
-                 merchant_id: Optional[str]):
-        self.id = id
-        self.type = "purchaseAuthorizationRequest"
-        self.attributes = {"createdAt": created_at, "amount": amount, "status": status,
-                           "partialApprovalAllowed": partial_approval_allowed, "approvedAmount": approved_amount,
-                           "declineReason": decline_reason, "merchant": { "name": merchant_name, "type": merchant_type,
-                                                                          "category": merchant_category,
-                                                                          "location": merchant_location,
-                                                                          "id": merchant_id},
-                           "recurring": recurring, "tags": tags}
-        self.relationships = relationships
+class PurchaseAuthorizationRequestDTO(UnitDTO):
+    def __init__(self, _id: str, _type: str, attributes: Dict[str, object], relationships: Dict[str, Relationship]):
+        super().__init__(_id, _type, attributes, relationships)
+        self.attributes["createdAt"] = date_utils.to_datetime(attributes["createdAt"])
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return PurchaseAuthorizationRequestDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                               attributes["amount"], attributes["status"],
-                                               attributes.get("partialApprovalAllowed"),
-                                               attributes.get("approvedAmount"), attributes.get("declineReason"),
-                                               attributes["merchant"]["name"], attributes["merchant"]["type"],
-                                               attributes["merchant"]["category"],
-                                               attributes["merchant"].get("location"), attributes["recurring"],
-                                               attributes.get("tags"), relationships, attributes["merchant"].get("id"))
+        return PurchaseAuthorizationRequestDTO(_id, _type, attributes, relationships)
 
 
 class ListPurchaseAuthorizationRequestParams(object):

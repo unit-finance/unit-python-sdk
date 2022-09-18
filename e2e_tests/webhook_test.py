@@ -1,20 +1,21 @@
 import os
-import unittest
 from unit import Unit
 from unit.models.webhook import *
-from unit.models.event import BaseEvent
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
+
 
 def create_webhook():
     request = CreateWebhookRequest("test", "https://webhook.site/81ee6b53-fde4-4b7d-85a0-0b6249a4488d", "MyToken",
                                    "Json")
     return client.webhooks.create(request).data
 
+
 def test_create_webhook():
     w = create_webhook()
     assert w.type == "webhook"
+
 
 def test_list_and_get_webhooks():
     webhook_ids = []
@@ -28,21 +29,25 @@ def test_list_and_get_webhooks():
         response = client.webhooks.get(id)
         assert response.data.type == "webhook"
 
+
 def test_update_webhook():
     w = create_webhook()
     request = PatchWebhookRequest(w.id, "MyLabel")
     response = client.webhooks.update(request)
     assert response.data.type == "webhook"
 
+
 def test_enable_webhook():
     w = create_webhook()
     response = client.webhooks.enable(w.id)
     assert response.data.type == "webhook" and response.data.attributes["status"] == "Enabled"
 
+
 def test_disable_webhook():
     w = create_webhook()
     response = client.webhooks.disable(w.id)
     assert response.data.type == "webhook" and response.data.attributes["status"] == "Disabled"
+
 
 def test_verify_webhook():
     payload = {"data": [{"id": "613457", "type": "authorizationRequest.pending",

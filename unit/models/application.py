@@ -12,61 +12,26 @@ ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMisma
 
 ApplicationTypes = Literal["individualApplication", "businessApplication"]
 
-class IndividualApplicationDTO(object):
-    def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
-                 email: str, phone: Phone, status: ApplicationStatus, ssn: Optional[str], message: Optional[str],
-                 ip: Optional[str], ein: Optional[str], dba: Optional[str],
-                 sole_proprietorship: Optional[bool], tags: Optional[Dict[str, str]],
+
+class IndividualApplicationDTO(UnitDTO):
+    def __init__(self, _id: str, _type: str, attributes: Dict[str, object],
                  relationships: Optional[Dict[str, Relationship]]):
-        self.id = id
-        self.type = "individualApplication"
-        self.attributes = {"createdAt": created_at, "fullName": full_name, "address": address,
-                           "dateOfBirth": date_of_birth, "email": email, "phone": phone, "status": status, "ssn": ssn,
-                           "message": message, "ip": ip, "ein": ein, "dba": dba,
-                           "soleProprietorship": sole_proprietorship, "tags": tags}
-        self.relationships = relationships
+        super().__init__(_id, _type, attributes_to_object(attributes), relationships)
+        self.attributes["dateOfBirth"] = date_utils.to_date(attributes["dateOfBirth"])
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return IndividualApplicationDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]),
-            FullName.from_json_api(attributes["fullName"]), Address.from_json_api(attributes["address"]),
-            date_utils.to_date(attributes["dateOfBirth"]),
-            attributes["email"], Phone.from_json_api(attributes["phone"]), attributes["status"],
-            attributes.get("ssn"), attributes.get("message"), attributes.get("ip"),
-            attributes.get("ein"), attributes.get("dba"), attributes.get("soleProprietorship"),
-            attributes.get("tags"), relationships
-        )
+        return IndividualApplicationDTO(_id, _type, attributes, relationships)
 
 
-class BusinessApplicationDTO(object):
-    def __init__(self, id: str, created_at: datetime, name: str, address: Address, phone: Phone,
-                 status: ApplicationStatus, state_of_incorporation: str, entity_type: EntityType,
-                 contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner], ssn: Optional[str],
-                 message: Optional[str], ip: Optional[str], ein: Optional[str], dba: Optional[str],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
-        self.id = id
-        self.type = "businessApplication"
-        self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
-                           "status": status, "ssn": ssn, "stateOfIncorporation": state_of_incorporation, "ssn": ssn,
-                           "message": message, "ip": ip, "ein": ein, "entityType": entity_type, "dba": dba,
-                           "contact": contact, "officer": officer, "beneficialOwners":beneficial_owners, "tags": tags}
-        self.relationships = relationships
-
-
+class BusinessApplicationDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return BusinessApplicationDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("name"),
-            Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
-            attributes["status"], attributes.get("stateOfIncorporation"), attributes.get("entityType"),
-            BusinessContact.from_json_api(attributes["contact"]), Officer.from_json_api(attributes["officer"]),
-            BeneficialOwner.from_json_api(attributes["beneficialOwners"]),  attributes.get("ssn"),
-            attributes.get("message"), attributes.get("ip"), attributes.get("ein"), attributes.get("dba"),
-            attributes.get("tags"), relationships
-        )
+        return BusinessApplicationDTO(_id, _type, attributes, relationships)
+
 
 ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
+
 
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
@@ -194,24 +159,11 @@ class CreateBusinessApplicationRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class ApplicationDocumentDTO(object):
-    def __init__(self, id: str, status: ApplicationStatus, document_type: DocumentType, description: str, name: str,
-                 address: Optional[Address], date_of_birth: Optional[date], passport: Optional[str], ein: Optional[str],
-                 reason_code: Optional[ReasonCode], reason: Optional[str]):
-        self.id = id
-        self.type = "document"
-        self.attributes = {"status": status, "documentType": document_type, "description": description, "name": name,
-                           "address": address, "dateOfBirth": date_of_birth, "passport": passport, "ein": ein,
-                           "reasonCode": reason_code, "reason": reason}
-
+class ApplicationDocumentDTO(UnitDTO):
     @staticmethod
-    def from_json_api(_id, _type, attributes):
-        address = Address.from_json_api(attributes.get("address")) if attributes.get("address") else None
-        return ApplicationDocumentDTO(
-            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes["name"],
-            address, attributes.get("dateOfBirth"), attributes.get("passport"),
-            attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
-        )
+    def from_json_api(_id, _type, attributes, relationships):
+        return ApplicationDocumentDTO(_id, _type, attributes_to_object(attributes), relationships)
+
 
 FileType = Literal["jpeg", "png", "pdf"]
 
@@ -249,11 +201,12 @@ class ListApplicationParams(UnitParams):
             parameters["sort"] = self.sort
         return parameters
 
+
 class PatchApplicationRequest(UnitRequest):
-    def __init__(self, application_id: str, type: ApplicationTypes = "individualApplication",
+    def __init__(self, application_id: str, _type: ApplicationTypes = "individualApplication",
                  tags: Optional[Dict[str, str]] = None):
         self.application_id = application_id
-        self.type = type
+        self.type = _type
         self.tags = tags
 
     def to_json_api(self) -> Dict:

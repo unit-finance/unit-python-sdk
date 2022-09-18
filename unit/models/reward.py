@@ -1,28 +1,18 @@
 import json
 from typing import Optional, Literal, Dict, List
-from datetime import datetime
-from unit.models import Relationship, UnitRequest, UnitParams
-from unit.utils import create_relationship, create_deposit_account_relationship, date_utils
+from unit.models import UnitRequest, UnitParams, attributes_to_object, UnitDTO
+from unit.utils.helpers import create_relationship, create_deposit_account_relationship
+from unit.utils.date_utils import *
 
 SORT_ORDERS = Literal["created_at", "-created_at"]
 RELATED_RESOURCES = Literal["customer", "account", "transaction"]
 RewardStatus = Literal["Sent", "Rejected"]
 
-class RewardDTO(object):
-    def __init__(self, _id: str, created_at: datetime, amount: int, description: str, status: RewardStatus,
-                 reject_reason: Optional[str], tags: Optional[Dict[str, str]] = None,
-                 relationships: Optional[Dict[str, Relationship]] = None):
-        self.id = _id
-        self.type = "reward"
-        self.attributes = {"createdAt": created_at, "amount": amount, "description": description, "status": status,
-                           "rejectReason": reject_reason, "tags": tags}
-        self.relationships = relationships
 
+class RewardDTO(UnitDTO):
     @staticmethod
-    def from_json_api(_id, attributes, relationships):
-        return RewardDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["amount"],
-                         attributes["description"], attributes["status"], attributes.get("rejectReason"),
-                         attributes.get("tags"), relationships)
+    def from_json_api(_id, _type, attributes, relationships):
+        return RewardDTO(_id, _type, attributes_to_object(attributes), relationships)
 
 
 class CreateRewardRequest(UnitRequest):

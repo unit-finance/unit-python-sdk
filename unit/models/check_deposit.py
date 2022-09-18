@@ -1,29 +1,17 @@
-import json
-from unit.utils import date_utils
-from typing import Optional, IO, Literal
+from typing import IO
 from unit.models import *
 
 CheckDepositStatus = Literal["AwaitingImages", "AwaitingFrontImage", "AwaitingBackImage", "Pending", "PendingReview",
                              "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 
-class CheckDepositDTO(object):
-    def __init__(self, id: str, created_at: datetime, status: str, description: str, amount: str, reason: Optional[str],
-                 check_number: Optional[str], counterparty: Optional[CheckCounterparty], settlement_date: Optional[date],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
-        self.id = id
-        self.type = "checkDeposit"
-        self.attributes = {"createdAt": created_at, "status": status, "reason": reason, "description": description,
-                           "amount": amount, "checkNumber": check_number, "counterparty": counterparty,
-                           "settlementDate": settlement_date, "tags": tags}
-        self.relationships = relationships
+
+class CheckDepositDTO(UnitDTO):
+    def __init__(self, _id: str, _type: str, attributes: Dict[str, object], relationships: Dict[str, Relationship]):
+        super().__init__(_id, _type, attributes, relationships)
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CheckDepositDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                               attributes["description"], attributes["amount"], attributes.get("reason"),
-                               attributes.get("checkNumber"),
-                               CheckCounterparty.from_json_api(attributes.get("counterparty")),
-                               date_utils.to_date(attributes.get("settlementDate")), attributes.get("tags"), relationships)
+        return CheckDepositDTO(_id, _type, attributes_to_object(attributes, CounterpartyType.CHECK), relationships)
 
 
 class CreateCheckDepositRequest(UnitRequest):
@@ -58,6 +46,7 @@ class CreateCheckDepositRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class ListCheckDepositParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, tags: Optional[object] = None,
@@ -84,7 +73,9 @@ class ListCheckDepositParams(UnitParams):
             parameters["include"] = self.include
         return parameters
 
+
 UploadSide = Literal["front", "back"]
+
 
 class UploadCheckDepositDocumentRequest(object):
     def __init__(self, check_deposit_id: str, file: IO, side: UploadSide = "front"):

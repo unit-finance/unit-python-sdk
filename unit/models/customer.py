@@ -1,4 +1,3 @@
-from unit.utils import date_utils
 from unit.models import *
 
 ArchiveReason = Literal["Inactive", "FraudACHActivity", "FraudCardActivity", "FraudCheckActivity",
@@ -7,57 +6,17 @@ ArchiveReason = Literal["Inactive", "FraudACHActivity", "FraudCardActivity", "Fr
 CustomerStatus = Literal["Active", "Archived"]
 
 
-class IndividualCustomerDTO(object):
-    def __init__(self, id: str, created_at: datetime, full_name: FullName, date_of_birth: date, address: Address,
-                 phone: Phone, email: str, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]],
-                 authorized_users: Optional[List[AuthorizedUser]], status: CustomerStatus,
-                 archive_reason: Optional[ArchiveReason]):
-        self.id = id
-        self.type = 'individualCustomer'
-        self.attributes = {"createdAt": created_at, "fullName": full_name, "dateOfBirth": date_of_birth,
-                           "address": address, "phone": phone, "email": email, "ssn": ssn, "passport": passport,
-                           "status": status, "archiveReason": archive_reason, "nationality": nationality,
-                           "authorizedUsers": authorized_users, "tags": tags}
-        self.relationships = relationships
-
+class IndividualCustomerDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return IndividualCustomerDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]),
-            FullName.from_json_api(attributes["fullName"]), date_utils.to_date(attributes["dateOfBirth"]),
-            Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
-            attributes["email"], attributes.get("ssn"), attributes.get("passport"), attributes.get("nationality"),
-            attributes.get("tags"), relationships,
-            AuthorizedUser.from_json_api(attributes.get("authorizedUsers")), attributes.get("status"),
-            attributes.get("archiveReason")
-        )
+        return IndividualCustomerDTO(_id, _type, attributes_to_object(attributes), relationships)
 
 
-class BusinessCustomerDTO(object):
-    def __init__(self, id: str, created_at: datetime, name: str, address: Address, phone: Phone,
-                 state_of_incorporation: str, ein: str, entity_type: EntityType, contact: BusinessContact,
-                 authorized_users: Optional[List[AuthorizedUser]], dba: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]], status: CustomerStatus,
-                 archive_reason: Optional[ArchiveReason]):
-        self.id = id
-        self.type = 'businessCustomer'
-        self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
-                           "stateOfIncorporation": state_of_incorporation, "ein": ein, "entityType": entity_type,
-                           "contact": contact, "authorizedUsers": authorized_users, "dba": dba, "tags": tags,
-                           "status": status, "archiveReason": archive_reason}
-        self.relationships = relationships
-
+class BusinessCustomerDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return BusinessCustomerDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"],
-            Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
-            attributes["stateOfIncorporation"], attributes["ein"], attributes["entityType"],
-            BusinessContact.from_json_api(attributes["contact"]),
-            AuthorizedUser.from_json_api(attributes.get("authorizedUsers")),
-            attributes.get("dba"), attributes.get("tags"), relationships, attributes.get("status"),
-            attributes.get("archiveReason"))
+        return BusinessCustomerDTO(_id, _type, attributes_to_object(attributes), relationships)
+
 
 CustomerDTO = Union[IndividualCustomerDTO, BusinessCustomerDTO]
 

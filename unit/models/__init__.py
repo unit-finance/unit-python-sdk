@@ -1,10 +1,18 @@
 import json
 from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 from datetime import datetime, date
-from unit.utils import date_utils
+
+from unit.utils.date_utils import to_datetime, to_date
+from enum import Enum
 
 
-def attribute_to_object(attributes):
+class CounterpartyType(Enum):
+    BASE = ""
+    CHECK = "check"
+    WIRE = "wire"
+
+
+def attributes_to_object(attributes, c_type=CounterpartyType.BASE):
     for k in attributes.keys():
         if k == "address" or k == "shippingAddress":
             attributes[k] = Address.from_json_api(attributes[k])
@@ -12,18 +20,29 @@ def attribute_to_object(attributes):
             attributes[k] = FullName.from_json_api(attributes[k])
         if k == "phone":
             attributes[k] = Phone.from_json_api(attributes[k])
-        if k == "counterParty":
-            attributes[k] = Counterparty.from_json_api(attributes[k])
-        if k == "createdAt" or k == "updatedAt":
-            attributes[k] = date_utils.to_datetime(attributes[k])
+        if k == "counterParty" or k == "counterparty" or k == "wireCounterparty" or k == "receiverCounterparty":
+            if c_type == CounterpartyType.CHECK:
+                attributes[k] = CheckCounterparty.from_json_api(attributes[k])
+            elif c_type == CounterpartyType.WIRE:
+                attributes[k] = WireCounterparty.from_json_api(attributes[k])
+            else:
+                attributes[k] = Counterparty.from_json_api(attributes[k])
+        if k == "createdAt" or k == "updatedAt" or k == "expiration":
+            attributes[k] = to_datetime(attributes[k])
         if k == "officer":
             attributes[k] = Officer.from_json_api(attributes[k])
         if k == "contact":
             attributes[k] = BusinessContact.from_json_api(attributes[k])
         if k == "beneficialOwners":
             attributes[k] = BeneficialOwner.from_json_api(attributes[k])
-        # if k == "":
-        #     attributes[k] = .from_json_api(attributes[k])
+        if k == "authorizedUsers":
+            attributes[k] = AuthorizedUser.from_json_api(attributes[k])
+        if k == "merchant":
+            attributes[k] = Merchant.from_json_api(attributes[k])
+        if k == "coordinates":
+            attributes[k] = Coordinates.from_json_api(attributes[k])
+        if k == "statusHistory":
+            attributes[k] = DisputeStatusHistory.from_json_api(attributes[k])
 
     return attributes
 
@@ -36,12 +55,22 @@ def to_camel_case(snake_str):
 
 
 class UnitDTO(object):
+    def __init__(self, _id, _type, attributes, relationships):
+        self.id = _id
+        self.type = _type
+        self.attributes = attributes
+        self.relationships = relationships
+
     def to_dict(self):
         if type(self) is dict:
             return self
         else:
             v = vars(self)
             return dict((to_camel_case(k), val) for k, val in v.items() if val is not None)
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        pass
 
 
 class Relationship(UnitDTO):
@@ -99,10 +128,7 @@ class UnitParams(object):
 
 class RawUnitObject(UnitDTO):
     def __init__(self, _id, _type, attributes, relationships):
-        self.id = _id
-        self.type = _type
-        self.attributes = attributes
-        self.relationships = relationships
+        super().__init__(_id, _type, attributes, relationships)
 
     def to_dict(self):
         v = vars(self.attributes)
@@ -263,10 +289,11 @@ class AuthorizedUser(UnitDTO):
 
         if type(data) is dict:
             return AuthorizedUser(FullName.from_json_api(data.get("fullName")), data.get("email"),
-                              Phone.from_json_api(data.get("phone")), data.get("jwtSubject"))
+                                  Phone.from_json_api(data.get("phone")), data.get("jwtSubject"))
 
         return [AuthorizedUser(FullName.from_json_api(d.get("fullName")), d.get("email"),
-                              Phone.from_json_api(d.get("phone")), d.get("jwtSubject")) for d in data]
+                               Phone.from_json_api(d.get("phone")), d.get("jwtSubject")) for d in data]
+
 
 class WireCounterparty(UnitDTO):
     def __init__(self, routing_number: str, account_number: str, name: str, address: Address):
@@ -280,6 +307,7 @@ class WireCounterparty(UnitDTO):
         return WireCounterparty(data["routingNumber"], data["accountNumber"], data["name"],
                                 Address.from_json_api(data["address"]))
 
+
 class Counterparty(UnitDTO):
     def __init__(self, routing_number: str, account_number: str, account_type: str, name: str):
         self.routing_number = routing_number
@@ -290,6 +318,7 @@ class Counterparty(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return Counterparty(data["routingNumber"], data["accountNumber"], data["accountType"], data["name"])
+
 
 class Coordinates(UnitDTO):
     def __init__(self, longitude: float, latitude: float):
@@ -330,7 +359,8 @@ class CardLevelLimits(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return CardLevelLimits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
-                      data["monthlyPurchase"])
+                               data["monthlyPurchase"])
+
 
 class CardTotals(UnitDTO):
     def __init__(self, withdrawals: int, deposits: int, purchases: int):
@@ -358,6 +388,7 @@ class DeviceFingerprint(UnitDTO):
     def from_json_api(cls, data: Dict):
         return cls(value=data["value"], provider=data["provider"])
 
+
 class CheckCounterparty(object):
     def __init__(self, routing_number: str, account_number: str, name: str):
         self.routing_number = routing_number
@@ -370,3 +401,23 @@ class CheckCounterparty(object):
             return None
 
         return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
+
+
+DisputeStatus = Literal["InvestigationStarted", "ProvisionallyCredited", "Denied", "ResolvedLost", "ResolvedWon"]
+
+
+class DisputeStatusHistory(object):
+    def __init__(self, _type: DisputeStatus, updated_at: datetime):
+        self.type = _type
+        self.updated_at = updated_at
+
+    @staticmethod
+    def from_json_api(data):
+        if data is None:
+            return None
+
+        dispute_statuses = []
+        for history in data:
+            dispute_statuses.append(DisputeStatusHistory(history["type"], to_datetime(history["updatedAt"])))
+
+        return dispute_statuses

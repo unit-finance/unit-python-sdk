@@ -1,6 +1,3 @@
-import json
-from datetime import datetime, date
-from unit.utils import date_utils
 from unit.models import *
 from typing import Literal
 
@@ -8,19 +5,10 @@ ContentType = Literal["Json", "JsonAPI"]
 WebhookStatus = Literal["Enabled", "Disabled"]
 
 
-class WebhookDTO(object):
-    def __init__(self, id: str, created_at: datetime, label: str, url: str, status: WebhookStatus,
-                 content_type: ContentType, token: str):
-        self.id = id
-        self.type = 'webhook'
-        self.attributes = {"createdAt": created_at, "label": label, "url": url, "status": status,
-                           "contentType": content_type, "token": token}
-
+class WebhookDTO(UnitDTO):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return WebhookDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["label"], attributes["url"],
-            attributes["status"], attributes["contentType"], attributes["token"])
+        return WebhookDTO(_id, _type, attributes_to_object(attributes), relationships)
 
 
 class CreateWebhookRequest(object):
