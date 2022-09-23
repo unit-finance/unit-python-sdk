@@ -186,6 +186,7 @@ class CardLimits(object):
         return CardLimits(data["dailyWithdrawal"], data["dailyDeposit"],
                           data["dailyPurchase"], data["dailyCardTransaction"])
 
+
 class CardTotals(object):
     def __init__(self, withdrawals: int, deposits: int, purchases: int, card_transactions: int):
         self.withdrawals = withdrawals
