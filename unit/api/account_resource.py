@@ -55,10 +55,6 @@ class AccountResource(BaseResource):
         response = super().get(f"{self.resource}/{account_id}", {"include": include})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            # ans = jsonpickle.decode(data)
-            r = jsonpickle.decode(json.dumps(data))
-            x = SimpleNamespace(**data)
-            a = json.loads(json.dumps(data), object_hook=DepositAccountDTO.from_json)
             included = response.json().get("included")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:

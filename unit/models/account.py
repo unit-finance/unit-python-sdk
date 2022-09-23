@@ -1,5 +1,3 @@
-import jsonpickle
-
 from unit.utils import date_utils
 from unit.models import *
 
@@ -9,6 +7,7 @@ FraudReason = Literal["ACHActivity", "CardActivity", "CheckActivity", "Applicati
                       "ClientIdentified", "IdentityTheft", "LinkedToFraudulentCustomer"]
 
 CreditAccountType = "creditAccount"
+
 
 class DepositAccountDTO(object):
     def __init__(self, _id: str, created_at: datetime, name: str, deposit_product: str, routing_number: str,
@@ -22,12 +21,6 @@ class DepositAccountDTO(object):
                            "balance": balance, "hold": hold, "available": available, "status": status,
                            "closeReason": close_reason, "tags": tags}
         self.relationships = relationships
-
-    @staticmethod
-    def from_json(account_dict):
-        return DepositAccountDTO(account_dict.get("id"), account_dict.get("type"),
-                                 jsonpickle.decode(json.dumps(account_dict.get("attributes"))),
-                                 jsonpickle.decode(json.dumps(account_dict.get("relationships"))))
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
