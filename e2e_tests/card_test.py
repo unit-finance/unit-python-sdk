@@ -4,7 +4,7 @@ import requests
 from datetime import timedelta
 from unit import Unit
 from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams,\
-    CreateBusinessDebitCard, CreateBusinessVirtualDebitCard
+    CreateBusinessDebitCard, CreateBusinessVirtualDebitCard, CreateIndividualVirtualDebitCard
 from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
 from e2e_tests.helpers.helpers import create_relationship
@@ -137,8 +137,26 @@ def create_individual_debit_card():
 
 def test_create_individual_debit_card():
     response = create_individual_debit_card()
-    print(response.data.attributes["status"])
     assert response.data.type == "individualDebitCard"
+
+
+def create_individual_virtual_debit_card():
+    account_id = create_deposit_account().data.id
+    request = CreateIndividualVirtualDebitCard(relationships={
+        "account": {
+            "data": {
+                "type": "depositAccount",
+                "id": account_id
+            }
+        }
+    })
+    response = client.cards.create(request)
+    return response.data
+
+
+def test_create_individual_virtual_debit_card():
+    response = create_individual_virtual_debit_card()
+    assert response.data.type == "individualVirtualDebitCard"
 
 
 def test_get_debit_card():
