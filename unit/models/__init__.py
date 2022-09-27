@@ -131,16 +131,20 @@ class UnitRequest(object):
 
         return attributes
 
-    def to_payload(self, _type: str, relationships: Dict[str, Relationship] = None, ignore: List[str] = []) -> Dict:
+    def to_payload(self, _type: str = None, relationships: Dict[str, Relationship] = None,
+                   ignore: List[str] = []) -> Dict:
+        t = _type or self._type or ""
+        r = relationships or self.relationships or None
+
         payload = {
             "data": {
-                "type": _type,
+                "type": t,
                 "attributes": self.vars_to_attributes_dict(ignore),
             }
         }
 
-        if relationships:
-            payload["data"]["relationships"] = relationships
+        if r:
+            payload["data"]["relationships"] = r
 
         return payload
 

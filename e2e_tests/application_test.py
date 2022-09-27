@@ -26,9 +26,11 @@ def create_individual_application():
 
     return client.applications.create(request)
 
+
 def test_create_individual_application():
     app = create_individual_application()
     assert app.data.type == "individualApplication"
+
 
 def create_business_application():
     request = CreateBusinessApplicationRequest(
@@ -52,9 +54,11 @@ def create_business_application():
 
     return client.applications.create(request)
 
+
 def test_create_business_application():
     response = create_business_application()
     assert response.data.type == "businessApplication"
+
 
 def test_list_and_get_applications():
     response = client.applications.list()
@@ -63,10 +67,12 @@ def test_list_and_get_applications():
         res = client.applications.get(app.id)
         assert res.data.type in ApplicationTypes
 
+
 def test_update_individual_application():
     app = create_individual_application()
     updated = client.applications.update(PatchApplicationRequest(app.data.id, tags={"patch": "test-patch"}))
     assert updated.data.type == "individualApplication"
+
 
 def test_update_business_application():
     app = create_business_application()

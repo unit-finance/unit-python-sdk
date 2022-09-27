@@ -69,18 +69,17 @@ class CreateIndividualDebitCard(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class CreateBusinessDebitCard(UnitRequest):
+class CreateBusinessCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, shipping_address: Optional[Address], ssn: Optional[str] = None,
-                 passport: Optional[str] = None, nationality: Optional[str] = None, design: Optional[str] = None,
-                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 relationships: Optional[Dict[str, Relationship]] = None):
+                 shipping_address: Optional[Address], ssn: Optional[str] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, design: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None,
+                 _type: str = "businessDebitCard"):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
         self.phone = phone
         self.email = email
-        self.status = status
         self.shipping_address = shipping_address
         self.ssn = ssn
         self.passport = passport
@@ -89,20 +88,29 @@ class CreateBusinessDebitCard(UnitRequest):
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
+        self._type = _type
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "businessDebitCard",
-                "attributes": self.vars_to_attributes_dict(),
-                "relationships": self.relationships
-            }
-        }
-
-        return payload
+        return self.to_payload(ignore=["_type"])
 
     def __repr__(self):
         json.dumps(self.to_json_api())
+
+
+class CreateBusinessDebitCard(CreateBusinessCard):
+    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
+                 shipping_address: Optional[Address], ssn: Optional[str] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, design: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None):
+        CreateBusinessCard.__init__(**locals())
+
+
+class CreateBusinessCreditCard(CreateBusinessCard):
+    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
+                 shipping_address: Optional[Address], ssn: Optional[str] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, design: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None):
+        CreateBusinessCard.__init__(**locals(), _type="businessCreditCard")
 
 
 class CreateIndividualVirtualDebitCard(UnitRequest):
@@ -113,58 +121,59 @@ class CreateIndividualVirtualDebitCard(UnitRequest):
         self.relationships = relationships
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "individualVirtualDebitCard",
-                "attributes": self.vars_to_attributes_dict(self),
-                "relationships": self.relationships
-            }
-        }
-
-        return payload
+        return self.to_payload("individualVirtualDebitCard")
 
     def __repr__(self):
         json.dumps(self.to_json_api())
 
 
-class CreateBusinessVirtualDebitCard(UnitRequest):
+class CreateBusinessVirtualCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, ssn: Optional[str] = None, passport: Optional[str] = None,
-                 nationality: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None):
+                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None,
+                 _type: str = "businessVirtualDebitCard"):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
         self.phone = phone
         self.email = email
-        self.status = status
         self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
+        self._type = _type
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "businessVirtualDebitCard",
-                "attributes": self.vars_to_attributes_dict(),
-                "relationships": self.relationships
-            }
-        }
-
-        return payload
+        return self.to_payload(ignore=["_type"])
 
     def __repr__(self):
         json.dumps(self.to_json_api())
 
 
+class CreateBusinessVirtualDebitCard(CreateBusinessVirtualCard):
+    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
+                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None):
+        CreateBusinessVirtualCard.__init__(**locals())
+
+
+class CreateBusinessVirtualCreditCard(CreateBusinessVirtualCard):
+    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
+                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None):
+        CreateBusinessVirtualCard.__init__(**locals(), _type="businessVirtualCreditCard")
+
+
 CreateCardRequest = Union[CreateIndividualDebitCard, CreateBusinessDebitCard, CreateIndividualVirtualDebitCard,
-                          CreateBusinessVirtualDebitCard]
+                          CreateBusinessVirtualDebitCard, CreateBusinessCreditCard, CreateBusinessVirtualCreditCard]
 
 
-class PatchIndividualDebitCard(object):
+class PatchIndividualDebitCard(UnitRequest):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, design: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None):
         self.card_id = card_id
@@ -173,32 +182,16 @@ class PatchIndividualDebitCard(object):
         self.tags = tags
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "individualDebitCard",
-                "attributes": {},
-            }
-        }
-
-        if self.shipping_address:
-            payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
-
-        if self.design:
-            payload["data"]["attributes"]["design"] = self.design
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        return payload
+        return self.to_payload("individualDebitCard")
 
     def __repr__(self):
         json.dumps(self.to_json_api())
 
 
-class PatchBusinessDebitCard(UnitRequest):
+class PatchBusinessCard(UnitRequest):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, _type: str = "businessDebitCard"):
         self.card_id = card_id
         self.shipping_address = shipping_address
         self.address = address
@@ -206,31 +199,27 @@ class PatchBusinessDebitCard(UnitRequest):
         self.email = email
         self.design = design
         self.tags = tags
+        self._type = _type
 
     def to_json_api(self) -> Dict:
-        return self.to_payload("businessDebitCard")
+        return self.to_payload(ignore=["card_id", "_type"])
 
     def __repr__(self):
         json.dumps(self.to_json_api())
 
 
-class PatchBusinessCreditCard(UnitRequest):
+class PatchBusinessDebitCard(PatchBusinessCard):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None):
-        self.card_id = card_id
-        self.shipping_address = shipping_address
-        self.address = address
-        self.phone = phone
-        self.email = email
-        self.design = design
-        self.tags = tags
+        PatchBusinessCard.__init__(**locals())
 
-    def to_json_api(self) -> Dict:
-        return self.to_payload("businessCreditCard", ignore=["card_id"])
 
-    def __repr__(self):
-        json.dumps(self.to_json_api())
+class PatchBusinessCreditCard(PatchBusinessCard):
+    def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
+                 phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None):
+        PatchBusinessCard.__init__(**locals(), _type="businessCreditCard")
 
 
 class PatchIndividualVirtualDebitCard(UnitRequest):
@@ -257,7 +246,7 @@ class PatchBusinessVirtualCard(UnitRequest):
         self._type = _type
 
     def to_json_api(self) -> Dict:
-        return self.to_payload(self._type, ignore=["card_id", "_type"])
+        return self.to_payload(ignore=["card_id", "_type"])
 
 
 class PatchBusinessVirtualDebitCard(PatchBusinessVirtualCard):
