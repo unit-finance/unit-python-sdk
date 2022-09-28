@@ -1,8 +1,7 @@
-import jsonpickle
-from types import SimpleNamespace
 from unit.api.base_resource import BaseResource
 from unit.models.account import *
 from unit.models.codecs import DtoDecoder
+
 
 class AccountResource(BaseResource):
     def __init__(self, api_url, token):

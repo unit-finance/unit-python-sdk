@@ -3,9 +3,12 @@ import unittest
 import requests
 from datetime import timedelta
 from unit import Unit
-from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams
+from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams,\
+    CreateBusinessDebitCard, CreateBusinessVirtualDebitCard
 from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
+from e2e_tests.helpers.helpers import create_relationship
+
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -17,6 +20,7 @@ headers = {
             "authorization": f"Bearer {token}",
             "user-agent": "unit-python-sdk"
         }
+
 
 def find_card_id(criteria: Dict[str, str]):
     def filter_func(card):
@@ -51,6 +55,57 @@ def create_individual_customer():
             return value.id
 
     return ""
+
+
+def create_business_debit_card():
+    request = CreateBusinessDebitCard(FullName.from_json_api({
+                "first": "Richard",
+                "last": "Hendricks"
+            }), "2001-08-10", Address.from_json_api({
+                "street": "5230 Newell Rd",
+                "street2": None,
+                "city": "Palo Alto",
+                "state": "CA",
+                "postalCode": "94303",
+                "country": "US"
+            }), Phone.from_json_api({
+                "countryCode": "1",
+                "number": "5555555555"
+            }), "richard@piedpiper.com", shipping_address=Address.from_json_api({
+                "street": "5230 Newell Rd",
+                "street2": None,
+                "city": "Palo Alto",
+                "state": "CA",
+                "postalCode": "94303",
+                "country": "US"
+            }), idempotency_key="3a1a33be-4e12-4603-9ed0-820922389fb8",
+        relationships=create_relationship("depositAccount", "779199", "account")
+    )
+
+    response = client.cards.create(request)
+    return response.data
+
+
+def create_business_virtual_debit_card():
+    request = CreateBusinessVirtualDebitCard(FullName.from_json_api({
+                "first": "Richard",
+                "last": "Hendricks"
+            }), "2001-08-10", Address.from_json_api({
+                "street": "5230 Newell Rd",
+                "street2": None,
+                "city": "Palo Alto",
+                "state": "CA",
+                "postalCode": "94303",
+                "country": "US"
+            }), Phone.from_json_api({
+                "countryCode": "1",
+                "number": "5555555555"
+            }), "richard@piedpiper.com",
+        relationships=create_relationship("depositAccount", "779199", "account")
+    )
+
+    response = client.cards.create(request)
+    return response.data
 
 
 def create_deposit_account():
@@ -165,3 +220,19 @@ def test_card_limits():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
     response = client.cards.limits(card_id)
     assert response.data.type == "limits"
+
+
+def test_get_test():
+    card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
+    response = client.cards.limits(card_id)
+    assert response.data.type == "limits"
+
+
+def test_create_business_debit_card():
+    response = create_business_debit_card()
+    assert response.type == "businessDebitCard"
+
+
+def test_create_business_debit_card():
+    response = create_business_virtual_debit_card()
+    assert response.type == "businessVirtualDebitCard"

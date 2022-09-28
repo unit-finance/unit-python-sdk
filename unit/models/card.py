@@ -25,9 +25,9 @@ class IndividualDebitCardDTO(object):
 
 
 class BusinessCardDTO(object):
-    def __init__(self, _id: str, _type: str, created_at: datetime, last_4_digits: str, expiration_date: str, ssn: str,
-                 full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, passport: Optional[str], nationality: Optional[str],
+    def __init__(self, _id: str, _type: str, created_at: datetime, last_4_digits: str, expiration_date: str,
+                 ssn: Optional[str], full_name: FullName, date_of_birth: date, address: Address, phone: Phone,
+                 email: str, status: CardStatus, passport: Optional[str], nationality: Optional[str],
                  shipping_address: Optional[Address], design: Optional[str],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
@@ -43,7 +43,7 @@ class BusinessCardDTO(object):
     def from_json_api(_id, _type, attributes, relationships):
         return BusinessCardDTO(
             _id, _type, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
-            attributes["expirationDate"], attributes["ssn"], FullName.from_json_api(attributes["fullName"]),
+            attributes["expirationDate"], attributes.get("ssn"), FullName.from_json_api(attributes["fullName"]),
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
             attributes.get("passport"), attributes.get("nationality"),
@@ -93,9 +93,9 @@ class IndividualVirtualDebitCardDTO(object):
 
 
 class BusinessVirtualCardDTO(object):
-    def __init__(self, _id: str, _type: str, created_at: datetime, last_4_digits: str, expiration_date: str, ssn: str,
-                 full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, passport: Optional[str], nationality: Optional[str],
+    def __init__(self, _id: str, _type: str, created_at: datetime, last_4_digits: str, expiration_date: str,
+                 ssn: Optional[str], full_name: FullName, date_of_birth: date, address: Address, phone: Phone,
+                 email: str, status: CardStatus, passport: Optional[str], nationality: Optional[str],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
         self.type = _type
@@ -109,14 +109,14 @@ class BusinessVirtualCardDTO(object):
     def from_json_api(_id, _type, attributes, relationships):
         return BusinessVirtualCardDTO(
             _id, _type, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
-            attributes["expirationDate"], attributes["ssn"], FullName.from_json_api(attributes["fullName"]),
+            attributes["expirationDate"], attributes.get("ssn"), FullName.from_json_api(attributes["fullName"]),
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
             attributes.get("passport"), attributes.get("nationality"), relationships)
 
 
 class BusinessVirtualDebitCardDTO(BusinessVirtualCardDTO):
-    def __init__(self, card: BusinessCardDTO):
+    def __init__(self, card: BusinessVirtualCardDTO):
         self.id = card.id
         self.type = card.type
         self.attributes = card.attributes
@@ -179,17 +179,17 @@ class CreateIndividualDebitCard(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class CreateBusinessDebitCard(object):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, shipping_address: Optional[Address], ssn: Optional[str], passport: Optional[str],
-                 nationality: Optional[str], design: Optional[str], idempotency_key: Optional[str],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 shipping_address: Optional[Address] = None, ssn: Optional[str] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, design: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
         self.phone = phone
         self.email = email
-        self.status = status
         self.shipping_address = shipping_address
         self.ssn = ssn
         self.passport = passport
@@ -240,6 +240,7 @@ class CreateBusinessDebitCard(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class CreateIndividualVirtualDebitCard(object):
     def __init__(self, relationships: Dict[str, Relationship], idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None):
@@ -270,15 +271,14 @@ class CreateIndividualVirtualDebitCard(object):
 
 class CreateBusinessVirtualDebitCard(object):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: CardStatus, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
-                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
+                 relationships: Optional[Dict[str, Relationship]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
         self.phone = phone
         self.email = email
-        self.status = status
         self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
