@@ -75,9 +75,9 @@ class BusinessCreditCardDTO(BusinessCardDTO):
 
 
 class IndividualVirtualDebitCardDTO(object):
-    def __init__(self, id: str, created_at: datetime, last_4_digits: str, expiration_date: str, status: CardStatus,
+    def __init__(self, _id: str, created_at: datetime, last_4_digits: str, expiration_date: str, status: CardStatus,
                  relationships: Optional[Dict[str, Relationship]]):
-        self.id = id
+        self.id = _id
         self.type = "individualVirtualDebitCard"
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
                            "status": status}
