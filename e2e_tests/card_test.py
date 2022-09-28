@@ -2,6 +2,8 @@ import os
 import unittest
 import requests
 from datetime import timedelta
+
+from e2e_tests.application_test import create_business_application
 from unit import Unit
 from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams,\
     CreateBusinessDebitCard, CreateBusinessVirtualDebitCard
@@ -58,6 +60,8 @@ def create_individual_customer():
 
 
 def create_business_debit_card():
+    account_id = create_deposit_account_for_business()
+
     request = CreateBusinessDebitCard(FullName.from_json_api({
                 "first": "Richard",
                 "last": "Hendricks"
@@ -79,7 +83,7 @@ def create_business_debit_card():
                 "postalCode": "94303",
                 "country": "US"
             }), idempotency_key="3a1a33be-4e12-4603-9ed0-820922389fb8",
-        relationships=create_relationship("depositAccount", "779199", "account")
+        relationships=create_relationship("depositAccount", account_id, "account")
     )
 
     response = client.cards.create(request)
@@ -87,6 +91,8 @@ def create_business_debit_card():
 
 
 def create_business_virtual_debit_card():
+    account_id = create_deposit_account_for_business()
+
     request = CreateBusinessVirtualDebitCard(FullName.from_json_api({
                 "first": "Richard",
                 "last": "Hendricks"
@@ -101,7 +107,7 @@ def create_business_virtual_debit_card():
                 "countryCode": "1",
                 "number": "5555555555"
             }), "richard@piedpiper.com",
-        relationships=create_relationship("depositAccount", "779199", "account")
+        relationships=create_relationship("depositAccount", account_id, "account")
     )
 
     response = client.cards.create(request)
@@ -114,6 +120,20 @@ def create_deposit_account():
                                           {"customer": Relationship("customer", customer_id)},
                                           {"purpose": "checking"})
     return client.accounts.create(request)
+
+
+def create_deposit_account(customer_id: str):
+    request = CreateDepositAccountRequest("checking",
+                                          {"customer": Relationship("customer", customer_id)},
+                                          {"purpose": "checking"})
+    return client.accounts.create(request)
+
+
+def create_deposit_account_for_business():
+    b_app = create_business_application().data
+    customer_id = b_app.relationships.get("customer").id
+    account_id = create_deposit_account(customer_id).data.id
+    return account_id
 
 
 def create_individual_debit_card():

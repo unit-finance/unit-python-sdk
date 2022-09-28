@@ -37,7 +37,7 @@ def create_business_application():
         phone=Phone("1", "9294723497"), state_of_incorporation="CA", entity_type="Corporation", ein="123456789",
         officer=Officer(full_name=FullName("Jone", "Doe"), date_of_birth=date.today() - timedelta(days=20 * 365),
                            address=Address("950 Allerton Street", "Redwood City", "CA", "94063", "US"),
-                           phone=Phone("1", "2025550108"), email="jone.doe@unit-finance.com", ssn="000000005"),
+                           phone=Phone("1", "2025550108"), email="jone.doe@unit-finance.com", ssn="123456789"),
         contact=BusinessContact(full_name=FullName("Jone", "Doe"), email="jone.doe@unit-finance.com", phone=Phone("1", "2025550108")),
         beneficial_owners=[
             BeneficialOwner(
