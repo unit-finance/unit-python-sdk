@@ -104,7 +104,7 @@ class CreateCreditAccountRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": "CreditAccountType",
+                "type": "creditAccount",
                 "attributes": {
                     "creditTerms": self.credit_terms,
                     "creditLimit": self.credit_limit

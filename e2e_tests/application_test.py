@@ -26,9 +26,11 @@ def create_individual_application():
 
     return client.applications.create(request)
 
+
 def test_create_individual_application():
     app = create_individual_application()
     assert app.data.type == "individualApplication"
+
 
 def create_business_application():
     request = CreateBusinessApplicationRequest(

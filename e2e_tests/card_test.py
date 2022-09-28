@@ -3,14 +3,15 @@ import unittest
 import requests
 from datetime import timedelta
 
+from e2e_tests.account_test import create_deposit_account, create_deposit_account_for_business, \
+    create_credit_account_for_business
 from e2e_tests.application_test import create_business_application
 from unit import Unit
 from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams,\
-    CreateBusinessDebitCard, CreateBusinessVirtualDebitCard
+    CreateBusinessDebitCard, CreateBusinessVirtualDebitCard, CreateBusinessCreditCard, CreateBusinessVirtualCreditCard
 from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
-from e2e_tests.helpers.helpers import create_relationship
-
+from e2e_tests.helpers.helpers import create_relationship, generate_uuid
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -82,7 +83,7 @@ def create_business_debit_card():
                 "state": "CA",
                 "postalCode": "94303",
                 "country": "US"
-            }), idempotency_key="3a1a33be-4e12-4603-9ed0-820922389fb8",
+            }), idempotency_key=generate_uuid(),
         relationships=create_relationship("depositAccount", account_id, "account")
     )
 
@@ -112,28 +113,6 @@ def create_business_virtual_debit_card():
 
     response = client.cards.create(request)
     return response.data
-
-
-def create_deposit_account():
-    customer_id = create_individual_customer()
-    request = CreateDepositAccountRequest("checking",
-                                          {"customer": Relationship("customer", customer_id)},
-                                          {"purpose": "checking"})
-    return client.accounts.create(request)
-
-
-def create_deposit_account(customer_id: str):
-    request = CreateDepositAccountRequest("checking",
-                                          {"customer": Relationship("customer", customer_id)},
-                                          {"purpose": "checking"})
-    return client.accounts.create(request)
-
-
-def create_deposit_account_for_business():
-    b_app = create_business_application().data
-    customer_id = b_app.relationships.get("customer").id
-    account_id = create_deposit_account(customer_id).data.id
-    return account_id
 
 
 def create_individual_debit_card():
@@ -253,6 +232,62 @@ def test_create_business_debit_card():
     assert response.type == "businessDebitCard"
 
 
-def test_create_business_debit_card():
+def test_create_business_virtual_debit_card():
     response = create_business_virtual_debit_card()
     assert response.type == "businessVirtualDebitCard"
+
+
+def test_create_business_credit_card():
+    account_id = create_credit_account_for_business().data.id
+
+    request = CreateBusinessCreditCard(FullName.from_json_api({
+        "first": "Richard",
+        "last": "Hendricks"
+    }), "2001-08-10", Address.from_json_api({
+        "street": "5230 Newell Rd",
+        "street2": None,
+        "city": "Palo Alto",
+        "state": "CA",
+        "postalCode": "94303",
+        "country": "US"
+    }), Phone.from_json_api({
+        "countryCode": "1",
+        "number": "5555555555"
+    }), "richard@piedpiper.com", shipping_address=Address.from_json_api({
+        "street": "5230 Newell Rd",
+        "street2": None,
+        "city": "Palo Alto",
+        "state": "CA",
+        "postalCode": "94303",
+        "country": "US"
+    }), idempotency_key=generate_uuid(),
+        relationships=create_relationship("creditAccount", account_id, "account")
+    )
+
+    response = client.cards.create(request)
+    assert response.data.type == "businessCreditCard"
+
+
+def test_create_business_virtual_credit_card():
+    account_id = create_credit_account_for_business().data.id
+
+    request = CreateBusinessVirtualCreditCard(FullName.from_json_api({
+        "first": "Richard",
+        "last": "Hendricks"
+    }), "2001-08-10", Address.from_json_api({
+        "street": "5230 Newell Rd",
+        "street2": None,
+        "city": "Palo Alto",
+        "state": "CA",
+        "postalCode": "94303",
+        "country": "US"
+    }), Phone.from_json_api({
+        "countryCode": "1",
+        "number": "5555555555"
+    }), "richard@piedpiper.com",
+        relationships=create_relationship("creditAccount", account_id, "account")
+    )
+
+    response = client.cards.create(request)
+    assert response.data.type == "businessVirtualCreditCard"
+

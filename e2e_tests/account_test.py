@@ -1,9 +1,12 @@
 import os
 import unittest
 from datetime import timedelta
+
+from e2e_tests.application_test import create_business_application
 from unit import Unit
 from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
+from e2e_tests.helpers.helpers import create_relationship
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -24,6 +27,11 @@ def create_individual_customer():
     return ""
 
 
+def create_business_customer():
+    b_app = create_business_application().data
+    return b_app.relationships.get("customer").id
+
+
 def create_deposit_account():
     customer_id = create_individual_customer()
     request = CreateDepositAccountRequest("checking",
@@ -35,6 +43,31 @@ def create_deposit_account():
 def test_create_deposit_account():
     response = create_deposit_account()
     assert response.data.type == "depositAccount"
+
+
+def create_deposit_account_for_customer(customer_id: str):
+    request = CreateDepositAccountRequest("checking",
+                                          {"customer": Relationship("customer", customer_id)},
+                                          {"purpose": "checking"})
+    return client.accounts.create(request)
+
+
+def create_deposit_account_for_business():
+    customer_id = create_business_customer()
+    account_id = create_deposit_account_for_customer(customer_id).data.id
+    return account_id
+
+
+def create_credit_account_for_business():
+    customer_id = create_business_customer()
+    request = CreateCreditAccountRequest("credit_terms_test", 20000, create_relationship("customer", customer_id),
+                                         {"purpose": "some_purpose"})
+    return client.accounts.create(request)
+
+
+def test_create_credit_account_for_business():
+    response = create_credit_account_for_business()
+    assert response.data.type == "creditAccount"
 
 
 def test_create_joint_deposit_account():
