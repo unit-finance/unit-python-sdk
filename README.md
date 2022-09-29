@@ -65,12 +65,13 @@ Fetching a customer
     print(customer.id)
 ```
 
-## Retry
-You can read about retries here: https://docs.unit.co/#retries.
+## Retrying API Requests
+API requests can fail for many reasons, from network components failures, API rate limits, timeouts or service incidents.
+<br> Create requests without idempotency key won't trigger the retry mechanism, so we recommend to pass an idempotency key where applicable. 
 
-the default amount of retries is 0.
+You can read about retries here: https://docs.unit.co/#retries. <br>
 
-Unit initialization with retries:
+the default amount of retries is 0. <br>Unit initialization with retries:
 ```python
     import os
     from unit import Unit
