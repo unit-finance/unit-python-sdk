@@ -377,10 +377,10 @@ class PatchIndividualDebitCard(object):
         json.dumps(self.to_json_api())
 
 
-class PatchBusinessDebitCard(object):
+class PatchBusinessCard(object):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None,):
         self.card_id = card_id
         self.shipping_address = shipping_address
         self.address = address
@@ -389,10 +389,10 @@ class PatchBusinessDebitCard(object):
         self.design = design
         self.tags = tags
 
-    def to_json_api(self) -> Dict:
+    def to_json_api(self, _type: str = "businessDebitCard") -> Dict:
         payload = {
             "data": {
-                "type": "businessDebitCard",
+                "type": _type,
                 "attributes": {},
             }
         }
@@ -421,48 +421,13 @@ class PatchBusinessDebitCard(object):
         json.dumps(self.to_json_api())
 
 
-class PatchBusinessCreditCard(object):
-    def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
-                 phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
-        self.card_id = card_id
-        self.shipping_address = shipping_address
-        self.address = address
-        self.phone = phone
-        self.email = email
-        self.design = design
-        self.tags = tags
+class PatchBusinessDebitCard(PatchBusinessCard):
+    pass
 
+
+class PatchBusinessCreditCard(PatchBusinessCard):
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "businessCreditCard",
-                "attributes": {},
-            }
-        }
-
-        if self.shipping_address:
-            payload["data"]["attributes"]["shippingAddress"] = self.shipping_address
-
-        if self.address:
-            payload["data"]["attributes"]["address"] = self.address
-
-        if self.phone:
-            payload["data"]["attributes"]["phone"] = self.phone
-
-        if self.email:
-            payload["data"]["attributes"]["email"] = self.email
-
-        if self.design:
-            payload["data"]["attributes"]["design"] = self.design
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        return payload
-
-    def __repr__(self):
-        json.dumps(self.to_json_api())
+        return super().to_json_api("businessCreditCard")
 
 
 class PatchIndividualVirtualDebitCard(object):
@@ -496,12 +461,11 @@ class PatchBusinessVirtualCard(object):
         self.phone = phone
         self.email = email
         self.tags = tags
-        self._type = _type
 
-    def to_json_api(self) -> Dict:
+    def to_json_api(self, _type: str = "businessVirtualDebitCard") -> Dict:
         payload = {
             "data": {
-                "type": self._type,
+                "type": _type,
                 "attributes": {},
             }
         }
@@ -522,15 +486,12 @@ class PatchBusinessVirtualCard(object):
 
 
 class PatchBusinessVirtualDebitCard(PatchBusinessVirtualCard):
-    def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
-                 email: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
-        super().__init__(card_id, address, phone, email, tags)
+    pass
 
 
 class PatchBusinessVirtualCreditCard(PatchBusinessVirtualCard):
-    def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
-                 email: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
-        super().__init__(card_id, address, phone, email, tags, "businessVirtualCreditCard")
+    def to_json_api(self) -> Dict:
+        return super().to_json_api("businessVirtualCreditCard")
 
 
 PatchCardRequest = Union[PatchIndividualDebitCard, PatchBusinessDebitCard, PatchIndividualVirtualDebitCard,

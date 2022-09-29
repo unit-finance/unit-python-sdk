@@ -45,15 +45,14 @@ def test_create_deposit_account():
     assert response.data.type == "depositAccount"
 
 
-def create_deposit_account_for_customer(customer_id: str):
+def create_deposit_account_for_business():
+    customer_id = create_business_customer()
+
     request = CreateDepositAccountRequest("checking",
                                           {"customer": Relationship("customer", customer_id)},
                                           {"purpose": "checking"})
     return client.accounts.create(request)
 
-
-def create_deposit_account_for_business():
-    customer_id = create_business_customer()
     return create_deposit_account_for_customer(customer_id)
 
 
@@ -104,11 +103,14 @@ def test_limits_account():
     assert response.data.type == "limits"
 
 
-def test_close_and_reopen_account():
+def test_close_account():
     account_id = create_deposit_account().data.id
     requet = CloseAccountRequest(account_id, "Fraud")
     response = client.accounts.close_account(requet)
     assert response.data.type == "depositAccount"
+
+
+def test_close_and_reopen_account():
     account_id = create_deposit_account().data.id
     requet = CloseAccountRequest(account_id)
     response = client.accounts.close_account(requet)
@@ -124,6 +126,7 @@ def test_update_account():
         "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
     response = client.accounts.update(request)
     assert response.data.type == "depositAccount"
+    assert response.data.attributes.get("tags").get("purpose") == "tax"
 
 
 def test_update_credit_account():
@@ -136,6 +139,7 @@ def test_update_credit_account():
     response = client.accounts.update(request)
     assert response.data.type == "creditAccount"
     assert response.data.attributes.get("creditLimit") == _credit_limit
+    assert response.data.attributes.get("tags").get("purpose") == "tax"
 
 
 def test_get_deposit_products():

@@ -10,7 +10,7 @@ CreditAccountType = "creditAccount"
 
 
 class DepositAccountDTO(object):
-    def __init__(self, _id: str, created_at: datetime, updated_at: datetime, name: str, deposit_product: str,
+    def __init__(self, _id: str, created_at: datetime, updated_at: Optional[datetime], name: str, deposit_product: str,
                  routing_number: str, account_number: str, currency: str, balance: int, hold: int, available: int,
                  status: AccountStatus, tags: Optional[Dict[str, str]], close_reason: Optional[CloseReason],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -341,7 +341,6 @@ class ListAccountParams(UnitParams):
         if self.to_balance:
             parameters["filter[toBalance]"] = self.to_balance
         return parameters
-
 
 
 class AccountOwnersRequest(UnitRequest):
