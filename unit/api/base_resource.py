@@ -13,14 +13,14 @@ def backoff_idempotency_key_handler(e):
 
 def backoff_handler(e):
     code = e.status_code
-    return is_timeout(code) or is_rete_limit(code) or is_server_error(code)
+    return is_timeout(code) or is_rate_limit(code) or is_server_error(code)
 
 
 def is_timeout(code):
     return code == 408
 
 
-def is_rete_limit(code):
+def is_rate_limit(code):
     return code == 429
 
 

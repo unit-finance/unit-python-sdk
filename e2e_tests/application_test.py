@@ -9,6 +9,7 @@ client = Unit("https://api.s.unit.sh", token)
 
 ApplicationTypes = ["individualApplication", "businessApplication", "trustApplication"]
 
+
 def create_individual_application():
     device_fingerprint = DeviceFingerprint.from_json_api({
         "provider": "iovation",
@@ -21,7 +22,8 @@ def create_individual_application():
         Phone("1", "2025550108"),
         ssn="000000003",
         device_fingerprints=[device_fingerprint],
-        idempotency_key=str(uuid.uuid1())
+        idempotency_key=str(uuid.uuid1()),
+        jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ"
     )
 
     return client.applications.create(request)
