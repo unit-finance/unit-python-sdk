@@ -10,25 +10,26 @@ CreditAccountType = "creditAccount"
 
 
 class DepositAccountDTO(object):
-    def __init__(self, _id: str, created_at: datetime, name: str, deposit_product: str, routing_number: str,
-                 account_number: str, currency: str, balance: int, hold: int, available: int, status: AccountStatus,
-                 tags: Optional[Dict[str, str]], close_reason: Optional[CloseReason],
+    def __init__(self, _id: str, created_at: datetime, updated_at: datetime, name: str, deposit_product: str,
+                 routing_number: str, account_number: str, currency: str, balance: int, hold: int, available: int,
+                 status: AccountStatus, tags: Optional[Dict[str, str]], close_reason: Optional[CloseReason],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
         self.type = "depositAccount"
-        self.attributes = {"name": name, "createdAt": created_at, "depositProduct": deposit_product,
-                           "routingNumber": routing_number, "accountNumber": account_number, "currency": currency,
-                           "balance": balance, "hold": hold, "available": available, "status": status,
-                           "closeReason": close_reason, "tags": tags}
+        self.attributes = {"name": name, "createdAt": created_at, "updatedAt": updated_at,
+                           "depositProduct": deposit_product, "routingNumber": routing_number,
+                           "accountNumber": account_number, "currency": currency, "balance": balance,
+                           "hold": hold, "available": available, "status": status, "closeReason": close_reason,
+                           "tags": tags}
         self.relationships = relationships
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return DepositAccountDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes["name"], attributes["depositProduct"],
-            attributes["routingNumber"], attributes["accountNumber"], attributes["currency"], attributes["balance"],
-            attributes["hold"], attributes["available"], attributes["status"], attributes.get("tags"),
-            attributes.get("closeReason"), relationships
+            _id, date_utils.to_datetime(attributes["createdAt"]), date_utils.to_datetime(attributes.get("updatedAt")),
+            attributes["name"], attributes["depositProduct"], attributes["routingNumber"], attributes["accountNumber"],
+            attributes["currency"], attributes["balance"], attributes["hold"], attributes["available"],
+            attributes["status"], attributes.get("tags"), attributes.get("closeReason"), relationships
         )
 
 
@@ -150,10 +151,12 @@ class PatchDepositAccountRequest(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
 class PatchCreditAccountRequest(UnitRequest):
-    def __init__(self, account_id: str, tags: Optional[Dict[str, str]] = None):
+    def __init__(self, account_id: str, tags: Optional[Dict[str, str]] = None, credit_limit: Optional[int] = None):
         self.account_id = account_id
         self.tags = tags
+        self.credit_limit = credit_limit
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -165,6 +168,9 @@ class PatchCreditAccountRequest(UnitRequest):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.credit_limit:
+            payload["data"]["attributes"]["creditLimit"] = self.credit_limit
 
         return payload
 

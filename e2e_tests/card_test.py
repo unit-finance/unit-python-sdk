@@ -6,8 +6,9 @@ from datetime import timedelta
 from e2e_tests.account_test import create_deposit_account, create_deposit_account_for_business, \
     create_credit_account_for_business
 from unit import Unit
-from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams,\
-    CreateBusinessDebitCard, CreateBusinessVirtualDebitCard, CreateBusinessCreditCard, CreateBusinessVirtualCreditCard
+from unit.models.card import CreateIndividualDebitCard, PatchIndividualDebitCard, ListCardParams, \
+    CreateBusinessDebitCard, CreateBusinessVirtualDebitCard, CreateBusinessCreditCard, CreateBusinessVirtualCreditCard, \
+    PatchBusinessDebitCard, PatchBusinessCreditCard
 from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
 from e2e_tests.helpers.helpers import create_relationship, generate_uuid, full_name, address, phone
@@ -60,7 +61,7 @@ def create_individual_customer():
 
 
 def create_business_debit_card():
-    account_id = create_deposit_account_for_business()
+    account_id = create_deposit_account_for_business().data.id
 
     request = CreateBusinessDebitCard(full_name, "2001-08-10", address, phone, "richard@piedpiper.com",
                                       shipping_address=address, idempotency_key=generate_uuid(),
@@ -71,7 +72,7 @@ def create_business_debit_card():
 
 
 def create_business_virtual_debit_card():
-    account_id = create_deposit_account_for_business()
+    account_id = create_deposit_account_for_business().data.id
 
     request = CreateBusinessVirtualDebitCard(full_name, "2001-08-10", address, phone, "richard@piedpiper.com",
                                              relationships=create_relationship("depositAccount", account_id, "account"))
@@ -172,6 +173,14 @@ def test_update_individual_card():
     assert response.data.type == "individualDebitCard"
 
 
+def test_update_business_card():
+    card_id = create_business_debit_card().id
+    _address = Address("1818 Pennsylvania Avenue Northwest", "Washington", "CA", "21500", "US")
+    request = PatchBusinessDebitCard(card_id, address=_address)
+    response = client.cards.update(request)
+    assert response.data.type == "businessDebitCard"
+
+
 def test_get_pin_status():
     response = client.cards.list()
     for card in response.data:
@@ -196,7 +205,7 @@ def test_create_business_virtual_debit_card():
     assert response.type == "businessVirtualDebitCard"
 
 
-def test_create_business_credit_card():
+def create_business_credit_card():
     account_id = create_credit_account_for_business().data.id
 
     request = CreateBusinessCreditCard(full_name, "2001-08-10", address, phone,
@@ -204,7 +213,11 @@ def test_create_business_credit_card():
                                        idempotency_key=generate_uuid(),
                                        relationships=create_relationship("creditAccount", account_id, "account"))
 
-    response = client.cards.create(request)
+    return client.cards.create(request)
+
+
+def test_create_business_credit_card():
+    response = create_business_credit_card()
     assert response.data.type == "businessCreditCard"
 
 
@@ -218,3 +231,10 @@ def test_create_business_virtual_credit_card():
     response = client.cards.create(request)
     assert response.data.type == "businessVirtualCreditCard"
 
+
+def test_update_business_credit_card():
+    card_id = create_business_credit_card().data.id
+    _address = Address("1818 Pennsylvania Avenue Northwest", "Washington", "CA", "21500", "US")
+    request = PatchBusinessCreditCard(card_id, address=_address)
+    response = client.cards.update(request)
+    assert response.data.type == "businessCreditCard"

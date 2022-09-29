@@ -181,9 +181,10 @@ class CreateIndividualDebitCard(object):
 
 class CreateBusinessCard(object):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 shipping_address: Optional[Address] = None, ssn: Optional[str] = None, passport: Optional[str] = None,
-                 nationality: Optional[str] = None, design: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None):
+                 relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
+                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 design: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -280,9 +281,9 @@ class CreateIndividualVirtualDebitCard(object):
 
 class CreateBusinessVirtualCard(object):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
-                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 relationships: Optional[Dict[str, Relationship]] = None):
+                 relationships: Dict[str, Relationship], ssn: Optional[str] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
