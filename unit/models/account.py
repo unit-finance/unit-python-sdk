@@ -126,6 +126,9 @@ class CreateCreditAccountRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
+CreateAccountRequest = Union[CreateDepositAccountRequest, CreateCreditAccountRequest]
+
+
 class PatchDepositAccountRequest(UnitRequest):
     def __init__(self, account_id: str, deposit_product: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
         self.account_id = account_id
@@ -176,6 +179,9 @@ class PatchCreditAccountRequest(UnitRequest):
 
     def __repr__(self):
         json.dumps(self.to_json_api())
+
+
+PatchAccountRequest = Union[PatchDepositAccountRequest, PatchCreditAccountRequest]
 
 
 class AchTotals(object):

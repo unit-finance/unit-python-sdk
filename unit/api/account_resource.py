@@ -8,7 +8,7 @@ class AccountResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "accounts"
 
-    def create(self, request: CreateDepositAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+    def create(self, request: CreateAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(self.resource, payload)
         if super().is_20x(response.status_code):
@@ -69,7 +69,7 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def update(self, request: PatchDepositAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+    def update(self, request: PatchAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.account_id}", payload)
         if super().is_20x(response.status_code):
