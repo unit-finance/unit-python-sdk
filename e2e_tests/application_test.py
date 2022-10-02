@@ -1,5 +1,5 @@
 import os
-import unittest
+import uuid
 from datetime import timedelta
 from unit import Unit
 from unit.models.application import *
@@ -8,6 +8,7 @@ token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
 ApplicationTypes = ["individualApplication", "businessApplication", "trustApplication"]
+
 
 def create_individual_application():
     device_fingerprint = DeviceFingerprint.from_json_api({
@@ -21,6 +22,7 @@ def create_individual_application():
         Phone("1", "2025550108"),
         ssn="000000003",
         device_fingerprints=[device_fingerprint],
+        idempotency_key=str(uuid.uuid1()),
         jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ"
     )
 
@@ -73,3 +75,4 @@ def test_update_business_application():
     updated = client.applications.update(PatchApplicationRequest(app.data.id, "businessApplication",
                                                                       tags={"patch": "test-patch"}))
     assert updated.data.type == "businessApplication"
+

@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class DisputeResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "disputes"
 
     def get(self, dispute_id: str) -> Union[UnitResponse[DisputeDTO], UnitError]:

@@ -2,9 +2,10 @@ from unit.api.base_resource import BaseResource
 from unit.models.atm_location import *
 from unit.models.codecs import DtoDecoder, UnitEncoder
 
+
 class AtmLocationResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "atm-locations"
 
     """

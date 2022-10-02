@@ -22,4 +22,3 @@ def test_fire_event():
     response = client.events.fire(event_id)
     assert response.data == []
 
-

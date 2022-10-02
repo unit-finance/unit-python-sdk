@@ -4,13 +4,13 @@ from unit.models.codecs import DtoDecoder
 
 
 class ApplicationResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "applications"
 
     def create(self, request: Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest]) -> Union[UnitResponse[ApplicationDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post_create(self.resource, payload)
 
         if response.ok:
             data = response.json().get("data")
