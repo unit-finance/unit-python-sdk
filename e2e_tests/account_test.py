@@ -53,8 +53,6 @@ def create_deposit_account_for_business():
                                           {"purpose": "checking"})
     return client.accounts.create(request)
 
-    return create_deposit_account_for_customer(customer_id)
-
 
 def create_credit_account_for_business():
     customer_id = create_business_customer()

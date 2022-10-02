@@ -380,7 +380,7 @@ class PatchIndividualDebitCard(object):
 class PatchBusinessCard(object):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None,):
+                 tags: Optional[Dict[str, str]] = None):
         self.card_id = card_id
         self.shipping_address = shipping_address
         self.address = address
