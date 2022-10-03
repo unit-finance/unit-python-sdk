@@ -57,13 +57,13 @@ class CardResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def replace(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]], UnitError]:
+    def replace(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Card], UnitError]:
         request = ReplaceCardRequest(shipping_address)
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{card_id}/replace", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]](DtoDecoder.decode(data), None)
+            return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
