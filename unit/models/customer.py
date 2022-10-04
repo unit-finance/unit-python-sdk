@@ -65,14 +65,14 @@ CustomerDTO = Union[IndividualCustomerDTO, BusinessCustomerDTO]
 class PatchIndividualCustomerRequest(UnitRequest):
     def __init__(self, customer_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
                  email: Optional[str] = None, dba: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 jwt_subject: Optional[str] = None, authorized_users: Optional[AuthorizedUser] = None):
+                 jwtSubject: Optional[str] = None, authorized_users: Optional[AuthorizedUser] = None):
         self.customer_id = customer_id
         self.address = address
         self.phone = phone
         self.email = email
         self.dba = dba
         self.tags = tags
-        self.jwt_subject = jwt_subject
+        self.jwtSubject = jwtSubject
         self.authorized_users = authorized_users
 
     def to_json_api(self) -> Dict:
@@ -98,8 +98,8 @@ class PatchIndividualCustomerRequest(UnitRequest):
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
-        if self.jwt_subject:
-            payload["data"]["attributes"]["jwtSubject"] = self.jwt_subject
+        if self.jwtSubject:
+            payload["data"]["attributes"]["jwtSubject"] = self.jwtSubject
 
         if self.authorized_users:
             payload["data"]["attributes"]["authorizedUsers"] = self.authorized_users

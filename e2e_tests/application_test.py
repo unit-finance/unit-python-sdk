@@ -23,7 +23,7 @@ def create_individual_application():
         ssn="000000003",
         device_fingerprints=[device_fingerprint],
         idempotency_key=str(uuid.uuid1()),
-        jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ"
+        jwtSubject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ"
     )
 
     return client.applications.create(request)

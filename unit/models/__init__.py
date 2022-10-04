@@ -221,11 +221,11 @@ class BeneficialOwner(UnitDTO):
 
 
 class AuthorizedUser(UnitDTO):
-    def __init__(self, full_name: FullName, email: str, phone: Phone, jwt_subject: Optional[str]):
+    def __init__(self, full_name: FullName, email: str, phone: Phone, jwtSubject: Optional[str]):
         self.full_name = full_name
         self.email = email
         self.phone = phone
-        self.jwt_subject = jwt_subject
+        self.jwtSubject = jwtSubject
 
     @staticmethod
     def from_json_api(data):

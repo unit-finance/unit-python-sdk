@@ -22,13 +22,13 @@ class CustomerVerificationTokenDTO(object):
 class CreateCustomerToken(UnitRequest):
     def __init__(self, customer_id: str, scope: str, verification_token: Optional[str] = None,
                  verification_code: Optional[str] = None, expires_in: Optional[int] = None,
-                 jwt_subject: Optional[str] = None):
+                 jwtSubject: Optional[str] = None):
         self.customer_id = customer_id
         self.scope = scope
         self.verification_token = verification_token
         self.verification_code = verification_code
         self.expires_in = expires_in
-        self.jwt_subject = jwt_subject
+        self.jwtSubject = jwtSubject
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -49,8 +49,8 @@ class CreateCustomerToken(UnitRequest):
         if self.verification_code:
             payload["data"]["attributes"]["verificationCode"] = self.verification_code
 
-        if self.jwt_subject:
-            payload["data"]["attributes"]["jwtSubject"] = self.jwt_subject
+        if self.jwtSubject:
+            payload["data"]["attributes"]["jwtSubject"] = self.jwtSubject
 
         return payload
 

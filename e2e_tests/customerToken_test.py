@@ -16,7 +16,7 @@ def test_create_token():
 def test_create_jwt_token():
     account_id = create_individual_customer()
     request = CreateCustomerToken(account_id, "customers accounts",
-                                  jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ")
+                                  jwtSubject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ")
     response = client.customerTokens.create_token(request)
     assert response.data.type == "customerBearerToken"
 
