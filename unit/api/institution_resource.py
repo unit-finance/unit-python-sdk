@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class InstitutionResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "institutions"
 
     def get(self, routing_number: str) -> Union[UnitResponse[InstitutionDTO], UnitError]:

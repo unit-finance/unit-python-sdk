@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class EventResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "events"
 
     def get(self, event_id: str) -> Union[UnitResponse[EventDTO], UnitError]:

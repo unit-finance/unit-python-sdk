@@ -1,5 +1,5 @@
 import os
-import unittest
+import uuid
 from datetime import timedelta
 from unit import Unit
 from unit.models.application import *
@@ -8,6 +8,7 @@ token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
 ApplicationTypes = ["individualApplication", "businessApplication", "trustApplication"]
+
 
 def create_individual_application():
     device_fingerprint = DeviceFingerprint.from_json_api({
@@ -21,14 +22,17 @@ def create_individual_application():
         Phone("1", "2025550108"),
         ssn="000000003",
         device_fingerprints=[device_fingerprint],
+        idempotency_key=str(uuid.uuid1()),
         jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ"
     )
 
     return client.applications.create(request)
 
+
 def test_create_individual_application():
     app = create_individual_application()
     assert app.data.type == "individualApplication"
+
 
 def create_business_application():
     request = CreateBusinessApplicationRequest(
@@ -37,7 +41,7 @@ def create_business_application():
         phone=Phone("1", "9294723497"), state_of_incorporation="CA", entity_type="Corporation", ein="123456789",
         officer=Officer(full_name=FullName("Jone", "Doe"), date_of_birth=date.today() - timedelta(days=20 * 365),
                            address=Address("950 Allerton Street", "Redwood City", "CA", "94063", "US"),
-                           phone=Phone("1", "2025550108"), email="jone.doe@unit-finance.com", ssn="000000005"),
+                           phone=Phone("1", "2025550108"), email="jone.doe@unit-finance.com", ssn="123456789"),
         contact=BusinessContact(full_name=FullName("Jone", "Doe"), email="jone.doe@unit-finance.com", phone=Phone("1", "2025550108")),
         beneficial_owners=[
             BeneficialOwner(
@@ -73,3 +77,4 @@ def test_update_business_application():
     updated = client.applications.update(PatchApplicationRequest(app.data.id, "businessApplication",
                                                                       tags={"patch": "test-patch"}))
     assert updated.data.type == "businessApplication"
+

@@ -2,14 +2,15 @@ from unit.api.base_resource import BaseResource
 from unit.models.account import *
 from unit.models.codecs import DtoDecoder
 
+
 class AccountResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "accounts"
 
-    def create(self, request: CreateDepositAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+    def create(self, request: CreateAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post_create(self.resource, payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
@@ -49,6 +50,7 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+
     def get(self, account_id: str, include: Optional[str] = "") -> Union[UnitResponse[AccountDTO], UnitError]:
         response = super().get(f"{self.resource}/{account_id}", {"include": include})
         if super().is_20x(response.status_code):
@@ -68,7 +70,7 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def update(self, request: PatchDepositAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+    def update(self, request: PatchAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.account_id}", payload)
         if super().is_20x(response.status_code):

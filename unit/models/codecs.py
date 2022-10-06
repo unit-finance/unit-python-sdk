@@ -1,6 +1,6 @@
 from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
-from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO
+from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO, CreditAccountDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, MobileWalletPayloadDTO
@@ -41,6 +41,9 @@ mappings = {
         "depositAccount": lambda _id, _type, attributes, relationships:
         DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "creditAccount": lambda _id, _type, attributes, relationships:
+        CreditAccountDTO.from_json_api(_id, _type, attributes, relationships),
+
         "limits": lambda _id, _type, attributes, relationships:
         decode_limits(attributes),
 
@@ -50,11 +53,17 @@ mappings = {
         "businessDebitCard": lambda _id, _type, attributes, relationships:
         BusinessDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "businessCreditCard": lambda _id, _type, attributes, relationships:
+        BusinessCreditCardDTO.from_json_api(_id, _type, attributes, relationships),
+
         "individualVirtualDebitCard": lambda _id, _type, attributes, relationships:
         IndividualVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
 
         "businessVirtualDebitCard": lambda _id, _type, attributes, relationships:
         BusinessVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessVirtualCreditCard": lambda _id, _type, attributes, relationships:
+        BusinessVirtualCreditCardDTO.from_json_api(_id, _type, attributes, relationships),
 
         "originatedAchTransaction": lambda _id, _type, attributes, relationships:
         OriginatedAchTransactionDTO.from_json_api(_id, _type, attributes, relationships),

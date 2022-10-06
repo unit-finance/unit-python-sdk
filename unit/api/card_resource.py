@@ -4,13 +4,13 @@ from unit.models.codecs import DtoDecoder
 
 
 class CardResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "cards"
 
     def create(self, request: CreateCardRequest) -> Union[UnitResponse[Card], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post_create(self.resource, payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[Card](DtoDecoder.decode(data), None)
@@ -57,13 +57,13 @@ class CardResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def replace(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]], UnitError]:
+    def replace(self, card_id: str, shipping_address: Optional[Address]) -> Union[UnitResponse[Card], UnitError]:
         request = ReplaceCardRequest(shipping_address)
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{card_id}/replace", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[Union[IndividualDebitCardDTO, BusinessDebitCardDTO]](DtoDecoder.decode(data), None)
+            return UnitResponse[Card](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
