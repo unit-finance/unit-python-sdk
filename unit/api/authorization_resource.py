@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class AuthorizationResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "authorizations"
 
     def get(self, authorization_id: str, include_non_authorized: Optional[bool] = False) -> Union[UnitResponse[AuthorizationDTO], UnitError]:

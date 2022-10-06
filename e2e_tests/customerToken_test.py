@@ -13,6 +13,13 @@ def test_create_token():
     response = client.customerTokens.create_token(request)
     assert response.data.type == "customerBearerToken"
 
+def test_create_jwt_token():
+    account_id = create_individual_customer()
+    request = CreateCustomerToken(account_id, "customers accounts",
+                                  jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ")
+    response = client.customerTokens.create_token(request)
+    assert response.data.type == "customerBearerToken"
+
 def test_create_token_verification():
     account_id = create_individual_customer()
     request = CreateCustomerTokenVerification(account_id, "sms")

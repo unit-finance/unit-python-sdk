@@ -11,12 +11,13 @@ class AuthorizationDTO(object):
                  merchant_type: int, merchant_category: str, merchant_location: Optional[str], recurring: bool,
                  payment_method: Optional[str], digital_wallet: Optional[str], card_verification_data,
                  card_network: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], merchant_id: Optional[str]):
         self.id = id
         self.type = "authorization"
         self.attributes = {"createdAt": created_at, "amount": amount, "cardLast4Digits": card_last_4_digits,
                            "status": status, "merchant": {"name": merchant_name, "type": merchant_type,
-                                                          "category": merchant_category, "location": merchant_location},
+                                                          "category": merchant_category, "location": merchant_location,
+                                                          "id": merchant_id},
                            "recurring": recurring, "paymentMethod": payment_method, "digitalWallet": digital_wallet,
                            "cardVerificationData": card_verification_data, "cardNetwork": card_network, "tags": tags}
         self.relationships = relationships
@@ -29,7 +30,7 @@ class AuthorizationDTO(object):
                                 attributes["merchant"].get("location"), attributes["recurring"],
                                 attributes.get("paymentMethod"), attributes.get("digitalWallet"),
                                 attributes.get("cardVerificationData"), attributes.get("cardNetwork"),
-                                attributes.get("tags"), relationships)
+                                attributes.get("tags"), relationships, attributes["merchant"].get("id"))
 
 
 class ListAuthorizationParams(UnitParams):

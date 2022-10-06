@@ -65,6 +65,7 @@ def test_create_wire_payment():
 
 def test_list_and_get_payments():
     payments_ids = []
+
     response = client.payments.list()
 
     for t in response.data:
