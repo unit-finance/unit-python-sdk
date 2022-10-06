@@ -15,6 +15,8 @@ def create_relationships_dict(relationships: List[Relationship]):
     for r in relationships:
         d.update(r)
 
+    return d
+
 
 def create_relationship(_type: str, _id: str, relation: str = None):
     relation = relation or _type
