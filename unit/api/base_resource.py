@@ -73,6 +73,10 @@ class BaseResource(object):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
         return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
+    @backoff.on_predicate(backoff.expo,
+                          backoff_idempotency_key_handler,
+                          max_tries=retries,
+                          jitter=backoff.random_jitter)
     def post_full_path(self, path: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
         return requests.post(path, data=data, headers=self.__merge_headers(headers))
