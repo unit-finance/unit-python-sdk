@@ -3,7 +3,8 @@ from unit.models.application import IndividualApplicationDTO, BusinessApplicatio
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO, CreditAccountDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
-    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, MobileWalletPayloadDTO
+    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, MobileWalletPayloadDTO, BusinessVirtualCreditCardDTO, \
+    BusinessCreditCardDTO
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
