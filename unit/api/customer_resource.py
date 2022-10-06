@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class CustomerResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "customers"
 
     def update(self, request: Union[PatchIndividualCustomerRequest, PatchBusinessCustomerRequest]) -> Union[UnitResponse[CustomerDTO], UnitError]:
@@ -20,7 +20,6 @@ class CustomerResource(BaseResource):
                 return UnitResponse[BusinessCustomerDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
-
 
     def get(self, customer_id: str) -> Union[UnitResponse[CustomerDTO], UnitError]:
         response = super().get(f"{self.resource}/{customer_id}")

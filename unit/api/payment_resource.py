@@ -4,13 +4,13 @@ from unit.models.codecs import DtoDecoder
 
 
 class PaymentResource(BaseResource):
-    def __init__(self, api_url, token):
-        super().__init__(api_url, token)
+    def __init__(self, api_url, token, retries):
+        super().__init__(api_url, token, retries)
         self.resource = "payments"
 
     def create(self, request: CreatePaymentRequest) -> Union[UnitResponse[PaymentDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post_create(self.resource, payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[PaymentDTO](DtoDecoder.decode(data), None)

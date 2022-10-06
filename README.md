@@ -56,7 +56,6 @@ Fetching a customer
 ```python
     import os
     from unit import Unit
-    from unit.models.customer import *
 
     token = os.environ.get("token")
     api_url = os.environ.get("api_url")
@@ -64,4 +63,21 @@ Fetching a customer
     unit = Unit(api_url, token)
     customer = unit.customers.list().data[0]
     print(customer.id)
+```
+
+## Retrying API Requests
+API requests can fail for many reasons, from network components failures, API rate limits, timeouts or service incidents.
+<br> Create requests without idempotency key won't trigger the retry mechanism, so we recommend to pass an idempotency key where applicable. 
+
+You can read about retries here: https://docs.unit.co/#retries. <br>
+
+the default amount of retries is 0. <br>Unit initialization with retries:
+```python
+    import os
+    from unit import Unit
+
+    token = os.environ.get("token")
+    api_url = os.environ.get("api_url")
+
+    unit = Unit(api_url, token, retries=3)
 ```

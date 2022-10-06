@@ -12,4 +12,3 @@ def test_list_account_end_of_day():
     for a in response.data:
         assert a.type == "accountEndOfDay"
 
-test_list_account_end_of_day()

@@ -146,9 +146,11 @@ class Address(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Address(data.get("street"), data.get("city"), data.get("state"),
-                data.get("postalCode"), data.get("country"), data.get("street2", None))
+        if data:
+            return Address(data.get("street"), data.get("city"), data.get("state"),
+                           data.get("postalCode"), data.get("country"), data.get("street2", None))
 
+        return None
 
 class Phone(UnitDTO):
     def __init__(self, country_code: str, number: str):
@@ -277,15 +279,20 @@ class Coordinates(UnitDTO):
 
 
 class Merchant(UnitDTO):
-    def __init__(self, name: str, type: int, category: str, location: Optional[str]):
+    def __init__(self, name: str, _type: int, category: str, location: Optional[str], _id: Optional[str]):
         self.name = name
-        self.type = type
+        self.type = _type
         self.category = category
         self.location = location
+        self.id = _id
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Merchant(data["name"], data["type"], data["category"], data.get("location"))
+        if data:
+            return Merchant(data["name"], data["type"], data["category"], data.get("location"), data.get("id"))
+
+        return None
+
 
 
 class CardLevelLimits(UnitDTO):
