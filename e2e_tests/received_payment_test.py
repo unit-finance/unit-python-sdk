@@ -158,7 +158,6 @@ def test_ach_received_payment_dto():
     assert str(payment.attributes["completionDate"]) == attributes["completionDate"]
 
 
-
 def test_list_payments():
     response = client.received_payments.list(ListReceivedPaymentParams(limit=150, offset=1,
                                                                        status=["Pending", "Advanced", "Completed"]))
