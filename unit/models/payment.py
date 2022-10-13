@@ -1,5 +1,6 @@
 from unit.utils import date_utils
 from unit.models import *
+from datetime import datetime as D
 
 PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
 PaymentDirections = Literal["Debit", "Credit"]
@@ -80,7 +81,7 @@ AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned
 
 
 class AchReceivedPaymentDTO(object):
-    def __init__(self, _id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: bool,
+    def __init__(self, _id: str, created_at: D, status: AchReceivedPaymentStatus, was_advanced: bool,
                  completion_date: date, return_reason: Optional[str], amount: int, description: str,
                  addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
                  sec_code: Optional[str], tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
@@ -101,6 +102,7 @@ class AchReceivedPaymentDTO(object):
                                      attributes.get("addenda"), attributes.get("companyName"),
                                      attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
                                      attributes.get("secCode"), attributes.get("tags"), relationships)
+
 
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
@@ -239,6 +241,27 @@ class PatchAchPaymentRequest(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+class PatchAchPaymentRequest(object):
+    def __init__(self, payment_id: str, tags: Dict[str, str]):
+        self.payment_id = payment_id
+        self.tags = tags
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "achPayment",
+                "attributes": {
+                    "tags": self.tags
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
 class PatchBookPaymentRequest(object):
     def __init__(self, payment_id: str, tags: Dict[str, str]):
         self.payment_id = payment_id
@@ -259,7 +282,30 @@ class PatchBookPaymentRequest(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
+
+class PatchReceivedPaymentRequest(object):
+    def __init__(self, payment_id: str, tags: Dict[str, str]):
+        self.payment_id = payment_id
+        self.tags = tags
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "achReceivedPayment",
+                "attributes": {
+                    "tags": self.tags
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
 PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
+
 
 class ListPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
@@ -308,11 +354,11 @@ class ListPaymentParams(UnitParams):
             parameters["include"] = self.include
         return parameters
 
+
 class ListReceivedPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None, tags: Optional[object] = None,
-                 status: Optional[List[AchReceivedPaymentStatus]] = None,
-                 direction: Optional[List[PaymentDirections]] = None, include_completed: Optional[bool] = None,
+                 status: Optional[List[AchReceivedPaymentStatus]] = None, include_completed: Optional[bool] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
         self.limit = limit
         self.offset = offset
