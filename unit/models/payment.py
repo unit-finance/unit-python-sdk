@@ -1,6 +1,5 @@
 from unit.utils import date_utils
 from unit.models import *
-from datetime import datetime as D
 
 PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
 PaymentDirections = Literal["Debit", "Credit"]
@@ -81,7 +80,7 @@ AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned
 
 
 class AchReceivedPaymentDTO(object):
-    def __init__(self, _id: str, created_at: D, status: AchReceivedPaymentStatus, was_advanced: bool,
+    def __init__(self, _id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: bool,
                  completion_date: date, return_reason: Optional[str], amount: int, description: str,
                  addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
                  sec_code: Optional[str], tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
