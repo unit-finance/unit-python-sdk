@@ -4,7 +4,7 @@ import requests
 
 from e2e_tests.helpers.helpers import create_deposit_account
 from unit import Unit
-from unit.models.codecs import UnitEncoder
+from unit.models.codecs import UnitEncoder, DtoDecoder
 from unit.models.payment import *
 
 
@@ -50,6 +50,113 @@ def simulate_received_payment():
         print("Failed to simulate received payment")
 
     return ""
+
+
+def test_ach_received_payment_dto():
+    ach_received_payment_response_json_api = {
+      "data": {
+        "type": "achReceivedPayment",
+        "id": "1337",
+        "attributes": {
+          "createdAt": "2022-02-01T12:03:14.406Z",
+          "status": "Pending",
+          "wasAdvanced": False,
+          "amount": 500000,
+          "completionDate": "2020-07-30",
+          "companyName": "UBER LTD",
+          "counterpartyRoutingNumber": "051402372",
+          "description": "Sandbox",
+          "traceNumber": "123456789123456",
+          "secCode": "PPD"
+        },
+        "relationships": {
+          "account": {
+            "data": {
+              "type": "account",
+              "id": "163555"
+            }
+          },
+          "customer": {
+            "data": {
+              "type": "customer",
+              "id": "129522"
+            }
+          }
+        }
+      }
+    }
+
+    _id = ach_received_payment_response_json_api["id"]
+    attributes = ach_received_payment_response_json_api["attributes"]
+    _type = ach_received_payment_response_json_api["type"]
+
+    payment = DtoDecoder.decode(ach_received_payment_response_json_api)
+
+    assert payment.id == _id
+    assert str(payment.attributes["completionDate"]) == attributes["completionDate"]
+    assert payment.attributes["traceNumber"] == attributes["traceNumber"]
+
+
+def test_ach_received_payment_dto():
+    ach_received_payment_response_json_api = {
+          "type": "achReceivedPayment",
+          "id": "1337",
+          "attributes": {
+            "createdAt": "2022-02-01T12:03:14.406Z",
+            "status": "Completed",
+            "wasAdvanced": True,
+            "amount": 100000,
+            "completionDate": "2022-01-23",
+            "companyName": "Uber",
+            "counterpartyRoutingNumber": "051402372",
+            "description": "Sandbox Transaction",
+            "traceNumber": "123456789123456",
+            "secCode": "PPD",
+            "tags": {}
+          },
+          "relationships": {
+            "account": {
+              "data": {
+                "type": "account",
+                "id": "163555"
+              }
+            },
+            "customer": {
+              "data": {
+                "type": "customer",
+                "id": "129522"
+              }
+            },
+            "receivePaymentTransaction": {
+              "data": {
+                "type": "transaction",
+                "id": "101"
+              }
+            },
+            "paymentAdvanceTransaction": {
+              "data": {
+                "type": "transaction",
+                "id": "202"
+              }
+            },
+            "repayPaymentAdvanceTransaction": {
+              "data": {
+                "type": "transaction",
+                "id": "890"
+              }
+            }
+          }
+        }
+
+    _id = ach_received_payment_response_json_api["id"]
+    attributes = ach_received_payment_response_json_api["attributes"]
+    _type = ach_received_payment_response_json_api["type"]
+
+    payment = DtoDecoder.decode(ach_received_payment_response_json_api)
+
+    assert payment.id == _id
+    assert str(payment.attributes["completionDate"]) == attributes["completionDate"]
+
 
 
 def test_list_payments():
