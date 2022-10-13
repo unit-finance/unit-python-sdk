@@ -49,8 +49,6 @@ def simulate_received_payment():
     if res.status_code != 201:
         print("Failed to simulate received payment")
 
-    return ""
-
 
 def test_ach_received_payment_dto():
     ach_received_payment_response_json_api = {
