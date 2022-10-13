@@ -174,9 +174,12 @@ def test_list_and_get_payments():
         payments_ids.append(t.id)
 
     for _id in payments_ids:
-        response = client.received_payments.get(_id, "customer")
+        response = client.received_payments.get(_id, "customer,account")
         assert response.data.type == "achReceivedPayment"
         assert response.included
+        assert len(response.included) == 2
+        assert any("Account" in x.type for x in response.included)
+        assert any("Customer" in x.type for x in response.included)
 
 
 def test_list_and_update_payments():
