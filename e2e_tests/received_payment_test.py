@@ -1,3 +1,4 @@
+import json
 import os
 import pytest
 import requests
@@ -5,8 +6,7 @@ import requests
 from e2e_tests.helpers.helpers import create_deposit_account
 from unit import Unit
 from unit.models.codecs import UnitEncoder, DtoDecoder
-from unit.models.payment import *
-
+from unit.models.received_payment import ListReceivedPaymentParams, PatchReceivedPaymentRequest
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)

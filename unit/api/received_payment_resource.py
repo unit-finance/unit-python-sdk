@@ -1,6 +1,6 @@
 from unit.api.base_resource import BaseResource
-from unit.models.payment import *
 from unit.models.codecs import DtoDecoder
+from unit.models.received_payment import *
 
 
 class ReceivedPaymentResource(BaseResource):
