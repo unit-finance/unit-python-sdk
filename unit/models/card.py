@@ -29,13 +29,14 @@ class BusinessCardDTO(object):
                  ssn: Optional[str], full_name: FullName, date_of_birth: date, address: Address, phone: Phone,
                  email: str, status: CardStatus, passport: Optional[str], nationality: Optional[str],
                  shipping_address: Optional[Address], design: Optional[str],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = _id
         self.type = _type
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
                            "ssn": ssn, "fullName": full_name, "dateOfBirth": date_of_birth, "address": address,
                            "phone": phone, "email": email, "status": status, "passport": passport,
-                           "nationality": nationality, "shippingAddress": shipping_address, "design": design}
+                           "nationality": nationality, "shippingAddress": shipping_address, "design": design,
+                           "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -46,7 +47,8 @@ class BusinessCardDTO(object):
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
             attributes.get("passport"), attributes.get("nationality"),
-            Address.from_json_api(attributes.get("shippingAddress")), attributes.get("design"), relationships
+            Address.from_json_api(attributes.get("shippingAddress")), attributes.get("design"), relationships,
+            attributes.get("tags")
         )
 
 
