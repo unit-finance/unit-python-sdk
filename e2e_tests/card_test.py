@@ -168,17 +168,19 @@ def test_report_lost_card():
 def test_update_individual_card():
     card_id = find_card_id({"type": "individualDebitCard", "status": "Active"})
     _address = Address("1818 Pennsylvania Avenue Northwest", "Washington", "CA", "21500", "US")
-    request = PatchIndividualDebitCard(card_id, _address)
+    request = PatchIndividualDebitCard(card_id, _address, tags={"test": "updated"})
     response = client.cards.update(request)
     assert response.data.type == "individualDebitCard"
+    assert response.data.attributes.get("tags").get("test") == "updated"
 
 
 def test_update_business_card():
     card_id = create_business_debit_card().id
     _address = Address("1818 Pennsylvania Avenue Northwest", "Washington", "CA", "21500", "US")
-    request = PatchBusinessDebitCard(card_id, address=_address)
+    request = PatchBusinessDebitCard(card_id, address=_address, tags={"test": "updated"})
     response = client.cards.update(request)
     assert response.data.type == "businessDebitCard"
+    assert response.data.attributes.get("tags").get("test") == "updated"
 
 
 def test_get_pin_status():
@@ -235,6 +237,8 @@ def test_create_business_virtual_credit_card():
 def test_update_business_credit_card():
     card_id = create_business_credit_card().data.id
     _address = Address("1818 Pennsylvania Avenue Northwest", "Washington", "CA", "21500", "US")
-    request = PatchBusinessCreditCard(card_id, address=_address)
+    request = PatchBusinessCreditCard(card_id, address=_address, tags={"test": "updated"})
     response = client.cards.update(request)
     assert response.data.type == "businessCreditCard"
+    assert response.data.attributes.get("tags").get("test") == "updated"
+
