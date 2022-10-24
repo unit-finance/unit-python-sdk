@@ -4,7 +4,11 @@ import backoff
 from typing import Optional, Dict
 from unit.models.codecs import UnitEncoder
 
-retries = 0
+_retries = 1
+
+
+def get_max_retries():
+    return _retries
 
 
 def backoff_idempotency_key_handler(e):
@@ -38,7 +42,7 @@ def idempotency_key_is_present(e):
 
 class BaseResource(object):
     def __init__(self, api_url, token, retries_amount):
-        global retries
+        global _retries
 
         self.api_url = api_url.rstrip("/")
         self.token = token
@@ -47,27 +51,27 @@ class BaseResource(object):
             "authorization": f"Bearer {self.token}",
             "user-agent": "unit-python-sdk"
         }
-        retries = retries_amount
+        # max_tries must be greater than 0 due to an infinite loop of backoff library otherwise
+        _retries = retries_amount if retries_amount > 1 else 1
 
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
-                          max_tries=retries,
+                          max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
-                          max_tries=retries,
+                          max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))\
-
+        return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
                           backoff_idempotency_key_handler,
-                          max_tries=retries,
+                          max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def post_create(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -75,7 +79,7 @@ class BaseResource(object):
 
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
-                          max_tries=retries,
+                          max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -83,7 +87,7 @@ class BaseResource(object):
 
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
-                          max_tries=retries,
+                          max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def delete(self, resource: str, data: Dict = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -91,7 +95,7 @@ class BaseResource(object):
 
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
-                          max_tries=retries,
+                          max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
@@ -106,4 +110,3 @@ class BaseResource(object):
 
     def is_20x(self, status: int):
         return status == 200 or status == 201 or status == 204
-
