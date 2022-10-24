@@ -113,7 +113,7 @@ class BusinessVirtualCardDTO(object):
             attributes["expirationDate"], attributes.get("ssn"), FullName.from_json_api(attributes["fullName"]),
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
-            attributes.get("passport"), attributes.get("nationality"), relationships)
+            attributes.get("passport"), attributes.get("nationality"), relationships, attributes.get("tags"))
 
 
 class BusinessVirtualDebitCardDTO(BusinessVirtualCardDTO):
