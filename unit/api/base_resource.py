@@ -51,7 +51,7 @@ class BaseResource(object):
             "authorization": f"Bearer {self.token}",
             "user-agent": "unit-python-sdk"
         }
-        _retries = retries_amount
+        _retries = retries_amount if retries_amount > 1 else 1
 
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
