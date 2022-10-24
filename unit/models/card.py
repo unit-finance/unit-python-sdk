@@ -97,13 +97,13 @@ class BusinessVirtualCardDTO(object):
     def __init__(self, _id: str, _type: str, created_at: datetime, last_4_digits: str, expiration_date: str,
                  ssn: Optional[str], full_name: FullName, date_of_birth: date, address: Address, phone: Phone,
                  email: str, status: CardStatus, passport: Optional[str], nationality: Optional[str],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = _id
         self.type = _type
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
                            "ssn": ssn, "fullName": full_name, "dateOfBirth": date_of_birth, "address": address,
                            "phone": phone, "email": email, "status": status, "passport": passport,
-                           "nationality": nationality}
+                           "nationality": nationality, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
