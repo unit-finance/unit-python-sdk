@@ -51,7 +51,7 @@ class BaseResource(object):
             "authorization": f"Bearer {self.token}",
             "user-agent": "unit-python-sdk"
         }
-        # max_tries must be greater than 0 due to infinite loop of backoff library otherwise
+        # max_tries must be greater than 0 due to an infinite loop of backoff library otherwise
         _retries = retries_amount if retries_amount > 1 else 1
 
     @backoff.on_predicate(backoff.expo,
@@ -67,8 +67,8 @@ class BaseResource(object):
                           jitter=backoff.random_jitter)
     def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers)) \
- \
+        return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
+
     @backoff.on_predicate(backoff.expo,
                           backoff_idempotency_key_handler,
                           max_tries=get_max_retries,
