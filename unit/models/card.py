@@ -140,6 +140,22 @@ class BusinessVirtualCreditCardDTO(BusinessVirtualCardDTO):
         return BusinessVirtualCreditCardDTO(BusinessVirtualCardDTO.from_json_api(_id, _type, attributes, relationships))
 
 
+class CreateCardLimits(object):
+    def __init__(self, dailyWithdrawal: int, dailyPurchase: int, monthlyWithdrawal: int, monthlyPurchase: int):
+        self.dailyWithdrawal = dailyWithdrawal
+        self.dailyPurchase = dailyPurchase
+        self.monthlyWithdrawal = monthlyWithdrawal
+        self.monthlyPurchase = monthlyPurchase
+
+    def to_json_api(self) -> Dict:
+        return {
+            "dailyWithdrawal": self.dailyWithdrawal,
+            "dailyPurchase": self.dailyPurchase,
+            "monthlyWithdrawal": self.monthlyWithdrawal,
+            "monthlyPurchase": self.monthlyPurchase
+        }
+
+
 Card = Union[IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO,
              BusinessVirtualCreditCardDTO, BusinessCreditCardDTO]
 
@@ -186,7 +202,7 @@ class CreateBusinessCard(object):
                  relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
                  ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
                  design: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -200,6 +216,7 @@ class CreateBusinessCard(object):
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
+        self.limits = limits
 
     def to_json_api(self, _type: str) -> Dict:
         payload = {
@@ -236,6 +253,9 @@ class CreateBusinessCard(object):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
 
         return payload
 
