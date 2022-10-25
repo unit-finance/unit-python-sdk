@@ -305,7 +305,7 @@ class CreateBusinessVirtualCard(object):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  relationships: Dict[str, Relationship], ssn: Optional[str] = None, passport: Optional[str] = None,
                  nationality: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -317,6 +317,7 @@ class CreateBusinessVirtualCard(object):
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
+        self.limits = limits
 
     def to_json_api(self, _type: str) -> Dict:
         payload = {
@@ -347,6 +348,9 @@ class CreateBusinessVirtualCard(object):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
 
         return payload
 
