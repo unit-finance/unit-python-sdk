@@ -406,7 +406,7 @@ class PatchIndividualDebitCard(object):
 class PatchBusinessCard(object):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None):
         self.card_id = card_id
         self.shipping_address = shipping_address
         self.address = address
@@ -414,6 +414,7 @@ class PatchBusinessCard(object):
         self.email = email
         self.design = design
         self.tags = tags
+        self.limits = limits
 
     def to_json_api(self, _type: str = "businessDebitCard") -> Dict:
         payload = {
@@ -440,6 +441,9 @@ class PatchBusinessCard(object):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.limits:
+            payload["data"]["limits"] = self.limits.to_json_api()
 
         return payload
 
@@ -481,12 +485,13 @@ class PatchIndividualVirtualDebitCard(object):
 class PatchBusinessVirtualCard(object):
     def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
                  email: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 _type: str = "businessVirtualDebitCard"):
+                 _type: str = "businessVirtualDebitCard", limits: Optional[CreateCardLimits] = None):
         self.card_id = card_id
         self.address = address
         self.phone = phone
         self.email = email
         self.tags = tags
+        self.limits = limits
 
     def to_json_api(self, _type: str = "businessVirtualDebitCard") -> Dict:
         payload = {
@@ -507,6 +512,9 @@ class PatchBusinessVirtualCard(object):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
 
         return payload
 
