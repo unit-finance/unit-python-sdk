@@ -443,7 +443,7 @@ class PatchBusinessCard(object):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.limits:
-            payload["data"]["limits"] = self.limits.to_json_api()
+            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
 
         return payload
 
