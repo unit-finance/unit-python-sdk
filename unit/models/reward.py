@@ -8,6 +8,7 @@ SORT_ORDERS = Literal["created_at", "-created_at"]
 RELATED_RESOURCES = Literal["customer", "account", "transaction"]
 RewardStatus = Literal["Sent", "Rejected"]
 
+
 class RewardDTO(object):
     def __init__(self, _id: str, created_at: datetime, amount: int, description: str, status: RewardStatus,
                  reject_reason: Optional[str], tags: Optional[Dict[str, str]] = None,
@@ -44,18 +45,16 @@ class CreateRewardRequest(UnitRequest):
         self.funding_account_id = funding_account_id
         self.idempotency_key = idempotency_key
         self.tags = tags
-        self.relationships = {}
 
-        if self.receiving_account_id:
-            self.relationships.update(
-                create_deposit_account_relationship(self.receiving_account_id, "receivingAccount"))
+        self.relationships = create_deposit_account_relationship(self.receiving_account_id, "receivingAccount")
 
         if self.rewarded_transaction_id:
             self.relationships.update(
                 create_relationship("transaction", self.rewarded_transaction_id, "rewardedTransaction"))
 
         if self.funding_account_id:
-            self.relationships.update(create_deposit_account_relationship(self.receiving_account_id, "fundingAccount"))
+            self.relationships.update(
+                create_deposit_account_relationship(self.funding_account_id, "fundingAccount"))
 
     def to_json_api(self) -> Dict:
         payload = {
