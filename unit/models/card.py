@@ -264,7 +264,7 @@ class CreateBusinessCard(object):
             payload["data"]["attributes"]["additionalEmbossedText"] = self.additional_embossed_text
 
         if self.print_only_business_name is not None:
-            payload["data"]["printOnlyBusinessName"] = self.print_only_business_name
+            payload["data"]["attributes"]["printOnlyBusinessName"] = self.print_only_business_name
 
         return payload
 
