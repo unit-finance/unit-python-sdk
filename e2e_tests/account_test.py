@@ -1,79 +1,54 @@
 import os
 import unittest
-from datetime import timedelta
+import pytest
 
-from e2e_tests.application_test import create_business_application
 from unit import Unit
 from unit.models.account import *
-from unit.models.application import CreateIndividualApplicationRequest
-from e2e_tests.helpers.helpers import create_relationship
+from e2e_tests.helpers.helpers import create_deposit_account, close_credit_account, create_individual_customer,\
+    create_deposit_account_for_business, create_credit_account_for_business
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
 
-def create_individual_customer():
-    request = CreateIndividualApplicationRequest(
-        FullName("Jhon", "Doe"), date.today() - timedelta(days=20 * 365),
-        Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
-        "jone.doe1@unit-finance.com",
-        Phone("1", "2025550108"), ssn="721074426",
-    )
-    response = client.applications.create(request)
-    for key, value in response.data.relationships.items():
-        if key == "customer":
-            return value.id
-
-    return ""
+@pytest.fixture
+def credit_account():
+    return create_credit_account_for_business(client).data
 
 
-def create_business_customer():
-    b_app = create_business_application().data
-    return b_app.relationships.get("customer").id
+@pytest.fixture
+def deposit_account():
+    return create_deposit_account(client).data
 
 
-def create_deposit_account():
-    customer_id = create_individual_customer()
-    request = CreateDepositAccountRequest("checking",
-                                          {"customer": Relationship("customer", customer_id)},
-                                          {"purpose": "checking"})
-    return client.accounts.create(request)
+@pytest.fixture()
+def account_with_owners(deposit_account):
+    account_id = deposit_account.id
+    customer_ids = [create_individual_customer(client), create_individual_customer(client)]
+    return client.accounts.add_owners(AccountOwnersRequest(account_id,
+                                                           RelationshipArray.from_ids_array("customer",
+                                                                                            customer_ids))).data
 
 
-def test_create_deposit_account():
-    response = create_deposit_account()
-    assert response.data.type == "depositAccount"
+def test_create_deposit_account(deposit_account):
+    assert deposit_account.type == "depositAccount"
 
 
-def create_deposit_account_for_business():
-    customer_id = create_business_customer()
-
-    request = CreateDepositAccountRequest("checking",
-                                          {"customer": Relationship("customer", customer_id)},
-                                          {"purpose": "checking"})
-    return client.accounts.create(request)
-
-
-def create_credit_account_for_business():
-    customer_id = create_business_customer()
-    request = CreateCreditAccountRequest("credit_terms_test", 20000, create_relationship("customer", customer_id),
-                                         {"purpose": "some_purpose"})
-    return client.accounts.create(request)
-
-
-def test_create_credit_account_for_business():
-    response = create_credit_account_for_business()
-    assert response.data.type == "creditAccount"
+def test_create_credit_account_for_business(credit_account):
+    assert credit_account
+    assert credit_account.type == "creditAccount"
+    res = close_credit_account(client, credit_account.id)
+    assert res.data.attributes.get("status").__eq__("Closed")
 
 
 def test_create_deposit_account_for_business():
-    response = create_deposit_account_for_business()
-    assert response.data.type == "depositAccount"
+    account = create_deposit_account_for_business(client).data
+    assert account.type == "depositAccount"
 
 
 def test_create_joint_deposit_account():
-    customer_id1 = create_individual_customer()
-    customer_id2 = create_individual_customer()
+    customer_id1 = create_individual_customer(client)
+    customer_id2 = create_individual_customer(client)
     request = CreateDepositAccountRequest("checking",
                                           {"customers": RelationshipArray([
                                             Relationship("customer", customer_id1),
@@ -83,8 +58,8 @@ def test_create_joint_deposit_account():
     assert response.data.type == "depositAccount"
 
 
-def test_get_account():
-    account_id = create_deposit_account().data.id
+def test_get_deposit_account(deposit_account):
+    account_id = deposit_account.id
     response = client.accounts.get(account_id, "customer")
     assert response.data.type == "depositAccount" and isinstance(response.included, list)
 
@@ -95,30 +70,44 @@ def test_list_accounts():
         assert acc.type == "depositAccount"
 
 
-def test_limits_account():
-    account_id = create_deposit_account().data.id
+def test_list_credit_accounts(credit_account):
+    assert credit_account
+
+    response = client.accounts.list(ListAccountParams(_type="credit"))
+    assert response.data is not None
+    for acc in response.data:
+        assert acc.type == "creditAccount"
+
+    accounts_to_close = list(filter(lambda x: x.attributes.get("status").__eq__("Open"), response.data))
+    for acc in accounts_to_close:
+        res = close_credit_account(client, acc.id)
+        assert res.data.attributes.get("status").__eq__("Closed")
+
+
+def test_limits_account(deposit_account):
+    account_id = deposit_account.id
     response = client.accounts.limits(account_id)
     assert response.data.type == "limits"
 
 
-def test_close_account():
-    account_id = create_deposit_account().data.id
-    requet = CloseAccountRequest(account_id, "Fraud")
-    response = client.accounts.close_account(requet)
+def test_close_account(deposit_account):
+    account_id = deposit_account.id
+    request = CloseDepositAccountRequest(account_id, "Fraud")
+    response = client.accounts.close_account(request)
     assert response.data.type == "depositAccount"
 
 
-def test_close_and_reopen_account():
-    account_id = create_deposit_account().data.id
-    requet = CloseAccountRequest(account_id)
-    response = client.accounts.close_account(requet)
+def test_close_and_reopen_account(deposit_account):
+    account_id = deposit_account.id
+    request = CloseDepositAccountRequest(account_id)
+    response = client.accounts.close_account(request)
     assert response.data.type == "depositAccount"
     response = client.accounts.reopen_account(account_id)
     assert response.data.type == "depositAccount"
 
 
-def test_update_account():
-    account_id = create_deposit_account().data.id
+def test_update_account(deposit_account):
+    account_id = deposit_account.id
     request = PatchDepositAccountRequest(account_id, tags={
         "purpose": "tax",
         "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
@@ -127,8 +116,8 @@ def test_update_account():
     assert response.data.attributes.get("tags").get("purpose") == "tax"
 
 
-def test_update_credit_account():
-    account_id = create_credit_account_for_business().data.id
+def test_update_credit_account(credit_account):
+    account_id = credit_account.id
     _credit_limit = 40000
     request = PatchCreditAccountRequest(account_id, tags={
         "purpose": "tax",
@@ -140,9 +129,9 @@ def test_update_credit_account():
     assert response.data.attributes.get("tags").get("purpose") == "tax"
 
 
-def test_get_deposit_products():
-    response = create_deposit_account()
-    assert response.data.type == "depositAccount"
+def test_get_deposit_products(deposit_account):
+    assert deposit_account.type == "depositAccount"
+
     response = client.accounts.list()
     assert len(response.data) > 0
 
@@ -152,26 +141,19 @@ def test_get_deposit_products():
             assert dp.type == "accountDepositProduct"
 
 
-def add_owners():
-    account_id = create_deposit_account().data.id
-    customer_ids = [create_individual_customer(), create_individual_customer()]
-    return client.accounts.add_owners(AccountOwnersRequest(account_id,
-                                                           RelationshipArray.from_ids_array("customer",
-                                                                                            customer_ids)))
+def test_add_owners(account_with_owners):
+    assert account_with_owners.type == "depositAccount"
+    assert account_with_owners.relationships["customers"].data is not None
+    assert len(account_with_owners.relationships["customers"].data) == 3
 
 
-def test_add_owners():
-    response = add_owners()
-    assert response.data.type == "depositAccount"
-    assert response.data.relationships["customers"].data is not None
-    assert len(response.data.relationships["customers"].data) == 3
+def test_remove_owners(account_with_owners):
+    assert account_with_owners.type == "depositAccount"
+    account_id = account_with_owners.id
 
-
-def test_remove_owners():
-    response = add_owners()
-    assert response.data.type == "depositAccount"
-    account_id = response.data.id
-    last_owner_id = response.data.relationships["customers"].data.pop().id # An account should have at least one owner
-    response = client.accounts.remove_owners(AccountOwnersRequest(account_id, response.data.relationships["customers"]))
+    # Account should have at least one owner
+    last_owner_id = account_with_owners.relationships["customers"].data.pop().id
+    response = client.accounts.remove_owners(AccountOwnersRequest(account_id,
+                                                                  account_with_owners.relationships["customers"]))
     assert response.data.type == "depositAccount"
     assert response.data.relationships.get("customer").id == last_owner_id

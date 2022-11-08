@@ -1,6 +1,8 @@
 import os
 import uuid
 from datetime import timedelta
+
+from e2e_tests.helpers.helpers import create_business_application
 from unit import Unit
 from unit.models.application import *
 
@@ -34,31 +36,10 @@ def test_create_individual_application():
     assert app.data.type == "individualApplication"
 
 
-def create_business_application():
-    request = CreateBusinessApplicationRequest(
-        name="Acme Inc.",
-        address=Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
-        phone=Phone("1", "9294723497"), state_of_incorporation="CA", entity_type="Corporation", ein="123456789",
-        officer=Officer(full_name=FullName("Jone", "Doe"), date_of_birth=date.today() - timedelta(days=20 * 365),
-                           address=Address("950 Allerton Street", "Redwood City", "CA", "94063", "US"),
-                           phone=Phone("1", "2025550108"), email="jone.doe@unit-finance.com", ssn="123456789"),
-        contact=BusinessContact(full_name=FullName("Jone", "Doe"), email="jone.doe@unit-finance.com", phone=Phone("1", "2025550108")),
-        beneficial_owners=[
-            BeneficialOwner(
-                FullName("James", "Smith"), date.today() - timedelta(days=20*365),
-                Address("650 Allerton Street","Redwood City","CA","94063","US"),
-                Phone("1","2025550127"),"james@unit-finance.com",ssn="574567625"),
-              BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
-              Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
-              Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
-        ]
-    )
-
-    return client.applications.create(request)
-
 def test_create_business_application():
-    response = create_business_application()
+    response = create_business_application(client)
     assert response.data.type == "businessApplication"
+
 
 def test_list_and_get_applications():
     response = client.applications.list()
@@ -67,13 +48,15 @@ def test_list_and_get_applications():
         res = client.applications.get(app.id)
         assert res.data.type in ApplicationTypes
 
+
 def test_update_individual_application():
     app = create_individual_application()
     updated = client.applications.update(PatchApplicationRequest(app.data.id, tags={"patch": "test-patch"}))
     assert updated.data.type == "individualApplication"
 
+
 def test_update_business_application():
-    app = create_business_application()
+    app = create_business_application(client)
     updated = client.applications.update(PatchApplicationRequest(app.data.id, "businessApplication",
                                                                       tags={"patch": "test-patch"}))
     assert updated.data.type == "businessApplication"

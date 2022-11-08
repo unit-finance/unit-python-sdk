@@ -1,40 +1,55 @@
 import os
 import unittest
+import pytest
+
+from e2e_tests.helpers.helpers import create_individual_customer
 from unit import Unit
 from unit.models.counterparty import *
-from e2e_tests.account_test import create_individual_customer
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
-def create_counterparty():
-    customer_id = create_individual_customer()
+
+@pytest.fixture
+def counterparty():
+    customer_id = create_individual_customer(client)
     request = CreateCounterpartyRequest("Joe Doe", "123456789", "123", "Checking", "Person",
                                         {"customer": Relationship("customer", customer_id)})
-    return client.counterparty.create(request)
+    return client.counterparty.create(request).data
 
-def test_create_counterparty():
-    response = create_counterparty()
-    assert response.data.type == "achCounterparty"
 
-def test_delete_counterparty():
-    counterparty_id = create_counterparty().data.id
-    response = client.counterparty.delete(counterparty_id)
+def delete_counterparty(counterparty_id):
+    return client.counterparty.delete(counterparty_id)
+
+
+def test_create_counterparty(counterparty):
+    assert counterparty.type == "achCounterparty"
+
+
+def test_delete_counterparty(counterparty):
+    response = delete_counterparty(counterparty.id)
     assert response.data == []
 
-def test_get_counterparty():
-    counterparty_id = create_counterparty().data.id
+
+def test_get_counterparty(counterparty):
+    counterparty_id = counterparty.id
     response = client.counterparty.get(counterparty_id)
     assert response.data.type == "achCounterparty"
 
+    response = delete_counterparty(counterparty_id)
+    assert response.data == []
 
-def test_counterparty_list():
+
+def test_counterparty_list(counterparty):
     response = client.counterparty.list()
     for c in response.data:
         assert c.type == "achCounterparty"
 
+    delete_response = delete_counterparty(counterparty.id)
+    assert delete_response.data == []
 
-def test_create_couterparty():
+
+def test_create_counterparty_json():
     create_counterparty_json = {
         "data": {
             "type": "achCounterparty",
@@ -70,7 +85,7 @@ def test_create_couterparty():
     assert payload["data"]["type"] == create_counterparty_json["data"]["type"]
 
 
-def test_create_with_token_couterparty():
+def test_create_counterparty_json_with_token():
     create_counterparty_json = {
          "data": {
             "type": "achCounterparty",
@@ -106,6 +121,7 @@ def test_create_with_token_couterparty():
     assert payload["data"]["attributes"]["plaidProcessorToken"] == create_counterparty_json["data"]["attributes"]["plaidProcessorToken"]
     assert payload["data"]["attributes"]["permissions"] == create_counterparty_json["data"]["attributes"]["permissions"]
     assert payload["data"]["attributes"]["tags"] == create_counterparty_json["data"]["attributes"]["tags"]
+
 
 def test_counterparty_dto():
     counterparty_api_response = {

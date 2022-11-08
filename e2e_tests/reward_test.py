@@ -1,6 +1,6 @@
 import os
 
-from e2e_tests.account_test import create_deposit_account
+from e2e_tests.helpers.helpers import create_deposit_account
 from unit import Unit
 from unit.models.reward import CreateRewardRequest
 
@@ -9,7 +9,7 @@ client = Unit("https://api.s.unit.sh", token)
 
 
 def test_create_reward():
-    account_id = create_deposit_account().data.id
+    account_id = create_deposit_account(client).data.id
     req = CreateRewardRequest(3000, "Reward for transaction #5678", account_id, tags={"test": "rewards"})
     res = client.rewards.create(req)
     assert res.data.type == "reward"

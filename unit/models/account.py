@@ -292,7 +292,7 @@ class AccountLimitsDTO(object):
                                 CheckDepositAccountLimits.from_json_api(attributes["checkDeposit"]))
 
 
-class CloseAccountRequest(UnitRequest):
+class CloseDepositAccountRequest(UnitRequest):
     def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer"):
         self.account_id = account_id
         self.reason = reason
@@ -313,10 +313,25 @@ class CloseAccountRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
+class CloseCreditAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer"):
+        self.account_id = account_id
+        self.reason = reason
+
+    def to_json_api(self) -> Dict:
+        return super().to_payload("creditAccountClose", ignore=["account_id"])
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+CloseAccountRequest = Union[CloseDepositAccountRequest, CloseCreditAccountRequest]
+
+
 class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
                  tags: Optional[object] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
-                 from_balance: Optional[int] = None, to_balance: Optional[int] = None):
+                 from_balance: Optional[int] = None, to_balance: Optional[int] = None, _type: Optional[str] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
@@ -325,6 +340,7 @@ class ListAccountParams(UnitParams):
         self.status = status
         self.from_balance = from_balance
         self.to_balance = to_balance
+        self._type = _type
     
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
@@ -340,6 +356,8 @@ class ListAccountParams(UnitParams):
             parameters["filter[fromBalance]"] = self.from_balance
         if self.to_balance:
             parameters["filter[toBalance]"] = self.to_balance
+        if self._type:
+            parameters["filter[type]"] = self._type
         return parameters
 
 
