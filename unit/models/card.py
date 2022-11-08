@@ -202,7 +202,8 @@ class CreateBusinessCard(object):
                  relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
                  ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
                  design: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None,
+                 additional_embossed_text: Optional[str] = None, print_only_business_name: Optional[bool] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -217,6 +218,8 @@ class CreateBusinessCard(object):
         self.tags = tags
         self.relationships = relationships
         self.limits = limits
+        self.additional_embossed_text = additional_embossed_text
+        self.print_only_business_name = print_only_business_name
 
     def to_json_api(self, _type: str) -> Dict:
         payload = {
@@ -256,6 +259,12 @@ class CreateBusinessCard(object):
 
         if self.limits:
             payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
+
+        if self.additional_embossed_text:
+            payload["data"]["attributes"]["additionalEmbossedText"] = self.additional_embossed_text
+
+        if self.print_only_business_name is not None:
+            payload["data"]["printOnlyBusinessName"] = self.print_only_business_name
 
         return payload
 
