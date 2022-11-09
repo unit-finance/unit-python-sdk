@@ -608,14 +608,19 @@ def test_reward_transaction():
 
 def test_list_and_get_transactions_with_type():
     transaction_ids = []
+    account_ids = []
     response = client.transactions.list(ListTransactionParams(100, 0, type=["Fee", "ReceivedAch"]))
 
     for t in response.data:
         assert t.type == "receivedAchTransaction" or t.type == "feeTransaction"
         transaction_ids.append(t.id)
+        account_ids.append(t.relationships["account"].id)
 
-    for id in transaction_ids:
-        response = client.transactions.get(id, "")
+    for i in range(len(transaction_ids)):
+        id = transaction_ids[i]
+        account_id = account_ids[i]
+
+        response = client.transactions.get(id, account_id)
         assert response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction"
 
 
