@@ -8,14 +8,19 @@ client = Unit("https://api.s.unit.sh", token)
 
 def test_list_and_get_transactions():
     transaction_ids = []
+    account_ids = []
     response = client.transactions.list()
 
     for t in response.data:
         assert "Transaction" in t.type
         transaction_ids.append(t.id)
+        account_ids.append(t.relationships["account"].id)
 
-    for id in transaction_ids:
-        response = client.transactions.get(id, "")
+    for i in range(len(transaction_ids)):
+        id = transaction_ids[i]
+        account_id = account_ids[i]
+
+        response = client.transactions.get(id, account_id)
         assert "Transaction" in response.data.type
 
 def test_update_transaction():
