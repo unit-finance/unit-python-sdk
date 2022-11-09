@@ -15,7 +15,7 @@ def test_list_and_get_transactions():
         transaction_ids.append(t.id)
 
     for id in transaction_ids:
-        response = client.transactions.get(id)
+        response = client.transactions.get(id, "")
         assert "Transaction" in response.data.type
 
 def test_update_transaction():
@@ -610,7 +610,7 @@ def test_list_and_get_transactions_with_type():
         transaction_ids.append(t.id)
 
     for id in transaction_ids:
-        response = client.transactions.get(id)
+        response = client.transactions.get(id, "")
         assert response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction"
 
 
