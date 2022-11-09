@@ -28,7 +28,7 @@ __all__ = ["api", "models", "utils"]
 
 
 class Unit(object):
-    def __init__(self, api_url, token, retries=0):
+    def __init__(self, api_url, token, retries=1):
         self.applications = ApplicationResource(api_url, token, retries)
         self.customers = CustomerResource(api_url, token, retries)
         self.accounts = AccountResource(api_url, token, retries)

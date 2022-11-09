@@ -7,11 +7,11 @@ CardStatus = Literal["Inactive", "Active", "Stolen", "Lost", "Frozen", "ClosedBy
 class IndividualDebitCardDTO(object):
     def __init__(self, id: str, created_at: datetime, last_4_digits: str, expiration_date: str, status: CardStatus,
                  shipping_address: Optional[Address], design: Optional[str],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = id
         self.type = "individualDebitCard"
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
-                           "status": status, "shippingAddress": shipping_address, "design": design}
+                           "status": status, "shippingAddress": shipping_address, "design": design, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -20,8 +20,7 @@ class IndividualDebitCardDTO(object):
         return IndividualDebitCardDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
             attributes["expirationDate"], attributes["status"],
-            shipping_address, attributes.get("design"), relationships
-        )
+            shipping_address, attributes.get("design"), relationships, attributes.get("tags"))
 
 
 class BusinessCardDTO(object):
@@ -78,18 +77,18 @@ class BusinessCreditCardDTO(BusinessCardDTO):
 
 class IndividualVirtualDebitCardDTO(object):
     def __init__(self, _id: str, created_at: datetime, last_4_digits: str, expiration_date: str, status: CardStatus,
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = _id
         self.type = "individualVirtualDebitCard"
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
-                           "status": status}
+                           "status": status, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return IndividualVirtualDebitCardDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
-            attributes["expirationDate"], attributes["status"], relationships
+            attributes["expirationDate"], attributes["status"], relationships, attributes.get("tags")
         )
 
 
