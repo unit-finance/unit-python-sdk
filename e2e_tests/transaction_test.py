@@ -6,7 +6,22 @@ from unit.models.codecs import DtoDecoder, mappings
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
+
 def test_list_and_get_transactions():
+    transaction_ids = []
+    response = client.transactions.list(ListTransactionParams(150, 20, since="2022-10-13T16:01:19.346Z",
+                                                              until="2022-11-13T16:01:19.346Z"))
+
+    for t in response.data:
+        assert "Transaction" in t.type
+        transaction_ids.append(t.id)
+
+    for id in transaction_ids:
+        response = client.transactions.get(id)
+        assert "Transaction" in response.data.type
+
+
+def test_list_and_get_transactions_with_account_id():
     transaction_ids = []
     account_ids = []
     response = client.transactions.list()
@@ -17,11 +32,12 @@ def test_list_and_get_transactions():
         account_ids.append(t.relationships["account"].id)
 
     for i in range(len(transaction_ids)):
-        id = transaction_ids[i]
+        _id = transaction_ids[i]
         account_id = account_ids[i]
 
-        response = client.transactions.get(id, account_id)
+        response = client.transactions.get_by_id_and_account(_id, account_id)
         assert "Transaction" in response.data.type
+
 
 def test_update_transaction():
     response = client.transactions.list()
@@ -33,6 +49,7 @@ def test_update_transaction():
         request = PatchTransactionRequest(account_id, transaction_id, tags)
         response = client.transactions.update(request)
         assert "Transaction" in t.type
+
 
 def test_sending_wire_transaction():
     wire_transaction_api_response = {
@@ -212,6 +229,7 @@ def test_card_transaction():
     assert transaction.attributes["cardNetwork"] == "Visa"
     assert transaction.attributes["digitalWallet"] == "Apple"
     assert transaction.attributes["cardVerificationData"]["verificationMethod"] == "CVV2"
+
 
 def test_atm_transaction():
     atm_transaction_api_response = {
@@ -630,7 +648,6 @@ def test_codecs_transactions():
 
     classes = []
 
-
     for name, obj in inspect.getmembers(umt):
         try:
             if 'TransactionDTO' in name and 'Base' not in name and name != 'TransactionDTO':
@@ -638,7 +655,6 @@ def test_codecs_transactions():
         except Exception as e:
             print(e)
             continue
-
 
     transactions = [x for x in mappings if "Transaction" in x]
 

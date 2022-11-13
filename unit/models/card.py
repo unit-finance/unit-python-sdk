@@ -139,22 +139,6 @@ class BusinessVirtualCreditCardDTO(BusinessVirtualCardDTO):
         return BusinessVirtualCreditCardDTO(BusinessVirtualCardDTO.from_json_api(_id, _type, attributes, relationships))
 
 
-class CreateCardLimits(object):
-    def __init__(self, dailyWithdrawal: int, dailyPurchase: int, monthlyWithdrawal: int, monthlyPurchase: int):
-        self.dailyWithdrawal = dailyWithdrawal
-        self.dailyPurchase = dailyPurchase
-        self.monthlyWithdrawal = monthlyWithdrawal
-        self.monthlyPurchase = monthlyPurchase
-
-    def to_json_api(self) -> Dict:
-        return {
-            "dailyWithdrawal": self.dailyWithdrawal,
-            "dailyPurchase": self.dailyPurchase,
-            "monthlyWithdrawal": self.monthlyWithdrawal,
-            "monthlyPurchase": self.monthlyPurchase
-        }
-
-
 Card = Union[IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, BusinessVirtualDebitCardDTO,
              BusinessVirtualCreditCardDTO, BusinessCreditCardDTO]
 
@@ -201,7 +185,7 @@ class CreateBusinessCard(object):
                  relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
                  ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
                  design: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None,
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CardLevelLimits] = None,
                  additional_embossed_text: Optional[str] = None, print_only_business_name: Optional[bool] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
@@ -257,7 +241,7 @@ class CreateBusinessCard(object):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.limits:
-            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
+            payload["data"]["attributes"]["limits"] = self.limits
 
         if self.additional_embossed_text:
             payload["data"]["attributes"]["additionalEmbossedText"] = self.additional_embossed_text
@@ -313,7 +297,7 @@ class CreateBusinessVirtualCard(object):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  relationships: Dict[str, Relationship], ssn: Optional[str] = None, passport: Optional[str] = None,
                  nationality: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CardLevelLimits] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -358,7 +342,7 @@ class CreateBusinessVirtualCard(object):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.limits:
-            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
+            payload["data"]["attributes"]["limits"] = self.limits
 
         return payload
 
@@ -414,7 +398,7 @@ class PatchIndividualDebitCard(object):
 class PatchBusinessCard(object):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None, limits: Optional[CreateCardLimits] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CardLevelLimits] = None):
         self.card_id = card_id
         self.shipping_address = shipping_address
         self.address = address
@@ -451,7 +435,7 @@ class PatchBusinessCard(object):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.limits:
-            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
+            payload["data"]["attributes"]["limits"] = self.limits
 
         return payload
 
@@ -493,7 +477,7 @@ class PatchIndividualVirtualDebitCard(object):
 class PatchBusinessVirtualCard(object):
     def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
                  email: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 _type: str = "businessVirtualDebitCard", limits: Optional[CreateCardLimits] = None):
+                 _type: str = "businessVirtualDebitCard", limits: Optional[CardLevelLimits] = None):
         self.card_id = card_id
         self.address = address
         self.phone = phone
@@ -522,7 +506,7 @@ class PatchBusinessVirtualCard(object):
             payload["data"]["attributes"]["tags"] = self.tags
 
         if self.limits:
-            payload["data"]["attributes"]["limits"] = self.limits.to_json_api()
+            payload["data"]["attributes"]["limits"] = self.limits
 
         return payload
 
