@@ -484,19 +484,29 @@ class ListTransactionParams(UnitParams):
         self.include = include
 
     def to_dict(self) -> Dict:
-        filters = {}
-        for f in ("customer_id", "account_id", "query", "tags", "since", "until", "card_id", "exclude_fees"):
-            v = getattr(self, f)
-            if v:
-                filters.update({f: v})
-
-        parameters = query_params_to_dict(self.include, filters, [self.limit, self.offset], self.sort)
-
+        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
+        if self.customer_id:
+            parameters["filter[customerId]"] = self.customer_id
+        if self.account_id:
+            parameters["filter[accountId]"] = self.account_id
+        if self.query:
+            parameters["filter[query]"] = self.query
+        if self.tags:
+            parameters["filter[tags]"] = self.tags
+        if self.since:
+            parameters["filter[since]"] = self.since
+        if self.until:
+            parameters["filter[until]"] = self.until
+        if self.card_id:
+            parameters["filter[cardId]"] = self.card_id
         if self.type:
             for idx, type_filter in enumerate(self.type):
                 parameters[f"filter[type][{idx}]"] = type_filter
+        if self.exclude_fees:
+            parameters["filter[excludeFees]"] = self.exclude_fees
         if self.sort:
             parameters["sort"] = self.sort
-
+        if self.include:
+            parameters["include"] = self.include
         return parameters
 

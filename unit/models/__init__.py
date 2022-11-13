@@ -10,35 +10,6 @@ def to_camel_case(snake_str):
     return components[0] + ''.join(x.title() for x in components[1:])
 
 
-def filters_to_dict(filters: Dict = None) -> Dict:
-    params = {}
-
-    for k, v in filters.items():
-        if v not in [None, ""]:
-            params.update({f"filter[{to_camel_case(k)}]": v})
-
-    return params
-
-
-def query_params_to_dict(include: str = "", filters: Dict = None, page_params: List = None, sort: str = "") -> Dict:
-    params = {}
-
-    if include not in [None, ""]:
-        params.update({"include": include})
-
-    if filters:
-        filters = filters_to_dict(filters)
-        params.update(filters)
-
-    if page_params and len(page_params) == 2:
-        params.update({"page[limit]": page_params[0], "page[offset]": page_params[1]})
-
-    if include not in [None, ""]:
-        params.update({"sort": sort})
-
-    return params
-
-
 class UnitDTO(object):
     def to_dict(self):
         if type(self) is dict:

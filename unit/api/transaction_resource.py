@@ -8,10 +8,8 @@ class TransactionResource(BaseResource):
         super().__init__(api_url, token, retries)
         self.resource = "transactions"
 
-    def get(self, transaction_id: str, include: Optional[str] = "", customer_id: Optional[str] = "") ->\
-            Union[UnitResponse[TransactionDTO], UnitError]:
-        params = query_params_to_dict(include, {"customer_id": customer_id})
-        response = super().get(f"{self.resource}/{transaction_id}", params)
+    def get(self, transaction_id: str, include: Optional[str] = "") -> Union[UnitResponse[TransactionDTO], UnitError]:
+        response = super().get(f"{self.resource}/{transaction_id}", {"include": include})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
@@ -39,10 +37,9 @@ class TransactionResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def get_by_id_and_account(self, transaction_id: str, account_id: str, include: Optional[str] = "",
-                              customer_id: Optional[str] = "") -> Union[UnitResponse[TransactionDTO], UnitError]:
-        params = query_params_to_dict(include, {"customer_id": customer_id})
-        response = super().get(f"accounts/{account_id}/{self.resource}/{transaction_id}", params)
+    def get_by_id_and_account(self, transaction_id: str, account_id: str, include: Optional[str] = "") ->\
+            Union[UnitResponse[TransactionDTO], UnitError]:
+        response = super().get(f"accounts/{account_id}/{self.resource}/{transaction_id}", {"include": include})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
