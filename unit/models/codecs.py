@@ -6,7 +6,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO
 from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, BulkPaymentsDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -281,6 +281,9 @@ mappings = {
 
         "dispute": lambda _id, _type, attributes, relationships:
         DisputeDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "bulkPayments": lambda _id, _type, attributes, relationships:
+        BulkPaymentsDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 
@@ -316,11 +319,13 @@ def decode_limits(attributes: Dict):
     else:
         return CardLimitsDTO.from_json_api(attributes)
 
+
 def mapping_wraper(_id, _type, attributes, relationships):
     if _type in mappings:
         return mappings[_type](_id, _type, attributes, relationships)
     else:
         return RawUnitObject(_id, _type, attributes, relationships)
+
 
 class DtoDecoder(object):
     @staticmethod
@@ -338,6 +343,7 @@ class DtoDecoder(object):
         else:
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
             return mapping_wraper(_id, _type, attributes, relationships)
+
 
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):

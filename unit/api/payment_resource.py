@@ -28,7 +28,7 @@ class PaymentResource(BaseResource):
 
     def get(self, payment_id: str, include: Optional[str] = "") -> Union[UnitResponse[PaymentDTO], UnitError]:
         response = super().get(f"{self.resource}/{payment_id}", {"include": include})
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[PaymentDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
@@ -38,10 +38,18 @@ class PaymentResource(BaseResource):
     def list(self, params: ListPaymentParams = None) -> Union[UnitResponse[List[PaymentDTO]], UnitError]:
         params = params or ListPaymentParams()
         response = super().get(self.resource, params.to_dict())
-        if response.status_code == 200:
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[PaymentDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def create_bulk(self, payments: List[PaymentDTO]) -> Union[UnitResponse[PaymentDTO], UnitError]:
+        response = super().post(f"{self.resource}/bulk", {"data": payments})
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[BulkPaymentsDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 

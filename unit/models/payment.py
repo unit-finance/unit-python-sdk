@@ -83,6 +83,12 @@ class BillPaymentDTO(BasePayment):
 PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO]
 
 
+class BulkPaymentsDTO(RawUnitObject):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return BulkPaymentsDTO(**locals())
+
+
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
@@ -95,7 +101,7 @@ class CreatePaymentBaseRequest(UnitRequest):
         self.tags = tags
         self.relationships = relationships
 
-    def to_json_api(self) -> Dict:
+    def to_json_api(self, wrap_with_data=True) -> Dict:
         payload = {
             "data": {
                 "type": self.type,
@@ -114,7 +120,7 @@ class CreatePaymentBaseRequest(UnitRequest):
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
-        return payload
+        return payload if wrap_with_data else payload.get("data")
 
     def __repr__(self):
         json.dumps(self.to_json_api())
