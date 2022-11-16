@@ -191,10 +191,10 @@ class CreateBookPaymentRequest(CreatePaymentBaseRequest):
 
 class CreateWirePaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, counterparty: WireCounterparty,
-                 relationships: Dict[str, Relationship], idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
-                 direction: str = "Credit"):
+                 relationships: Dict[str, Relationship], idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, direction: str = "Credit"):
         CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction,
-                                      "wirePayment")
+                                          "wirePayment")
         self.counterparty = counterparty
 
     def to_json_api(self) -> Dict:

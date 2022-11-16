@@ -3,6 +3,7 @@ import unittest
 from unit import Unit
 from unit.models.payment import *
 from e2e_tests.account_test import create_deposit_account
+from e2e_tests.helpers.helpers import address, create_relationship, generate_uuid
 
 
 token = os.environ.get('TOKEN')
@@ -68,9 +69,29 @@ def test_create_book_payment():
     response = create_book_payment()
     assert response.data.type == "bookPayment"
 
+
 def test_update_book_payment():
     payment_id = create_book_payment().data.id
     tags = {"purpose": "test"}
     request = PatchBookPaymentRequest(payment_id, tags)
     response = client.payments.update(request)
     assert response.data.type == "bookPayment"
+
+
+def create_wire_payment():
+    account_id = create_deposit_account().data.id
+    idempotency_key = generate_uuid()
+    counterparty = WireCounterparty("812345678", "1000000001", "April Oniel", address)
+    return CreateWirePaymentRequest(200, "Wire payment", counterparty, create_relationship("depositAccount", account_id,
+                                                                                           "account"),
+                                    idempotency_key)
+
+
+def test_create_wire_payment():
+    request = create_wire_payment()
+    response = client.payments.create(request)
+
+    assert response.data.type == "wirePayment"
+    assert response.data.attributes.get("amount") == request.amount
+    assert response.data.attributes.get("counterparty").name == request.counterparty.name
+
