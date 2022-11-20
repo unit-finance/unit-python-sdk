@@ -1,5 +1,5 @@
 import json
-from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
+from typing import TypeVar, Generic, Optional, Literal, List, Dict, Union
 from datetime import datetime, date
 
 
@@ -50,16 +50,6 @@ class RelationshipArray(Generic[T], UnitDTO):
     @staticmethod
     def from_ids_array(type: str, ids: List[str]):
         return RelationshipArray(list(map(lambda id: Relationship(type, id), ids)))
-
-
-class UnitResponse(Generic[T]):
-    def __init__(self, data: Union[T, List[T]], included):
-        self.data = data
-        self.included = included
-
-    @staticmethod
-    def from_json_api(data: str):
-        pass
 
 
 class UnitRequest(object):

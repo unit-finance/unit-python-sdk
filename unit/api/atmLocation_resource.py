@@ -1,6 +1,7 @@
 from unit.api.base_resource import BaseResource
 from unit.models.atm_location import *
 from unit.models.codecs import DtoDecoder, UnitEncoder
+from unit.models.unit_models import UnitResponse
 
 
 class AtmLocationResource(BaseResource):

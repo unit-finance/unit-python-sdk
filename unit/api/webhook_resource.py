@@ -1,4 +1,5 @@
 from unit.api.base_resource import BaseResource
+from unit.models.unit_models import UnitResponse
 from unit.models.webhook import *
 from unit.models.codecs import DtoDecoder
 import hmac

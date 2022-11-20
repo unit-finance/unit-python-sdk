@@ -1,6 +1,6 @@
 from unit.api.base_resource import BaseResource
 from unit.models.customer import *
-from unit.models.codecs import DtoDecoder
+from unit.models.unit_models import UnitResponse
 
 
 class CustomerResource(BaseResource):
@@ -13,16 +13,14 @@ class CustomerResource(BaseResource):
         response = super().patch(f"{self.resource}/{request.customer_id}", payload)
 
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
     def get(self, customer_id: str) -> Union[UnitResponse[CustomerDTO], UnitError]:
         response = super().get(f"{self.resource}/{customer_id}")
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
@@ -30,8 +28,7 @@ class CustomerResource(BaseResource):
         params = params or ListCustomerParams()
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
@@ -39,8 +36,7 @@ class CustomerResource(BaseResource):
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{request.customer_id}/archive", payload)
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
@@ -48,8 +44,7 @@ class CustomerResource(BaseResource):
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{request.customer_id}/authorized-users", payload)
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
@@ -57,8 +52,7 @@ class CustomerResource(BaseResource):
         payload = request.to_json_api()
         response = super().delete(f"{self.resource}/{request.customer_id}/authorized-users", payload)
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 

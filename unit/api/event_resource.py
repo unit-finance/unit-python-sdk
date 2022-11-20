@@ -1,6 +1,7 @@
 from unit.api.base_resource import BaseResource
 from unit.models.event import *
 from unit.models.codecs import DtoDecoder
+from unit.models.unit_models import UnitResponse
 
 
 class EventResource(BaseResource):

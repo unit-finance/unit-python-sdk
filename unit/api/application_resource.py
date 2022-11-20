@@ -1,6 +1,8 @@
+from typing import Union
+
 from unit.api.base_resource import BaseResource
 from unit.models.application import *
-from unit.models.codecs import DtoDecoder
+from unit.models.unit_models import UnitResponse
 
 
 class ApplicationResource(BaseResource):
@@ -12,32 +14,23 @@ class ApplicationResource(BaseResource):
         payload = request.to_json_api()
         response = super().post_create(self.resource, payload)
 
-        if response.ok:
-            data = response.json().get("data")
-            included = response.json().get("included")
-            if data["type"] == "individualApplication":
-                return UnitResponse[IndividualApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
-            else:
-                return UnitResponse[BusinessApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+        if super().is_20x(response.status_code):
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
     def list(self, params: ListApplicationParams = None) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
         params = params or ListApplicationParams()
         response = super().get(self.resource, params.to_dict())
-        if response.status_code == 200:
-            data = response.json().get("data")
-            included = response.json().get("included")
-            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
+        if super().is_20x(response.status_code):
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
     def get(self, application_id: str) -> Union[UnitResponse[ApplicationDTO], UnitError]:
         response = super().get(f"{self.resource}/{application_id}")
-        if response.status_code == 200:
-            data = response.json().get("data")
-            included = response.json().get("included")
-            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+        if super().is_20x(response.status_code):
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
@@ -56,9 +49,8 @@ class ApplicationResource(BaseResource):
                 headers = {"Content-Type": "application/pdf"}
 
         response = super().put(url, request.file, headers)
-        if response.status_code == 200:
-            data = response.json().get("data")
-            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+        if super().is_20x(response.status_code):
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 
@@ -66,8 +58,7 @@ class ApplicationResource(BaseResource):
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.application_id}", payload)
         if super().is_20x(response.status_code):
-            data = response.json().get("data")
-            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
+            return UnitResponse.from_json_api(response.json())
         else:
             return UnitError.from_json_api(response.json())
 

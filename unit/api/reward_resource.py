@@ -1,6 +1,7 @@
 from typing import Union, List, Optional
 from unit.api.base_resource import BaseResource
-from unit.models import UnitResponse, UnitError
+from unit.models import UnitError
+from unit.models.unit_models import UnitResponse
 from unit.models.reward import RewardDTO, ListRewardsParams, CreateRewardRequest
 from unit.models.codecs import DtoDecoder
 

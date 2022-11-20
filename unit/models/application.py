@@ -1,6 +1,6 @@
 from unit.utils import date_utils
 from unit.models import *
-from typing import IO
+from typing import IO, Union
 
 ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview"]
 
