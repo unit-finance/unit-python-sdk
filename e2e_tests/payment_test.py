@@ -1,5 +1,8 @@
 import os
 import unittest
+
+import pytest
+
 from unit import Unit
 from unit.models.payment import *
 from e2e_tests.account_test import create_deposit_account
@@ -78,7 +81,8 @@ def test_update_book_payment():
     assert response.data.type == "bookPayment"
 
 
-def create_wire_payment():
+@pytest.fixture
+def create_wire_payment_request():
     account_id = create_deposit_account().data.id
     idempotency_key = generate_uuid()
     counterparty = WireCounterparty("812345678", "1000000001", "April Oniel", address)
@@ -87,11 +91,10 @@ def create_wire_payment():
                                     idempotency_key)
 
 
-def test_create_wire_payment():
-    request = create_wire_payment()
-    response = client.payments.create(request)
+def test_create_wire_payment(create_wire_payment_request):
+    response = client.payments.create(create_wire_payment_request)
 
     assert response.data.type == "wirePayment"
-    assert response.data.attributes.get("amount") == request.amount
-    assert response.data.attributes.get("counterparty").name == request.counterparty.name
+    assert response.data.attributes.get("amount") == create_wire_payment_request.amount
+    assert response.data.attributes.get("counterparty").name == create_wire_payment_request.counterparty.name
 
