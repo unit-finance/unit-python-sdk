@@ -206,12 +206,11 @@ class ApplicationDocumentDTO(object):
 
     @staticmethod
     def from_json_api(_id, _type, attributes):
-        address = Address.from_json_api(attributes.get("address")) if attributes.get("address") else None
         return ApplicationDocumentDTO(
-            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes["name"],
-            address, attributes.get("dateOfBirth"), attributes.get("passport"),
-            attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
-        )
+            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes.get("name"),
+            Address.from_json_api(attributes.get("address")), attributes.get("dateOfBirth"), attributes.get("passport"),
+            attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason"))
+
 
 FileType = Literal["jpeg", "png", "pdf"]
 
