@@ -289,7 +289,7 @@ class Merchant(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         if data:
-            return Merchant(data["name"], data["type"], data["category"], data.get("location"), data.get("id"))
+            return Merchant(data["name"], data["type"], data.get("category"), data.get("location"), data.get("id"))
 
         return None
 
@@ -344,3 +344,24 @@ class CheckCounterparty(object):
             return None
 
         return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
+
+
+class HealthcareAmounts(object):
+    def __init__(self, transit_amount: int, prescription_rx_amount: int, vision_optical_amount: int,
+                 clinic_other_qualified_medical_amount: int, dental_amount: int, total_healthcare_amount: int):
+        self.transit_amount = transit_amount
+        self.prescription_rx_amount = prescription_rx_amount
+        self.vision_optical_amount = vision_optical_amount
+        self.clinic_other_qualified_medical_amount = clinic_other_qualified_medical_amount
+        self.dental_amount = dental_amount
+        self.total_healthcare_amount = total_healthcare_amount
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if data:
+            return HealthcareAmounts(data.get("transitAmount"), data.get("prescriptionRXAmount"),
+                                     data.get("visionOpticalAmount"), data.get("clinicOtherQualifiedMedicalAmount"),
+                                     data.get("dentalAmount"), data.get("totalHealthcareAmount"))
+
+        return None
+

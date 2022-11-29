@@ -24,131 +24,11 @@ from unit.models.check_deposit import CheckDepositDTO
 from unit.models.dispute import DisputeDTO
 
 mappings = {
-        "individualApplication": lambda _id, _type, attributes, relationships:
-        IndividualApplicationDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "businessApplication": lambda _id, _type, attributes, relationships:
-        BusinessApplicationDTO.from_json_api(_id, _type, attributes, relationships),
-
         "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
 
-        "individualCustomer": lambda _id, _type, attributes, relationships:
-        IndividualCustomerDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "businessCustomer": lambda _id, _type, attributes, relationships:
-        BusinessCustomerDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "depositAccount": lambda _id, _type, attributes, relationships:
-        DepositAccountDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "creditAccount": lambda _id, _type, attributes, relationships:
-        CreditAccountDTO.from_json_api(_id, _type, attributes, relationships),
-
         "limits": lambda _id, _type, attributes, relationships:
         decode_limits(attributes),
-
-        "individualDebitCard": lambda _id, _type, attributes, relationships:
-        IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "businessDebitCard": lambda _id, _type, attributes, relationships:
-        BusinessDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "businessCreditCard": lambda _id, _type, attributes, relationships:
-        BusinessCreditCardDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "individualVirtualDebitCard": lambda _id, _type, attributes, relationships:
-        IndividualVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "businessVirtualDebitCard": lambda _id, _type, attributes, relationships:
-        BusinessVirtualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "businessVirtualCreditCard": lambda _id, _type, attributes, relationships:
-        BusinessVirtualCreditCardDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "originatedAchTransaction": lambda _id, _type, attributes, relationships:
-        OriginatedAchTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "receivedAchTransaction": lambda _id, _type, attributes, relationships:
-        ReceivedAchTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "returnedAchTransaction": lambda _id, _type, attributes, relationships:
-        ReturnedAchTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "returnedReceivedAchTransaction": lambda _id, _type, attributes, relationships:
-        ReturnedReceivedAchTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "dishonoredAchTransaction": lambda _id, _type, attributes, relationships:
-        DishonoredAchTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "bookTransaction": lambda _id, _type, attributes, relationships:
-        BookTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "purchaseTransaction": lambda _id, _type, attributes, relationships:
-        PurchaseTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "atmTransaction": lambda _id, _type, attributes, relationships:
-        AtmTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "feeTransaction": lambda _id, _type, attributes, relationships:
-        FeeTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "cardTransaction": lambda _id, _type, attributes, relationships:
-        CardTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "wireTransaction": lambda _id, _type, attributes, relationships:
-        WireTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "releaseTransaction": lambda _id, _type, attributes, relationships:
-        ReleaseTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "adjustmentTransaction": lambda _id, _type, attributes, relationships:
-        AdjustmentTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "interestTransaction": lambda _id, _type, attributes, relationships:
-        InterestTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "disputeTransaction": lambda _id, _type, attributes, relationships:
-        DisputeTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "checkDepositTransaction": lambda _id, _type, attributes, relationships:
-        CheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "returnedCheckDepositTransaction": lambda _id, _type, attributes, relationships:
-        ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
-        PaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "repaidPaymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
-        RepaidPaymentAdvanceTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "rewardTransaction": lambda _id, _type, attributes, relationships:
-        RewardTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "paymentCanceledTransaction": lambda _id, _type, attributes, relationships:
-        PaymentCanceledTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "chargebackTransaction": lambda _id, _type, attributes, relationships:
-        ChargebackTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "cardReversalTransaction": lambda _id, _type, attributes, relationships:
-        CardReversalTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "achPayment": lambda _id, _type, attributes, relationships:
-        AchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "bookPayment": lambda _id, _type, attributes, relationships:
-        BookPaymentDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "wirePayment": lambda _id, _type, attributes, relationships:
-        WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "billPayment": lambda _id, _type, attributes, relationships:
-        BillPaymentDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "achReceivedPayment": lambda _id, _type, attributes, relationships:
-        AchReceivedPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
@@ -165,122 +45,8 @@ mappings = {
         "achCounterparty": lambda _id, _type, attributes, relationships:
         CounterpartyDTO.from_json_api(_id, _type, attributes, relationships),
 
-        "applicationForm": lambda _id, _type, attributes, relationships:
-        ApplicationFormDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "fee": lambda _id, _type, attributes, relationships:
-        FeeDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "account.closed": lambda _id, _type, attributes, relationships:
-        AccountClosedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "account.frozen": lambda _id, _type, attributes, relationships:
-        AccountFrozenEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "application.awaitingDocuments": lambda _id, _type, attributes, relationships:
-        ApplicationAwaitingDocumentsEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "application.denied": lambda _id, _type, attributes, relationships:
-        ApplicationDeniedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "application.pendingReview": lambda _id, _type, attributes, relationships:
-        ApplicationPendingReviewEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "card.activated": lambda _id, _type, attributes, relationships:
-        CardActivatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "card.statusChanged": lambda _id, _type, attributes, relationships:
-        CardStatusChangedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorization.created": lambda _id, _type, attributes, relationships:
-        AuthorizationCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorizationRequest.declined": lambda _id, _type, attributes, relationships:
-        AuthorizationRequestDeclinedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorizationRequest.pending": lambda _id, _type, attributes, relationships:
-        AuthorizationRequestPendingEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorizationRequest.approved": lambda _id, _type, attributes, relationships:
-        AuthorizationRequestApprovedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "document.approved": lambda _id, _type, attributes, relationships:
-        DocumentApprovedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "document.rejected": lambda _id, _type, attributes, relationships:
-        DocumentRejectedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "document.approved": lambda _id, _type, attributes, relationships:
-        DocumentApprovedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "checkDeposit.created": lambda _id, _type, attributes, relationships:
-        CheckDepositCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "checkDeposit.clearing": lambda _id, _type, attributes, relationships:
-        CheckDepositClearingEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "checkDeposit.sent": lambda _id, _type, attributes, relationships:
-        CheckDepositSentEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "payment.clearing": lambda _id, _type, attributes, relationships:
-        PaymentClearingEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "payment.sent": lambda _id, _type, attributes, relationships:
-        PaymentSentEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "payment.returned": lambda _id, _type, attributes, relationships:
-        PaymentReturnedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "statements.created": lambda _id, _type, attributes, relationships:
-        StatementsCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "transaction.created": lambda _id, _type, attributes, relationships:
-        TransactionCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "customer.created": lambda _id, _type, attributes, relationships:
-        CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "account.reopened": lambda _id, _type, attributes, relationships:
-        AccountReopenedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "webhook": lambda _id, _type, attributes, relationships:
-        WebhookDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "institution": lambda _id, _type, attributes, relationships:
-        InstitutionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "atmLocation": lambda _id, _type, attributes, relationships:
-        AtmLocationDTO.from_json_api(_type, attributes),
-
-        "biller": lambda _id, _type, attributes, relationships:
-        BillerDTO.from_json_api(_id, _type, attributes, relationships),
-
         "apiToken": lambda _id, _type, attributes, relationships:
         APITokenDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "authorization": lambda _id, _type, attributes, relationships:
-        AuthorizationDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "purchaseAuthorizationRequest": lambda _id, _type, attributes, relationships:
-        PurchaseAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "accountEndOfDay": lambda _id, _type, attributes, relationships:
-        AccountEndOfDayDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "counterpartyBalance": lambda _id, _type, attributes, relationships:
-        CounterpartyBalanceDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "pinStatus": lambda _id, _type, attributes, relationships:
-        PinStatusDTO.from_json_api(attributes),
-
-        "accountDepositProduct": lambda _id, _type, attributes, relationships:
-        AccountDepositProductDTO.from_json_api(attributes),
-
-        "checkDeposit": lambda _id, _type, attributes, relationships:
-        CheckDepositDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "dispute": lambda _id, _type, attributes, relationships:
-        DisputeDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 
@@ -316,11 +82,23 @@ def decode_limits(attributes: Dict):
     else:
         return CardLimitsDTO.from_json_api(attributes)
 
-def mapping_wraper(_id, _type, attributes, relationships):
+
+def mapping_wrapper(_id, _type, attributes, relationships):
     if _type in mappings:
         return mappings[_type](_id, _type, attributes, relationships)
+
+    if "." in _type:
+        i = _type.index(".")
+        _type = _type.replace(".", "")
+        t = _type[0].upper() + _type[1: i] + _type[i].upper() + _type[i + 1:] + "Event"
     else:
-        return RawUnitObject(_id, _type, attributes, relationships)
+        t = _type[0].upper() + _type[1:] + "DTO"
+
+    if t in globals():
+        return globals()[t].from_json_api(_id, _type, attributes, relationships)
+
+    return RawUnitObject(_id, _type, attributes, relationships)
+
 
 class DtoDecoder(object):
     @staticmethod
@@ -332,12 +110,12 @@ class DtoDecoder(object):
             dtos = split_json_api_array_response(payload)
             response = []
             for _id, _type, attributes, relationships in dtos:
-                response.append(mapping_wraper(_id, _type, attributes, relationships))
+                response.append(mapping_wrapper(_id, _type, attributes, relationships))
 
             return response
         else:
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
-            return mapping_wraper(_id, _type, attributes, relationships)
+            return mapping_wrapper(_id, _type, attributes, relationships)
 
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):
