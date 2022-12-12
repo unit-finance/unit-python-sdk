@@ -20,5 +20,6 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Test with pytest
-      run: |
-        TOKEN=${{ secrets.UNIT_TOKEN }} py.test
+      env:
+        TOKEN: ${{ secrets.UNIT_TOKEN }}
+      run: py.test
