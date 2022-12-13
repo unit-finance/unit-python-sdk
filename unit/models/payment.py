@@ -91,14 +91,14 @@ class AchReceivedPaymentDTO(object):
                  completion_date: date, return_reason: Optional[str], amount: int, description: str,
                  addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
                  sec_code: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]], same_day: bool):
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
         self.type = "achReceivedPayment"
         self.attributes = {"createdAt": created_at, "status": status, "wasAdvanced": was_advanced,
                            "completionDate": completion_date, "returnReason": return_reason, "description": description,
                            "amount": amount, "addenda": addenda, "companyName": company_name,
                            "counterpartyRoutingNumber": counterparty_routing_number, "traceNumber": trace_number,
-                           "secCode": sec_code, "tags": tags, "sameDay": same_day}
+                           "secCode": sec_code, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -108,8 +108,7 @@ class AchReceivedPaymentDTO(object):
                                      attributes.get("returnReason"), attributes["amount"], attributes["description"],
                                      attributes.get("addenda"), attributes.get("companyName"),
                                      attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
-                                     attributes.get("secCode"), attributes.get("tags"), relationships,
-                                     attributes.get("sameDay"))
+                                     attributes.get("secCode"), attributes.get("tags"), relationships)
 
 
 class CreatePaymentBaseRequest(UnitRequest):
