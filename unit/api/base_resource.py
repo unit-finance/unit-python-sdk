@@ -79,7 +79,7 @@ class BaseResource(object):
 
     @backoff.on_predicate(backoff.expo,
                           backoff_idempotency_key_handler,
-                          max_tries=retries,
+                          max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def post_full_path(self, path: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
