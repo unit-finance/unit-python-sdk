@@ -78,7 +78,7 @@ class BaseResource(object):
         return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
-                          backoff_idempotency_key_handler,
+                          backoff_handler,
                           max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def post_full_path(self, path: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
