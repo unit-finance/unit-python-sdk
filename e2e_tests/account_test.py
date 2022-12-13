@@ -129,7 +129,7 @@ def test_update_account():
 
 def test_update_credit_account():
     account_id = create_credit_account_for_business().data.id
-    _credit_limit = 40000
+    _credit_limit = 4000
     request = PatchCreditAccountRequest(account_id, tags={
         "purpose": "tax",
         "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"},

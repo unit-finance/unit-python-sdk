@@ -76,9 +76,11 @@ def test_list_and_get_payments():
         response = client.payments.get(id)
         assert "Payment" in response.data.type
 
+
 def test_create_book_payment():
     response = create_book_payment()
     assert response.data.type == "bookPayment"
+
 
 def test_list_and_get_payments_filter_by_type():
     payments_ids = []

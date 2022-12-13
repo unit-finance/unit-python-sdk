@@ -49,7 +49,7 @@ class CheckDepositResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def upload(self, request: UploadCheckDepositDocumentRequest):
+    def upload(self, request: UploadCheckDepositDocumentRequest) -> Union[UnitResponse[CheckDepositDTO], UnitError]:
         url = f"{self.resource}/{request.check_deposit_id}/{request.side}"
 
         headers = {"Content-Type": "image/jpeg"}
@@ -57,7 +57,7 @@ class CheckDepositResource(BaseResource):
         response = super().put(url, request.file, headers)
         if response.status_code == 200:
             data = response.json().get("data")
-            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+            return UnitResponse[CheckDepositDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 

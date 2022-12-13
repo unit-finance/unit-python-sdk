@@ -66,6 +66,7 @@ class WirePaymentDTO(BasePayment):
                               attributes["description"], attributes["amount"], attributes.get("reason"),
                               attributes.get("tags"), relationships)
 
+
 class BillPaymentDTO(BasePayment):
     def __init__(self, _id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
@@ -191,6 +192,7 @@ class CreateLinkedPaymentRequest(CreatePaymentBaseRequest):
             payload["data"]["attributes"]["verifyCounterpartyBalance"] = self.verify_counterparty_balance
 
         return payload
+
 
 class CreateVerifiedPaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, plaid_processor_token: str, relationships: Dict[str, Relationship],
