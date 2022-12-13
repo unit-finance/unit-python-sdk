@@ -601,7 +601,8 @@ class ListCardParams(UnitParams):
                 parameters[f"filter[status][{idx}]"] = status_filter
         return parameters
 
-class GetMobileWalletPayloadRequest():
+
+class GetMobileWalletPayloadRequest(UnitRequest):
     def __init__(self, card_id: str, signed_nonce: str, secure_path: Optional[str] = "https://secure.api.s.unit.sh"):
         self.card_id = card_id
         self.signed_nonce = signed_nonce
