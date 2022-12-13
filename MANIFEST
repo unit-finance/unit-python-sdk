@@ -50,6 +50,7 @@ unit/models/event.py
 unit/models/fee.py
 unit/models/institution.py
 unit/models/payment.py
+unit/models/received_payment.py
 unit/models/returnAch.py
 unit/models/reward.py
 unit/models/statement.py

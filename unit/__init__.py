@@ -4,6 +4,7 @@ from unit.api.account_resource import AccountResource
 from unit.api.card_resource import CardResource
 from unit.api.transaction_resource import TransactionResource
 from unit.api.payment_resource import PaymentResource
+from unit.api.received_payment_resource import ReceivedPaymentResource
 from unit.api.statement_resource import StatementResource
 from unit.api.customerToken_resource import CustomerTokenResource
 from unit.api.counterparty_resource import CounterpartyResource
@@ -27,7 +28,7 @@ __all__ = ["api", "models", "utils"]
 
 
 class Unit(object):
-    def __init__(self, api_url, token, retries=0):
+    def __init__(self, api_url, token, retries=1):
         self.applications = ApplicationResource(api_url, token, retries)
         self.customers = CustomerResource(api_url, token, retries)
         self.accounts = AccountResource(api_url, token, retries)
@@ -52,3 +53,4 @@ class Unit(object):
         self.checkDeposits = CheckDepositResource(api_url, token, retries)
         self.disputes = DisputeResource(api_url, token, retries)
         self.rewards = RewardResource(api_url, token, retries)
+        self.received_payments = ReceivedPaymentResource(api_url, token, retries)
