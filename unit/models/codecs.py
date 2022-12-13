@@ -5,6 +5,7 @@ from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO
 from unit.models.received_payment import AchReceivedPaymentDTO
+from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
@@ -281,6 +282,12 @@ mappings = {
 
         "dispute": lambda _id, _type, attributes, relationships:
         DisputeDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "bookRepayment": lambda _id, _type, attributes, relationships:
+        BookRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "achRepayment": lambda _id, _type, attributes, relationships:
+        AchRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
     }
 
 

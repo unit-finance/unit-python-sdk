@@ -10,6 +10,14 @@ def to_camel_case(snake_str):
     return components[0] + ''.join(x.title() for x in components[1:])
 
 
+def extract_attributes(list_of_attributes, attributes):
+    extracted_attributes = {}
+    for a in list_of_attributes:
+        extracted_attributes.update(a, attributes[a])
+
+    return extracted_attributes
+
+
 class UnitDTO(object):
     def to_dict(self):
         if type(self) is dict:
@@ -65,6 +73,30 @@ class UnitResponse(Generic[T]):
 class UnitRequest(object):
     def to_json_api(self) -> Dict:
         pass
+
+    def vars_to_attributes_dict(self, ignore: List[str] = []) -> Dict:
+        attributes = {}
+
+        for k in self.__dict__:
+            if k != "relationships" and k not in ignore:
+                v = getattr(self, k)
+                if v:
+                    attributes[to_camel_case(k)] = v
+
+        return attributes
+
+    def to_payload(self, _type: str, relationships: Dict[str, Relationship] = None, ignore: List[str] = []) -> Dict:
+        payload = {
+            "data": {
+                "type": _type,
+                "attributes": self.vars_to_attributes_dict(ignore),
+            }
+        }
+
+        if relationships:
+            payload["data"]["relationships"] = relationships
+
+        return payload
 
 
 class UnitParams(object):
