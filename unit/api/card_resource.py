@@ -110,3 +110,15 @@ class CardResource(BaseResource):
             return UnitResponse[CardLimitsDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
+
+    def mobile_wallet_payload(self, request: GetMobileWalletPayloadRequest) -> Union[UnitResponse[MobileWalletPayloadDTO],
+                                                                                     UnitError]:
+        payload = request.to_json_api()
+        response = super().post_full_path(
+            f"{request.secure_path}/{self.resource}/{request.card_id}/mobile-wallet-payload", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[MobileWalletPayloadDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
