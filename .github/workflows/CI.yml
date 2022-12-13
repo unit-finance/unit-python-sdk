@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         ref: ${{github.event.pull_request.head.sha}}
     - name: Set up Python 3.9.12
@@ -20,5 +20,7 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Test with pytest
+      env:
+        TOKEN: ${{ secrets.UNIT_TOKEN }}
       run: |
-        TOKEN=${{ secrets.UNIT_TOKEN }} py.test
+          pytest
