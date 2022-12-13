@@ -335,38 +335,3 @@ class ListPaymentParams(UnitParams):
             parameters["include"] = self.include
         return parameters
 
-
-class ListReceivedPaymentParams(UnitParams):
-    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None,
-                 status: Optional[List[AchReceivedPaymentStatus]] = None,
-                 direction: Optional[List[PaymentDirections]] = None, include_completed: Optional[bool] = None,
-                 sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
-        self.limit = limit
-        self.offset = offset
-        self.account_id = account_id
-        self.customer_id = customer_id
-        self.tags = tags
-        self.status = status
-        self.include_completed = include_completed
-        self.sort = sort
-        self.include = include
-
-    def to_dict(self) -> Dict:
-        parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
-        if self.customer_id:
-            parameters["filter[customerId]"] = self.customer_id
-        if self.account_id:
-            parameters["filter[accountId]"] = self.account_id
-        if self.tags:
-            parameters["filter[tags]"] = self.tags
-        if self.include_completed:
-            parameters["filter[includeCompleted]"] = self.include_completed
-        if self.status:
-            for idx, status_filter in enumerate(self.status):
-                parameters[f"filter[status][{idx}]"] = status_filter
-        if self.sort:
-            parameters["sort"] = self.sort
-        if self.include:
-            parameters["include"] = self.include
-        return parameters
