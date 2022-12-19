@@ -1,6 +1,10 @@
 import json
 from unit.utils import date_utils
-from typing import Optional, IO, Literal
+try:
+    from typing import Optional, IO
+except ImportError:
+    from typing import Optional, IO
+    from typing_extensions import Literal
 from unit.models import *
 
 CheckDepositStatus = Literal["AwaitingImages", "AwaitingFrontImage", "AwaitingBackImage", "Pending", "PendingReview",
