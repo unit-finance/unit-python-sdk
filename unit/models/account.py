@@ -296,7 +296,7 @@ class AccountLimitsDTO(object):
 
 class CloseAccountRequest(UnitRequest):
     def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer",
-                 _type: str = CloseAccountType):
+                 _type: CloseAccountType = "accountClose"):
         self.account_id = account_id
         self.reason = reason
         self._type = _type
