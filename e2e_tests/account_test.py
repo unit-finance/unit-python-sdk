@@ -8,6 +8,10 @@ from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
 from e2e_tests.helpers.helpers import create_relationship
 
+import pkg_resources
+
+pkg_resources.get_distribution("unit")
+
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 

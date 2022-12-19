@@ -3,7 +3,9 @@ import requests
 import backoff
 from typing import Optional, Dict
 from unit.models.codecs import UnitEncoder
+from distutils.dist import DistributionMetadata
 
+metadata = DistributionMetadata()
 _retries = 1
 
 
@@ -46,6 +48,9 @@ class BaseResource(object):
 
         self.api_url = api_url.rstrip("/")
         self.token = token
+        # metadata.read_pkg_file(open('distribute-0.6.8-py2.7.egg-info'))
+        # metadata.name
+        # metadata.version
         self.headers = {
             "content-type": "application/vnd.api+json",
             "authorization": f"Bearer {self.token}",
