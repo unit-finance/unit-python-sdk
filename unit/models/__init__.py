@@ -13,7 +13,8 @@ def to_camel_case(snake_str):
 def extract_attributes(list_of_attributes, attributes):
     extracted_attributes = {}
     for a in list_of_attributes:
-        extracted_attributes.update(a, attributes[a])
+        if a in attributes:
+            extracted_attributes[a] = attributes[a]
 
     return extracted_attributes
 
