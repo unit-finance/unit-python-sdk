@@ -3,11 +3,12 @@ from unit.models.application import IndividualApplicationDTO, BusinessApplicatio
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO, CreditAccountDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
-    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO
+    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO,\
+    MobileWalletPayloadDTO
 from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.transaction import *
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -282,6 +283,9 @@ mappings = {
 
         "dispute": lambda _id, _type, attributes, relationships:
         DisputeDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "mobileWalletPayload": lambda _id, _type, attributes, relationships:
+        MobileWalletPayloadDTO.from_json_api(_id, _type, attributes, relationships),
 
         "bookRepayment": lambda _id, _type, attributes, relationships:
         BookRepaymentDTO.from_json_api(_id, _type, attributes, relationships),

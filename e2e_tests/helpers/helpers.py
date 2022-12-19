@@ -1,7 +1,8 @@
 import uuid
-from datetime import date, timedelta
 
-from unit.models import Relationship, Address, Phone, FullName
+from typing import List
+from datetime import date, timedelta
+from unit.models import Relationship, Address, Phone, FullName, Counterparty, WireCounterparty
 from unit.models.account import CreateDepositAccountRequest
 from unit.models.application import CreateIndividualApplicationRequest
 
@@ -9,6 +10,30 @@ from unit.models.application import CreateIndividualApplicationRequest
 def create_relationship(_type: str, _id: str, relation: str = None):
     relation = relation or _type
     return {relation: Relationship(_type, _id)}
+
+
+def create_relationships_dict(relationships: List[Relationship]):
+    d = {}
+
+    for r in relationships:
+        d.update(r)
+
+    return d
+
+
+def create_relationship(_type: str, _id: str, relation: str = None):
+    relation = relation or _type
+    return {relation: Relationship(_type, _id)}
+
+    return d
+
+
+def create_counterparty_dto(routing_number: str, account_number: str, account_type: str, name: str):
+    return Counterparty(routing_number, account_number, account_type, name)
+
+
+def create_wire_counterparty_dto(routing_number: str, account_number: str, name: str, address: Address):
+    return WireCounterparty(routing_number, account_number, name, address)
 
 
 def generate_uuid():
@@ -56,3 +81,4 @@ def create_deposit_account(client):
                                           {"customer": Relationship("customer", customer_id)},
                                           {"purpose": "credit_operating"})
     return client.accounts.create(request)
+
