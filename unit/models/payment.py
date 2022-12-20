@@ -290,7 +290,7 @@ PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
 
 class ListPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None,
+                 customer_id: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  status: Optional[List[PaymentStatus]] = None, type: Optional[List[PaymentTypes]] = None,
                  direction: Optional[List[PaymentDirections]] = None, since: Optional[str] = None,
                  until: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
@@ -315,7 +315,7 @@ class ListPaymentParams(UnitParams):
         if self.account_id:
             parameters["filter[accountId]"] = self.account_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.status:
             for idx, status_filter in enumerate(self.status):
                 parameters[f"filter[status][{idx}]"] = status_filter

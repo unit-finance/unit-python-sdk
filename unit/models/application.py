@@ -228,7 +228,7 @@ class UploadDocumentRequest(object):
 
 class ListApplicationParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, email: Optional[str] = None,
-                 tags: Optional[object] = None, query: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, query: Optional[str] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None):
         self.offset = offset
         self.limit = limit
@@ -244,7 +244,7 @@ class ListApplicationParams(UnitParams):
         if self.query:
             parameters["filter[query]"] = self.query
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.sort:
             parameters["sort"] = self.sort
         return parameters
