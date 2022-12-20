@@ -53,7 +53,7 @@ class PatchReceivedPaymentRequest(object):
 
 class ListReceivedPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None,
+                 customer_id: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  status: Optional[List[AchReceivedPaymentStatus]] = None, include_completed: Optional[bool] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
         self.limit = limit
@@ -73,7 +73,7 @@ class ListReceivedPaymentParams(UnitParams):
         if self.account_id:
             parameters["filter[accountId]"] = self.account_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include_completed:
             parameters["filter[includeCompleted]"] = self.include_completed
         if self.status:
