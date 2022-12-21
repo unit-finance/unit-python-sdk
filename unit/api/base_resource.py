@@ -60,7 +60,6 @@ class BaseResource(object):
                           max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
-        print(self.__merge_headers(headers))
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
