@@ -3,9 +3,8 @@ import requests
 import backoff
 from typing import Optional, Dict
 from unit.models.codecs import UnitEncoder
-from distutils.dist import DistributionMetadata
+from unit.app_config import sdk_version
 
-metadata = DistributionMetadata()
 _retries = 1
 
 
@@ -48,13 +47,10 @@ class BaseResource(object):
 
         self.api_url = api_url.rstrip("/")
         self.token = token
-        # metadata.read_pkg_file(open('distribute-0.6.8-py2.7.egg-info'))
-        # metadata.name
-        # metadata.version
         self.headers = {
             "content-type": "application/vnd.api+json",
             "authorization": f"Bearer {self.token}",
-            "user-agent": "unit-python-sdk"
+            "X-UNIT-SDK": f"unit-python-sdk@v{sdk_version}"
         }
         # max_tries must be greater than 0 due to an infinite loop of backoff library otherwise
         _retries = retries_amount if retries_amount > 1 else 1
@@ -64,6 +60,7 @@ class BaseResource(object):
                           max_tries=get_max_retries,
                           jitter=backoff.random_jitter)
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
+        print(self.__merge_headers(headers))
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
     @backoff.on_predicate(backoff.expo,
