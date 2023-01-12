@@ -56,6 +56,30 @@ class SimulateIncomingAchPaymentDTO(BasePayment):
             relationships
         )
 
+class SimulateAchPaymentDTO(object):
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str,
+                 description: str, amount: int, reason: Optional[str],
+                 settlement_date: Optional[datetime], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BasePayment.__init__(self, id, created_at, direction, description, amount, reason, tags, relationships)
+        self.type = 'achPayment'
+        self.attributes["status"] = status
+        self.settlement_date = settlement_date
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return BasePayment(
+            _id,
+            date_utils.to_datetime(attributes["createdAt"]),
+            attributes.get("status"),
+            attributes.get("direction"),
+            attributes["description"],
+            attributes["amount"],
+            attributes.get("reason"),
+            attributes.get("tags"),
+            relationships
+        )
+
 class BookPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: Optional[str], description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
@@ -207,6 +231,54 @@ class SimulateIncomingAchRequest(CreatePaymentBaseRequest):
     def to_json_api(self) -> Dict:
         payload = CreatePaymentBaseRequest.to_json_api(self)
 
+        return payload
+
+class SimulateTransmitAchRequest(UnitRequest):
+    def __init__(
+        self, payment_id: int
+    ):
+        self.type = "transmitAchPayment"
+        self.id = payment_id
+        self.relationships = {
+            "payment": {
+                "data": {
+                    "type": "achPayment",
+                    "id": self.id
+                }
+            }
+        }
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": self.type,
+                "relationships": self.relationships
+            }
+        }
+        return payload
+
+class SimulateClearAchRequest(UnitRequest):
+    def __init__(
+        self, payment_id: int
+    ):
+        self.type = "clearAchPayment"
+        self.id = payment_id
+        self.relationships = {
+            "payment": {
+                "data": {
+                    "type": "achPayment",
+                    "id": self.id
+                }
+            }
+        }
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": self.type,
+                "relationships": self.relationships
+            }
+        }
         return payload
 
 class CreateVerifiedPaymentRequest(CreatePaymentBaseRequest):

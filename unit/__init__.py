@@ -4,6 +4,7 @@ from unit.api.account_resource import AccountResource
 from unit.api.card_resource import CardResource
 from unit.api.transaction_resource import TransactionResource
 from unit.api.payment_resource import PaymentResource
+from unit.api.ach_resource import AchResource
 from unit.api.statement_resource import StatementResource
 from unit.api.customerToken_resource import CustomerTokenResource
 from unit.api.counterparty_resource import CounterpartyResource
@@ -32,6 +33,7 @@ class Unit(object):
         self.cards = CardResource(api_url, token)
         self.transactions = TransactionResource(api_url, token)
         self.payments = PaymentResource(api_url, token)
+        self.ach = AchResource(api_url, token)
         self.statements = StatementResource(api_url, token)
         self.customerTokens = CustomerTokenResource(api_url, token)
         self.counterparty = CounterpartyResource(api_url, token)
