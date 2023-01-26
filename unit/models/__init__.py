@@ -86,7 +86,7 @@ class RawUnitObject(UnitDTO):
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
-                 source: Optional[Dict] = None, code: Optional[str] = None, meta: Optional[object] = None):
+                 source: Optional[Dict] = None, code: Optional[str] = None, meta: Optional[Dict[str, object]] = None):
         self.title = title
         self.status = status
         self.detail = detail
