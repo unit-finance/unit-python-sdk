@@ -195,9 +195,9 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
 
 class ApplicationDocumentDTO(object):
-    def __init__(self, id: str, status: ApplicationStatus, document_type: DocumentType, description: str,
-                 name: str, address: Optional[Address], date_of_birth: Optional[date],
-                 passport: Optional[str], ein: Optional[str], reason_code: Optional[ReasonCode], reason: Optional[str]):
+    def __init__(self, id: str, status: ApplicationStatus, document_type: DocumentType, description: str, name: str,
+                 address: Optional[Address], date_of_birth: Optional[date], passport: Optional[str], ein: Optional[str],
+                 reason_code: Optional[ReasonCode], reason: Optional[str]):
         self.id = id
         self.type = "document"
         self.attributes = {"status": status, "documentType": document_type, "description": description, "name": name,
