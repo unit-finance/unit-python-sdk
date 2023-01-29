@@ -196,7 +196,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
 class ApplicationDocumentDTO(object):
     def __init__(self, id: str, status: ApplicationStatus, document_type: DocumentType, description: str,
-                 name: Optional[str], address: Optional[Address], date_of_birth: Optional[date],
+                 name: str, address: Optional[Address], date_of_birth: Optional[date],
                  passport: Optional[str], ein: Optional[str], reason_code: Optional[ReasonCode], reason: Optional[str]):
         self.id = id
         self.type = "document"
@@ -208,7 +208,7 @@ class ApplicationDocumentDTO(object):
     def from_json_api(_id, _type, attributes):
         address = Address.from_json_api(attributes.get("address")) if attributes.get("address") else None
         return ApplicationDocumentDTO(
-            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes.get("name"),
+            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes["name"],
             address, attributes.get("dateOfBirth"), attributes.get("passport"),
             attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
         )
