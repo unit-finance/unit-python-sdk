@@ -315,7 +315,7 @@ class CloseAccountRequest(UnitRequest):
 
 class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
+                 tags: Optional[Dict[str, str]] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
                  from_balance: Optional[int] = None, to_balance: Optional[int] = None):
         self.offset = offset
         self.limit = limit
@@ -331,7 +331,7 @@ class ListAccountParams(UnitParams):
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include:
             parameters["include"] = self.include
         if self.status:
