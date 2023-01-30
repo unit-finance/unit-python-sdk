@@ -1,7 +1,7 @@
 import json
 from unit.utils import date_utils
 try:
-    from typing import Optional, IO
+    from typing import Optional, IO, Literal
 except ImportError:
     from typing import Optional, IO
     from typing_extensions import Literal
