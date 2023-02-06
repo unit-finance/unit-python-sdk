@@ -363,3 +363,27 @@ class AccountDepositProductDTO(object):
     @staticmethod
     def from_json_api(attributes):
         return AccountDepositProductDTO(attributes["name"])
+
+class FreezeAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, reason: Literal["Fraud", "Other"], reason_text: Optional[str] = None):
+        self.account_id = account_id
+        self.reason = reason
+        self.reason_text = reason_text
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "accountFreeze",
+                "attributes": {
+                    "reason": self.reason,
+                }
+            }
+        }
+
+        if self.reason_text:
+            payload["data"]["attributes"]["reasonText"] = self.reason_text
+
+        return payload
+
+    def __repr__(self) -> str:
+        return json.dumps(self.to_json_api())
