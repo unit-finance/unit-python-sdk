@@ -208,7 +208,7 @@ class ApplicationDocumentDTO(object):
     def from_json_api(_id, _type, attributes):
         address = Address.from_json_api(attributes.get("address")) if attributes.get("address") else None
         return ApplicationDocumentDTO(
-            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes["name"],
+            _id, attributes["status"], attributes["documentType"], attributes["description"], attributes.get("name"),
             address, attributes.get("dateOfBirth"), attributes.get("passport"),
             attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
         )
