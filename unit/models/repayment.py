@@ -97,9 +97,6 @@ class ListRepaymentParams(UnitParams):
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
 
-        if self.customer_id:
-            parameters["filter[customerId]"] = self.customer_id
-
         if self.status:
             for idx, status_filter in enumerate(self.status):
                 parameters[f"filter[status][{idx}]"] = status_filter
