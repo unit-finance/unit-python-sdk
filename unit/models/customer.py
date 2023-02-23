@@ -155,7 +155,7 @@ PatchCustomerRequest = Union[PatchIndividualCustomerRequest, PatchBusinessCustom
 
 class ListCustomerParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, query: Optional[str] = None, email: Optional[str] = None,
-                 tags: Optional[object] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None):
+                 tags: Optional[Dict[str, str]] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None):
         self.offset = offset
         self.limit = limit
         self.query = query
@@ -170,7 +170,7 @@ class ListCustomerParams(UnitParams):
         if self.email:
             parameters["filter[email]"] = self.email
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.sort:
             parameters["sort"] = self.sort
         return parameters

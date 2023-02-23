@@ -572,7 +572,7 @@ class CardLimitsDTO(object):
 
 class ListCardParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None, include: Optional[str] = None,
+                 customer_id: Optional[str] = None, tags: Optional[Dict[str, str]] = None, include: Optional[str] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None,
                  status: Optional[List[CardStatus]] = None):
         self.offset = offset
@@ -591,7 +591,7 @@ class ListCardParams(UnitParams):
         if self.account_id:
             parameters["filter[accountId]"] = self.account_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include:
             parameters["include"] = self.include
         if self.sort:

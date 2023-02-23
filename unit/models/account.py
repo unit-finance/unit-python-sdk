@@ -1,14 +1,12 @@
 from unit.utils import date_utils
 from unit.models import *
 
-AccountStatus = Literal["Open", "Closed", "Frozen"]
+AccountStatus = Literal["Open", "Closed"]
 CloseReason = Literal["ByCustomer", "Fraud"]
 FraudReason = Literal["ACHActivity", "CardActivity", "CheckActivity", "ApplicationHistory", "AccountActivity",
                       "ClientIdentified", "IdentityTheft", "LinkedToFraudulentCustomer"]
+
 CreditAccountType = "creditAccount"
-DepositAccountType = "depositAccount"
-AccountTypes = Literal[CreditAccountType, DepositAccountType]
-CloseAccountType = Literal["accountClose", "creditAccountClose"]
 
 
 class DepositAccountDTO(object):
@@ -17,7 +15,7 @@ class DepositAccountDTO(object):
                  status: AccountStatus, tags: Optional[Dict[str, str]], close_reason: Optional[CloseReason],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
-        self.type = DepositAccountType
+        self.type = "depositAccount"
         self.attributes = {"name": name, "createdAt": created_at, "updatedAt": updated_at,
                            "depositProduct": deposit_product, "routingNumber": routing_number,
                            "accountNumber": account_number, "currency": currency, "balance": balance,
@@ -75,7 +73,7 @@ class CreateDepositAccountRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": DepositAccountType,
+                "type": "depositAccount",
                 "attributes": {
                     "depositProduct": self.deposit_product,
                 },
@@ -140,7 +138,7 @@ class PatchDepositAccountRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": DepositAccountType,
+                "type": "depositAccount",
                 "attributes": {}
             }
         }
@@ -295,16 +293,14 @@ class AccountLimitsDTO(object):
 
 
 class CloseAccountRequest(UnitRequest):
-    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer",
-                 _type: CloseAccountType = "accountClose"):
+    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer"):
         self.account_id = account_id
         self.reason = reason
-        self._type = _type
 
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": self._type,
+                "type": "accountClose",
                 "attributes": {
                     "reason": self.reason,
                 }
@@ -319,9 +315,8 @@ class CloseAccountRequest(UnitRequest):
 
 class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
-                 from_balance: Optional[int] = None, to_balance: Optional[int] = None,
-                 type: Optional[List[AccountTypes]] = None):
+                 tags: Optional[Dict[str, str]] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
+                 from_balance: Optional[int] = None, to_balance: Optional[int] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
@@ -330,21 +325,17 @@ class ListAccountParams(UnitParams):
         self.status = status
         self.from_balance = from_balance
         self.to_balance = to_balance
-        self.type = type
     
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include:
             parameters["include"] = self.include
         if self.status:
-            for idx, status_filter in enumerate(self.status):
-                parameters[f"filter[status][{idx}]"] = status_filter
-        if self.type:
-            parameters[f"filter[type]"] = self.type
+            parameters["filter[status]"] = self.status
         if self.from_balance:
             parameters["filter[fromBalance]"] = self.from_balance
         if self.to_balance:
@@ -372,3 +363,27 @@ class AccountDepositProductDTO(object):
     @staticmethod
     def from_json_api(attributes):
         return AccountDepositProductDTO(attributes["name"])
+
+class FreezeAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, reason: Literal["Fraud", "Other"], reason_text: Optional[str] = None):
+        self.account_id = account_id
+        self.reason = reason
+        self.reason_text = reason_text
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "accountFreeze",
+                "attributes": {
+                    "reason": self.reason,
+                }
+            }
+        }
+
+        if self.reason_text:
+            payload["data"]["attributes"]["reasonText"] = self.reason_text
+
+        return payload
+
+    def __repr__(self) -> str:
+        return json.dumps(self.to_json_api())

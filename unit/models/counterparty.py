@@ -156,7 +156,7 @@ class CounterpartyBalanceDTO(object):
 
 class ListCounterpartyParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None):
+                 tags: Optional[Dict[str, str]] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
@@ -167,6 +167,6 @@ class ListCounterpartyParams(UnitParams):
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         return parameters
 

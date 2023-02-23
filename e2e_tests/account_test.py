@@ -116,6 +116,19 @@ def test_close_and_reopen_account():
     response = client.accounts.reopen_account(account_id)
     assert response.data.type == "depositAccount"
 
+def test_freeze_account():
+    account_id = create_deposit_account().data.id
+    request = FreezeAccountRequest(account_id, "Fraud")
+    response = client.accounts.freeze_account(request)
+    assert response.data.type == "depositAccount"
+
+def test_freeze_and_unfreeze_account():
+    account_id = create_deposit_account().data.id
+    request = FreezeAccountRequest(account_id, "Fraud")
+    response = client.accounts.freeze_account(request)
+    assert response.data.type == "depositAccount"
+    response = client.accounts.unfreeze_account(account_id)
+    assert response.data.type == "depositAccount"
 
 def test_update_account():
     account_id = create_deposit_account().data.id
