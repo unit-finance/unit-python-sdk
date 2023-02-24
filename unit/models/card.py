@@ -631,3 +631,38 @@ class MobileWalletPayloadDTO(object):
     def from_json_api(_id, _type, attributes, relationships):
         return MobileWalletPayloadDTO(attributes["payload"])
 
+
+class EnableCardToCardPaymentsRequest(UnitRequest):
+    def __init__(self, card_id: str, astra_token: str, idempotency_key: Optional[str] = None):
+        self.card_id = card_id
+        self.astra_token = astra_token
+        self.idempotency_key = idempotency_key
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "astra",
+                "attributes": {
+                    "token": self.astra_token
+                }
+            }
+        }
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
+class AstraDTO(object):
+    def __init__(self, _type: str, _id: str, astra_card_id: str):
+        self._type = _type
+        self._id = _id
+        self.astra_card_id = astra_card_id
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AstraDTO(_id, _type, attributes["astraCardId"])
