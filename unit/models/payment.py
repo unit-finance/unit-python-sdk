@@ -145,7 +145,7 @@ class CreatePaymentBaseRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateInlinePaymentRequest(CreatePaymentBaseRequest):
@@ -261,7 +261,7 @@ class PatchAchPaymentRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBookPaymentRequest(object):
@@ -282,7 +282,7 @@ class PatchBookPaymentRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]

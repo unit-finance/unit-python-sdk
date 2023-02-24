@@ -57,7 +57,7 @@ class CreateCustomerToken(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateCustomerTokenVerification(UnitRequest):
@@ -91,5 +91,5 @@ class CreateCustomerTokenVerification(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
