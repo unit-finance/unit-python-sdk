@@ -3,6 +3,7 @@ import requests
 import backoff
 from typing import Optional, Dict
 from unit.models.codecs import UnitEncoder
+from unit.app_config import sdk_version
 
 _retries = 1
 
@@ -49,7 +50,7 @@ class BaseResource(object):
         self.headers = {
             "content-type": "application/vnd.api+json",
             "authorization": f"Bearer {self.token}",
-            "user-agent": "unit-python-sdk"
+            "X-UNIT-SDK": f"unit-python-sdk@v{sdk_version}"
         }
         # max_tries must be greater than 0 due to an infinite loop of backoff library otherwise
         _retries = retries_amount if retries_amount > 1 else 1
