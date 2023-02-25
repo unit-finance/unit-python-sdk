@@ -100,7 +100,7 @@ class ListRewardsParams(UnitParams):
         until: Optional[datetime] = None,
         sort: Optional[SORT_ORDERS] = None,
         include: Optional[List[RELATED_RESOURCES]] = None,
-        tags: Optional[object] = None,
+        tags: Optional[Dict[str, str]] = None,
     ):
         self.limit = limit
         self.offset = offset
@@ -147,7 +147,7 @@ class ListRewardsParams(UnitParams):
             parameters["sort"] = self.sort
 
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
 
         return parameters
 

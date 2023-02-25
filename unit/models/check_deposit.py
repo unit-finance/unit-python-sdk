@@ -64,7 +64,7 @@ class CreateCheckDepositRequest(UnitRequest):
 
 class ListCheckDepositParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None,
+                 customer_id: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  sort: Optional[str] = None, include: Optional[str] = None):
         self.offset = offset
         self.limit = limit
@@ -81,7 +81,7 @@ class ListCheckDepositParams(UnitParams):
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.sort:
             parameters["sort"] = self.sort
         if self.include:
