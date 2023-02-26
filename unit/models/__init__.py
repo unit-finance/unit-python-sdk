@@ -1,5 +1,10 @@
 import json
-from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
+try:
+    from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
+except ImportError:
+    from typing import TypeVar, Generic, Union, Optional, List, Dict
+    from typing_extensions import Literal
+
 from datetime import datetime, date
 
 

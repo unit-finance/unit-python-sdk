@@ -1,6 +1,10 @@
 import json
 from datetime import datetime, date
-from typing import Literal, Optional
+try:
+    from typing import Literal, Optional
+except ImportError:
+    from typing import Optional
+    from typing_extensions import Literal
 from unit.utils import date_utils
 from unit.models import *
 
