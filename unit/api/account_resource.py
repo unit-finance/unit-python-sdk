@@ -34,6 +34,23 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def freeze_account(self, request: FreezeAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.account_id}/freeze", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def unfreeze_account(self, account_id: str) -> Union[UnitResponse[AccountDTO], UnitError]:
+        response = super().post(f"{self.resource}/{account_id}/unfreeze")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
     def enter_daca(self, account_id: str) -> Union[UnitResponse[AccountDTO], UnitError]:
         response = super().post(f"{self.resource}/{account_id}/enter-daca")
         if super().is_20x(response.status_code):

@@ -106,7 +106,7 @@ class CreateApplicationFormRequest(UnitRequest):
 
 
 class ListApplicationFormParams(UnitParams):
-    def __init__(self, offset: int = 0, limit: int = 100, tags: Optional[object] = None,
+    def __init__(self, offset: int = 0, limit: int = 100, tags: Optional[Dict[str, str]] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None):
         self.offset = offset
         self.limit = limit
@@ -116,7 +116,7 @@ class ListApplicationFormParams(UnitParams):
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.sort:
             parameters["sort"] = self.sort
         return parameters

@@ -195,9 +195,9 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
 
 class ApplicationDocumentDTO(object):
-    def __init__(self, id: str, status: ApplicationStatus, document_type: DocumentType, description: str, name: str,
-                 address: Optional[Address], date_of_birth: Optional[date], passport: Optional[str], ein: Optional[str],
-                 reason_code: Optional[ReasonCode], reason: Optional[str]):
+    def __init__(self, id: str, status: ApplicationStatus, document_type: DocumentType, description: str,
+                 name: Optional[str], address: Optional[Address], date_of_birth: Optional[date],
+                 passport: Optional[str], ein: Optional[str], reason_code: Optional[ReasonCode], reason: Optional[str]):
         self.id = id
         self.type = "document"
         self.attributes = {"status": status, "documentType": document_type, "description": description, "name": name,
@@ -210,7 +210,6 @@ class ApplicationDocumentDTO(object):
             _id, attributes["status"], attributes["documentType"], attributes["description"], attributes.get("name"),
             Address.from_json_api(attributes.get("address")), attributes.get("dateOfBirth"), attributes.get("passport"),
             attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason"))
-
 
 FileType = Literal["jpeg", "png", "pdf"]
 
@@ -227,7 +226,7 @@ class UploadDocumentRequest(object):
 
 class ListApplicationParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, email: Optional[str] = None,
-                 tags: Optional[object] = None, query: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, query: Optional[str] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None):
         self.offset = offset
         self.limit = limit
@@ -243,7 +242,7 @@ class ListApplicationParams(UnitParams):
         if self.query:
             parameters["filter[query]"] = self.query
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.sort:
             parameters["sort"] = self.sort
         return parameters

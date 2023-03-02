@@ -572,7 +572,7 @@ class CardLimitsDTO(object):
 
 class ListCardParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None, include: Optional[str] = None,
+                 customer_id: Optional[str] = None, tags: Optional[Dict[str, str]] = None, include: Optional[str] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None,
                  status: Optional[List[CardStatus]] = None):
         self.offset = offset
@@ -591,7 +591,7 @@ class ListCardParams(UnitParams):
         if self.account_id:
             parameters["filter[accountId]"] = self.account_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include:
             parameters["include"] = self.include
         if self.sort:
@@ -600,4 +600,34 @@ class ListCardParams(UnitParams):
             for idx, status_filter in enumerate(self.status):
                 parameters[f"filter[status][{idx}]"] = status_filter
         return parameters
+
+
+class GetMobileWalletPayloadRequest(UnitRequest):
+    def __init__(self, card_id: str, signed_nonce: str, secure_path: Optional[str] = "https://secure.api.s.unit.sh"):
+        self.card_id = card_id
+        self.signed_nonce = signed_nonce
+        self.secure_path = secure_path
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "attributes": {
+                    "signedNonce": self.signed_nonce
+                }
+            }
+        }
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class MobileWalletPayloadDTO(object):
+    def __init__(self, payload: str):
+        self.type = "mobileWalletPayload"
+        self.attributes = {"payload": payload}
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return MobileWalletPayloadDTO(attributes["payload"])
 

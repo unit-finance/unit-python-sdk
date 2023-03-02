@@ -315,7 +315,7 @@ class CloseAccountRequest(UnitRequest):
 
 class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
+                 tags: Optional[Dict[str, str]] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
                  from_balance: Optional[int] = None, to_balance: Optional[int] = None):
         self.offset = offset
         self.limit = limit
@@ -331,7 +331,7 @@ class ListAccountParams(UnitParams):
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include:
             parameters["include"] = self.include
         if self.status:
@@ -363,3 +363,27 @@ class AccountDepositProductDTO(object):
     @staticmethod
     def from_json_api(attributes):
         return AccountDepositProductDTO(attributes["name"])
+
+class FreezeAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, reason: Literal["Fraud", "Other"], reason_text: Optional[str] = None):
+        self.account_id = account_id
+        self.reason = reason
+        self.reason_text = reason_text
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "accountFreeze",
+                "attributes": {
+                    "reason": self.reason,
+                }
+            }
+        }
+
+        if self.reason_text:
+            payload["data"]["attributes"]["reasonText"] = self.reason_text
+
+        return payload
+
+    def __repr__(self) -> str:
+        return json.dumps(self.to_json_api())
