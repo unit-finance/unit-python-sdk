@@ -1,5 +1,8 @@
-from typing import Optional, Dict, Union, List, Literal
-
+from typing import Optional, Dict, Union, List
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 from unit.models import UnitDTO, extract_attributes, UnitRequest, Relationship, UnitParams
 from unit.utils import date_utils
 
