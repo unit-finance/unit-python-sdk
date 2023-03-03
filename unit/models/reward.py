@@ -1,5 +1,9 @@
 import json
-from typing import Optional, Literal, Dict, List
+try:
+    from typing import Optional, Literal, Dict, List
+except:
+    from typing import Optional, Dict, List
+    from typing_extensions import Literal
 from datetime import datetime
 from unit.models import Relationship, UnitRequest, UnitParams
 from unit.utils import create_relationship, create_deposit_account_relationship, date_utils

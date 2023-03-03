@@ -6,9 +6,9 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO, \
     MobileWalletPayloadDTO, AstraDTO
 from unit.models.received_payment import AchReceivedPaymentDTO
+from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -286,6 +286,12 @@ mappings = {
 
         "mobileWalletPayload": lambda _id, _type, attributes, relationships:
         MobileWalletPayloadDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "bookRepayment": lambda _id, _type, attributes, relationships:
+        BookRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "achRepayment": lambda _id, _type, attributes, relationships:
+        AchRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "astra": lambda _id, _type, attributes, relationships:
         AstraDTO.from_json_api(_id, _type, attributes, relationships)

@@ -1,5 +1,9 @@
 import json
-from typing import Optional, Literal
+try:
+    from typing import Optional, Literal
+except ImportError:
+    from typing import Optional
+    from typing_extensions import Literal
 from unit.models import *
 from unit.utils import date_utils
 

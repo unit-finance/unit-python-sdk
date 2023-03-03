@@ -23,6 +23,7 @@ from unit.api.account_end_of_day_resource import AccountEndOfDayResource
 from unit.api.checkDeposit_resource import CheckDepositResource
 from unit.api.dispute_resource import DisputeResource
 from unit.api.reward_resource import RewardResource
+from unit.api.repayment_resource import RepaymentResource
 
 __all__ = ["api", "models", "utils"]
 
@@ -54,3 +55,4 @@ class Unit(object):
         self.disputes = DisputeResource(api_url, token, retries)
         self.rewards = RewardResource(api_url, token, retries)
         self.received_payments = ReceivedPaymentResource(api_url, token, retries)
+        self.repayments = RepaymentResource(api_url, token, retries)
