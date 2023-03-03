@@ -21,7 +21,7 @@ def create_book_payment_request():
                                                              "counterpartyAccount": Relationship("depositAccount",
                                                                                                  account_id2)},
                                        tags={"purpose": "checking"})
-    return client.payments.create(request)
+    return request
 
 
 def create_book_payment():
