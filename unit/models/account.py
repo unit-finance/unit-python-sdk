@@ -355,7 +355,7 @@ class ListAccountParams(UnitParams):
         if self.status:
             for idx, status_filter in enumerate(self.status):
                 parameters[f"filter[status][{idx}]"] = status_filter
-        if self.type:
+        if self._type:
             parameters[f"filter[type]"] = self._type
         if self.from_balance:
             parameters["filter[fromBalance]"] = self.from_balance
