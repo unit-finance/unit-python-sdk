@@ -134,7 +134,7 @@ class UnitErrorPayload(object):
         self.meta = meta
 
     def __str__(self):
-        return self.detail
+        return self.detail or self.title
 
 
 class UnitError(object):
