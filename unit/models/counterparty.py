@@ -60,7 +60,7 @@ class CreateCounterpartyRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateCounterpartyWithTokenRequest(UnitRequest):
@@ -105,7 +105,7 @@ class CreateCounterpartyWithTokenRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchCounterpartyRequest(object):
@@ -139,7 +139,7 @@ class PatchCounterpartyRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CounterpartyBalanceDTO(object):

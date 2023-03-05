@@ -47,12 +47,13 @@ class CreateBookRepaymentRequest(UnitRequest):
 
 class CreateAchRepaymentRequest(UnitRequest):
     def __init__(self, description: str, amount: int, relationships: Dict[str, Relationship],
-                 addenda: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
+                 addenda: Optional[str] = None, tags: Optional[Dict[str, str]] = None, same_day: Optional[bool] = None,
                  idempotency_key: Optional[str] = None):
         self.description = description
         self.amount = amount
         self.addenda = addenda
         self.tags = tags
+        self.same_day = same_day
         self.idempotency_key = idempotency_key
         self.relationships = relationships
 

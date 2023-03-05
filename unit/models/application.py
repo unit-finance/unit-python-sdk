@@ -141,7 +141,7 @@ class CreateIndividualApplicationRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessApplicationRequest(UnitRequest):
@@ -191,7 +191,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class ApplicationDocumentDTO(object):
@@ -270,5 +270,5 @@ class PatchApplicationRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 

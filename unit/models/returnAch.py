@@ -1,5 +1,8 @@
 import json
-from typing import Literal
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 from unit.models import *
 
 AchReturnReason = Literal["Unauthorized"]
@@ -25,5 +28,5 @@ class ReturnReceivedAchTransactionRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 

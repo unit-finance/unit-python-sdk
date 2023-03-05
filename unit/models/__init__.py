@@ -1,5 +1,10 @@
 import json
-from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
+try:
+    from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
+except ImportError:
+    from typing import TypeVar, Generic, Union, Optional, List, Dict
+    from typing_extensions import Literal
+
 from datetime import datetime, date
 
 
@@ -129,7 +134,7 @@ class UnitErrorPayload(object):
         self.meta = meta
 
     def __str__(self):
-        return self.detail
+        return self.detail or self.title
 
 
 class UnitError(object):

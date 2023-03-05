@@ -61,4 +61,11 @@ class CheckDepositResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def confirm(self, check_deposit_id: str) -> Union[UnitResponse[CheckDepositDTO], UnitError]:
+        response = super().post(f"{self.resource}/{check_deposit_id}/confirm")
 
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[CheckDepositDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())

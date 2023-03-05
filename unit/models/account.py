@@ -92,7 +92,7 @@ class CreateDepositAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateCreditAccountRequest(UnitRequest):
@@ -125,7 +125,7 @@ class CreateCreditAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 CreateAccountRequest = Union[CreateDepositAccountRequest, CreateCreditAccountRequest]
@@ -154,7 +154,7 @@ class PatchDepositAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchCreditAccountRequest(UnitRequest):
@@ -180,7 +180,7 @@ class PatchCreditAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 PatchAccountRequest = Union[PatchDepositAccountRequest, PatchCreditAccountRequest]
@@ -326,7 +326,7 @@ class CloseAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class ListAccountParams(UnitParams):
@@ -373,7 +373,7 @@ class AccountOwnersRequest(UnitRequest):
         return self.customers.to_dict()
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class AccountDepositProductDTO(object):

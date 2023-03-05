@@ -107,7 +107,7 @@ class PatchIndividualCustomerRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBusinessCustomerRequest(UnitRequest):
@@ -147,7 +147,7 @@ class PatchBusinessCustomerRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 PatchCustomerRequest = Union[PatchIndividualCustomerRequest, PatchBusinessCustomerRequest]
@@ -195,7 +195,7 @@ class ArchiveCustomerRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class AddAuthorizedUsersRequest(UnitRequest):
@@ -214,7 +214,7 @@ class AddAuthorizedUsersRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class RemoveAuthorizedUsersRequest(UnitRequest):
@@ -233,4 +233,4 @@ class RemoveAuthorizedUsersRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
