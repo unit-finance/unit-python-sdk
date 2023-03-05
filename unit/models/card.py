@@ -177,7 +177,7 @@ class CreateIndividualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessCard(object):
@@ -252,7 +252,7 @@ class CreateBusinessCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessDebitCard(CreateBusinessCard):
@@ -290,7 +290,7 @@ class CreateIndividualVirtualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessVirtualCard(object):
@@ -347,7 +347,7 @@ class CreateBusinessVirtualCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessVirtualDebitCard(CreateBusinessVirtualCard):
@@ -392,7 +392,7 @@ class PatchIndividualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBusinessCard(object):
@@ -440,7 +440,7 @@ class PatchBusinessCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBusinessDebitCard(PatchBusinessCard):
@@ -471,7 +471,7 @@ class PatchIndividualVirtualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBusinessVirtualCard(object):
@@ -542,7 +542,7 @@ class ReplaceCardRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 PinStatus = Literal["Set", "NotSet"]
@@ -619,7 +619,7 @@ class GetMobileWalletPayloadRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class MobileWalletPayloadDTO(object):

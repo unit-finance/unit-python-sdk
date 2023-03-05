@@ -60,7 +60,7 @@ class CreateCheckDepositRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 class ListCheckDepositParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
@@ -116,5 +116,5 @@ class PatchCheckDepositRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 

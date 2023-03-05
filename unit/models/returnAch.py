@@ -28,5 +28,5 @@ class ReturnReceivedAchTransactionRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
