@@ -657,7 +657,7 @@ class EnableCardToCardPaymentsRequest(UnitRequest):
         return json.dumps(self.to_json_api())
 
 
-class AstraDTO(object):
+class CardToCardPaymentDTO(object):
     def __init__(self, _type: str, _id: str, astra_card_id: str):
         self._type = _type
         self._id = _id
@@ -665,4 +665,4 @@ class AstraDTO(object):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return AstraDTO(_id, _type, attributes["astraCardId"])
+        return CardToCardPaymentDTO(_id, _type, attributes["astraCardId"])
