@@ -2,9 +2,9 @@ from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO, CreditAccountDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
-from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO,\
-    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO,\
-    MobileWalletPayloadDTO
+from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
+    BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO, \
+    MobileWalletPayloadDTO, CardToCardPaymentDTO
 from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.transaction import *
@@ -292,6 +292,9 @@ mappings = {
 
         "achRepayment": lambda _id, _type, attributes, relationships:
         AchRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "astra": lambda _id, _type, attributes, relationships:
+        CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 
