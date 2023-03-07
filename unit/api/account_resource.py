@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class AccountResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
+    def __init__(self):
+        super().__init__()
         self.resource = "accounts"
 
     def create(self, request: CreateAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:

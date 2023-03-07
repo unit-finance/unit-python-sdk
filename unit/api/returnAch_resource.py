@@ -5,8 +5,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class ReturnAchResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
+    def __init__(self):
+        super().__init__()
         self.resource = "returns"
 
     def return_ach(self, request: ReturnReceivedAchTransactionRequest) -> Union[UnitResponse[ReturnedReceivedAchTransactionDTO], UnitError]:

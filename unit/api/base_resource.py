@@ -2,14 +2,18 @@ import json
 import requests
 import backoff
 from typing import Optional, Dict
-from unit.models.codecs import UnitEncoder
-from unit.app_config import sdk_version
 
-_retries = 1
+
+from unit.utils.configuration import Configuration
+from unit.models.codecs import UnitEncoder
 
 
 def get_max_retries():
-    return _retries
+    return Configuration.get_retries()
+
+
+def get_max_timeout():
+    return Configuration.get_timeout()
 
 
 def backoff_idempotency_key_handler(e):
@@ -42,22 +46,15 @@ def idempotency_key_is_present(e):
 
 
 class BaseResource(object):
-    def __init__(self, api_url, token, retries_amount):
-        global _retries
-
-        self.api_url = api_url.rstrip("/")
-        self.token = token
-        self.headers = {
-            "content-type": "application/vnd.api+json",
-            "authorization": f"Bearer {self.token}",
-            "X-UNIT-SDK": f"unit-python-sdk@v{sdk_version}"
-        }
-        # max_tries must be greater than 0 due to an infinite loop of backoff library otherwise
-        _retries = retries_amount if retries_amount > 1 else 1
+    def __init__(self):
+        self.api_url = Configuration.get_api_url()
+        self.token = Configuration.get_token()
+        self.headers = Configuration.get_headers()
 
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
                           max_tries=get_max_retries,
+                          max_time=get_max_timeout,
                           jitter=backoff.random_jitter)
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
         return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
@@ -65,6 +62,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
                           max_tries=get_max_retries,
+                          max_time=get_max_timeout,
                           jitter=backoff.random_jitter)
     def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -73,6 +71,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           backoff_idempotency_key_handler,
                           max_tries=get_max_retries,
+                          max_time=get_max_timeout,
                           jitter=backoff.random_jitter)
     def post_create(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -81,6 +80,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
                           max_tries=get_max_retries,
+                          max_time=get_max_timeout,
                           jitter=backoff.random_jitter)
     def post_full_path(self, path: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -89,6 +89,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
                           max_tries=get_max_retries,
+                          max_time=get_max_timeout,
                           jitter=backoff.random_jitter)
     def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -97,6 +98,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
                           max_tries=get_max_retries,
+                          max_time=get_max_timeout,
                           jitter=backoff.random_jitter)
     def delete(self, resource: str, data: Dict = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
@@ -105,6 +107,7 @@ class BaseResource(object):
     @backoff.on_predicate(backoff.expo,
                           backoff_handler,
                           max_tries=get_max_retries,
+                          max_time=get_max_timeout,
                           jitter=backoff.random_jitter)
     def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))

@@ -4,8 +4,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class APITokenResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
+    def __init__(self):
+        super().__init__()
         self.resource = "users"
 
     def create(self, request: CreateAPITokenRequest) -> Union[UnitResponse[APITokenDTO], UnitError]:

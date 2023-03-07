@@ -4,8 +4,8 @@ from unit.models.transaction import *
 
 
 class TransactionResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
+    def __init__(self):
+        super().__init__()
         self.resource = "transactions"
 
     def get(self, transaction_id: str, include: Optional[str] = "") -> Union[UnitResponse[TransactionDTO], UnitError]:

@@ -6,8 +6,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class RewardResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
+    def __init__(self):
+        super().__init__()
         self.resource = "rewards"
 
     def create(self, request: CreateRewardRequest) -> Union[UnitResponse[RewardDTO], UnitError]:

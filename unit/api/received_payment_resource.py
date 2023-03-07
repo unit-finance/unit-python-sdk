@@ -4,8 +4,8 @@ from unit.models.received_payment import *
 
 
 class ReceivedPaymentResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
+    def __init__(self):
+        super().__init__()
         self.resource = "received-payments"
 
     def update(self, request: PatchReceivedPaymentRequest) -> Union[UnitResponse[AchReceivedPaymentDTO], UnitError]:
