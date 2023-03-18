@@ -272,3 +272,26 @@ class PatchApplicationRequest(UnitRequest):
     def __repr__(self):
         return json.dumps(self.to_json_api())
 
+
+class VerifyDocumentRequest(UnitRequest):
+    def __init__(self, application_id: str, document_id: str, job_id: str):
+        self.application_id = application_id
+        self.document_id = document_id
+        self.job_id = job_id
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "selfieVerification",
+                "attributes": {
+                    "jobId": self.job_id
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+

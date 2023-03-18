@@ -71,3 +71,40 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def list_documents(self, application_id: str) -> Union[UnitResponse[List[ApplicationDocumentDTO]], UnitError]:
+        response = super().get(f"{self.resource}/{application_id}/documents")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def create_document(self, application_id: str) -> Union[UnitResponse[ApplicationDocumentDTO], UnitError]:
+        response = super().post(f"{self.resource}/{application_id}/documents/")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def verify_document(self, request: VerifyDocumentRequest) -> Union[UnitResponse[ApplicationDocumentDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.application_id}/documents/{request.document_id}/verify",
+                                payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[ApplicationDocumentDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def download_document(self,  application_id: str, document_id: str, is_back_side: bool = False):
+        url = f"{self.resource}/{application_id}/documents/{document_id}"
+        if is_back_side:
+            url += "/back"
+
+        response = super().get(url)
+        if super().is_20x(response.status_code):
+            UnitResponse[str](response.text, None)
+        else:
+            return UnitError.from_json_api(response.json())
+
