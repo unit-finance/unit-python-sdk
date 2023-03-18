@@ -71,3 +71,12 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def cancel(self, request: CancelApplicationRequest) -> Union[UnitResponse[ApplicationDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.application_id}/cancel", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            included = response.json().get("included")
+            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+        else:
+            return UnitError.from_json_api(response.json())
