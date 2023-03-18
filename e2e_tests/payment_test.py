@@ -24,12 +24,16 @@ def create_book_payment():
     return client.payments.create(request)
 
 
-def test_create_inline_ach_payment():
+def create_inline_ach_payment():
     account_id = create_deposit_account().data.id
     request = CreateInlinePaymentRequest(10000, "Funding", create_counterparty_dto("812345673", "12345569", "Checking",
-                                                                               "Jane Doe"),
+                                                                                   "Jane Doe"),
                                          create_relationship("depositAccount", account_id, "account"))
-    response = client.payments.create(request)
+    return client.payments.create(request)
+
+
+def test_create_inline_ach_payment():
+    response = create_inline_ach_payment()
     assert response.data.type == "achPayment"
 
 
@@ -182,3 +186,11 @@ def test_ach_received_payment_dto():
 
     assert payment.id == _id
     assert str(payment.attributes["completionDate"]) == attributes["completionDate"]
+
+
+def test_cancel_book_payment():
+    payment = create_inline_ach_payment().data
+    assert payment.type == "achPayment"
+    cancel_response = client.payments.cancel(payment.id).data
+    assert cancel_response.type == payment.type
+    assert cancel_response.id == payment.id
