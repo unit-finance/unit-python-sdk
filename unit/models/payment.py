@@ -224,8 +224,17 @@ class CreateVerifiedPaymentRequest(CreatePaymentBaseRequest):
 class CreateBookPaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 direction: str = "Credit"):
+                 direction: str = "Credit", transaction_summary_override: Optional[str] = None):
         super().__init__(amount, description, relationships, idempotency_key, tags, direction, _type="bookPayment")
+        self.transaction_summary_override = transaction_summary_override
+
+    def to_json_api(self) -> Dict:
+        payload = CreatePaymentBaseRequest.to_json_api(self)
+
+        if self.transaction_summary_override:
+            payload["data"]["attributes"]["transactionSummaryOverride"] = self.transaction_summary_override
+
+        return payload
 
 
 class CreateWirePaymentRequest(CreatePaymentBaseRequest):
@@ -297,7 +306,9 @@ class ListPaymentParams(UnitParams):
                  status: Optional[List[PaymentStatus]] = None, type: Optional[List[PaymentTypes]] = None,
                  direction: Optional[List[PaymentDirections]] = None, since: Optional[str] = None,
                  until: Optional[str] = None, sort: Optional[Literal["createdAt", "-createdAt"]] = None,
-                 include: Optional[str] = None):
+                 include: Optional[str] = None, counterparty_account_id: Optional[str] = None,
+                 from_amount: Optional[int] = None, to_amount: Optional[int] = None,
+                 recurring_payment_id: Optional[str] = None, feature: Optional[List[str]] = None):
         self.limit = limit
         self.offset = offset
         self.account_id = account_id
@@ -310,6 +321,11 @@ class ListPaymentParams(UnitParams):
         self.until = until
         self.sort = sort
         self.include = include
+        self.counterparty_account_id = counterparty_account_id
+        self.from_amount = from_amount
+        self.to_amount = to_amount
+        self.recurring_payment_id = recurring_payment_id
+        self.feature = feature
 
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
@@ -328,13 +344,25 @@ class ListPaymentParams(UnitParams):
         if self.direction:
             for idx, direction_filter in enumerate(self.direction):
                 parameters[f"filter[direction][{idx}]"] = direction_filter
+        if self.feature:
+            for idx, feature_filter in enumerate(self.feature):
+                parameters[f"filter[feature][{idx}]"] = feature_filter
         if self.since:
             parameters["filter[since]"] = self.since
         if self.until:
             parameters["filter[until]"] = self.until
+        if self.counterparty_account_id:
+            parameters["filter[counterpartyAccountId]"] = self.counterparty_account_id
+        if self.recurring_payment_id:
+            parameters["filter[recurringPaymentId]"] = self.recurring_payment_id
+        if self.from_amount:
+            parameters["fromAmount"] = self.from_amount
+        if self.to_amount:
+            parameters["toAmount"] = self.to_amount
         if self.sort:
             parameters["sort"] = self.sort
         if self.include:
             parameters["include"] = self.include
+
         return parameters
 
