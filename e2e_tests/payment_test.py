@@ -188,7 +188,7 @@ def test_ach_received_payment_dto():
     assert str(payment.attributes["completionDate"]) == attributes["completionDate"]
 
 
-def test_cancel_book_payment():
+def test_cancel_inline_ach_payment():
     payment = create_inline_ach_payment().data
     assert payment.type == "achPayment"
     cancel_response = client.payments.cancel(payment.id).data
