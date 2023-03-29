@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder, UnitEncoder
 
 
 class AtmLocationResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "atm-locations"
-
     """
     UnitEncoder must be imported here and not in the model class to no cause circular importing.
     """

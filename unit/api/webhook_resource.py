@@ -7,10 +7,6 @@ import base64
 
 
 class WebhookResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "webhooks"
-
     def create(self, request: CreateWebhookRequest) -> Union[UnitResponse[WebhookDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(self.resource, payload)

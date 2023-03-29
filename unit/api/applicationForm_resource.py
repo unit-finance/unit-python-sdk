@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class ApplicationFormResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "application-forms"
-
     def create(self, request: CreateApplicationFormRequest) -> Union[UnitResponse[ApplicationFormDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(self.resource, payload)

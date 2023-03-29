@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class CustomerResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "customers"
-
     def update(self, request: PatchCustomerRequest) -> Union[UnitResponse[CustomerDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.customer_id}", payload)

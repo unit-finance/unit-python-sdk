@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class CardResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "cards"
-
     def create(self, request: CreateCardRequest) -> Union[UnitResponse[Card], UnitError]:
         payload = request.to_json_api()
         response = super().post_create(self.resource, payload)

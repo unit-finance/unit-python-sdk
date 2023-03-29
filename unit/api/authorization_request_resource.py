@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class AuthorizationRequestResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "authorization-requests"
-
     def get(self, authorization_id: str) -> Union[UnitResponse[PurchaseAuthorizationRequestDTO], UnitError]:
         response = super().get(f"{self.resource}/{authorization_id}")
         if super().is_20x(response.status_code):

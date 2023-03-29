@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class CustomerTokenResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "customers"
-
     def create_token(self, request: CreateCustomerToken) -> Union[UnitResponse[CustomerTokenDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{request.customer_id}/token", payload)

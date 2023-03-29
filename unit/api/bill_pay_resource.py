@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class BillPayResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "payments/billpay/billers"
-
     def get(self, params: GetBillersParams) -> Union[UnitResponse[List[BillerDTO]], UnitError]:
         parameters = {"name": params.name}
         if params.page:

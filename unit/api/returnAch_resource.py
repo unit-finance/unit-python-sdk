@@ -5,10 +5,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class ReturnAchResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "returns"
-
     def return_ach(self, request: ReturnReceivedAchTransactionRequest) -> Union[UnitResponse[ReturnedReceivedAchTransactionDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{request.transaction_id}", payload)

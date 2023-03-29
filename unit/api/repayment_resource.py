@@ -6,10 +6,6 @@ from unit.models.repayment import RepaymentDTO, CreateRepaymentRequest, ListRepa
 
 
 class RepaymentResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "repayments"
-
     def create(self, request: CreateRepaymentRequest) -> Union[UnitResponse[RepaymentDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post_create(self.resource, payload)

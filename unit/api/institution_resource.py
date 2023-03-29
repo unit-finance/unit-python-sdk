@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class InstitutionResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "institutions"
-
     def get(self, routing_number: str) -> Union[UnitResponse[InstitutionDTO], UnitError]:
         response = super().get(f"{self.resource}/{routing_number}", None)
         if super().is_20x(response.status_code):

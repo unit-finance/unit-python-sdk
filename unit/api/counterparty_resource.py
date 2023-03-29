@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class CounterpartyResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "counterparties"
-
     def create(self, request: Union[CreateCounterpartyRequest, CreateCounterpartyWithTokenRequest]) -> Union[UnitResponse[CounterpartyDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post_create(self.resource, payload)

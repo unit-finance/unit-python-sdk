@@ -4,10 +4,6 @@ from unit.models.received_payment import *
 
 
 class ReceivedPaymentResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "received-payments"
-
     def update(self, request: PatchReceivedPaymentRequest) -> Union[UnitResponse[AchReceivedPaymentDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.payment_id}", payload)

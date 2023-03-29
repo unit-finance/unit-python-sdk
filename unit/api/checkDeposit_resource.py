@@ -3,10 +3,6 @@ from unit.models.check_deposit import *
 from unit.models.codecs import DtoDecoder
 
 class CheckDepositResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "check-deposits"
-
     def create(self, request: CreateCheckDepositRequest) -> Union[UnitResponse[CheckDepositDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post_create(self.resource, payload)

@@ -4,10 +4,6 @@ from unit.models.codecs import DtoDecoder
 
 
 class DisputeResource(BaseResource):
-    def __init__(self):
-        super().__init__()
-        self.resource = "disputes"
-
     def get(self, dispute_id: str) -> Union[UnitResponse[DisputeDTO], UnitError]:
         response = super().get(f"{self.resource}/{dispute_id}")
         if response.status_code == 200:

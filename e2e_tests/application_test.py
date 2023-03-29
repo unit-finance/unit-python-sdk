@@ -1,11 +1,11 @@
 import os
 import uuid
 from datetime import timedelta
-from unit import Unit
+from unit import Unit, Configuration
 from unit.models.application import *
 
 token = os.environ.get('TOKEN')
-client = Unit("https://api.s.unit.sh", token)
+client = Unit(configuration=Configuration("https://api.s.unit.sh", token, 2, 150))
 
 ApplicationTypes = ["individualApplication", "businessApplication", "trustApplication"]
 
