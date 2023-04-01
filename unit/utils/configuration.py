@@ -68,6 +68,3 @@ class Configuration(object):
 
         return token
 
-
-__all__ = [Configuration]
-

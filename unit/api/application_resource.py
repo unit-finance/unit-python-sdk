@@ -1,9 +1,13 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.application import *
 from unit.models.codecs import DtoDecoder
 
 
 class ApplicationResource(BaseResource):
+    def __init__(self, configuration: Configuration):
+        super().__init__("applications", configuration)
+
     def create(self, request: Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest]) -> Union[UnitResponse[ApplicationDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post_create(self.resource, payload)

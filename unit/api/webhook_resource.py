@@ -1,3 +1,4 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.webhook import *
 from unit.models.codecs import DtoDecoder
@@ -7,6 +8,9 @@ import base64
 
 
 class WebhookResource(BaseResource):
+    def __init__(self, configuration: Configuration):
+        super().__init__("webhooks", configuration)
+
     def create(self, request: CreateWebhookRequest) -> Union[UnitResponse[WebhookDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(self.resource, payload)

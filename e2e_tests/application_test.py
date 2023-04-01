@@ -5,7 +5,9 @@ from unit import Unit, Configuration
 from unit.models.application import *
 
 token = os.environ.get('TOKEN')
-client = Unit(configuration=Configuration("https://api.s.unit.sh", token, 2, 150))
+c = Configuration("https://api.s.unit.sh", token, 2, 150)
+client = Unit(configuration=c)
+
 
 ApplicationTypes = ["individualApplication", "businessApplication", "trustApplication"]
 

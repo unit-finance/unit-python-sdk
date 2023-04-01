@@ -1,9 +1,13 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.event import *
 from unit.models.codecs import DtoDecoder
 
 
 class EventResource(BaseResource):
+    def __init__(self, configuration: Configuration):
+        super().__init__("events", configuration)
+
     def get(self, event_id: str) -> Union[UnitResponse[EventDTO], UnitError]:
         response = super().get(f"{self.resource}/{event_id}")
         if super().is_20x(response.status_code):

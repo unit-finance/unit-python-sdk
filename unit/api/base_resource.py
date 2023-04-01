@@ -6,9 +6,6 @@ from typing import Optional, Dict
 from unit.utils.configuration import Configuration
 from unit.models.codecs import UnitEncoder
 
-get_max_retries = None
-get_max_timeout = None
-
 
 def backoff_idempotency_key_handler(e):
     return backoff_handler(e) and idempotency_key_is_present(e)
@@ -41,73 +38,96 @@ def idempotency_key_is_present(e):
 
 class BaseResource(object):
     def __init__(self, resource: str, configuration: Configuration):
-        global get_max_timeout, get_max_retries
-
         self.resource = resource
         self.configuration = configuration
-        get_max_timeout = configuration.get_timeout
-        get_max_retries = configuration.get_retries
 
-    @backoff.on_predicate(backoff.expo,
-                          backoff_handler,
-                          max_tries=get_max_retries,
-                          max_time=get_max_timeout,
-                          jitter=backoff.random_jitter)
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
-        return requests.get(f"{self.configuration.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
 
-    @backoff.on_predicate(backoff.expo,
-                          backoff_handler,
-                          max_tries=get_max_retries,
-                          max_time=get_max_timeout,
-                          jitter=backoff.random_jitter)
+        @backoff.on_predicate(backoff.expo,
+                              backoff_handler,
+                              max_tries=self.configuration.get_retries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
+        def get_with_backoff(path: str, p: Dict, h: Dict[str, str]):
+            return requests.get(path, params=p, headers=h)
+
+        return get_with_backoff(f"{self.configuration.api_url}/{resource}", params, self.__merge_headers(headers))
+
     def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.post(f"{self.configuration.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
-    @backoff.on_predicate(backoff.expo,
-                          backoff_idempotency_key_handler,
-                          max_tries=get_max_retries,
-                          max_time=get_max_timeout,
-                          jitter=backoff.random_jitter)
+        @backoff.on_predicate(backoff.expo,
+                              backoff_handler,
+                              max_tries=self.configuration.get_retries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
+        def post_with_backoff(path: str, d: Dict, h: Dict[str, str]):
+            return requests.post(path, data=d, headers=h)
+
+        return post_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
+
     def post_create(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.post(f"{self.configuration.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
-    @backoff.on_predicate(backoff.expo,
-                          backoff_handler,
-                          max_tries=get_max_retries,
-                          max_time=get_max_timeout,
-                          jitter=backoff.random_jitter)
+        @backoff.on_predicate(backoff.expo,
+                              backoff_idempotency_key_handler,
+                              max_tries=self.configuration.get_retries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
+        def post_create_with_backoff(path: str, d, h):
+            return requests.post(path, data=d, headers=h)
+
+        return post_create_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
+
     def post_full_path(self, path: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.post(path, data=data, headers=self.__merge_headers(headers))
 
-    @backoff.on_predicate(backoff.expo,
-                          backoff_handler,
-                          max_tries=get_max_retries,
-                          max_time=get_max_timeout,
-                          jitter=backoff.random_jitter)
+        @backoff.on_predicate(backoff.expo,
+                              backoff_handler,
+                              max_tries=self.configuration.get_retries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
+        def post_full_path_with_backoff(p, d, h):
+            return requests.post(p, data=d, headers=h)
+
+        return post_full_path_with_backoff(path, data, self.__merge_headers(headers))
+
     def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.patch(f"{self.configuration.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
-    @backoff.on_predicate(backoff.expo,
-                          backoff_handler,
-                          max_tries=get_max_retries,
-                          max_time=get_max_timeout,
-                          jitter=backoff.random_jitter)
+        @backoff.on_predicate(backoff.expo,
+                              backoff_handler,
+                              max_tries=self.configuration.get_retries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
+        def patch_with_backoff(p, d, h):
+            return requests.patch(p, data=d, headers=h)
+
+        return patch_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
+
     def delete(self, resource: str, data: Dict = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.delete(f"{self.configuration.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
 
-    @backoff.on_predicate(backoff.expo,
-                          backoff_handler,
-                          max_tries=get_max_retries,
-                          max_time=get_max_timeout,
-                          jitter=backoff.random_jitter)
+        @backoff.on_predicate(backoff.expo,
+                              backoff_handler,
+                              max_tries=self.configuration.get_retries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
+        def delete_with_backoff(p, d, h):
+            return requests.delete(p, data=d, headers=h)
+
+        return delete_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
+
     def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
-        return requests.put(f"{self.configuration.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
+        @backoff.on_predicate(backoff.expo,
+                              backoff_handler,
+                              max_tries=self.configuration.get_retries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
+        def put_with_backoff(p, d, h):
+            return requests.put(p, data=d, headers=h)
+
+        return put_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
     def __merge_headers(self, headers: Optional[Dict[str, str]] = None):
         if not headers:

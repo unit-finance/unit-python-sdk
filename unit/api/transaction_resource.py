@@ -1,9 +1,13 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.codecs import DtoDecoder
 from unit.models.transaction import *
 
 
 class TransactionResource(BaseResource):
+    def __init__(self, configuration: Configuration):
+        super().__init__("transactions", configuration)
+
     def get(self, transaction_id: str, include: Optional[str] = "") -> Union[UnitResponse[TransactionDTO], UnitError]:
         response = super().get(f"{self.resource}/{transaction_id}", {"include": include})
         if super().is_20x(response.status_code):

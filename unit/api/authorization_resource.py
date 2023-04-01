@@ -1,9 +1,13 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.authorization import *
 from unit.models.codecs import DtoDecoder
 
 
 class AuthorizationResource(BaseResource):
+    def __init__(self, configuration: Configuration):
+        super().__init__("authorizations", configuration)
+
     def get(self, authorization_id: str, include_non_authorized: Optional[bool] = False) -> Union[UnitResponse[AuthorizationDTO], UnitError]:
         params = {"filter[includeNonAuthorized]": include_non_authorized}
 
