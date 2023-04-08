@@ -2,7 +2,7 @@ from unit.app_config import sdk_version
 
 
 class Configuration(object):
-    def __init__(self, api_url, token, retries=1, timeout=120):
+    def __init__(self, api_url, token, retries=0, timeout=120):
         self.api_url = self.__check_api_url(api_url)
         self.token = self.__check_token(token)
         self.retries = self.__check_retries(retries)
@@ -28,7 +28,7 @@ class Configuration(object):
         self.retries = self.__check_retries(retries)
 
     def get_retries(self):
-        return self.retries
+        return self.retries + 1
 
     def get_api_url(self):
         return self.api_url
@@ -52,7 +52,7 @@ class Configuration(object):
             raise Exception("retries is missing")
 
         # max_tries must be greater than 0 due to an infinite loop of backoff library otherwise
-        return retries if retries > 1 else 1
+        return retries if retries > 0 else 0
 
     @staticmethod
     def __check_api_url(api_url: str):
