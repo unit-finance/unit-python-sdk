@@ -44,26 +44,26 @@ class Configuration(object):
         try:
             i_seconds = int(seconds)
 
-            if i_seconds < 0:
-                raise Exception("seconds must be 0 or greater")
-
-            return i_seconds
-
         except Exception as e:
             raise Exception("seconds must be an int")
+
+        if i_seconds < 0:
+            raise Exception("seconds must be 0 or greater")
+
+        return i_seconds
 
     @staticmethod
     def __check_retries(retries):
         try:
             tries = int(retries)
 
-            if tries < 0:
-                raise Exception("retries must be 0 or greater")
-
-            return tries
-
         except Exception as e:
             raise Exception("retries must be an int")
+
+        if tries < 0:
+            raise Exception("retries must be 0 or greater")
+
+        return tries
 
     @staticmethod
     def __check_api_url(api_url: str):
