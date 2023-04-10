@@ -40,21 +40,30 @@ class Configuration(object):
         return self.timeout
 
     @staticmethod
-    def __check_timeout(seconds: int):
-        if not seconds:
-            raise Exception("timeout is missing")
+    def __check_timeout(seconds):
+        try:
+            i_seconds = int(seconds)
 
-        return seconds if seconds > 0 else 120
+            if i_seconds < 0:
+                raise Exception("seconds must be 0 or greater")
+
+            return i_seconds
+
+        except Exception as e:
+            raise Exception("seconds must be an int")
 
     @staticmethod
-    def __check_retries(retries: int):
-        if not retries:
-            raise Exception("retries is missing")
+    def __check_retries(retries):
+        try:
+            tries = int(retries)
 
-        if retries < 0:
-            raise Exception("retries must be 0 or greater")
+            if tries < 0:
+                raise Exception("retries must be 0 or greater")
 
-        return retries
+            return tries
+
+        except Exception as e:
+            raise Exception("retries must be an int")
 
     @staticmethod
     def __check_api_url(api_url: str):
