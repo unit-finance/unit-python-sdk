@@ -27,7 +27,7 @@ class Configuration(object):
     def set_retries(self, retries):
         self.retries = self.__check_retries(retries)
 
-    def get_retries(self):
+    def get_tries(self):
         return self.retries + 1
 
     def get_api_url(self):
@@ -51,8 +51,10 @@ class Configuration(object):
         if not retries:
             raise Exception("retries is missing")
 
-        # max_tries must be greater than 0 due to an infinite loop of backoff library otherwise
-        return retries if retries > 0 else 0
+        if retries < 0:
+            raise Exception("retries must be 0 or greater")
+
+        return retries
 
     @staticmethod
     def __check_api_url(api_url: str):

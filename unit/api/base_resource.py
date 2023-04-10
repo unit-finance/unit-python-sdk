@@ -45,7 +45,7 @@ class BaseResource(object):
 
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
-                              max_tries=self.configuration.get_retries,
+                              max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def get_with_backoff(path: str, p: Dict, h: Dict[str, str]):
@@ -58,7 +58,7 @@ class BaseResource(object):
 
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
-                              max_tries=self.configuration.get_retries,
+                              max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_with_backoff(path: str, d: Dict, h: Dict[str, str]):
@@ -71,7 +71,7 @@ class BaseResource(object):
 
         @backoff.on_predicate(backoff.expo,
                               backoff_idempotency_key_handler,
-                              max_tries=self.configuration.get_retries,
+                              max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_create_with_backoff(path: str, d, h):
@@ -84,7 +84,7 @@ class BaseResource(object):
 
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
-                              max_tries=self.configuration.get_retries,
+                              max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_full_path_with_backoff(p, d, h):
@@ -97,7 +97,7 @@ class BaseResource(object):
 
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
-                              max_tries=self.configuration.get_retries,
+                              max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def patch_with_backoff(p, d, h):
@@ -110,7 +110,7 @@ class BaseResource(object):
 
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
-                              max_tries=self.configuration.get_retries,
+                              max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def delete_with_backoff(p, d, h):
@@ -121,7 +121,7 @@ class BaseResource(object):
     def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
-                              max_tries=self.configuration.get_retries,
+                              max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def put_with_backoff(p, d, h):
