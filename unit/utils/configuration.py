@@ -55,15 +55,15 @@ class Configuration(object):
     @staticmethod
     def __check_retries(retries):
         try:
-            tries = int(retries)
+            i_retries = int(retries)
 
         except Exception as e:
             raise Exception("retries must be an int")
 
-        if tries < 0:
+        if i_retries < 0:
             raise Exception("retries must be 0 or greater")
 
-        return tries
+        return i_retries
 
     @staticmethod
     def __check_api_url(api_url: str):
