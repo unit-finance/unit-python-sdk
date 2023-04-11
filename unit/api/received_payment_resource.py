@@ -1,13 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.codecs import DtoDecoder
 from unit.models.received_payment import *
 
 
 class ReceivedPaymentResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "received-payments"
-
+    def __init__(self, configuration: Configuration):
+        super().__init__("received-payments", configuration)
     def update(self, request: PatchReceivedPaymentRequest) -> Union[UnitResponse[AchReceivedPaymentDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.payment_id}", payload)

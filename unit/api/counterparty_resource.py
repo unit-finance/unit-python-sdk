@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.counterparty import *
 from unit.models.codecs import DtoDecoder
 
 
 class CounterpartyResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "counterparties"
+    def __init__(self, configuration: Configuration):
+        super().__init__("counterparties", configuration)
 
     def create(self, request: Union[CreateCounterpartyRequest, CreateCounterpartyWithTokenRequest]) -> Union[UnitResponse[CounterpartyDTO], UnitError]:
         payload = request.to_json_api()
