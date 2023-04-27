@@ -1,10 +1,9 @@
 from distutils.core import setup
-from package_version import sdk_version
 
 setup(
     name='unit-python-sdk',
     packages=['unit', 'unit.api', 'unit.models', 'unit.utils'],
-    version=sdk_version,
+    version="0.23.1",
     license='Mozilla Public License 2.0',
     description='This library provides a python wrapper to http://unit.co API. See https://docs.unit.co/',
     author='unit.co',

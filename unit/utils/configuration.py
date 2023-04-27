@@ -1,6 +1,3 @@
-from package_version import sdk_version
-
-
 class Configuration(object):
     def __init__(self, api_url, token, retries=0, timeout=120):
         self.api_url = self.__check_api_url(api_url)
@@ -12,7 +9,7 @@ class Configuration(object):
         return {
             "content-type": "application/vnd.api+json",
             "authorization": f"Bearer {self.token}",
-            "X-UNIT-SDK": f"unit-python-sdk@v{sdk_version}"
+            "X-UNIT-SDK": f"unit-python-sdk@v0.23.1"
         }
 
     def set_api_url(self, api_url):
