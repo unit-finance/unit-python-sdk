@@ -38,7 +38,7 @@ class CreateFeeRequest(object):
         }
 
         if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.tags
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
@@ -69,7 +69,7 @@ class ReverseFeeRequest(object):
         }
 
         if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.tags
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
