@@ -38,7 +38,38 @@ class CreateFeeRequest(object):
         }
 
         if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.tags
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
+class ReverseFeeRequest(object):
+    def __init__(self, description: str, relationships: Optional[Dict[str, Relationship]],
+                 tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None):
+        self.description = description
+        self.tags = tags
+        self.idempotency_key = idempotency_key
+        self.relationships = relationships
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "feeReversal",
+                "attributes": {
+                    "description": self.description
+                },
+                "relationships": self.relationships
+            }
+        }
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
