@@ -1,4 +1,4 @@
-from unit.app_config import sdk_version
+from package_version import sdk_version
 
 
 class Configuration(object):

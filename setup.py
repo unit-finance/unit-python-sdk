@@ -1,5 +1,5 @@
 from distutils.core import setup
-from unit.app_config import sdk_version
+from package_version import sdk_version
 
 setup(
     name='unit-python-sdk',
