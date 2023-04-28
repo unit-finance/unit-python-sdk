@@ -372,6 +372,7 @@ class DeviceFingerprint(UnitDTO):
     def from_json_api(cls, data: Dict):
         return cls(value=data["value"], provider=data["provider"])
 
+
 class CheckCounterparty(object):
     def __init__(self, routing_number: str, account_number: str, name: str):
         self.routing_number = routing_number
@@ -384,3 +385,27 @@ class CheckCounterparty(object):
             return None
 
         return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
+
+
+class Agent(object):
+    def __init__(self, status: str, full_name: FullName, ssn: str, passport: str, nationality: str, date_of_birth: date,
+                 address: Address, phone: Phone, email: str, jwt_subject: str):
+        self.status = status
+        self.full_name = full_name
+        self.ssn = ssn
+        self.passport: passport
+        self.nationality = nationality
+        self.date_of_birth = date_of_birth
+        self.address = address
+        self.phone = phone
+        self.email = email
+        self.jwt_subject = jwt_subject
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if not data:
+            return None
+
+        return Agent(data["status"], data["fullName"], data["ssn"], data.get("passport"), data.get("nationality"),
+                     data["dateOfBirth"], data["address"], data["phone"], data["email"], data.get("jwtSubject"))
+

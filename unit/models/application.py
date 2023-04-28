@@ -12,18 +12,21 @@ ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMisma
 
 ApplicationTypes = Literal["individualApplication", "businessApplication"]
 
+
 class IndividualApplicationDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
                  email: str, phone: Phone, status: ApplicationStatus, ssn: Optional[str], message: Optional[str],
                  ip: Optional[str], ein: Optional[str], dba: Optional[str],
                  sole_proprietorship: Optional[bool], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], archived: Optional[bool],
+                 power_of_attorney_agent: Optional[Agent], id_theft_score: Optional[int]):
         self.id = id
         self.type = "individualApplication"
         self.attributes = {"createdAt": created_at, "fullName": full_name, "address": address,
                            "dateOfBirth": date_of_birth, "email": email, "phone": phone, "status": status, "ssn": ssn,
-                           "message": message, "ip": ip, "ein": ein, "dba": dba,
-                           "soleProprietorship": sole_proprietorship, "tags": tags}
+                           "message": message, "ip": ip, "ein": ein, "dba": dba, "archived": archived,
+                           "powerOfAttorneyAgent": power_of_attorney_agent, "soleProprietorship": sole_proprietorship,
+                           "idTheftScore": id_theft_score, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -35,8 +38,8 @@ class IndividualApplicationDTO(object):
             attributes["email"], Phone.from_json_api(attributes["phone"]), attributes["status"],
             attributes.get("ssn"), attributes.get("message"), attributes.get("ip"),
             attributes.get("ein"), attributes.get("dba"), attributes.get("soleProprietorship"),
-            attributes.get("tags"), relationships
-        )
+            attributes.get("tags"), relationships, attributes.get("archived"),
+            Agent.from_json_api(attributes.get("powerOfAttorneyAgent")), attributes.get("idTheftScore"))
 
 
 class BusinessApplicationDTO(object):
@@ -53,7 +56,6 @@ class BusinessApplicationDTO(object):
                            "contact": contact, "officer": officer, "beneficialOwners":beneficial_owners, "tags": tags}
         self.relationships = relationships
 
-
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return BusinessApplicationDTO(
@@ -66,7 +68,9 @@ class BusinessApplicationDTO(object):
             attributes.get("tags"), relationships
         )
 
+
 ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
+
 
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
