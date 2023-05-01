@@ -19,14 +19,16 @@ class IndividualApplicationDTO(object):
                  ip: Optional[str], ein: Optional[str], dba: Optional[str],
                  sole_proprietorship: Optional[bool], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]], archived: Optional[bool],
-                 power_of_attorney_agent: Optional[Agent], id_theft_score: Optional[int]):
+                 power_of_attorney_agent: Optional[Agent], id_theft_score: Optional[int], industry: Optional[str],
+                 passport: Optional[str], nationality: Optional[str], updated_at: Optional[datetime]):
         self.id = id
         self.type = "individualApplication"
         self.attributes = {"createdAt": created_at, "fullName": full_name, "address": address,
                            "dateOfBirth": date_of_birth, "email": email, "phone": phone, "status": status, "ssn": ssn,
                            "message": message, "ip": ip, "ein": ein, "dba": dba, "archived": archived,
                            "powerOfAttorneyAgent": power_of_attorney_agent, "soleProprietorship": sole_proprietorship,
-                           "idTheftScore": id_theft_score, "tags": tags}
+                           "industry": industry, "passport": passport, "nationality": nationality,
+                           "updatedAt": updated_at, "idTheftScore": id_theft_score, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -39,7 +41,9 @@ class IndividualApplicationDTO(object):
             attributes.get("ssn"), attributes.get("message"), attributes.get("ip"),
             attributes.get("ein"), attributes.get("dba"), attributes.get("soleProprietorship"),
             attributes.get("tags"), relationships, attributes.get("archived"),
-            Agent.from_json_api(attributes.get("powerOfAttorneyAgent")), attributes.get("idTheftScore"))
+            Agent.from_json_api(attributes.get("powerOfAttorneyAgent")), attributes.get("idTheftScore"),
+            attributes.get("industry"), attributes.get("passport"), attributes.get("nationality"),
+            date_utils.to_datetime(attributes.get("updatedAt")))
 
 
 class BusinessApplicationDTO(object):
