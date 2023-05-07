@@ -1,6 +1,10 @@
 import json
 from unit.utils import date_utils
-from typing import Optional, IO, Literal
+try:
+    from typing import Optional, IO, Literal
+except ImportError:
+    from typing import Optional, IO
+    from typing_extensions import Literal
 from unit.models import *
 
 CheckDepositStatus = Literal["AwaitingImages", "AwaitingFrontImage", "AwaitingBackImage", "Pending", "PendingReview",
@@ -56,11 +60,11 @@ class CreateCheckDepositRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 class ListCheckDepositParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None,
+                 customer_id: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  sort: Optional[str] = None, include: Optional[str] = None):
         self.offset = offset
         self.limit = limit
@@ -77,7 +81,7 @@ class ListCheckDepositParams(UnitParams):
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.sort:
             parameters["sort"] = self.sort
         if self.include:
@@ -112,5 +116,5 @@ class PatchCheckDepositRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 

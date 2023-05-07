@@ -1,5 +1,9 @@
 import json
-from typing import Optional, Literal
+try:
+    from typing import Optional, Literal
+except ImportError:
+    from typing import Optional
+    from typing_extensions import Literal
 from unit.models import *
 from unit.utils import date_utils
 
@@ -77,7 +81,7 @@ class ApproveAuthorizationRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class DeclineAuthorizationRequest(object):
@@ -98,4 +102,4 @@ class DeclineAuthorizationRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())

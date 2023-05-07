@@ -7,11 +7,11 @@ CardStatus = Literal["Inactive", "Active", "Stolen", "Lost", "Frozen", "ClosedBy
 class IndividualDebitCardDTO(object):
     def __init__(self, id: str, created_at: datetime, last_4_digits: str, expiration_date: str, status: CardStatus,
                  shipping_address: Optional[Address], design: Optional[str],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = id
         self.type = "individualDebitCard"
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
-                           "status": status, "shippingAddress": shipping_address, "design": design}
+                           "status": status, "shippingAddress": shipping_address, "design": design, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -20,8 +20,7 @@ class IndividualDebitCardDTO(object):
         return IndividualDebitCardDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
             attributes["expirationDate"], attributes["status"],
-            shipping_address, attributes.get("design"), relationships
-        )
+            shipping_address, attributes.get("design"), relationships, attributes.get("tags"))
 
 
 class BusinessCardDTO(object):
@@ -29,13 +28,14 @@ class BusinessCardDTO(object):
                  ssn: Optional[str], full_name: FullName, date_of_birth: date, address: Address, phone: Phone,
                  email: str, status: CardStatus, passport: Optional[str], nationality: Optional[str],
                  shipping_address: Optional[Address], design: Optional[str],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = _id
         self.type = _type
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
                            "ssn": ssn, "fullName": full_name, "dateOfBirth": date_of_birth, "address": address,
                            "phone": phone, "email": email, "status": status, "passport": passport,
-                           "nationality": nationality, "shippingAddress": shipping_address, "design": design}
+                           "nationality": nationality, "shippingAddress": shipping_address, "design": design,
+                           "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -46,7 +46,8 @@ class BusinessCardDTO(object):
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
             attributes.get("passport"), attributes.get("nationality"),
-            Address.from_json_api(attributes.get("shippingAddress")), attributes.get("design"), relationships
+            Address.from_json_api(attributes.get("shippingAddress")), attributes.get("design"), relationships,
+            attributes.get("tags")
         )
 
 
@@ -76,18 +77,18 @@ class BusinessCreditCardDTO(BusinessCardDTO):
 
 class IndividualVirtualDebitCardDTO(object):
     def __init__(self, _id: str, created_at: datetime, last_4_digits: str, expiration_date: str, status: CardStatus,
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = _id
         self.type = "individualVirtualDebitCard"
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
-                           "status": status}
+                           "status": status, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return IndividualVirtualDebitCardDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["last4Digits"],
-            attributes["expirationDate"], attributes["status"], relationships
+            attributes["expirationDate"], attributes["status"], relationships, attributes.get("tags")
         )
 
 
@@ -95,13 +96,13 @@ class BusinessVirtualCardDTO(object):
     def __init__(self, _id: str, _type: str, created_at: datetime, last_4_digits: str, expiration_date: str,
                  ssn: Optional[str], full_name: FullName, date_of_birth: date, address: Address, phone: Phone,
                  email: str, status: CardStatus, passport: Optional[str], nationality: Optional[str],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]]):
         self.id = _id
         self.type = _type
         self.attributes = {"createdAt": created_at, "last4Digits": last_4_digits, "expirationDate": expiration_date,
                            "ssn": ssn, "fullName": full_name, "dateOfBirth": date_of_birth, "address": address,
                            "phone": phone, "email": email, "status": status, "passport": passport,
-                           "nationality": nationality}
+                           "nationality": nationality, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
@@ -111,7 +112,7 @@ class BusinessVirtualCardDTO(object):
             attributes["expirationDate"], attributes.get("ssn"), FullName.from_json_api(attributes["fullName"]),
             attributes["dateOfBirth"], Address.from_json_api(attributes["address"]),
             Phone.from_json_api(attributes["phone"]), attributes["email"], attributes["status"],
-            attributes.get("passport"), attributes.get("nationality"), relationships)
+            attributes.get("passport"), attributes.get("nationality"), relationships, attributes.get("tags"))
 
 
 class BusinessVirtualDebitCardDTO(BusinessVirtualCardDTO):
@@ -176,7 +177,7 @@ class CreateIndividualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessCard(object):
@@ -184,7 +185,8 @@ class CreateBusinessCard(object):
                  relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
                  ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
                  design: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CardLevelLimits] = None,
+                 additional_embossed_text: Optional[str] = None, print_only_business_name: Optional[bool] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -198,6 +200,9 @@ class CreateBusinessCard(object):
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
+        self.limits = limits
+        self.additional_embossed_text = additional_embossed_text
+        self.print_only_business_name = print_only_business_name
 
     def to_json_api(self, _type: str) -> Dict:
         payload = {
@@ -235,10 +240,19 @@ class CreateBusinessCard(object):
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
+
+        if self.additional_embossed_text:
+            payload["data"]["attributes"]["additionalEmbossedText"] = self.additional_embossed_text
+
+        if self.print_only_business_name is not None:
+            payload["data"]["attributes"]["printOnlyBusinessName"] = self.print_only_business_name
+
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessDebitCard(CreateBusinessCard):
@@ -276,14 +290,14 @@ class CreateIndividualVirtualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessVirtualCard(object):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  relationships: Dict[str, Relationship], ssn: Optional[str] = None, passport: Optional[str] = None,
                  nationality: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CardLevelLimits] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -295,6 +309,7 @@ class CreateBusinessVirtualCard(object):
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
+        self.limits = limits
 
     def to_json_api(self, _type: str) -> Dict:
         payload = {
@@ -326,10 +341,13 @@ class CreateBusinessVirtualCard(object):
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
+
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateBusinessVirtualDebitCard(CreateBusinessVirtualCard):
@@ -374,13 +392,13 @@ class PatchIndividualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBusinessCard(object):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, limits: Optional[CardLevelLimits] = None):
         self.card_id = card_id
         self.shipping_address = shipping_address
         self.address = address
@@ -388,6 +406,7 @@ class PatchBusinessCard(object):
         self.email = email
         self.design = design
         self.tags = tags
+        self.limits = limits
 
     def to_json_api(self, _type: str = "businessDebitCard") -> Dict:
         payload = {
@@ -415,10 +434,13 @@ class PatchBusinessCard(object):
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
+
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBusinessDebitCard(PatchBusinessCard):
@@ -449,18 +471,19 @@ class PatchIndividualVirtualDebitCard(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchBusinessVirtualCard(object):
     def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
                  email: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 _type: str = "businessVirtualDebitCard"):
+                 _type: str = "businessVirtualDebitCard", limits: Optional[CardLevelLimits] = None):
         self.card_id = card_id
         self.address = address
         self.phone = phone
         self.email = email
         self.tags = tags
+        self.limits = limits
 
     def to_json_api(self, _type: str = "businessVirtualDebitCard") -> Dict:
         payload = {
@@ -481,6 +504,9 @@ class PatchBusinessVirtualCard(object):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.limits:
+            payload["data"]["attributes"]["limits"] = self.limits
 
         return payload
 
@@ -516,7 +542,7 @@ class ReplaceCardRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 PinStatus = Literal["Set", "NotSet"]
@@ -546,7 +572,7 @@ class CardLimitsDTO(object):
 
 class ListCardParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, tags: Optional[object] = None, include: Optional[str] = None,
+                 customer_id: Optional[str] = None, tags: Optional[Dict[str, str]] = None, include: Optional[str] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None,
                  status: Optional[List[CardStatus]] = None):
         self.offset = offset
@@ -565,7 +591,7 @@ class ListCardParams(UnitParams):
         if self.account_id:
             parameters["filter[accountId]"] = self.account_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include:
             parameters["include"] = self.include
         if self.sort:
@@ -575,3 +601,68 @@ class ListCardParams(UnitParams):
                 parameters[f"filter[status][{idx}]"] = status_filter
         return parameters
 
+
+class GetMobileWalletPayloadRequest(UnitRequest):
+    def __init__(self, card_id: str, signed_nonce: str, secure_path: Optional[str] = "https://secure.api.s.unit.sh"):
+        self.card_id = card_id
+        self.signed_nonce = signed_nonce
+        self.secure_path = secure_path
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "attributes": {
+                    "signedNonce": self.signed_nonce
+                }
+            }
+        }
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
+class MobileWalletPayloadDTO(object):
+    def __init__(self, payload: str):
+        self.type = "mobileWalletPayload"
+        self.attributes = {"payload": payload}
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return MobileWalletPayloadDTO(attributes["payload"])
+
+
+class EnableCardToCardPaymentsRequest(UnitRequest):
+    def __init__(self, card_id: str, astra_token: str, idempotency_key: Optional[str] = None):
+        self.card_id = card_id
+        self.astra_token = astra_token
+        self.idempotency_key = idempotency_key
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "astra",
+                "attributes": {
+                    "token": self.astra_token
+                }
+            }
+        }
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
+class CardToCardPaymentDTO(object):
+    def __init__(self, _type: str, _id: str, astra_card_id: str):
+        self._type = _type
+        self._id = _id
+        self.astra_card_id = astra_card_id
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CardToCardPaymentDTO(_id, _type, attributes["astraCardId"])

@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.account import *
 from unit.models.codecs import DtoDecoder
 
 
 class AccountResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "accounts"
+    def __init__(self, configuration: Configuration):
+        super().__init__("accounts", configuration)
 
     def create(self, request: CreateAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
@@ -26,8 +26,26 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def reopen_account(self, account_id: str, reason: str = "ByCustomer") -> Union[UnitResponse[AccountDTO], UnitError]:
+    def reopen_account(self, account_id: str, reason: AccountCloseReason = "ByCustomer") ->\
+            Union[UnitResponse[AccountDTO], UnitError]:
         response = super().post(f"{self.resource}/{account_id}/reopen", {'reason': reason})
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def freeze_account(self, request: FreezeAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.account_id}/freeze", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def unfreeze_account(self, account_id: str) -> Union[UnitResponse[AccountDTO], UnitError]:
+        response = super().post(f"{self.resource}/{account_id}/unfreeze")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
@@ -49,7 +67,6 @@ class AccountResource(BaseResource):
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
-
 
     def get(self, account_id: str, include: Optional[str] = "") -> Union[UnitResponse[AccountDTO], UnitError]:
         response = super().get(f"{self.resource}/{account_id}", {"include": include})
@@ -112,5 +129,3 @@ class AccountResource(BaseResource):
             return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
-
-

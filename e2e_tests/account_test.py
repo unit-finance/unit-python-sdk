@@ -103,17 +103,33 @@ def test_limits_account():
 
 def test_close_account():
     account_id = create_deposit_account().data.id
-    requet = CloseAccountRequest(account_id, "Fraud")
-    response = client.accounts.close_account(requet)
+    request = CloseAccountRequest(account_id, "Fraud")
+    response = client.accounts.close_account(request)
     assert response.data.type == "depositAccount"
 
 
 def test_close_and_reopen_account():
     account_id = create_deposit_account().data.id
-    requet = CloseAccountRequest(account_id)
-    response = client.accounts.close_account(requet)
+    request = CloseAccountRequest(account_id)
+    response = client.accounts.close_account(request)
     assert response.data.type == "depositAccount"
     response = client.accounts.reopen_account(account_id)
+    assert response.data.type == "depositAccount"
+
+
+def test_freeze_account():
+    account_id = create_deposit_account().data.id
+    request = FreezeAccountRequest(account_id, "Fraud")
+    response = client.accounts.freeze_account(request)
+    assert response.data.type == "depositAccount"
+
+
+def test_freeze_and_unfreeze_account():
+    account_id = create_deposit_account().data.id
+    request = FreezeAccountRequest(account_id, "Fraud")
+    response = client.accounts.freeze_account(request)
+    assert response.data.type == "depositAccount"
+    response = client.accounts.unfreeze_account(account_id)
     assert response.data.type == "depositAccount"
 
 
@@ -129,7 +145,7 @@ def test_update_account():
 
 def test_update_credit_account():
     account_id = create_credit_account_for_business().data.id
-    _credit_limit = 40000
+    _credit_limit = 4000
     request = PatchCreditAccountRequest(account_id, tags={
         "purpose": "tax",
         "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"},

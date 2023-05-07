@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.customerToken import *
 from unit.models.codecs import DtoDecoder
 
 
 class CustomerTokenResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "customers"
+    def __init__(self, configuration: Configuration):
+        super().__init__("customers", configuration)
 
     def create_token(self, request: CreateCustomerToken) -> Union[UnitResponse[CustomerTokenDTO], UnitError]:
         payload = request.to_json_api()

@@ -61,7 +61,7 @@ class CreateCounterpartyRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateCounterpartyWithTokenRequest(UnitRequest):
@@ -106,7 +106,7 @@ class CreateCounterpartyWithTokenRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchCounterpartyRequest(object):
@@ -140,7 +140,7 @@ class PatchCounterpartyRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CounterpartyBalanceDTO(object):
@@ -157,7 +157,7 @@ class CounterpartyBalanceDTO(object):
 
 class ListCounterpartyParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None):
+                 tags: Optional[Dict[str, str]] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
@@ -168,6 +168,6 @@ class ListCounterpartyParams(UnitParams):
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         return parameters
 

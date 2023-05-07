@@ -2,6 +2,7 @@
 setup.cfg
 setup.py
 unit/__init__.py
+unit/app_config.py
 unit/api/__init__.py
 unit/api/account_end_of_day_resource.py
 unit/api/account_resource.py
@@ -24,6 +25,7 @@ unit/api/fee_resource.py
 unit/api/institution_resource.py
 unit/api/payment_resource.py
 unit/api/received_payment_resource.py
+unit/api/repayment_resource.py
 unit/api/returnAch_resource.py
 unit/api/reward_resource.py
 unit/api/statement_resource.py
@@ -50,6 +52,8 @@ unit/models/event.py
 unit/models/fee.py
 unit/models/institution.py
 unit/models/payment.py
+unit/models/received_payment.py
+unit/models/repayment.py
 unit/models/returnAch.py
 unit/models/reward.py
 unit/models/statement.py

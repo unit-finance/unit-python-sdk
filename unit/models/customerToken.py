@@ -1,5 +1,6 @@
 from unit.models import *
 
+
 class CustomerTokenDTO(object):
     def __init__(self, token: str, expires_in: int):
         self.type = "customerBearerToken"
@@ -8,6 +9,7 @@ class CustomerTokenDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CustomerTokenDTO(attributes["token"], attributes["expiresIn"])
+
 
 class CustomerVerificationTokenDTO(object):
     def __init__(self, verification_token: str):
@@ -22,13 +24,13 @@ class CustomerVerificationTokenDTO(object):
 class CreateCustomerToken(UnitRequest):
     def __init__(self, customer_id: str, scope: str, verification_token: Optional[str] = None,
                  verification_code: Optional[str] = None, expires_in: Optional[int] = None,
-                 jwt_subject: Optional[str] = None):
+                 jwt_token: Optional[str] = None):
         self.customer_id = customer_id
         self.scope = scope
         self.verification_token = verification_token
         self.verification_code = verification_code
         self.expires_in = expires_in
-        self.jwt_subject = jwt_subject
+        self.jwt_token = jwt_token
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -49,13 +51,13 @@ class CreateCustomerToken(UnitRequest):
         if self.verification_code:
             payload["data"]["attributes"]["verificationCode"] = self.verification_code
 
-        if self.jwt_subject:
-            payload["data"]["attributes"]["jwtSubject"] = self.jwt_subject
+        if self.jwt_token:
+            payload["data"]["attributes"]["jwtToken"] = self.jwt_token
 
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateCustomerTokenVerification(UnitRequest):
@@ -89,5 +91,5 @@ class CreateCustomerTokenVerification(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 

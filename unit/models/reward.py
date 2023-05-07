@@ -1,5 +1,9 @@
 import json
-from typing import Optional, Literal, Dict, List
+try:
+    from typing import Optional, Literal, Dict, List
+except:
+    from typing import Optional, Dict, List
+    from typing_extensions import Literal
 from datetime import datetime
 from unit.models import Relationship, UnitRequest, UnitParams
 from unit.utils import create_relationship, create_deposit_account_relationship, date_utils
@@ -7,6 +11,7 @@ from unit.utils import create_relationship, create_deposit_account_relationship,
 SORT_ORDERS = Literal["created_at", "-created_at"]
 RELATED_RESOURCES = Literal["customer", "account", "transaction"]
 RewardStatus = Literal["Sent", "Rejected"]
+
 
 class RewardDTO(object):
     def __init__(self, _id: str, created_at: datetime, amount: int, description: str, status: RewardStatus,
@@ -44,18 +49,16 @@ class CreateRewardRequest(UnitRequest):
         self.funding_account_id = funding_account_id
         self.idempotency_key = idempotency_key
         self.tags = tags
-        self.relationships = {}
 
-        if self.receiving_account_id:
-            self.relationships.update(
-                create_deposit_account_relationship(self.receiving_account_id, "receivingAccount"))
+        self.relationships = create_deposit_account_relationship(self.receiving_account_id, "receivingAccount")
 
         if self.rewarded_transaction_id:
             self.relationships.update(
                 create_relationship("transaction", self.rewarded_transaction_id, "rewardedTransaction"))
 
         if self.funding_account_id:
-            self.relationships.update(create_deposit_account_relationship(self.receiving_account_id, "fundingAccount"))
+            self.relationships.update(
+                create_deposit_account_relationship(self.funding_account_id, "fundingAccount"))
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -78,7 +81,7 @@ class CreateRewardRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class ListRewardsParams(UnitParams):
@@ -96,7 +99,7 @@ class ListRewardsParams(UnitParams):
         until: Optional[datetime] = None,
         sort: Optional[SORT_ORDERS] = None,
         include: Optional[List[RELATED_RESOURCES]] = None,
-        tags: Optional[object] = None,
+        tags: Optional[Dict[str, str]] = None,
     ):
         self.limit = limit
         self.offset = offset
@@ -143,7 +146,7 @@ class ListRewardsParams(UnitParams):
             parameters["sort"] = self.sort
 
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
 
         return parameters
 

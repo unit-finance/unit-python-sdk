@@ -362,18 +362,19 @@ class ReturnedCheckDepositTransactionDTO(BaseTransactionDTO):
                                                   attributes["amount"], attributes["balance"], attributes["summary"],
                                                   attributes["reason"], attributes.get("tags"), relationships)
 
+
 class PaymentAdvanceTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 reason: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'paymentAdvanceTransaction'
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return PaymentAdvanceTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                                  attributes["direction"],
-                                                  attributes["amount"], attributes["balance"], attributes["summary"],
-                                                  attributes.get("tags"), relationships)
+                                            attributes["direction"], attributes["amount"], attributes["balance"],
+                                            attributes["summary"], attributes.get("tags"), relationships)
+
 
 class RepaidPaymentAdvanceTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
@@ -464,7 +465,7 @@ class PatchTransactionRequest(BaseTransactionDTO, UnitRequest):
 
 class ListTransactionParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
-                 customer_id: Optional[str] = None, query: Optional[str] = None, tags: Optional[object] = None,
+                 customer_id: Optional[str] = None, query: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  since: Optional[str] = None, until: Optional[str] = None, card_id: Optional[str] = None,
                  type: Optional[List[str]] = None, exclude_fees: Optional[bool] = None,
                  sort: Optional[Literal["createdAt", "-createdAt"]] = None, include: Optional[str] = None):
@@ -491,7 +492,7 @@ class ListTransactionParams(UnitParams):
         if self.query:
             parameters["filter[query]"] = self.query
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.since:
             parameters["filter[since]"] = self.since
         if self.until:
@@ -508,3 +509,4 @@ class ListTransactionParams(UnitParams):
         if self.include:
             parameters["include"] = self.include
         return parameters
+

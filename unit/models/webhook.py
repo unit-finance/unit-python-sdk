@@ -2,7 +2,10 @@ import json
 from datetime import datetime, date
 from unit.utils import date_utils
 from unit.models import *
-from typing import Literal
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 ContentType = Literal["Json", "JsonAPI"]
 WebhookStatus = Literal["Enabled", "Disabled"]
@@ -46,7 +49,7 @@ class CreateWebhookRequest(object):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchWebhookRequest(object):

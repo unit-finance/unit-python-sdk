@@ -1,8 +1,9 @@
 from distutils.core import setup
+
 setup(
     name='unit-python-sdk',
     packages=['unit', 'unit.api', 'unit.models', 'unit.utils'],
-    version='0.16.0',
+    version="0.23.1",
     license='Mozilla Public License 2.0',
     description='This library provides a python wrapper to http://unit.co API. See https://docs.unit.co/',
     author='unit.co',
@@ -12,7 +13,7 @@ setup(
     keywords=['unit', 'finance', 'banking',
               'banking-as-a-service', 'API', 'SDK'],
     install_requires=[
-        'requests', 'backoff'
+        'requests', 'backoff', 'typing_extensions'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

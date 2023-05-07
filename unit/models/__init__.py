@@ -1,5 +1,10 @@
 import json
-from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
+try:
+    from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
+except ImportError:
+    from typing import TypeVar, Generic, Union, Optional, List, Dict
+    from typing_extensions import Literal
+
 from datetime import datetime, date
 
 
@@ -8,6 +13,15 @@ def to_camel_case(snake_str):
     # We capitalize the first letter of each component except the first one
     # with the 'title' method and join them together.
     return components[0] + ''.join(x.title() for x in components[1:])
+
+
+def extract_attributes(list_of_attributes, attributes):
+    extracted_attributes = {}
+    for a in list_of_attributes:
+        if a in attributes:
+            extracted_attributes[a] = attributes[a]
+
+    return extracted_attributes
 
 
 class UnitDTO(object):
@@ -66,6 +80,30 @@ class UnitRequest(object):
     def to_json_api(self) -> Dict:
         pass
 
+    def vars_to_attributes_dict(self, ignore: List[str] = []) -> Dict:
+        attributes = {}
+
+        for k in self.__dict__:
+            if k != "relationships" and k not in ignore:
+                v = getattr(self, k)
+                if v:
+                    attributes[to_camel_case(k)] = v
+
+        return attributes
+
+    def to_payload(self, _type: str, relationships: Dict[str, Relationship] = None, ignore: List[str] = []) -> Dict:
+        payload = {
+            "data": {
+                "type": _type,
+                "attributes": self.vars_to_attributes_dict(ignore),
+            }
+        }
+
+        if relationships:
+            payload["data"]["relationships"] = relationships
+
+        return payload
+
 
 class UnitParams(object):
     def to_dict(self) -> Dict:
@@ -86,16 +124,17 @@ class RawUnitObject(UnitDTO):
 
 class UnitErrorPayload(object):
     def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
-                 source: Optional[Dict] = None, code: Optional[str] = None):
+                 source: Optional[Dict] = None, code: Optional[str] = None, meta: Optional[Dict[str, object]] = None):
         self.title = title
         self.status = status
         self.detail = detail
         self.details = details
         self.source = source
         self.code = code
+        self.meta = meta
 
     def __str__(self):
-        return self.detail
+        return self.detail or self.title
 
 
 class UnitError(object):
@@ -108,7 +147,8 @@ class UnitError(object):
         for err in data["errors"]:
             errors.append(
                 UnitErrorPayload(err.get("title"), err.get("status"), err.get("detail", None),
-                                 err.get("details", None), err.get("source", None), err.get("code", None))
+                                 err.get("details", None), err.get("source", None), err.get("code", None),
+                                 err.get("meta", None))
             )
 
         return UnitError(errors)

@@ -7,6 +7,8 @@ FraudReason = Literal["ACHActivity", "CardActivity", "CheckActivity", "Applicati
                       "ClientIdentified", "IdentityTheft", "LinkedToFraudulentCustomer"]
 
 CreditAccountType = "creditAccount"
+DepositAccountType = "depositAccount"
+AccountTypes = Literal[CreditAccountType, DepositAccountType]
 
 
 class DepositAccountDTO(object):
@@ -15,7 +17,7 @@ class DepositAccountDTO(object):
                  status: AccountStatus, tags: Optional[Dict[str, str]], close_reason: Optional[CloseReason],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
-        self.type = "depositAccount"
+        self.type = DepositAccountType
         self.attributes = {"name": name, "createdAt": created_at, "updatedAt": updated_at,
                            "depositProduct": deposit_product, "routingNumber": routing_number,
                            "accountNumber": account_number, "currency": currency, "balance": balance,
@@ -73,7 +75,7 @@ class CreateDepositAccountRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": "depositAccount",
+                "type": DepositAccountType,
                 "attributes": {
                     "depositProduct": self.deposit_product,
                 },
@@ -90,7 +92,7 @@ class CreateDepositAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class CreateCreditAccountRequest(UnitRequest):
@@ -123,7 +125,7 @@ class CreateCreditAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 CreateAccountRequest = Union[CreateDepositAccountRequest, CreateCreditAccountRequest]
@@ -138,7 +140,7 @@ class PatchDepositAccountRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": "depositAccount",
+                "type": DepositAccountType,
                 "attributes": {}
             }
         }
@@ -152,7 +154,7 @@ class PatchDepositAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class PatchCreditAccountRequest(UnitRequest):
@@ -178,7 +180,7 @@ class PatchCreditAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 PatchAccountRequest = Union[PatchDepositAccountRequest, PatchCreditAccountRequest]
@@ -234,6 +236,7 @@ class CardLimits(object):
         return CardLimits(data["dailyWithdrawal"], data["dailyDeposit"],
                           data["dailyPurchase"], data["dailyCardTransaction"])
 
+
 class CardTotals(object):
     def __init__(self, withdrawals: int, deposits: int, purchases: int, card_transactions: int):
         self.withdrawals = withdrawals
@@ -244,6 +247,7 @@ class CardTotals(object):
     @staticmethod
     def from_json_api(data: Dict):
         return CardTotals(data["withdrawals"], data["deposits"], data["purchases"], data["cardTransactions"])
+
 
 class AccountCardLimits(object):
     def __init__(self, limits: CardLimits, totals_daily: CardTotals):
@@ -292,31 +296,44 @@ class AccountLimitsDTO(object):
                                 CheckDepositAccountLimits.from_json_api(attributes["checkDeposit"]))
 
 
+AccountCloseReason = Literal["ByCustomer", "Fraud"]
+FraudReason = Literal["ACHActivity", "CardActivity", "CheckActivity", "ApplicationHistory", "AccountActivity",
+                      "ClientIdentified", "IdentityTheft", "LinkedToFraudulentCustomer"]
+AccountCloseType = Literal["depositAccountClose", "creditAccountClose"]
+
+
 class CloseAccountRequest(UnitRequest):
-    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer"):
+    def __init__(self, account_id: str, reason: Optional[AccountCloseReason] = "ByCustomer",
+                 fraud_reason: Optional[FraudReason] = None, _type: AccountCloseType = "depositAccountClose"):
         self.account_id = account_id
         self.reason = reason
+        self.fraud_reason = fraud_reason
+        self._type = _type
 
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": "accountClose",
+                "type": self._type,
                 "attributes": {
                     "reason": self.reason,
                 }
             }
         }
 
+        if self.fraud_reason:
+            payload["data"]["attributes"]["fraudReason"] = self.fraud_reason
+
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None, include: Optional[str] = None, status: Optional[AccountStatus] = None,
-                 from_balance: Optional[int] = None, to_balance: Optional[int] = None):
+                 tags: Optional[Dict[str, str]] = None, include: Optional[str] = None,
+                 status: Optional[AccountStatus] = None, from_balance: Optional[int] = None,
+                 to_balance: Optional[int] = None, _type: Optional[AccountTypes] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
@@ -325,17 +342,21 @@ class ListAccountParams(UnitParams):
         self.status = status
         self.from_balance = from_balance
         self.to_balance = to_balance
+        self._type = _type
     
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
-            parameters["filter[tags]"] = self.tags
+            parameters["filter[tags]"] = json.dumps(self.tags)
         if self.include:
             parameters["include"] = self.include
         if self.status:
-            parameters["filter[status]"] = self.status
+            for idx, status_filter in enumerate(self.status):
+                parameters[f"filter[status][{idx}]"] = status_filter
+        if self._type:
+            parameters[f"filter[type]"] = self._type
         if self.from_balance:
             parameters["filter[fromBalance]"] = self.from_balance
         if self.to_balance:
@@ -352,7 +373,7 @@ class AccountOwnersRequest(UnitRequest):
         return self.customers.to_dict()
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class AccountDepositProductDTO(object):
@@ -363,3 +384,28 @@ class AccountDepositProductDTO(object):
     @staticmethod
     def from_json_api(attributes):
         return AccountDepositProductDTO(attributes["name"])
+
+
+class FreezeAccountRequest(UnitRequest):
+    def __init__(self, account_id: str, reason: Literal["Fraud", "Other"], reason_text: Optional[str] = None):
+        self.account_id = account_id
+        self.reason = reason
+        self.reason_text = reason_text
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "accountFreeze",
+                "attributes": {
+                    "reason": self.reason,
+                }
+            }
+        }
+
+        if self.reason_text:
+            payload["data"]["attributes"]["reasonText"] = self.reason_text
+
+        return payload
+
+    def __repr__(self) -> str:
+        return json.dumps(self.to_json_api())

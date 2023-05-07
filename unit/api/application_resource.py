@@ -1,17 +1,12 @@
-from typing import Union, List
-
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
-from unit.models import UnitResponse, UnitError
-from unit.models.application import CreateIndividualApplicationRequest, CreateBusinessApplicationRequest, \
-    BusinessApplicationDTO, IndividualApplicationDTO, ApplicationDTO, ListApplicationParams, UploadDocumentRequest, \
-    ApplicationDocumentDTO, PatchApplicationRequest
+from unit.models.application import *
 from unit.models.codecs import DtoDecoder
 
 
 class ApplicationResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "applications"
+    def __init__(self, configuration: Configuration):
+        super().__init__("applications", configuration)
 
     def create(self, request: Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest]) -> Union[UnitResponse[ApplicationDTO], UnitError]:
         payload = request.to_json_api()
@@ -76,3 +71,12 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def cancel(self, request: CancelApplicationRequest) -> Union[UnitResponse[ApplicationDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.application_id}/cancel", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            included = response.json().get("included")
+            return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+        else:
+            return UnitError.from_json_api(response.json())
