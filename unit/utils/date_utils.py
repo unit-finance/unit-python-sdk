@@ -7,10 +7,8 @@ def to_datetime(dt: str):
 
     return datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S.%f%z")
 
-
 def from_datetime(dt: datetime):
     return dt.isoformat(timespec='milliseconds') + "Z"
-
 
 def to_date(d: str):
     if d is None:
