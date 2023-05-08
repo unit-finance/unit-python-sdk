@@ -41,3 +41,18 @@ def test_create_recurring_credit_book_payment():
     res = create_recurring_credit_book_payment()
     assert res.data.type == "recurringCreditBookPayment"
 
+
+def test_create_recurring_debit_ach_payment():
+    account_id = create_deposit_account().data.id
+    counterparty_id = create_counterparty().data.id
+
+    request = CreateRecurringDebitAchPaymentRequest(100, "Rent-Apt15", CreateSchedule("Monthly", 16,
+                                                                                      total_number_of_payments=12),
+                                                    {"account": Relationship("depositAccount", account_id),
+                                                     "counterparty": Relationship("counterparty",
+                                                                                  counterparty_id)})
+
+    res = client.recurring_payments.create(request)
+    assert res.data.type == "recurringDebitAchPayment"
+
+
