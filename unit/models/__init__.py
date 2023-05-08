@@ -344,7 +344,7 @@ class CardLevelLimits(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return CardLevelLimits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
-                        data["monthlyPurchase"])
+                               data["monthlyPurchase"])
 
 
 class CardTotals(UnitDTO):
