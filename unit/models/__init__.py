@@ -334,7 +334,6 @@ class Merchant(UnitDTO):
         return None
 
 
-
 class CardLevelLimits(UnitDTO):
     def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
         self.daily_withdrawal = daily_withdrawal
@@ -373,7 +372,6 @@ class DeviceFingerprint(UnitDTO):
     @classmethod
     def from_json_api(cls, data: Dict):
         return cls(value=data["value"], provider=data["provider"])
-
 
 class CheckCounterparty(object):
     def __init__(self, routing_number: str, account_number: str, name: str):
