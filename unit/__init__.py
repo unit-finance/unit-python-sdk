@@ -63,5 +63,5 @@ class Unit(object):
         self.rewards = RewardResource(c)
         self.received_payments = ReceivedPaymentResource(c)
         self.repayments = RepaymentResource(c)
-        self.recurring_payments = RecurringPaymentResource(api_url, token, retries)
+        self.recurring_payments = RecurringPaymentResource(c)
 

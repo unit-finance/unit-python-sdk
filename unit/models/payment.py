@@ -5,14 +5,16 @@ PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"
 PaymentDirections = Literal["Debit", "Credit"]
 PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 RecurringStatus = Literal["Active", "Completed", "Disabled"]
+DayOfWeek = Literal["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 
 class Schedule(UnitDTO):
-    def __init__(self, start_time: datetime, end_time: datetime, day_of_month: int, interval: str,
-                 next_scheduled_action: str, total_number_of_payments: int):
+    def __init__(self, start_time: datetime, end_time: datetime, day_of_month: int, day_of_week: DayOfWeek,
+                 interval: str, next_scheduled_action: str, total_number_of_payments: int):
         self.start_time = start_time
         self.end_time = end_time
         self.day_of_month = day_of_month
+        self.day_of_week = day_of_week
         self.interval = interval
         self.next_scheduled_action = next_scheduled_action
         self.total_number_of_payments = total_number_of_payments
@@ -20,16 +22,18 @@ class Schedule(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return Schedule(date_utils.to_date(data["startTime"]), date_utils.to_date(data.get("endTime")),
-                        data.get("dayOfMonth"), data["interval"], data["nextScheduledAction"],
+                        data.get("dayOfMonth"), data.get("dayOfWeek"), data["interval"], data["nextScheduledAction"],
                         data.get("totalNumberOfPayments"))
 
 
 class CreateSchedule(UnitDTO):
     def __init__(self, interval: str, day_of_month: int, start_time: Optional[datetime] = None,
-                 end_time: Optional[datetime] = None, total_number_of_payments: Optional[int] = None):
+                 end_time: Optional[datetime] = None, day_of_week: Optional[DayOfWeek] = None,
+                 total_number_of_payments: Optional[int] = None):
         self.start_time = start_time
         self.end_time = end_time
         self.day_of_month = day_of_month
+        self.day_of_week = day_of_week
         self.interval = interval
         self.total_number_of_payments = total_number_of_payments
 

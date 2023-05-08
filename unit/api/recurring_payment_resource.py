@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.payment import *
 from unit.models.codecs import DtoDecoder
 
 
 class RecurringPaymentResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "recurring-payments"
+    def __init__(self, configuration: Configuration):
+        super().__init__("recurring-payments", configuration)
 
     def create(self, request: CreateRecurringCreditPaymentRequest) -> Union[UnitResponse[RecurringCreditPaymentDTO], UnitError]:
         payload = request.to_json_api()
