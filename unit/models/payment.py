@@ -167,13 +167,22 @@ class RecurringCreditAchPaymentDTO(BaseRecurringPaymentDTO):
 
 
 class RecurringCreditBookPaymentDTO(BaseRecurringPaymentDTO):
+    def __init__(self, _id: str, _type: str, created_at: datetime, update_at: datetime, amount: int, description: str,
+                 addenda: Optional[str], status: RecurringStatus, number_of_payments: int, schedule: Schedule,
+                 transaction_summary_override: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        super().__init__(_id, _type, created_at, update_at, amount, description, addenda, status, number_of_payments,
+                         schedule, tags, relationships)
+        self.attributes["transactionSummaryOverride"] = transaction_summary_override
+
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return RecurringCreditBookPaymentDTO(_id, _type, date_utils.to_datetime(attributes["createdAt"]),
                                              date_utils.to_datetime(attributes["updatedAt"]), attributes["amount"],
                                              attributes["description"], attributes.get("addenda"), attributes["status"],
                                              attributes["numberOfPayments"],
-                                             Schedule.from_json_api(attributes["schedule"]), attributes.get("tags"),
+                                             Schedule.from_json_api(attributes["schedule"]),
+                                             attributes.get("transactionSummaryOverride"), attributes.get("tags"),
                                              relationships)
 
 
@@ -191,47 +200,9 @@ class RecurringDebitAchPaymentDTO(BaseRecurringPaymentDTO):
 RecurringPaymentDTO = Union[RecurringCreditAchPaymentDTO, RecurringDebitAchPaymentDTO, RecurringCreditBookPaymentDTO]
 
 
-class CreateRecurringCreditAchPaymentRequest(UnitRequest):
-    def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
-                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
-                 type: str = "achPayment"):
-        self.type = type
-        self.amount = amount
-        self.description = description
-        self.direction = direction
-        self.idempotency_key = idempotency_key
-        self.tags = tags
-        self.relationships = relationships
-
-    def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": self.type,
-                "attributes": {
-                    "amount": self.amount,
-                    "direction": self.direction,
-                    "description": self.description
-                },
-                "relationships": self.relationships
-            }
-        }
-
-        if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        return payload
-
-    def __repr__(self):
-        json.dumps(self.to_json_api())
-
-
 class CreateRecurringPaymentBaseRequest(UnitRequest):
-    def __init__(self, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
-                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
-                 _type: str = "recurringCreditAchPayment"):
+    def __init__(self,_type: str, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
+                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]]):
         self.type = _type
         self.amount = amount
         self.description = description
@@ -269,8 +240,8 @@ class CreateRecurringCreditAchPaymentRequest(CreateRecurringPaymentBaseRequest):
     def __init__(self, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
                  addenda: Optional[str] = None, idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None):
-        CreateRecurringPaymentBaseRequest.__init__(self, amount, description, schedule, relationships,
-                                                   idempotency_key, tags)
+        CreateRecurringPaymentBaseRequest.__init__(self, "recurringCreditAchPayment", amount, description, schedule,
+                                                   relationships, idempotency_key, tags)
         self.addenda = addenda
 
     def to_json_api(self) -> Dict:
@@ -286,8 +257,8 @@ class CreateRecurringCreditBookPaymentRequest(CreateRecurringPaymentBaseRequest)
     def __init__(self, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
                  transaction_summary_override: Optional[str] = None, idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None):
-        CreateRecurringPaymentBaseRequest.__init__(self, amount, description, schedule, relationships,
-                                                   idempotency_key, tags, "recurringCreditBookPayment")
+        CreateRecurringPaymentBaseRequest.__init__(self, "recurringCreditBookPayment", amount, description, schedule,
+                                                   relationships, idempotency_key, tags)
         self.transaction_summary_override = transaction_summary_override
 
     def to_json_api(self) -> Dict:
@@ -302,10 +273,10 @@ class CreateRecurringCreditBookPaymentRequest(CreateRecurringPaymentBaseRequest)
 class CreateRecurringDebitAchPaymentRequest(CreateRecurringPaymentBaseRequest):
     def __init__(self, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
                  addenda: Optional[str] = None, idempotency_key: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None, verify_counterparty_balance: Optional[bool] = None,
-                 same_day: Optional[bool] = None):
-        CreateRecurringPaymentBaseRequest.__init__(self, amount, description, schedule, relationships,
-                                                   idempotency_key, tags, "recurringDebitAchPayment")
+                 tags: Optional[Dict[str, str]] = None, verify_counterparty_balance: Optional[bool] = False,
+                 same_day: Optional[bool] = False):
+        CreateRecurringPaymentBaseRequest.__init__(self, "recurringDebitAchPayment", amount, description, schedule,
+                                                   relationships, idempotency_key, tags)
         self.addenda = addenda
         self.verify_counterparty_balance = verify_counterparty_balance
         self.same_day = same_day
