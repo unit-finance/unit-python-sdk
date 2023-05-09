@@ -23,6 +23,7 @@ from unit.api.account_end_of_day_resource import AccountEndOfDayResource
 from unit.api.checkDeposit_resource import CheckDepositResource
 from unit.api.dispute_resource import DisputeResource
 from unit.api.reward_resource import RewardResource
+from unit.api.recurring_payment_resource import RecurringPaymentResource
 from unit.api.repayment_resource import RepaymentResource
 from unit.utils.configuration import Configuration
 
@@ -35,6 +36,7 @@ class Unit(object):
             raise Exception("use only configuration")
 
         c = configuration if configuration else Configuration(api_url, token, retries, timeout)
+
         self.applications = ApplicationResource(c)
         self.customers = CustomerResource(c)
         self.accounts = AccountResource(c)
@@ -61,3 +63,5 @@ class Unit(object):
         self.rewards = RewardResource(c)
         self.received_payments = ReceivedPaymentResource(c)
         self.repayments = RepaymentResource(c)
+        self.recurring_payments = RecurringPaymentResource(c)
+
