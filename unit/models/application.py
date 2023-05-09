@@ -68,6 +68,7 @@ class BusinessApplicationDTO(object):
 
 ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
 
+
 class CreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
                  ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
@@ -192,6 +193,85 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
+
+
+class CreateSoleProprietorApplication(UnitRequest):
+    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
+                 ip: Optional[str] = None, ein: Optional[str] = None, dba: Optional[str] = None,
+                 sole_proprietorship: Optional[bool] = True, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, ssn: Optional[str] = None, industry: Optional[Industry] = None,
+                 powerOfAttorneyAgent: Agent
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None):
+        self.full_name = full_name
+        self.date_of_birth = date_of_birth
+        self.address = address
+        self.email = email
+        self.phone = phone
+        self.ip = ip
+        self.ein = ein
+        self.dba = dba
+        self.sole_proprietorship = sole_proprietorship
+        self.ssn = ssn
+        self.passport = passport
+        self.nationality = nationality
+        self.device_fingerprints = device_fingerprints
+        self.idempotency_key = idempotency_key
+        self.tags = tags
+        self.jwt_subject = jwt_subject
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "individualApplication",
+                "attributes": {
+                    "fullName": self.full_name,
+                    "dateOfBirth": date_utils.to_date_str(self.date_of_birth),
+                    "address": self.address,
+                    "email": self.email,
+                    "phone": self.phone,
+                }
+            }
+        }
+
+        if self.ip:
+            payload["data"]["attributes"]["ip"] = self.ip
+
+        if self.ein:
+            payload["data"]["attributes"]["ein"] = self.ein
+
+        if self.dba:
+            payload["data"]["attributes"]["dba"] = self.dba
+
+        if self.sole_proprietorship:
+            payload["data"]["attributes"]["soleProprietorship"] = self.sole_proprietorship
+
+        if self.ssn:
+            payload["data"]["attributes"]["ssn"] = self.ssn
+
+        if self.passport:
+            payload["data"]["attributes"]["passport"] = self.passport
+
+        if self.nationality:
+            payload["data"]["attributes"]["nationality"] = self.nationality
+
+        if self.idempotency_key:
+            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+
+        if self.device_fingerprints:
+            payload["data"]["attributes"]["deviceFingerprints"] = [e.to_json_api() for e in self.device_fingerprints]
+
+        if self.tags:
+            payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.jwt_subject:
+            payload["data"]["attributes"]["jwtSubject"] = self.jwt_subject
+
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
 
 
 class ApplicationDocumentDTO(object):
