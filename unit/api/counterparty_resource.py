@@ -1,5 +1,8 @@
+from typing import Union, List
+
 from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
+from unit.models import UnitResponse, UnitError
 from unit.models.counterparty import *
 from unit.models.codecs import DtoDecoder
 
