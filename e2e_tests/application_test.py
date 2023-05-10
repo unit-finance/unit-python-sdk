@@ -3,6 +3,7 @@ import uuid
 from datetime import timedelta
 from unit import Unit, Configuration
 from unit.models.application import *
+from unit.models.codecs import DtoDecoder
 
 token = os.environ.get('TOKEN')
 c = Configuration("https://api.s.unit.sh", token, 2, 150)
@@ -92,3 +93,349 @@ def test_cancel_individual_application():
     res = client.applications.cancel(req)
     assert res.data.type == "individualApplication"
     assert res.data.id == app.id
+
+
+def test_individual_application_dto():
+    full_name = FullName("Jhon", "Doe")
+    created_at = date.today() - timedelta(days=20 * 365)
+    updated_at = date.today() - timedelta(days=20 * 365)
+    address = Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"), "jone.doe1@unit-finance.com",
+    phone = Phone("1", "2025550108")
+    agent = Agent.from_json_api({
+        "status": "Approved",
+          "fullName": {
+            "first": "Peter",
+            "last": "Parker"
+          },
+          "ssn": "721074426",
+          "dateOfBirth": "2001-08-15",
+          "address": {
+            "street": "5230 Newell Rd",
+            "city": "Palo Alto",
+            "state": "CA",
+            "postalCode": "94303",
+            "country": "US"
+          },
+          "phone": {
+            "countryCode": "1",
+            "number": "5555555555"
+          },
+          "email": "peter@oscorp.com"
+        })
+
+    app = IndividualApplicationDTO(id='123', created_at=created_at, full_name=full_name,
+                                   address=address, date_of_birth=date(1990, 1, 1),
+                                   email='johndoe@example.com', phone=phone,
+                                   status="Pending", ssn='123-45-6789', message='Some message',
+                                   ip='127.0.0.1', ein='12-3456789', dba='My Business', sole_proprietorship=True,
+                                   tags={'tag1': 'value1', 'tag2': 'value2'},
+                                   relationships={"org": {"data": {"type": "org","id": "1"}}}, archived=False,
+                                   power_of_attorney_agent=agent, id_theft_score=500, industry="OtherEducationServices",
+                                   passport='ABC123', nationality='US', updated_at=updated_at)
+
+    assert app.type == "individualApplication"
+    assert app.id == "123"
+    assert app.attributes["address"] == address
+    assert app.attributes["industry"] == "OtherEducationServices"
+    assert app.attributes["powerOfAttorneyAgent"].ssn == "721074426"
+    assert app.attributes["nationality"] == "US"
+    assert app.attributes["passport"] == "ABC123"
+    assert app.attributes["idTheftScore"] == 500
+
+
+def test_create_individual_application_from_json():
+    data = {
+      "type": "individualApplication",
+      "id": "53",
+      "attributes": {
+        "createdAt": "2020-01-14T14:05:04.718Z",
+        "fullName": {
+          "first": "Peter",
+          "last": "Parker"
+        },
+        "ssn": "721074426",
+        "address": {
+          "street": "20 Ingram St",
+          "street2": None,
+          "city": "Forest Hills",
+          "state": "NY",
+          "postalCode": "11375",
+          "country": "US"
+        },
+        "dateOfBirth": "2001-08-10",
+        "email": "peter@oscorp.com",
+        "phone": {
+          "countryCode": "1",
+          "number": "1555555578"
+        },
+        "status": "AwaitingDocuments",
+        "message": "Waiting for you to upload the required documents.",
+        "archived": False,
+        "tags": {
+          "userId": "106a75e9-de77-4e25-9561-faffe59d7814"
+        }
+      },
+      "relationships": {
+        "org": {
+          "data": {
+            "type": "org",
+            "id": "1"
+          }
+        },
+        "documents": {
+          "data": [
+            {
+              "type": "document",
+              "id": "1"
+            },
+            {
+              "type": "document",
+              "id": "2"
+            }
+          ]
+        },
+        "applicationForm": {
+          "data": {
+            "type": "applicationForm",
+            "id": "3"
+          }
+        }
+      }
+    }
+
+    app = IndividualApplicationDTO.from_json_api(data.get("id"), data.get("type"), data.get("attributes"),
+                                                 data.get("relationships"),)
+
+    assert app.type == "individualApplication"
+    assert app.id == "53"
+    assert app.attributes["ssn"] == "721074426"
+    assert app.attributes["archived"] is False
+    assert app.attributes["status"] == "AwaitingDocuments"
+
+
+def test_business_application_dto():
+    created_at = date.today() - timedelta(days=20 * 365)
+    updated_at = date.today() - timedelta(days=20 * 365)
+    address = Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500",
+                      "US"), "jone.doe1@unit-finance.com",
+    phone = Phone("1", "2025550108")
+
+    contact = BusinessContact.from_json_api({
+      "fullName": {
+        "first": "Richard",
+        "last": "Hendricks"
+      },
+      "email": "richard@piedpiper.com",
+      "phone": {
+        "countryCode": "1",
+        "number": "1555555578"
+      }
+    })
+
+    officer = Officer.from_json_api({
+        "fullName": {
+            "first": "Richard",
+            "last": "Hendricks"
+        },
+        "ssn": "123456789",
+        "address": {
+            "street": "5230 Newell Rd",
+            "street2": None,
+            "city": "Palo Alto",
+            "state": "CA",
+            "postalCode": "94303",
+            "country": "US"
+        },
+        "dateOfBirth": "2001-08-10",
+        "email": "richard@piedpiper.com",
+        "phone": {
+            "countryCode": "1",
+            "number": "1555555589"
+        },
+        "occupation": "ArchitectOrEngineer",
+        "annualIncome": "Between10kAnd25k",
+        "sourceOfIncome": "EmploymentOrPayrollIncome",
+        "status": "Approved"
+    })
+
+    b_owner = BeneficialOwner.from_json_api([{
+        "fullName": {
+          "first": "Richard",
+          "last": "Hendricks"
+        },
+        "ssn": "123456789",
+        "address": {
+          "street": "5230 Newell Rd",
+          "street2": None,
+          "city": "Palo Alto",
+          "state": "CA",
+          "postalCode": "94303",
+          "country": "US"
+        },
+        "dateOfBirth": "2001-08-10",
+        "phone": {
+          "countryCode": "1",
+          "number": "1555555589"
+        },
+        "email": "richard@piedpiper.com",
+        "occupation": "ArchitectOrEngineer",
+        "annualIncome": "Between10kAnd25k",
+        "sourceOfIncome": "EmploymentOrPayrollIncome",
+        "status": "Approved"
+      }])
+
+    app = BusinessApplicationDTO(id='1234', created_at=created_at, name='My Business', address=address, phone=phone,
+                                 status="Pending", state_of_incorporation='CA',
+                                 entity_type="Corporation", contact=contact, officer=officer,
+                                 beneficial_owners=b_owner, message='Test message', ein='123456789',
+                                 dba='Test DBA', tags={'tag1': 'value1', 'tag2': 'value2'},
+                                 relationships={"org": {"data": {"type": "org", "id": "1"}}},
+                                 updated_at=updated_at, industry="OtherEducationServices", archived=False)
+
+    assert app.type == "businessApplication"
+    assert app.id == "1234"
+    assert app.attributes["address"] == address
+    assert app.attributes["phone"] == phone
+    assert app.attributes["industry"] == "OtherEducationServices"
+    assert app.attributes["powerOfAttorneyAgent"].ssn == "721074426"
+    assert app.attributes["nationality"] == "US"
+
+
+def test_create_business_application_from_json():
+    data = {
+          "type": "businessApplication",
+          "id": "50",
+          "attributes": {
+            "createdAt": "2020-01-13T16:01:19.346Z",
+            "name": "Pied Piper",
+            "dba": None,
+            "address": {
+              "street": "5230 Newell Rd",
+              "street2": None,
+              "city": "Palo Alto",
+              "state": "CA",
+              "postalCode": "94303",
+              "country": "US"
+            },
+            "phone": {
+              "countryCode": "1",
+              "number": "1555555578"
+            },
+            "stateOfIncorporation": "DE",
+            "ein": "123456789",
+            "entityType": "Corporation",
+            "contact": {
+              "fullName": {
+                "first": "Richard",
+                "last": "Hendricks"
+              },
+              "email": "richard@piedpiper.com",
+              "phone": {
+                "countryCode": "1",
+                "number": "1555555578"
+              }
+            },
+            "officer": {
+              "fullName": {
+                "first": "Richard",
+                "last": "Hendricks"
+              },
+              "ssn": "123456789",
+              "address": {
+                "street": "5230 Newell Rd",
+                "street2": None,
+                "city": "Palo Alto",
+                "state": "CA",
+                "postalCode": "94303",
+                "country": "US"
+              },
+              "dateOfBirth": "2001-08-10",
+              "email": "richard@piedpiper.com",
+              "phone": {
+                "countryCode": "1",
+                "number": "1555555589"
+              },
+              "occupation": "ArchitectOrEngineer",
+              "annualIncome": "Between10kAnd25k",
+              "sourceOfIncome": "EmploymentOrPayrollIncome",
+              "status": "Approved"
+            },
+            "beneficialOwners": [
+              {
+                "fullName": {
+                  "first": "Richard",
+                  "last": "Hendricks"
+                },
+                "ssn": "123456789",
+                "address": {
+                  "street": "5230 Newell Rd",
+                  "street2": None,
+                  "city": "Palo Alto",
+                  "state": "CA",
+                  "postalCode": "94303",
+                  "country": "US"
+                },
+                "dateOfBirth": "2001-08-10",
+                "phone": {
+                  "countryCode": "1",
+                  "number": "1555555589"
+                },
+                "email": "richard@piedpiper.com",
+                "occupation": "ArchitectOrEngineer",
+                "annualIncome": "Between10kAnd25k",
+                "sourceOfIncome": "EmploymentOrPayrollIncome",
+                "status": "Approved"
+              }
+            ],
+            "tags": {
+              "userId": "106a75e9-de77-4e25-9561-faffe59d7814"
+            },
+            "archived": False,
+            "status": "AwaitingDocuments",
+            "message": "Waiting for you to upload the required documents."
+          },
+          "relationships": {
+            "org": {
+              "data": {
+                "type": "org",
+                "id": "1"
+              }
+            },
+            "documents": {
+              "data": [
+                {
+                  "type": "document",
+                  "id": "1"
+                },
+                {
+                  "type": "document",
+                  "id": "2"
+                },
+                {
+                  "type": "document",
+                  "id": "3"
+                }
+              ]
+            },
+            "applicationForm": {
+              "data": {
+                "type": "applicationForm",
+                "id": "3"
+              }
+            }
+          }
+        }
+
+    app = DtoDecoder.decode(data)
+
+    assert app.type == "businessApplication"
+    assert app.id == "50"
+    assert app.attributes["ein"] == "123456789"
+    assert app.attributes["officer"].occupation == "ArchitectOrEngineer"
+    assert app.attributes["officer"].annualIncome == "Between10kAnd25k"
+    assert app.attributes["officer"].sourceOfIncome == "EmploymentOrPayrollIncome"
+    assert app.attributes["officer"].status == "Approved"
+    assert app.attributes["status"] == "Approved"
+    assert app.attributes["name"] == "Pied Piper"
+    assert app.attributes["entityType"] == "Corporation"
+

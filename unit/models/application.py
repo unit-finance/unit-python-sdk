@@ -13,13 +13,18 @@ ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMisma
 ApplicationTypes = Literal["individualApplication", "businessApplication"]
 
 
+Industry = Literal["Retail", "Wholesale", "Restaurants", "Hospitals", "Construction", "Insurance", "Unions",
+                   "RealEstate", "FreelanceProfessional", "OtherProfessionalServices", "OnlineRetailer",
+                   "OtherEducationServices"]
+
+
 class IndividualApplicationDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
                  email: str, phone: Phone, status: ApplicationStatus, ssn: Optional[str], message: Optional[str],
                  ip: Optional[str], ein: Optional[str], dba: Optional[str],
                  sole_proprietorship: Optional[bool], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]], archived: Optional[bool],
-                 power_of_attorney_agent: Optional[Agent], id_theft_score: Optional[int], industry: Optional[str],
+                 power_of_attorney_agent: Optional[Agent], id_theft_score: Optional[int], industry: Optional[Industry],
                  passport: Optional[str], nationality: Optional[str], updated_at: Optional[datetime]):
         self.id = id
         self.type = "individualApplication"
@@ -49,15 +54,17 @@ class IndividualApplicationDTO(object):
 class BusinessApplicationDTO(object):
     def __init__(self, id: str, created_at: datetime, name: str, address: Address, phone: Phone,
                  status: ApplicationStatus, state_of_incorporation: str, entity_type: EntityType,
-                 contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner], ssn: Optional[str],
-                 message: Optional[str], ip: Optional[str], ein: Optional[str], dba: Optional[str],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner],
+                 message: Optional[str], ein: Optional[str], dba: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]], updated_at: Optional[datetime],
+                 industry: Optional[Industry], archived: Optional[bool]):
         self.id = id
         self.type = "businessApplication"
         self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
-                           "status": status, "ssn": ssn, "stateOfIncorporation": state_of_incorporation, "ssn": ssn,
-                           "message": message, "ip": ip, "ein": ein, "entityType": entity_type, "dba": dba,
-                           "contact": contact, "officer": officer, "beneficialOwners":beneficial_owners, "tags": tags}
+                           "status": status, "stateOfIncorporation": state_of_incorporation, "message": message,
+                           "ein": ein, "entityType": entity_type, "dba": dba, "contact": contact, "officer": officer,
+                           "beneficialOwners": beneficial_owners, "tags": tags, "updatedAt": updated_at,
+                           "industry": industry, "archived": archived}
         self.relationships = relationships
 
     @staticmethod
@@ -67,9 +74,9 @@ class BusinessApplicationDTO(object):
             Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
             attributes["status"], attributes.get("stateOfIncorporation"), attributes.get("entityType"),
             BusinessContact.from_json_api(attributes["contact"]), Officer.from_json_api(attributes["officer"]),
-            BeneficialOwner.from_json_api(attributes["beneficialOwners"]),  attributes.get("ssn"),
-            attributes.get("message"), attributes.get("ip"), attributes.get("ein"), attributes.get("dba"),
-            attributes.get("tags"), relationships
+            BeneficialOwner.from_json_api(attributes["beneficialOwners"]), attributes.get("message"),
+            attributes.get("ein"), attributes.get("dba"), attributes.get("tags"), relationships,
+            date_utils.to_datetime(attributes.get("updatedAt")), attributes.get("industry"), attributes.get("archived")
         )
 
 
