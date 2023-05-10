@@ -296,9 +296,13 @@ def test_business_application_dto():
     assert app.id == "1234"
     assert app.attributes["address"] == address
     assert app.attributes["phone"] == phone
+    assert app.attributes["status"] == "Pending"
     assert app.attributes["industry"] == "OtherEducationServices"
-    assert app.attributes["powerOfAttorneyAgent"].ssn == "721074426"
-    assert app.attributes["nationality"] == "US"
+    assert app.attributes["dba"] == "Test DBA"
+    assert app.attributes["message"] == "Test message"
+    assert app.attributes["ein"] == "123456789"
+    assert app.attributes["stateOfIncorporation"] == "CA"
+    assert app.attributes["entityType"] == "Corporation"
 
 
 def test_create_business_application_from_json():
