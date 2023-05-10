@@ -216,7 +216,10 @@ class BusinessContact(UnitDTO):
 class Officer(UnitDTO):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  status: Optional[Status] = None, title: Optional[Title] = None, ssn: Optional[str] = None,
-                 passport: Optional[str] = None, nationality: Optional[str] = None):
+                 passport: Optional[str] = None, nationality: Optional[str] = None,
+                 evaluation_params: Optional[str] = None, id_theft_score: Optional[str] = None,
+                 occupation: Optional[str] = None, annual_income: Optional[str] = None,
+                 source_of_income: Optional[str] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -227,18 +230,27 @@ class Officer(UnitDTO):
         self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
+        self.evaluation_params = evaluation_params
+        self.id_theft_score = id_theft_score
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
 
     @staticmethod
     def from_json_api(data: Dict):
         return Officer(data.get("fullName"), data.get("dateOfBirth"), data.get("address"), data.get("phone"),
-                data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
-                data.get("nationality"))
+                       data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
+                       data.get("nationality"), data.get("evaluationParams"), data.get("idTheftScore"),
+                       data.get("occupation"), data.get("annualIncome"), data.get("sourceOfIncome"))
 
 
 class BeneficialOwner(UnitDTO):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  status: Optional[Status] = None, ssn: Optional[str] = None, passport: Optional[str] = None,
-                 nationality: Optional[str] = None, percentage: Optional[int] = None):
+                 nationality: Optional[str] = None, percentage: Optional[int] = None,
+                 evaluation_params: Optional[str] = None, id_theft_score: Optional[str] = None,
+                 occupation: Optional[str] = None, annual_income: Optional[str] = None,
+                 source_of_income: Optional[str] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -249,14 +261,22 @@ class BeneficialOwner(UnitDTO):
         self.passport = passport
         self.nationality = nationality
         self.percentage = percentage
+        self.evaluation_params = evaluation_params
+        self.id_theft_score = id_theft_score
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
 
     @staticmethod
     def from_json_api(l: List):
         beneficial_owners = []
         for data in l:
             beneficial_owners.append(BeneficialOwner(data.get("fullName"), data.get("dateOfBirth"), data.get("address"),
-                data.get("phone"), data.get("email"), data.get("status"), data.get("ssn"),
-                data.get("passport"), data.get("nationality"), data.get("percentage")))
+                                                     data.get("phone"), data.get("email"), data.get("status"),
+                                                     data.get("ssn"), data.get("passport"), data.get("nationality"),
+                                                     data.get("percentage"), data.get("evaluationParams"),
+                                                     data.get("idTheftScore"), data.get("occupation"),
+                                                     data.get("annualIncome"), data.get("sourceOfIncome")))
         return beneficial_owners
 
 
