@@ -8,6 +8,24 @@ except ImportError:
 from datetime import datetime, date
 
 
+Occupation = Literal["ArchitectOrEngineer", "BusinessAnalystAccountantOrFinancialAdvisor",
+                     "CommunityAndSocialServicesWorker", "ConstructionMechanicOrMaintenanceWorker", "Doctor",
+                     "Educator", "EntertainmentSportsArtsOrMedia", "ExecutiveOrManager", "FarmerFishermanForester",
+                     "FoodServiceWorker", "GigWorker", "HospitalityOfficeOrAdministrativeSupportWorker",
+                     "HouseholdManager", "JanitorHousekeeperLandscaper", "Lawyer", "ManufacturingOrProductionWorker",
+                     "MilitaryOrPublicSafety", "NurseHealthcareTechnicianOrHealthcareSupport",
+                     "PersonalCareOrServiceWorker", "PilotDriverOperator", "SalesRepresentativeBrokerAgent",
+                     "ScientistOrTechnologist", "Student"]
+AnnualIncome = Literal["UpTo10k", "Between10kAnd25k", "Between25kAnd50k", "Between50kAnd100k", "Between100kAnd250k",
+                       "Over250k"]
+SourceOfIncome = Literal["EmploymentOrPayrollIncome", "PartTimeOrContractorIncome", "InheritancesAndGifts",
+                         "PersonalInvestments", "BusinessOwnershipInterests", "GovernmentBenefits"]
+Status = Literal["Approved", "Denied", "PendingReview"]
+Title = Literal["CEO", "COO", "CFO", "President"]
+EntityType = Literal["Corporation", "LLC", "Partnership"]
+UseSelfieVerification = Literal["Never", "ReplaceIdentification"]
+
+
 def to_camel_case(snake_str):
     components = snake_str.lstrip('_').split('_')
     # We capitalize the first letter of each component except the first one
@@ -158,11 +176,6 @@ class UnitError(object):
                                 "details": err.details, "source": err.source, "code": err.code} for err in self.errors]})
 
 
-Status = Literal["Approved", "Denied", "PendingReview"]
-Title = Literal["CEO", "COO", "CFO", "President"]
-EntityType = Literal["Corporation", "LLC", "Partnership"]
-
-
 class FullName(UnitDTO):
     def __init__(self, first: str, last: str):
         self.first = first
@@ -192,6 +205,7 @@ class Address(UnitDTO):
 
         return None
 
+
 class Phone(UnitDTO):
     def __init__(self, country_code: str, number: str):
         self.country_code = country_code
@@ -200,6 +214,26 @@ class Phone(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return Phone(data.get("countryCode"), data.get("number"))
+
+
+class EvaluationParams(object):
+    def __init__(self, use_selfie_verification: Optional[UseSelfieVerification] = None,
+                 require_id_verification: Optional[bool] = False):
+        self.use_selfie_verification = use_selfie_verification
+        self.require_id_verification = require_id_verification
+
+    def to_json_api(self):
+        return {
+            "useSelfieVerification": self.use_selfie_verification,
+            "requireIdVerification": self.require_id_verification,
+        }
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if data:
+            return EvaluationParams(data.get("useSelfieVerification"), data.get("requireIdVerification"))
+
+        return None
 
 
 class BusinessContact(UnitDTO):
@@ -217,9 +251,9 @@ class Officer(UnitDTO):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  status: Optional[Status] = None, title: Optional[Title] = None, ssn: Optional[str] = None,
                  passport: Optional[str] = None, nationality: Optional[str] = None,
-                 evaluation_params: Optional[str] = None, id_theft_score: Optional[str] = None,
-                 occupation: Optional[str] = None, annual_income: Optional[str] = None,
-                 source_of_income: Optional[str] = None):
+                 evaluation_params: Optional[EvaluationParams] = None, id_theft_score: Optional[str] = None,
+                 occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
+                 source_of_income: Optional[SourceOfIncome] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -240,17 +274,18 @@ class Officer(UnitDTO):
     def from_json_api(data: Dict):
         return Officer(data.get("fullName"), data.get("dateOfBirth"), data.get("address"), data.get("phone"),
                        data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
-                       data.get("nationality"), data.get("evaluationParams"), data.get("idTheftScore"),
-                       data.get("occupation"), data.get("annualIncome"), data.get("sourceOfIncome"))
+                       data.get("nationality"), EvaluationParams.from_json(data.get("evaluationParams")),
+                       data.get("idTheftScore"), data.get("occupation"), data.get("annualIncome"),
+                       data.get("sourceOfIncome"))
 
 
 class BeneficialOwner(UnitDTO):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  status: Optional[Status] = None, ssn: Optional[str] = None, passport: Optional[str] = None,
                  nationality: Optional[str] = None, percentage: Optional[int] = None,
-                 evaluation_params: Optional[str] = None, id_theft_score: Optional[str] = None,
-                 occupation: Optional[str] = None, annual_income: Optional[str] = None,
-                 source_of_income: Optional[str] = None):
+                 evaluation_params: Optional[EvaluationParams] = None, id_theft_score: Optional[str] = None,
+                 occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
+                 source_of_income: Optional[SourceOfIncome] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -274,7 +309,8 @@ class BeneficialOwner(UnitDTO):
             beneficial_owners.append(BeneficialOwner(data.get("fullName"), data.get("dateOfBirth"), data.get("address"),
                                                      data.get("phone"), data.get("email"), data.get("status"),
                                                      data.get("ssn"), data.get("passport"), data.get("nationality"),
-                                                     data.get("percentage"), data.get("evaluationParams"),
+                                                     data.get("percentage"),
+                                                     EvaluationParams.from_json(data.get("evaluationParams")),
                                                      data.get("idTheftScore"), data.get("occupation"),
                                                      data.get("annualIncome"), data.get("sourceOfIncome")))
         return beneficial_owners
@@ -429,4 +465,5 @@ class Agent(object):
 
         return Agent(data["status"], data["fullName"], data["ssn"], data.get("passport"), data.get("nationality"),
                      data["dateOfBirth"], data["address"], data["phone"], data["email"], data.get("jwtSubject"))
+
 

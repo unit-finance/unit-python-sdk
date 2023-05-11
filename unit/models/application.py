@@ -88,7 +88,10 @@ class CreateIndividualApplicationRequest(UnitRequest):
                  ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
                  passport: str = None, nationality: str = None, ssn = None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None,
-                 tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None):
+                 tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
+                 power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
+                 occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
+                 source_of_income: Optional[SourceOfIncome] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -105,55 +108,14 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.jwt_subject = jwt_subject
+        self.power_of_attorney_agent = power_of_attorney_agent
+        self.evaluation_params = evaluation_params
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "individualApplication",
-                "attributes": {
-                    "fullName": self.full_name,
-                    "dateOfBirth": date_utils.to_date_str(self.date_of_birth),
-                    "address": self.address,
-                    "email": self.email,
-                    "phone": self.phone,
-                }
-            }
-        }
-
-        if self.ip:
-            payload["data"]["attributes"]["ip"] = self.ip
-
-        if self.ein:
-            payload["data"]["attributes"]["ein"] = self.ein
-
-        if self.dba:
-            payload["data"]["attributes"]["dba"] = self.dba
-
-        if self.sole_proprietorship:
-            payload["data"]["attributes"]["soleProprietorship"] = self.sole_proprietorship
-
-        if self.ssn:
-            payload["data"]["attributes"]["ssn"] = self.ssn
-
-        if self.passport:
-            payload["data"]["attributes"]["passport"] = self.passport
-
-        if self.nationality:
-            payload["data"]["attributes"]["nationality"] = self.nationality
-
-        if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
-
-        if self.device_fingerprints:
-            payload["data"]["attributes"]["deviceFingerprints"] = [e.to_json_api() for e in self.device_fingerprints]
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        if self.jwt_subject:
-            payload["data"]["attributes"]["jwtSubject"] = self.jwt_subject
-
-        return payload
+        return super().to_payload("individualApplication")
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
@@ -162,7 +124,14 @@ class CreateIndividualApplicationRequest(UnitRequest):
 class CreateBusinessApplicationRequest(UnitRequest):
     def __init__(self, name: str, address: Address, phone: Phone, state_of_incorporation: str, ein: str,
                  contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner],
-                 entity_type: EntityType, dba: str = None, ip: str = None, website: str = None):
+                 entity_type: EntityType, dba: Optional[str] = None, ip: Optional[str] = None,
+                 website: Optional[str] = None, industry: Optional[Industry] = None,
+                 annual_revenue: Optional[AnnualRevenue] = None,
+                 number_of_employees: Optional[NumberOfEmployees] = None, cash_flow: Optional[CashFlow] = None,
+                 year_of_incorporation: Optional[str] = None, countries_of_operation: Optional[str] = None,
+                 stock_symbol: Optional[str] = None, business_vertical: Optional[BusinessVertical] = None,
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None
+                 ):
         self.name = name
         self.address = address
         self.phone = phone
@@ -175,38 +144,24 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.dba = dba
         self.ip = ip
         self.website = website
+        self.industry = industry
+        self.annual_revenue = annual_revenue
+        self.number_of_employees = number_of_employees
+        self.cash_flow = cash_flow
+        self.year_of_incorporation = year_of_incorporation
+        self.countries_of_operation = countries_of_operation
+        self.stock_symbol = stock_symbol
+        self.business_vertical = business_vertical
+        self.device_fingerprints = device_fingerprints
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "businessApplication",
-                "attributes": {
-                    "name": self.name,
-                    "address": self.address,
-                    "phone": self.phone,
-                    "stateOfIncorporation": self.state_of_incorporation,
-                    "ein": self.ein,
-                    "contact": self.contact,
-                    "officer": self.officer,
-                    "beneficialOwners": self.beneficial_owners,
-                    "entityType": self.entity_type
-                }
-            }
-        }
-
-        if self.dba:
-            payload["data"]["attributes"]["dba"] = self.dba
-
-        if self.ip:
-            payload["data"]["attributes"]["ip"] = self.ip
-
-        if self.website:
-            payload["data"]["attributes"]["website"] = self.website
-
-        return payload
+        return super().to_payload("businessApplication")
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
+
+
+CreateApplicationRequest = Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest]
 
 
 class ApplicationDocumentDTO(object):
