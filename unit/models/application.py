@@ -330,7 +330,7 @@ class PatchApplicationRequest(UnitRequest):
         self.tags = tags
 
     def to_json_api(self) -> Dict:
-        super().to_payload(self.type, ignore=['applicationId', 'type'])
+        return super().to_payload(self.type, ignore=['application_id', 'type'])
 
 
 class PatchIndividualApplicationRequest(PatchApplicationRequest):
@@ -372,7 +372,7 @@ class PatchBusinessBeneficialOwnerRequest(UnitRequest):
 
     def to_json_api(self) -> Dict:
         relationships = {"data": {"application": Relationship("businessApplication", self.application_id)}}
-        super().to_payload(self.type, relationships, ['beneficial_owner_id', 'applicationId', 'type'])
+        return super().to_payload(self.type, relationships, ['beneficial_owner_id', 'application_id', 'type'])
 
 
 class PatchBusinessApplicationRequest(PatchApplicationRequest):
@@ -395,9 +395,6 @@ class PatchBusinessApplicationRequest(PatchApplicationRequest):
 class PatchTrustApplicationRequest(PatchApplicationRequest):
     def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None):
         super().__init__(application_id, "trustApplication", tags)
-
-    def to_json_api(self) -> Dict:
-        super().to_payload(self.type, ignore=['applicationId', 'type'])
 
 
 UnionPatchApplicationRequest = Union[PatchApplicationRequest, PatchIndividualApplicationRequest,

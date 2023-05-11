@@ -457,3 +457,26 @@ def create_trust_application():
 def test_create_trust_application():
     response = create_trust_application()
     assert response.data.type == "trustApplication"
+
+
+def test_update_trust_application():
+    response = create_trust_application()
+    assert response.data.type == "trustApplication"
+
+    tags = {"update_test": "update_test"}
+
+    request = PatchTrustApplicationRequest(response.data.id, tags)
+    trust_app = client.applications.update(request)
+
+    tags_to_compare = tags
+    tags_to_compare.update(response.data.attributes["tags"])
+
+    assert trust_app.data.attributes["tags"] == tags_to_compare
+
+
+def test_update_business_application_request():
+    app = create_business_application()
+    updated = client.applications.update(PatchBusinessApplicationRequest(app.data.id, 'UpTo250k',
+                                                                         tags={'test': 'test_update'}))
+    assert updated.data.type == "businessApplication"
+
