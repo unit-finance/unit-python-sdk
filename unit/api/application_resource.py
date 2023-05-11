@@ -58,12 +58,21 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def update(self, request: PatchApplicationRequest) -> Union[UnitResponse[ApplicationDTO], UnitError]:
+    def update(self, request: UnionPatchApplicationRequest) -> Union[UnitResponse[ApplicationDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"{self.resource}/{request.application_id}", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def update_business_beneficial_owner(self, request: PatchBusinessBeneficialOwnerRequest) -> Union[UnitResponse[BeneficialOwner], UnitError]:
+        payload = request.to_json_api()
+        response = super().patch(f"beneficial-owner/{request.beneficial_owner}", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[BeneficialOwner](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 

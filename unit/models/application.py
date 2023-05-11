@@ -10,7 +10,7 @@ DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "Certifi
 ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMismatch", "DOBMismatch", "ExpiredId",
                      "EINMismatch", "StateMismatch", "Other"]
 
-ApplicationTypes = Literal["individualApplication", "businessApplication"]
+ApplicationTypes = Literal["individualApplication", "businessApplication", "trustApplication"]
 
 
 Industry = Literal["Retail", "Wholesale", "Restaurants", "Hospitals", "Construction", "Insurance", "Unions",
@@ -330,20 +330,79 @@ class PatchApplicationRequest(UnitRequest):
         self.tags = tags
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": self.type,
-                "attributes": {}
-            }
-        }
+        super().to_payload(self.type, ignore=['applicationId', 'type'])
 
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
 
-        return payload
+class PatchIndividualApplicationRequest(PatchApplicationRequest):
+    def __init__(self, application_id: str, occupation: Optional[Occupation] = None,
+                 annual_income: Optional[AnnualIncome] = None, source_of_income: Optional[SourceOfIncome] = None,
+                 tags: Optional[Dict[str, str]] = None):
+        super().__init__(application_id, tags=tags)
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
 
-    def __repr__(self):
-        return json.dumps(self.to_json_api())
+
+class PatchSoleProprietorApplicationRequest(PatchApplicationRequest):
+    def __init__(self, application_id: str, annual_revenue: Optional[AnnualRevenue] = None,
+                 number_of_employees: Optional[NumberOfEmployees] = None,
+                 business_vertical: Optional[BusinessVertical] = None, website: Optional[str] = None,
+                 tags: Optional[Dict[str, str]] = None):
+        super().__init__(application_id, tags=tags)
+        self.annual_revenue = annual_revenue
+        self.number_of_employees = number_of_employees
+        self.business_vertical = business_vertical
+        self.website = website
+
+
+class UpdateBusinessAttributes(object):
+    def __init__(self, occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
+                 source_of_income: Optional[SourceOfIncome] = None):
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
+
+
+class PatchBusinessBeneficialOwnerRequest(UnitRequest):
+    def __init__(self, beneficial_owner_id: str, application_id: str, beneficial_owner: UpdateBusinessAttributes):
+        self.beneficial_owner_id = beneficial_owner_id
+        self.application_id = application_id
+        self.type = "beneficialOwner"
+        self.beneficial_owner = beneficial_owner
+
+    def to_json_api(self) -> Dict:
+        relationships = {"data": {"application": Relationship("businessApplication", self.application_id)}}
+        super().to_payload(self.type, relationships, ['beneficial_owner_id', 'applicationId', 'type'])
+
+
+class PatchBusinessApplicationRequest(PatchApplicationRequest):
+    def __init__(self, application_id: str, annual_revenue: Optional[AnnualRevenue] = None,
+                 number_of_employees: Optional[NumberOfEmployees] = None, cash_flow: Optional[CashFlow] = None,
+                 year_of_incorporation: Optional[str] = None, countries_of_operation: Optional[str] = None,
+                 stock_symbol: Optional[str] = None, business_vertical: Optional[BusinessVertical] = None,
+                 officer: Optional[UpdateBusinessAttributes] = None, tags: Optional[Dict[str, str]] = None):
+        super().__init__(application_id, "businessApplication", tags=tags)
+        self.annual_revenue = annual_revenue
+        self.number_of_employees = number_of_employees
+        self.cash_flow = cash_flow
+        self.year_of_incorporation = year_of_incorporation
+        self.countries_of_operation = countries_of_operation
+        self.stock_symbol = stock_symbol
+        self.business_vertical = business_vertical
+        self.officer = officer
+
+
+class PatchTrustApplicationRequest(PatchApplicationRequest):
+    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None):
+        super().__init__(application_id, "trustApplication", tags)
+
+    def to_json_api(self) -> Dict:
+        super().to_payload(self.type, ignore=['applicationId', 'type'])
+
+
+UnionPatchApplicationRequest = Union[PatchApplicationRequest, PatchIndividualApplicationRequest,
+                                     PatchSoleProprietorApplicationRequest, PatchBusinessApplicationRequest,
+                                     PatchTrustApplicationRequest]
 
 
 class CancelApplicationRequest(UnitRequest):

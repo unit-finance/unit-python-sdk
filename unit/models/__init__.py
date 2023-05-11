@@ -122,6 +122,9 @@ class UnitRequest(object):
 
         return payload
 
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
 
 class UnitParams(object):
     def to_dict(self) -> Dict:
