@@ -36,6 +36,9 @@ BusinessVertical = Literal['AdultEntertainmentDatingOrEscortServices', 'Agricult
                            'RealEstate', 'ReligiousCivicAndSocialOrganizations', 'RepairAndMaintenance', 'RetailTrade',
                            'TechnologyMediaOrTelecom', 'TransportationOrWarehousing', 'Utilities', 'WholesaleTrade']
 
+Revocability = Literal['Revocable', 'Irrevocable']
+SourceOfFunds = Literal['Inheritance', 'Salary', 'Savings', 'InvestmentReturns', 'Gifts']
+
 
 class BaseApplication(UnitDTO):
     def __init__(self, _id: str, _type: str, created_at: datetime, status: ApplicationStatus, message: str,
@@ -89,9 +92,9 @@ class BusinessApplicationDTO(BaseApplication):
         super().__init__(id, "businessApplication", created_at, status, message, archived, relationships, updated_at,
                          tags)
         self.attributes.update({"name": name, "address": address, "phone": phone,
-                           "stateOfIncorporation": state_of_incorporation, "message": message,
-                           "ein": ein, "entityType": entity_type, "dba": dba, "contact": contact, "officer": officer,
-                           "beneficialOwners": beneficial_owners, "industry": industry})
+                                "stateOfIncorporation": state_of_incorporation, "message": message, "ein": ein,
+                                "entityType": entity_type, "dba": dba, "contact": contact, "officer": officer,
+                                "beneficialOwners": beneficial_owners, "industry": industry})
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -108,9 +111,10 @@ class BusinessApplicationDTO(BaseApplication):
 
 class TrustApplicationDTO(BaseApplication):
     def __init__(self, id: str, created_at: datetime, name: str, message: Optional[str],
-                 status: ApplicationStatus, state_of_incorporation: str, revocability: str, source_of_funds: str,
-                 tax_id: str, grantor: Grantor, contact: TrustContact, archived: bool, updated_at: Optional[datetime],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 status: ApplicationStatus, state_of_incorporation: str, revocability: Revocability,
+                 source_of_funds: SourceOfFunds, tax_id: str, grantor: Grantor, contact: TrustContact,
+                 archived: bool, updated_at: Optional[datetime], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         super().__init__(id, "trustApplication", created_at, status, message, archived, relationships, updated_at, tags)
         self.attributes.update({"name": name, "stateOfIncorporation": state_of_incorporation,
                                 "revocability": revocability, "sourceOfFunds": source_of_funds, "taxId": tax_id,
@@ -130,10 +134,10 @@ class TrustApplicationDTO(BaseApplication):
 ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO, TrustApplicationDTO]
 
 
-class CreateIndividualApplicationRequest(UnitRequest):
+class BaseCreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
                  ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
-                 passport: str = None, nationality: str = None, ssn = None,
+                 passport: str = None, nationality: str = None, ssn=None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None,
                  tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
                  power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
@@ -166,6 +170,10 @@ class CreateIndividualApplicationRequest(UnitRequest):
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
+
+
+class CreateIndividualApplicationRequest(BaseCreateIndividualApplicationRequest):
+    pass
 
 
 class CreateBusinessApplicationRequest(UnitRequest):
@@ -209,10 +217,10 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
 
 class CreateTrustApplicationRequest(UnitRequest):
-    def __init__(self, name: str, state_of_incorporation: str, revocability: str, source_of_funds: str,
-                 tax_id: str, grantor: Grantor, trustees: List[Trustee], beneficiaries: List[Beneficiary],
-                 contact: TrustContact, ip: Optional[str] = None, tags: Optional[object] = None,
-                 idempotency_key: Optional[str] = None, device_fingerprints: Optional[List[DeviceFingerprint]] = None):
+    def __init__(self, name: str, state_of_incorporation: str, revocability: Revocability,
+                 source_of_funds: SourceOfFunds, tax_id: str, grantor: Grantor, trustees: List[Trustee],
+                 beneficiaries: List[Beneficiary], contact: TrustContact, ip: Optional[str] = None,
+                 tags: Optional[object] = None, idempotency_key: Optional[str] = None, device_fingerprints: Optional[List[DeviceFingerprint]] = None):
         self.name = name
         self.state_of_incorporation = state_of_incorporation
         self.revocability = revocability
@@ -234,8 +242,27 @@ class CreateTrustApplicationRequest(UnitRequest):
         json.dumps(self.to_json_api())
 
 
+class CreateSoleProprietorApplicationRequest(BaseCreateIndividualApplicationRequest):
+    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
+                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
+                 passport: str = None, nationality: str = None, ssn = None,
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None,
+                 tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
+                 power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
+                 occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
+                 source_of_income: Optional[SourceOfIncome] = None, annual_revenue: Optional[AnnualRevenue] = None,
+                 number_of_employees: Optional[NumberOfEmployees] = None,
+                 business_vertical: Optional[BusinessVertical] = None):
+        super().__init__(full_name, date_of_birth, address, email, phone, ip, ein, dba, sole_proprietorship, passport,
+                         nationality, ssn, device_fingerprints, idempotency_key, tags, jwt_subject,
+                         power_of_attorney_agent, evaluation_params, occupation, annual_income, source_of_income)
+        self.annual_revenue = annual_revenue
+        self.number_of_employees = number_of_employees
+        self.business_vertical = business_vertical
+
+
 CreateApplicationRequest = Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest,
-                                 CreateTrustApplicationRequest]
+                                 CreateTrustApplicationRequest, CreateSoleProprietorApplicationRequest]
 
 
 class ApplicationDocumentDTO(object):
