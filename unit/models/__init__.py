@@ -444,30 +444,7 @@ class CheckCounterparty(object):
         return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
 
 
-class Agent(object):
-    def __init__(self, status: str, full_name: FullName, ssn: str, passport: str, nationality: str, date_of_birth: date,
-                 address: Address, phone: Phone, email: str, jwt_subject: str):
-        self.status = status
-        self.full_name = full_name
-        self.ssn = ssn
-        self.passport: passport
-        self.nationality = nationality
-        self.date_of_birth = date_of_birth
-        self.address = address
-        self.phone = phone
-        self.email = email
-        self.jwt_subject = jwt_subject
-
-    @staticmethod
-    def from_json_api(data: Dict):
-        if not data:
-            return None
-
-        return Agent(data["status"], data["fullName"], data["ssn"], data.get("passport"), data.get("nationality"),
-                     data["dateOfBirth"], data["address"], data["phone"], data["email"], data.get("jwtSubject"))
-
-
-class Grantor(UnitDTO):
+class BaseIndividual(UnitDTO):
     def __init__(self, full_name: FullName, date_of_birth: date, ssn: str, email: str, phone: Phone, address: Address):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
@@ -476,6 +453,8 @@ class Grantor(UnitDTO):
         self.phone = phone
         self.address = address
 
+
+class Grantor(BaseIndividual):
     @staticmethod
     def from_json_api(data: Dict):
         if not data:
@@ -485,15 +464,7 @@ class Grantor(UnitDTO):
                        Phone.from_json_api(data["phone"]), Address.from_json_api(data["address"]))
 
 
-class Trustee(UnitDTO):
-    def __init__(self, full_name: FullName, date_of_birth: date, ssn: str, email: str, phone: Phone, address: Address):
-        self.full_name = full_name
-        self.date_of_birth = date_of_birth
-        self.ssn = ssn
-        self.email = email
-        self.phone = phone
-        self.address = address
-
+class Trustee(BaseIndividual):
     @staticmethod
     def from_json_api(data: Dict):
         if not data:
@@ -517,22 +488,17 @@ class TrustContact(UnitDTO):
             return None
 
         return TrustContact(FullName.from_json_api(data["fullName"]), data["email"], Phone.from_json_api(data["phone"]),
-                       Address.from_json_api(data["address"]), data.get("jwtSubject"))
+                            Address.from_json_api(data["address"]), data.get("jwtSubject"))
 
 
-class Agent(UnitDTO):
+class Agent(BaseIndividual):
     def __init__(self, status: str, full_name: FullName, ssn: Optional[str], passport: Optional[str],
                  nationality: Optional[str], date_of_birth: date, email: str, phone: Phone, address: Address,
                  jwt_subject: Optional[str]):
+        super().__init__(full_name, date_of_birth, ssn, email, phone, address)
         self.status = status
-        self.full_name = full_name
-        self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
-        self.date_of_birth = date_of_birth
-        self.email = email
-        self.phone = phone
-        self.address = address
         self.jwt_subject = jwt_subject
 
     @staticmethod
