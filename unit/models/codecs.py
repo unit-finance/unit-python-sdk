@@ -1,5 +1,6 @@
 from unit.models.applicationForm import ApplicationFormDTO
-from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
+from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO,\
+    TrustApplicationDTO
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO, CreditAccountDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
@@ -32,6 +33,9 @@ mappings = {
 
         "businessApplication": lambda _id, _type, attributes, relationships:
         BusinessApplicationDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "trustApplication": lambda _id, _type, attributes, relationships:
+        TrustApplicationDTO.from_json_api(_id, _type, attributes, relationships),
 
         "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),

@@ -1,8 +1,7 @@
 import os
-import uuid
-from datetime import timedelta
 from unit import Unit, Configuration
 from unit.models.application import *
+from e2e_tests.helpers.helpers import *
 from unit.models.codecs import DtoDecoder
 
 token = os.environ.get('TOKEN')
@@ -447,3 +446,14 @@ def test_create_business_application_from_json():
     assert app.attributes["name"] == "Pied Piper"
     assert app.attributes["entityType"] == "Corporation"
 
+
+def create_trust_application():
+    request = CreateTrustApplicationRequest("Trust me Inc.", "CA", "Revocable", "Salary", "123456789",
+                                            create_grantor(), create_trustee(), create_beneficiaries(),
+                                            create_trust_contact(), tags={"test": "test1"})
+    return client.applications.create(request)
+
+
+def test_create_trust_application():
+    response = create_trust_application()
+    assert response.data.type == "trustApplication"

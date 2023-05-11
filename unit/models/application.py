@@ -191,7 +191,34 @@ class CreateBusinessApplicationRequest(UnitRequest):
         return json.dumps(self.to_json_api())
 
 
-CreateApplicationRequest = Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest]
+class CreateTrustApplicationRequest(UnitRequest):
+    def __init__(self, name: str, state_of_incorporation: str, revocability: str, source_of_funds: str,
+                 tax_id: str, grantor: Grantor, trustees: List[Trustee], beneficiaries: List[Beneficiary],
+                 contact: TrustContact, ip: Optional[str] = None, tags: Optional[object] = None,
+                 idempotency_key: Optional[str] = None, device_fingerprints: Optional[List[DeviceFingerprint]] = None):
+        self.name = name
+        self.state_of_incorporation = state_of_incorporation
+        self.revocability = revocability
+        self.source_of_funds = source_of_funds
+        self.tax_id = tax_id
+        self.grantor = grantor
+        self.trustees = trustees
+        self.beneficiaries = beneficiaries
+        self.contact = contact
+        self.ip = ip
+        self.tags = tags
+        self.idempotency_key = idempotency_key
+        self.device_fingerprints = device_fingerprints
+
+    def to_json_api(self) -> Dict:
+        return super().to_payload("trustApplication")
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+CreateApplicationRequest = Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest,
+                                 CreateTrustApplicationRequest]
 
 
 class ApplicationDocumentDTO(object):
