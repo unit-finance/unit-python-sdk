@@ -18,23 +18,32 @@ Industry = Literal["Retail", "Wholesale", "Restaurants", "Hospitals", "Construct
                    "OtherEducationServices"]
 
 
-class IndividualApplicationDTO(object):
+class BaseApplication(UnitDTO):
+    def __init__(self, _id: str, _type: str, created_at: datetime, status: ApplicationStatus, message: str,
+                 archived: bool, relationships: Dict[str, Relationship], updated_at: Optional[datetime],
+                 tags: Optional[object]):
+        self.id = _id
+        self.type = _type
+        self.attributes = {"createdAt": created_at, "status": status, "message": message,  "archived": archived,
+                           "updatedAt": updated_at, "tags": tags}
+        self.relationships = relationships
+
+
+class IndividualApplicationDTO(BaseApplication):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, address: Address, date_of_birth: date,
-                 email: str, phone: Phone, status: ApplicationStatus, ssn: Optional[str], message: Optional[str],
+                 email: str, phone: Phone, status: ApplicationStatus, ssn: Optional[str], message: str,
                  ip: Optional[str], ein: Optional[str], dba: Optional[str],
                  sole_proprietorship: Optional[bool], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]], archived: Optional[bool],
                  power_of_attorney_agent: Optional[Agent], id_theft_score: Optional[int], industry: Optional[Industry],
                  passport: Optional[str], nationality: Optional[str], updated_at: Optional[datetime]):
-        self.id = id
-        self.type = "individualApplication"
-        self.attributes = {"createdAt": created_at, "fullName": full_name, "address": address,
-                           "dateOfBirth": date_of_birth, "email": email, "phone": phone, "status": status, "ssn": ssn,
-                           "message": message, "ip": ip, "ein": ein, "dba": dba, "archived": archived,
-                           "powerOfAttorneyAgent": power_of_attorney_agent, "soleProprietorship": sole_proprietorship,
-                           "industry": industry, "passport": passport, "nationality": nationality,
-                           "updatedAt": updated_at, "idTheftScore": id_theft_score, "tags": tags}
-        self.relationships = relationships
+        super().__init__(id, "individualApplication", created_at, status, message, archived, relationships, updated_at,
+                         tags)
+        self.attributes.update({"fullName": full_name, "address": address, "dateOfBirth": date_of_birth,
+                                "email": email, "phone": phone, "ssn": ssn, "ip": ip, "ein": ein, "dba": dba,
+                                "powerOfAttorneyAgent": power_of_attorney_agent,
+                                "soleProprietorship": sole_proprietorship, "industry": industry, "passport": passport,
+                                "nationality": nationality,  "idTheftScore": id_theft_score})
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -51,21 +60,19 @@ class IndividualApplicationDTO(object):
             date_utils.to_datetime(attributes.get("updatedAt")))
 
 
-class BusinessApplicationDTO(object):
+class BusinessApplicationDTO(BaseApplication):
     def __init__(self, id: str, created_at: datetime, name: str, address: Address, phone: Phone,
                  status: ApplicationStatus, state_of_incorporation: str, entity_type: EntityType,
                  contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner],
                  message: Optional[str], ein: Optional[str], dba: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]], updated_at: Optional[datetime],
                  industry: Optional[Industry], archived: Optional[bool]):
-        self.id = id
-        self.type = "businessApplication"
-        self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
-                           "status": status, "stateOfIncorporation": state_of_incorporation, "message": message,
+        super().__init__(id, "businessApplication", created_at, status, message, archived, relationships, updated_at,
+                         tags)
+        self.attributes = {"name": name, "address": address, "phone": phone,
+                           "stateOfIncorporation": state_of_incorporation, "message": message,
                            "ein": ein, "entityType": entity_type, "dba": dba, "contact": contact, "officer": officer,
-                           "beneficialOwners": beneficial_owners, "tags": tags, "updatedAt": updated_at,
-                           "industry": industry, "archived": archived}
-        self.relationships = relationships
+                           "beneficialOwners": beneficial_owners, "industry": industry}
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -80,7 +87,30 @@ class BusinessApplicationDTO(object):
         )
 
 
-ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
+class TrustApplicationDTO(BaseApplication):
+    def __init__(self, id: str, created_at: datetime, name: str, message: Optional[str],
+                 status: ApplicationStatus, state_of_incorporation: str, revocability: str, source_of_funds: str,
+                 tax_id: str, grantor: Grantor, contact: TrustContact, archived: bool, updated_at: Optional[datetime],
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        super().__init__(id, "trustApplication", created_at, status, message, archived, relationships, updated_at, tags)
+        self.attributes.update({"name": name, "stateOfIncorporation": state_of_incorporation,
+                                "revocability": revocability, "sourceOfFunds": source_of_funds, "taxId": tax_id,
+                                "grantor": grantor, "contact": contact})
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return TrustApplicationDTO(
+            _id, date_utils.to_datetime(attributes["createdAt"]), date_utils.to_datetime(attributes.get("updatedAt")),
+            attributes.get("name"), attributes.get("message"), attributes.get("status"),
+            attributes.get("stateOfIncorporation"), attributes.get("revocability"), attributes.get("sourceOfFunds"),
+            attributes.get("taxId"), Grantor.from_json_api(attributes.get("grantor")),
+            TrustContact.from_json_api(attributes.get("contact")), attributes.get("archived"),
+            date_utils.to_datetime(attributes.get("updatedAt")), attributes.get("tags"),
+            relationships
+        )
+
+
+ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO, TrustApplicationDTO]
 
 
 class CreateIndividualApplicationRequest(UnitRequest):
