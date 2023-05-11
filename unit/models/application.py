@@ -17,6 +17,25 @@ Industry = Literal["Retail", "Wholesale", "Restaurants", "Hospitals", "Construct
                    "RealEstate", "FreelanceProfessional", "OtherProfessionalServices", "OnlineRetailer",
                    "OtherEducationServices"]
 
+AnnualRevenue = Literal['UpTo250k', 'Between250kAnd500k', 'Between500kAnd1m', 'Between1mAnd5m', 'Over5m', 'UpTo50k',
+                        'Between50kAnd100k', 'Between100kAnd200k', 'Between200kAnd500k', 'Over500k']
+
+NumberOfEmployees = Literal['One', 'Between2And5', 'Between5And10', 'Over10', 'UpTo10', 'Between10And50',
+                            'Between50And100', 'Between100And500', 'Over500']
+
+CashFlow = Literal['Unpredictable', 'Predictable']
+
+BusinessVertical = Literal['AdultEntertainmentDatingOrEscortServices', 'AgricultureForestryFishingOrHunting',
+                           'ArtsEntertainmentAndRecreation', 'BusinessSupportOrBuildingServices', 'Cannabis',
+                           'Construction', 'DirectMarketingOrTelemarketing', 'EducationalServices',
+                           'FinancialServicesCryptocurrency', 'FinancialServicesDebitCollectionOrConsolidation',
+                           'FinancialServicesMoneyServicesBusinessOrCurrencyExchange', 'FinancialServicesOther',
+                           'FinancialServicesPaydayLending', 'GamingOrGambling', 'HealthCareAndSocialAssistance',
+                           'HospitalityAccommodationOrFoodServices', 'LegalAccountingConsultingOrComputerProgramming',
+                           'Manufacturing', 'Mining', 'Nutraceuticals', 'PersonalCareServices', 'PublicAdministration',
+                           'RealEstate', 'ReligiousCivicAndSocialOrganizations', 'RepairAndMaintenance', 'RetailTrade',
+                           'TechnologyMediaOrTelecom', 'TransportationOrWarehousing', 'Utilities', 'WholesaleTrade']
+
 
 class BaseApplication(UnitDTO):
     def __init__(self, _id: str, _type: str, created_at: datetime, status: ApplicationStatus, message: str,
@@ -69,10 +88,10 @@ class BusinessApplicationDTO(BaseApplication):
                  industry: Optional[Industry], archived: Optional[bool]):
         super().__init__(id, "businessApplication", created_at, status, message, archived, relationships, updated_at,
                          tags)
-        self.attributes = {"name": name, "address": address, "phone": phone,
+        self.attributes.update({"name": name, "address": address, "phone": phone,
                            "stateOfIncorporation": state_of_incorporation, "message": message,
                            "ein": ein, "entityType": entity_type, "dba": dba, "contact": contact, "officer": officer,
-                           "beneficialOwners": beneficial_owners, "industry": industry}
+                           "beneficialOwners": beneficial_owners, "industry": industry})
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -100,13 +119,11 @@ class TrustApplicationDTO(BaseApplication):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return TrustApplicationDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), date_utils.to_datetime(attributes.get("updatedAt")),
-            attributes.get("name"), attributes.get("message"), attributes.get("status"),
-            attributes.get("stateOfIncorporation"), attributes.get("revocability"), attributes.get("sourceOfFunds"),
-            attributes.get("taxId"), Grantor.from_json_api(attributes.get("grantor")),
+            _id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("name"), attributes.get("message"),
+            attributes.get("status"), attributes.get("stateOfIncorporation"), attributes.get("revocability"),
+            attributes.get("sourceOfFunds"), attributes.get("taxId"), Grantor.from_json_api(attributes.get("grantor")),
             TrustContact.from_json_api(attributes.get("contact")), attributes.get("archived"),
-            date_utils.to_datetime(attributes.get("updatedAt")), attributes.get("tags"),
-            relationships
+            date_utils.to_datetime(attributes.get("updatedAt")), attributes.get("tags"), relationships
         )
 
 
@@ -239,6 +256,7 @@ class ApplicationDocumentDTO(object):
             address, attributes.get("dateOfBirth"), attributes.get("passport"),
             attributes.get("ein"), attributes.get("reasonCode"), attributes.get("reason")
         )
+
 
 FileType = Literal["jpeg", "png", "pdf"]
 

@@ -274,7 +274,7 @@ class Officer(UnitDTO):
     def from_json_api(data: Dict):
         return Officer(data.get("fullName"), data.get("dateOfBirth"), data.get("address"), data.get("phone"),
                        data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
-                       data.get("nationality"), EvaluationParams.from_json(data.get("evaluationParams")),
+                       data.get("nationality"), EvaluationParams.from_json_api(data.get("evaluationParams")),
                        data.get("idTheftScore"), data.get("occupation"), data.get("annualIncome"),
                        data.get("sourceOfIncome"))
 
@@ -310,7 +310,7 @@ class BeneficialOwner(UnitDTO):
                                                      data.get("phone"), data.get("email"), data.get("status"),
                                                      data.get("ssn"), data.get("passport"), data.get("nationality"),
                                                      data.get("percentage"),
-                                                     EvaluationParams.from_json(data.get("evaluationParams")),
+                                                     EvaluationParams.from_json_api(data.get("evaluationParams")),
                                                      data.get("idTheftScore"), data.get("occupation"),
                                                      data.get("annualIncome"), data.get("sourceOfIncome")))
         return beneficial_owners
