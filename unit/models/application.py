@@ -147,7 +147,8 @@ class CreateIndividualApplicationRequest(UnitRequest):
 class CreateBusinessApplicationRequest(UnitRequest):
     def __init__(self, name: str, address: Address, phone: Phone, state_of_incorporation: str, ein: str,
                  contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner],
-                 entity_type: EntityType, dba: str = None, ip: str = None, website: str = None):
+                 entity_type: EntityType, dba: str = None, ip: str = None, website: str = None,
+                 year_of_incorporation: Optional[date] = None, business_vertical: Optional[str] = None):
         self.name = name
         self.address = address
         self.phone = phone
@@ -160,6 +161,8 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.dba = dba
         self.ip = ip
         self.website = website
+        self.year_of_incorporation = year_of_incorporation
+        self.business_vertical = business_vertical
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -187,6 +190,12 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
         if self.website:
             payload["data"]["attributes"]["website"] = self.website
+
+        if self.year_of_incorporation:
+            payload["data"]["attributes"]["yearOfIncorporation"] = date_utils.to_date_str(self.year_of_incorporation)
+
+        if self.business_vertical:
+            payload["data"]["attributes"]["businessVertical"] = self.business_vertical
 
         return payload
 

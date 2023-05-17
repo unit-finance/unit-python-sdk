@@ -53,7 +53,9 @@ def create_business_application():
               BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
               Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
               Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
-        ]
+        ],
+        year_of_incorporation=date.today() - timedelta(days=2 * 365),
+        business_vertical="Construction"
     )
 
     return client.applications.create(request)
