@@ -71,8 +71,5 @@ class Configuration(object):
 
     @staticmethod
     def __check_token(token: str):
-        if not token:
-            raise Exception("token is missing")
-
         return token
 
