@@ -183,7 +183,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
                  website: Optional[str] = None, industry: Optional[Industry] = None,
                  annual_revenue: Optional[AnnualRevenue] = None,
                  number_of_employees: Optional[NumberOfEmployees] = None, cash_flow: Optional[CashFlow] = None,
-                 year_of_incorporation: Optional[str] = None, countries_of_operation: Optional[str] = None,
+                 year_of_incorporation: Optional[str] = None, countries_of_operation: Optional[List[str]] = None,
                  stock_symbol: Optional[str] = None, business_vertical: Optional[BusinessVertical] = None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None
                  ):

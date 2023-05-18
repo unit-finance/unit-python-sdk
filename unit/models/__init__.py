@@ -1,4 +1,5 @@
 import json
+
 try:
     from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 except ImportError:
@@ -6,7 +7,6 @@ except ImportError:
     from typing_extensions import Literal
 
 from datetime import datetime, date
-
 
 Occupation = Literal["ArchitectOrEngineer", "BusinessAnalystAccountantOrFinancialAdvisor",
                      "CommunityAndSocialServicesWorker", "ConstructionMechanicOrMaintenanceWorker", "Doctor",
@@ -176,7 +176,8 @@ class UnitError(object):
 
     def __str__(self):
         return json.dumps({"errors": [{"title": err.title, "status": err.status, "detail": err.detail,
-                                "details": err.details, "source": err.source, "code": err.code} for err in self.errors]})
+                                       "details": err.details, "source": err.source, "code": err.code} for err in
+                                      self.errors]})
 
 
 class FullName(UnitDTO):
@@ -247,7 +248,8 @@ class BusinessContact(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return BusinessContact(FullName.from_json_api(data.get("fullName")), data.get("email"), Phone.from_json_api(data.get("phone")))
+        return BusinessContact(FullName.from_json_api(data.get("fullName")), data.get("email"),
+                               Phone.from_json_api(data.get("phone")))
 
 
 class Officer(UnitDTO):
@@ -306,17 +308,34 @@ class BeneficialOwner(UnitDTO):
         self.source_of_income = source_of_income
 
     @staticmethod
-    def from_json_api(l: List):
-        beneficial_owners = []
-        for data in l:
-            beneficial_owners.append(BeneficialOwner(data.get("fullName"), data.get("dateOfBirth"), data.get("address"),
-                                                     data.get("phone"), data.get("email"), data.get("status"),
-                                                     data.get("ssn"), data.get("passport"), data.get("nationality"),
-                                                     data.get("percentage"),
-                                                     EvaluationParams.from_json_api(data.get("evaluationParams")),
-                                                     data.get("idTheftScore"), data.get("occupation"),
-                                                     data.get("annualIncome"), data.get("sourceOfIncome")))
-        return beneficial_owners
+    def create(data: Dict):
+        return BeneficialOwner(data.get("fullName"), data.get("dateOfBirth"), data.get("address"),
+                               data.get("phone"), data.get("email"), data.get("status"), data.get("ssn"),
+                               data.get("passport"), data.get("nationality"), data.get("percentage"),
+                               EvaluationParams.from_json_api(data.get("evaluationParams")), data.get("idTheftScore"),
+                               data.get("occupation"), data.get("annualIncome"), data.get("sourceOfIncome"))
+
+    @staticmethod
+    def from_json_api(l: Union[List, Dict]):
+        if l is List:
+            beneficial_owners = []
+            for data in l:
+                beneficial_owners.append(BeneficialOwner.create(data))
+            return beneficial_owners
+        else:
+            return BeneficialOwner.create(l)
+
+
+class BeneficialOwnerDTO(UnitDTO):
+    def __init__(self, _id: str, _type: str, attributes: BeneficialOwner, relationships: Dict[str, Relationship]):
+        self.id = _id
+        self.type = _type
+        self.attributes = attributes
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return BeneficialOwnerDTO(_id, _type, BeneficialOwner.from_json_api(attributes), relationships)
 
 
 class AuthorizedUser(UnitDTO):
@@ -336,10 +355,11 @@ class AuthorizedUser(UnitDTO):
 
         if type(data) is dict:
             return AuthorizedUser(FullName.from_json_api(data.get("fullName")), data.get("email"),
-                              Phone.from_json_api(data.get("phone")), data.get("jwtSubject"))
+                                  Phone.from_json_api(data.get("phone")), data.get("jwtSubject"))
 
         return [AuthorizedUser(FullName.from_json_api(d.get("fullName")), d.get("email"),
-                              Phone.from_json_api(d.get("phone")), d.get("jwtSubject")) for d in data]
+                               Phone.from_json_api(d.get("phone")), d.get("jwtSubject")) for d in data]
+
 
 class WireCounterparty(UnitDTO):
     def __init__(self, routing_number: str, account_number: str, name: str, address: Address):
@@ -353,6 +373,7 @@ class WireCounterparty(UnitDTO):
         return WireCounterparty(data["routingNumber"], data["accountNumber"], data["name"],
                                 Address.from_json_api(data["address"]))
 
+
 class Counterparty(UnitDTO):
     def __init__(self, routing_number: str, account_number: str, account_type: str, name: str):
         self.routing_number = routing_number
@@ -363,6 +384,7 @@ class Counterparty(UnitDTO):
     @staticmethod
     def from_json_api(data: Dict):
         return Counterparty(data["routingNumber"], data["accountNumber"], data["accountType"], data["name"])
+
 
 class Coordinates(UnitDTO):
     def __init__(self, longitude: float, latitude: float):
@@ -525,4 +547,3 @@ class Beneficiary(UnitDTO):
             return None
 
         return Beneficiary(FullName.from_json_api(data["fullName"]), data.get("dateOfBirth"))
-

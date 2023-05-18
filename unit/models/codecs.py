@@ -308,7 +308,10 @@ mappings = {
         AchRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "astra": lambda _id, _type, attributes, relationships:
-        CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships)
+        CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "beneficialOwner": lambda _id, _type, attributes, relationships:
+        BeneficialOwnerDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 
