@@ -192,7 +192,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
             payload["data"]["attributes"]["website"] = self.website
 
         if self.year_of_incorporation:
-            payload["data"]["attributes"]["yearOfIncorporation"] = date_utils.to_date_str(self.year_of_incorporation)
+            payload["data"]["attributes"]["yearOfIncorporation"] = date_utils.to_year_str(self.year_of_incorporation)
 
         if self.business_vertical:
             payload["data"]["attributes"]["businessVertical"] = self.business_vertical
