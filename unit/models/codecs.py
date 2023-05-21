@@ -370,6 +370,7 @@ class DtoDecoder(object):
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
             return mapping_wraper(_id, _type, attributes, relationships)
 
+
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime, date)):
@@ -377,5 +378,8 @@ class UnitEncoder(json.JSONEncoder):
         if hasattr(obj, 'to_dict'):
             return obj.to_dict()
         else:
-            return json.JSONEncoder.default(self, obj)
+            try:
+                return json.JSONEncoder.default(self, obj)
+            except TypeError:
+                return json.dumps(obj, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 

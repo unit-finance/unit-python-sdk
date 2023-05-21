@@ -69,7 +69,7 @@ class ApplicationResource(BaseResource):
 
     def update_business_beneficial_owner(self, request: PatchBusinessBeneficialOwnerRequest) -> Union[UnitResponse[BeneficialOwnerDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().patch(f"beneficial-owner/{request.beneficial_owner}", payload)
+        response = super().patch(f"beneficial-owner/{request.beneficial_owner_id}", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[BeneficialOwnerDTO](DtoDecoder.decode(data), None)

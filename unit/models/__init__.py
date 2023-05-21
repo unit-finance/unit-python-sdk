@@ -317,7 +317,7 @@ class BeneficialOwner(UnitDTO):
 
     @staticmethod
     def from_json_api(l: Union[List, Dict]):
-        if l is List:
+        if isinstance(l, list):
             beneficial_owners = []
             for data in l:
                 beneficial_owners.append(BeneficialOwner.create(data))

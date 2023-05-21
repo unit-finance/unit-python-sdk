@@ -480,3 +480,12 @@ def test_update_business_application_request():
                                                                          tags={'test': 'test_update'}))
     assert updated.data.type == "businessApplication"
 
+
+def test_update_beneficial_owner():
+    app = create_business_application()
+    updated = client.applications.update_business_beneficial_owner(PatchBusinessBeneficialOwnerRequest(
+        app.data.relationships["beneficialOwners"].data[0].id, app.data.id, "ArchitectOrEngineer", "Between10kAnd25k",
+        "EmploymentOrPayrollIncome"))
+
+    assert updated.data.type == "beneficialOwner"
+

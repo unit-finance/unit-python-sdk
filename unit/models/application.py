@@ -364,14 +364,17 @@ class UpdateBusinessAttributes(object):
 
 
 class PatchBusinessBeneficialOwnerRequest(UnitRequest):
-    def __init__(self, beneficial_owner_id: str, application_id: str, beneficial_owner: UpdateBusinessAttributes):
+    def __init__(self, beneficial_owner_id: str, application_id: str, occupation: Optional[Occupation] = None,
+                 annual_income: Optional[AnnualIncome] = None, source_of_income: Optional[SourceOfIncome] = None):
         self.beneficial_owner_id = beneficial_owner_id
         self.application_id = application_id
         self.type = "beneficialOwner"
-        self.beneficial_owner = beneficial_owner
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
 
     def to_json_api(self) -> Dict:
-        relationships = {"data": {"application": Relationship("businessApplication", self.application_id)}}
+        relationships = {"application": Relationship("businessApplication", self.application_id)}
         return super().to_payload(self.type, relationships, ['beneficial_owner_id', 'application_id', 'type'])
 
 
