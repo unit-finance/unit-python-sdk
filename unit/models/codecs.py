@@ -1,5 +1,6 @@
 from unit.models.applicationForm import ApplicationFormDTO
-from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
+from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO,\
+    TrustApplicationDTO
 from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO, CreditAccountDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
@@ -32,6 +33,9 @@ mappings = {
 
         "businessApplication": lambda _id, _type, attributes, relationships:
         BusinessApplicationDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "trustApplication": lambda _id, _type, attributes, relationships:
+        TrustApplicationDTO.from_json_api(_id, _type, attributes, relationships),
 
         "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),
@@ -304,7 +308,10 @@ mappings = {
         AchRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "astra": lambda _id, _type, attributes, relationships:
-        CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships)
+        CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "beneficialOwner": lambda _id, _type, attributes, relationships:
+        BeneficialOwnerDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 
@@ -363,6 +370,7 @@ class DtoDecoder(object):
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
             return mapping_wraper(_id, _type, attributes, relationships)
 
+
 class UnitEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime, date)):
@@ -370,5 +378,8 @@ class UnitEncoder(json.JSONEncoder):
         if hasattr(obj, 'to_dict'):
             return obj.to_dict()
         else:
-            return json.JSONEncoder.default(self, obj)
+            try:
+                return json.JSONEncoder.default(self, obj)
+            except TypeError:
+                return json.dumps(obj, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
