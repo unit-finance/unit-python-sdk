@@ -616,7 +616,7 @@ class RichMerchantDataAddress(object):
 class RichMerchantData(UnitDTO):
     def __init__(self, name: str, website: Optional[str], logo: Optional[str], phone: Optional[str],
                  categories: Optional[List[RichMerchantDataCategory]], address: Optional[RichMerchantDataAddress],
-                 coordinates: Optional[Coordinates], facilitators: Optional[List[Facilitator]]):
+                 coordinates: Optional[Coordinates], facilitators: Optional[List[RichMerchantDataFacilitator]]):
         self.name = name
         self.website = website
         self.logo = logo
