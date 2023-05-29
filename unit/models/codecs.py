@@ -341,11 +341,12 @@ def split_json_api_array_response(payload):
     return dtos
 
 
-def decode_limits(attributes: Dict):
-    if "ach" in attributes.keys():
-        return AccountLimitsDTO.from_json_api(attributes)
+def decode_limits(_id: str, _type: str, attributes: Dict):
+    if "ach" in attributes.keys() or _type is "creditLimits":
+        return AccountLimitsDTO.from_json_api(_id, _type, attributes)
     else:
         return CardLimitsDTO.from_json_api(attributes)
+
 
 def mapping_wraper(_id, _type, attributes, relationships):
     if _type in mappings:
