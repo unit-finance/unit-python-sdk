@@ -292,17 +292,30 @@ class CheckDepositAccountLimits(object):
 
 
 class AccountLimitsDTO(object):
-    def __init__(self, ach: AccountAchLimits, card: AccountCardLimits, check_deposit: CheckDepositAccountLimits,
-                 _id: str, _type: str):
+    def __init__(self, _id: str, _type: str, card: AccountCardLimits):
         self.id = _id
         self.type = _type
-        self.attributes = {"ach": ach, "card": card, "checkDeposit": check_deposit}
+        self.attributes = {"card": card}
+
+
+class DepositAccountLimitsDTO(AccountLimitsDTO):
+    def __init__(self, ach: AccountAchLimits, card: AccountCardLimits, check_deposit: CheckDepositAccountLimits,
+                 _id: str, _type: str):
+        super().__init__(_id, _type, card)
+        self.attributes = {"ach": ach, "checkDeposit": check_deposit}
 
     @staticmethod
     def from_json_api(_id, _type, attributes):
-        return AccountLimitsDTO(AccountAchLimits.from_json_api(attributes.get("ach")),
-                                AccountCardLimits.from_json_api(attributes.get("card")),
-                                CheckDepositAccountLimits.from_json_api(attributes.get("checkDeposit")), _id, _type)
+        return DepositAccountLimitsDTO(AccountAchLimits.from_json_api(attributes.get("ach")),
+                                       AccountCardLimits.from_json_api(attributes.get("card")),
+                                       CheckDepositAccountLimits.from_json_api(
+                                           attributes.get("checkDeposit")), _id, _type)
+
+
+class CreditAccountLimitsDTO(AccountLimitsDTO):
+    @staticmethod
+    def from_json_api(_id, _type, attributes):
+        return CreditAccountLimitsDTO(_id, _type, AccountCardLimits.from_json_api(attributes.get("card")))
 
 
 AccountCloseReason = Literal["ByCustomer", "Fraud"]

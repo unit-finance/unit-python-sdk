@@ -1,7 +1,8 @@
 from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO,\
     TrustApplicationDTO
-from unit.models.account import DepositAccountDTO, AccountLimitsDTO, AccountDepositProductDTO, CreditAccountDTO
+from unit.models.account import DepositAccountDTO, AccountDepositProductDTO, CreditAccountDTO, \
+    CreditAccountLimitsDTO, DepositAccountLimitsDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO, \
@@ -53,7 +54,10 @@ mappings = {
         CreditAccountDTO.from_json_api(_id, _type, attributes, relationships),
 
         "limits": lambda _id, _type, attributes, relationships:
-        decode_limits(attributes),
+        decode_limits(_id, _type, attributes),
+
+        "creditLimits": lambda _id, _type, attributes, relationships:
+        CreditAccountLimitsDTO.from_json_api(_id, _type, attributes),
 
         "individualDebitCard": lambda _id, _type, attributes, relationships:
         IndividualDebitCardDTO.from_json_api(_id, _type, attributes, relationships),
@@ -342,8 +346,8 @@ def split_json_api_array_response(payload):
 
 
 def decode_limits(_id: str, _type: str, attributes: Dict):
-    if "ach" in attributes.keys() or _type is "creditLimits":
-        return AccountLimitsDTO.from_json_api(_id, _type, attributes)
+    if "ach" in attributes.keys():
+        return DepositAccountLimitsDTO.from_json_api(_id, _type, attributes)
     else:
         return CardLimitsDTO.from_json_api(attributes)
 
