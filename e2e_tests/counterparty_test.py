@@ -107,6 +107,7 @@ def test_create_with_token_couterparty():
     assert payload["data"]["attributes"]["permissions"] == create_counterparty_json["data"]["attributes"]["permissions"]
     assert payload["data"]["attributes"]["tags"] == create_counterparty_json["data"]["attributes"]["tags"]
 
+
 def test_counterparty_dto():
     counterparty_api_response = {
           "type": "achCounterparty",
@@ -146,3 +147,24 @@ def test_counterparty_dto():
     assert counterparty.attributes["permissions"] == counterparty_api_response["attributes"]["permissions"]
     assert counterparty.attributes["type"] == counterparty_api_response["attributes"]["type"]
     assert counterparty.attributes["name"] == counterparty_api_response["attributes"]["name"]
+
+
+def test_409_conflict():
+    customer_id = create_individual_customer()
+
+    req = CreateCounterpartyWithTokenRequest("Sherlock Holmes", "Person",
+                                             "processor-sandbox-c192e281-ca96-42fd-8db6-e9d37a701b11",
+                                             {"customer": Relationship("customer", customer_id)},
+                                             tags={"purpose": "testing_creation"})
+    counterparty = client.counterparty.create(req).data
+    assert counterparty.type == "achCounterparty"
+
+    customer_id = create_individual_customer()
+
+    req = CreateCounterpartyWithTokenRequest("Sherlock Holmes", "Person",
+                                             "processor-sandbox-c192e281-ca96-42fd-8db6-e9d37a701b11",
+                                             {"customer": Relationship("customer", customer_id)},
+                                             tags={"purpose": "testing_creation"})
+
+    response = client.counterparty.create(req)
+    assert response
