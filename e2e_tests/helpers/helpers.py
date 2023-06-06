@@ -61,14 +61,19 @@ full_name = FullName.from_json_api({
     })
 
 
-def create_individual_customer(client):
+def create_individual_application(client):
     request = CreateIndividualApplicationRequest(
         FullName("Jhon", "Doe"), date.today() - timedelta(days=20 * 365),
         Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
         "jone.doe1@unit-finance.com",
         Phone("1", "2025550108"), ssn="721074426",
     )
-    response = client.applications.create(request)
+    return client.applications.create(request)
+
+
+def create_individual_customer(client):
+    response = create_individual_application(client)
+
     for key, value in response.data.relationships.items():
         if key == "customer":
             return value.id
