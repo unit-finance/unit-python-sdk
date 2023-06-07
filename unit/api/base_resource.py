@@ -3,8 +3,9 @@ import requests
 import backoff
 from typing import Optional, Dict
 
+from unit.models import UnitError
 from unit.utils.configuration import Configuration
-from unit.models.codecs import UnitEncoder
+from unit.models.codecs import UnitEncoder, DtoDecoder
 
 
 def backoff_idempotency_key_handler(e):
@@ -136,6 +137,13 @@ class BaseResource(object):
             merged = self.configuration.get_headers().copy()
             merged.update(**headers)
             return merged
+
+    @staticmethod
+    def create_response(response):
+        if BaseResource.is_20x(response.status_code):
+            return DtoDecoder.create_response(response.json())
+        else:
+            return UnitError.from_json_api(response.json())
 
     @staticmethod
     def is_20x(status: int):

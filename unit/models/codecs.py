@@ -353,6 +353,7 @@ def mapping_wraper(_id, _type, attributes, relationships):
     else:
         return RawUnitObject(_id, _type, attributes, relationships)
 
+
 class DtoDecoder(object):
     @staticmethod
     def decode(payload):
@@ -369,6 +370,14 @@ class DtoDecoder(object):
         else:
             _id, _type, attributes, relationships = split_json_api_single_response(payload)
             return mapping_wraper(_id, _type, attributes, relationships)
+
+    @staticmethod
+    def create_response(payload):
+        data = payload.get("data")
+        included = payload.get("included")
+        meta = payload.get("meta")
+
+        return UnitResponse(DtoDecoder.decode(data), DtoDecoder.decode(included), meta)
 
 
 class UnitEncoder(json.JSONEncoder):
