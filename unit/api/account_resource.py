@@ -108,7 +108,8 @@ class AccountResource(BaseResource):
         response = super().get(f"{self.resource}/{account_id}/deposit-products")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[List[AccountDepositProductDTO]](DtoDecoder.decode(data), None)
+            meta = response.json().get("meta")
+            return UnitResponse[List[AccountDepositProductDTO]](DtoDecoder.decode(data), meta=meta)
         else:
             return UnitError.from_json_api(response.json())
 
