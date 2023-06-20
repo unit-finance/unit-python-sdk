@@ -20,6 +20,5 @@ def to_date(d: str):
 def to_date_str(d: date):
     return d.strftime("%Y-%m-%d")
 
-
 def to_year_str(d: date):
     return d.strftime("%Y")
