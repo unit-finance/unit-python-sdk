@@ -25,7 +25,8 @@ def create_individual_application(ssn: str = "000000003"):
         ssn=ssn,
         device_fingerprints=[device_fingerprint],
         idempotency_key=str(uuid.uuid1()),
-        jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ"
+        jwt_subject="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fQ",
+        occupation="ArchitectOrEngineer"
     )
 
     return client.applications.create(request)
@@ -53,7 +54,7 @@ def create_business_application():
               BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
               Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
               Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
-        ]
+        ], business_vertical="FinancialServicesOther", year_of_incorporation="2020"
     )
 
     return client.applications.create(request)
