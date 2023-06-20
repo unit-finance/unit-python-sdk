@@ -2,7 +2,7 @@ from unit.utils import date_utils
 from unit.models import *
 from typing import IO
 
-ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview"]
+ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview", "AwaitingDocuments", "Canceled"]
 
 DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "CertificateOfIncorporation",
                        "EmployerIdentificationNumberConfirmation"]
