@@ -21,4 +21,4 @@ def to_date_str(d: date):
     return d.strftime("%Y-%m-%d")
 
 def to_year_str(d: date):
-    return d.strftime("%Y")
+    return None if type(d) is not date else d.strftime("%Y")
