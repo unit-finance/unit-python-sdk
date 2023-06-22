@@ -7,12 +7,13 @@ ApplicationFormStage = Literal["ChooseBusinessOrIndividual", "EnterIndividualInf
 
 
 class ApplicationFormPrefill(UnitDTO):
-    def __init__(self, application_type: Optional[str], full_name: Optional[FullName], ssn: Optional[str],
-                 passport: Optional[str], nationality: Optional[str], date_of_birth: Optional[date],
-                 email: Optional[str], name: Optional[str], state_of_incorporation: Optional[str],
-                 entity_type: Optional[str], contact: Optional[BusinessContact], officer: Optional[Officer],
-                 beneficial_owners: [BeneficialOwner], website: Optional[str], dba: Optional[str],
-                 ein: Optional[str], address: Optional[Address], phone: Optional[Phone]):
+    def __init__(self, application_type: Optional[str] = None, full_name: Optional[FullName] = None,
+                 ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
+                 date_of_birth: Optional[date] = None, email: Optional[str] = None, name: Optional[str] = None,
+                 state_of_incorporation: Optional[str] = None, entity_type: Optional[str] = None,
+                 contact: Optional[BusinessContact] = None, officer: Optional[Officer] = None,
+                 beneficial_owners: [BeneficialOwner] = None, website: Optional[str] = None, dba: Optional[str] = None,
+                 ein: Optional[str] = None, address: Optional[Address] = None, phone: Optional[Phone] = None):
         self.application_type = application_type
         self.full_name = full_name
         self.ssn = ssn
@@ -69,12 +70,14 @@ class CreateApplicationFormRequest(UnitRequest):
     def __init__(self, tags: Optional[Dict[str, str]] = None,
                  application_details: Optional[ApplicationFormPrefill] = None,
                  allowed_application_types: Optional[List[AllowedApplicationTypes]] = None,
-                 settings_override: Optional[ApplicationFormSettingsOverride] = None, lang: Optional[str] = None):
+                 settings_override: Optional[ApplicationFormSettingsOverride] = None, lang: Optional[str] = None,
+                 relationships: Optional[Dict[str, Dict[str, Relationship]]] = None):
         self.tags = tags
         self.application_details = application_details
         self.allowed_application_types = allowed_application_types
         self.lang = lang
         self.settings_override = settings_override
+        self.relationships = relationships
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -98,6 +101,9 @@ class CreateApplicationFormRequest(UnitRequest):
 
         if self.lang:
             payload["data"]["attributes"]["lang"] = self.lang
+
+        if self.relationships:
+            payload["data"]["relationships"] = self.relationships
 
         return payload
 
