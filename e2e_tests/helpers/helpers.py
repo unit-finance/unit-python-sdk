@@ -67,6 +67,7 @@ def create_individual_application(client):
         Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
         "jone.doe1@unit-finance.com",
         Phone("1", "2025550108"), ssn="721074426",
+        occupation="ArchitectOrEngineer"
     )
     return client.applications.create(request)
 
