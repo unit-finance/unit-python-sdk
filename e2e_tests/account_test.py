@@ -191,3 +191,12 @@ def test_remove_owners():
     response = client.accounts.remove_owners(AccountOwnersRequest(account_id, response.data.relationships["customers"]))
     assert response.data.type == "depositAccount"
     assert response.data.relationships.get("customer").id == last_owner_id
+
+
+def test_get_credit_account_limits():
+    account = create_credit_account_for_business().data
+    assert account.type == "creditAccount"
+
+    limits = client.accounts.limits(account.id).data
+    assert limits.type == "creditLimits"
+
