@@ -136,8 +136,9 @@ ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO, TrustAp
 
 class BaseCreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
-                 passport: str = None, nationality: str = None, ssn=None,
+                 ip: Optional[str] = None, ein: Optional[str] = None, dba: Optional[str] = None,
+                 sole_proprietorship: Optional[bool] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, ssn: Optional[str] = None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None,
                  tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
                  power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
@@ -245,9 +246,10 @@ class CreateTrustApplicationRequest(UnitRequest):
 
 class CreateSoleProprietorApplicationRequest(BaseCreateIndividualApplicationRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
-                 passport: str = None, nationality: str = None, ssn = None,
-                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None,
+                 ip: Optional[str] = None, ein: Optional[str] = None, dba: Optional[str] = None,
+                 sole_proprietorship: Optional[bool] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, ssn: Optional[str] = None,
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
                  power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
                  occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
