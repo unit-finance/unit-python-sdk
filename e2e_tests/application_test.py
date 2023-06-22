@@ -51,10 +51,12 @@ def create_business_application():
                 FullName("James", "Smith"), date.today() - timedelta(days=20*365),
                 Address("650 Allerton Street","Redwood City","CA","94063","US"),
                 Phone("1","2025550127"),"james@unit-finance.com",ssn="574567625"),
-              BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
-              Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
-              Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
-        ], business_vertical="FinancialServicesOther", year_of_incorporation="2020"
+            BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
+                            Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
+                            Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
+        ],
+        year_of_incorporation=date.today() - timedelta(days=2 * 365),
+        business_vertical="Construction"
     )
 
     return client.applications.create(request)

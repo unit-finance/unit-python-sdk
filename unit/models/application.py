@@ -136,8 +136,9 @@ ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO, TrustAp
 
 class BaseCreateIndividualApplicationRequest(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
-                 passport: str = None, nationality: str = None, ssn=None,
+                 ip: Optional[str] = None, ein: Optional[str] = None, dba: Optional[str] = None,
+                 sole_proprietorship: Optional[bool] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, ssn: Optional[str] = None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None,
                  tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
                  power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
@@ -183,8 +184,9 @@ class CreateBusinessApplicationRequest(UnitRequest):
                  website: Optional[str] = None, industry: Optional[Industry] = None,
                  annual_revenue: Optional[AnnualRevenue] = None,
                  number_of_employees: Optional[NumberOfEmployees] = None, cash_flow: Optional[CashFlow] = None,
-                 year_of_incorporation: Optional[str] = None, countries_of_operation: Optional[List[str]] = None,
-                 stock_symbol: Optional[str] = None, business_vertical: Optional[BusinessVertical] = None,
+                 year_of_incorporation: Optional[Union[date, str]] = None,
+                 countries_of_operation: Optional[List[str]] = None, stock_symbol: Optional[str] = None,
+                 business_vertical: Optional[BusinessVertical] = None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None
                  ):
         self.name = name
@@ -203,7 +205,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.annual_revenue = annual_revenue
         self.number_of_employees = number_of_employees
         self.cash_flow = cash_flow
-        self.year_of_incorporation = year_of_incorporation
+        self.year_of_incorporation = date_utils.to_year_str(year_of_incorporation)
         self.countries_of_operation = countries_of_operation
         self.stock_symbol = stock_symbol
         self.business_vertical = business_vertical
@@ -244,9 +246,10 @@ class CreateTrustApplicationRequest(UnitRequest):
 
 class CreateSoleProprietorApplicationRequest(BaseCreateIndividualApplicationRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, email: str, phone: Phone,
-                 ip: str = None, ein: str = None, dba: str = None, sole_proprietorship: bool = None,
-                 passport: str = None, nationality: str = None, ssn = None,
-                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: str = None,
+                 ip: Optional[str] = None, ein: Optional[str] = None, dba: Optional[str] = None,
+                 sole_proprietorship: Optional[bool] = None, passport: Optional[str] = None,
+                 nationality: Optional[str] = None, ssn: Optional[str] = None,
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None, idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
                  power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
                  occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,

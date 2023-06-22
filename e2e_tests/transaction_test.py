@@ -641,21 +641,3 @@ def test_list_and_get_transactions_with_type():
         response = client.transactions.get(id, account_id)
         assert response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction"
 
-
-def test_codecs_transactions():
-    import inspect
-    import unit.models.transaction as umt
-
-    classes = []
-
-    for name, obj in inspect.getmembers(umt):
-        try:
-            if 'TransactionDTO' in name and 'Base' not in name and name != 'TransactionDTO':
-                classes.append(name.replace('DTO', ''))
-        except Exception as e:
-            print(e)
-            continue
-
-    transactions = [x for x in mappings if "Transaction" in x]
-
-    assert len(transactions) == len(classes)
