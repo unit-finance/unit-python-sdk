@@ -1,7 +1,7 @@
 from unit.utils import date_utils
 from unit.models import *
 
-AccountStatus = Literal["Open", "Closed"]
+AccountStatus = Literal["Open", "Frozen", "Closed"]
 CloseReason = Literal["ByCustomer", "Fraud"]
 FraudReason = Literal["ACHActivity", "CardActivity", "CheckActivity", "ApplicationHistory", "AccountActivity",
                       "ClientIdentified", "IdentityTheft", "LinkedToFraudulentCustomer"]
