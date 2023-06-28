@@ -34,7 +34,7 @@ class CreateCounterpartyRequest(UnitRequest):
     def __init__(self, name: str, routing_number: str, account_number: str, account_type: CounterpartyAccountType,
                  type: CounterpartyType, relationships: [Dict[str, Relationship]], tags: Optional[object] = None,
                  idempotency_key: Optional[str] = None,
-                 permissions: Optional[CounterpartyPermissions] = "CreditAndDebit"):
+                 permissions: Optional[CounterpartyPermissions] = None):
         self.name = name
         self.routing_number = routing_number
         self.account_number = account_number
@@ -55,7 +55,7 @@ class CreateCounterpartyRequest(UnitRequest):
 class CreateCounterpartyWithTokenRequest(UnitRequest):
     def __init__(self, name: str, type: CounterpartyType, plaid_processor_token: str,
                  relationships: [Dict[str, Relationship]], verify_name: Optional[bool] = None,
-                 permissions: Optional[CounterpartyPermissions] = "CreditAndDebit", tags: Optional[object] = None,
+                 permissions: Optional[CounterpartyPermissions] = None, tags: Optional[object] = None,
                  idempotency_key: Optional[str] = None):
         self.name = name
         self.type = type
