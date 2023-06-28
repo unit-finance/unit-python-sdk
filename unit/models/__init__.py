@@ -547,3 +547,18 @@ class Beneficiary(UnitDTO):
             return None
 
         return Beneficiary(FullName.from_json_api(data["fullName"]), data.get("dateOfBirth"))
+
+
+class CurrencyConversion(UnitDTO):
+    def __init__(self, original_currency: str, amount_in_original_currency: int, fx_rate: Optional[str]):
+        self.original_currency = original_currency
+        self.amount_in_original_currency = amount_in_original_currency
+        self.fx_rate = fx_rate
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if not data:
+            return None
+
+        return CurrencyConversion(data["originalCurrency"], data["amountInOriginalCurrency"], data.get("fxRate"))
+
