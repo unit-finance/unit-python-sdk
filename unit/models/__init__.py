@@ -562,6 +562,7 @@ class CurrencyConversion(UnitDTO):
 
         return CurrencyConversion(data["originalCurrency"], data["amountInOriginalCurrency"], data.get("fxRate"))
 
+
 class RichMerchantDataFacilitator(object):
     def __init__(self, name: str, _type: Optional[str], logo: Optional[str]):
         self.name = name
