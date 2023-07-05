@@ -1,10 +1,11 @@
 import os
 import pytest
+import requests
 
 from e2e_tests.helpers.helpers import create_counterparty_dto, create_relationship, create_relationships_dict, \
     create_wire_counterparty_dto
 from e2e_tests.counterparty_test import create_counterparty
-from unit import Unit
+from unit import Unit, Configuration
 from unit.models.codecs import DtoDecoder
 from unit.models.payment import *
 from e2e_tests.account_test import create_deposit_account
@@ -29,9 +30,44 @@ def book_payment():
 @pytest.fixture
 def inline_ach_payment():
     account_id = create_deposit_account().data.id
-    request = CreateInlinePaymentRequest(10000, "Funding", create_counterparty_dto("812345673", "12345569", "Checking",
-                                                                                   "Jane Doe"),
+
+    data = {
+        "data": {
+            "type": "wirePayment",
+            "attributes": {
+                "amount": 500000,
+                "description": "Wire Payment from Sandbox"
+            },
+            "relationships": {
+                "account": {
+                    "data": {
+                        "type": "depositAccount",
+                        "id": account_id
+                    }
+                }
+            }
+        }
+    }
+
+    response = requests.post(f"https://api.s.unit.sh/sandbox/wire-payments", data=json.dumps(data),
+                             headers=Configuration("https://api.s.unit.sh", token).get_headers())
+
+    assert response.status_code == 201
+
+    request = CreateInlinePaymentRequest(100, "Funding", create_counterparty_dto("812345673", "12345569", "Checking",
+                                                                                 "Jane Doe"),
                                          create_relationship("depositAccount", account_id, "account"))
+    return client.payments.create(request).data
+
+
+@pytest.fixture()
+def linked_ach_payment():
+    account_id = create_deposit_account().data.id
+    counterparty_id = create_counterparty().data.id
+    relationships_list = [create_relationship("depositAccount", account_id, "account"),
+                          create_relationship("counterparty", counterparty_id)]
+    relationships = create_relationships_dict(relationships_list)
+    request = CreateLinkedPaymentRequest(10000, "Funding", relationships)
     return client.payments.create(request).data
 
 
@@ -39,15 +75,8 @@ def test_create_inline_ach_payment(inline_ach_payment):
     assert inline_ach_payment.type == "achPayment"
 
 
-def test_create_linked_ach_payment():
-    account_id = create_deposit_account().data.id
-    counterparty_id = create_counterparty().data.id
-    relationships_list = [create_relationship("depositAccount", account_id, "account"),
-                          create_relationship("counterparty", counterparty_id)]
-    relationships = create_relationships_dict(relationships_list)
-    request = CreateLinkedPaymentRequest(10000, "Funding", relationships)
-    response = client.payments.create(request)
-    assert response.data.type == "achPayment"
+def test_create_linked_ach_payment(linked_ach_payment):
+    assert linked_ach_payment.type == "achPayment"
 
 
 def test_create_wire_payment():
@@ -180,3 +209,5 @@ def test_cancel_ach_payment(inline_ach_payment):
     response = client.payments.cancel(inline_ach_payment.id)
     assert response.data.type == "achPayment"
     assert response.data.id == inline_ach_payment.id
+    assert response.data.attributes["amount"] == inline_ach_payment.attributes["amount"]
+    assert response.data.attributes["status"] == "Canceled"
