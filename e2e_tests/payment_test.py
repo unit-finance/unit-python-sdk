@@ -1,4 +1,5 @@
 import os
+import pytest
 
 from e2e_tests.helpers.helpers import create_counterparty_dto, create_relationship, create_relationships_dict, \
     create_wire_counterparty_dto
@@ -13,7 +14,8 @@ token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
 
-def create_book_payment():
+@pytest.fixture
+def book_payment():
     account_id1 = create_deposit_account().data.id
     account_id2 = create_deposit_account().data.id
 
@@ -21,16 +23,20 @@ def create_book_payment():
                                                              "counterpartyAccount": Relationship("depositAccount",
                                                                                                  account_id2)},
                                        tags={"purpose": "checking"})
-    return client.payments.create(request)
+    return client.payments.create(request).data
 
 
-def test_create_inline_ach_payment():
+@pytest.fixture
+def inline_ach_payment():
     account_id = create_deposit_account().data.id
     request = CreateInlinePaymentRequest(10000, "Funding", create_counterparty_dto("812345673", "12345569", "Checking",
-                                                                               "Jane Doe"),
+                                                                                   "Jane Doe"),
                                          create_relationship("depositAccount", account_id, "account"))
-    response = client.payments.create(request)
-    assert response.data.type == "achPayment"
+    return client.payments.create(request).data
+
+
+def test_create_inline_ach_payment(inline_ach_payment):
+    assert inline_ach_payment.type == "achPayment"
 
 
 def test_create_linked_ach_payment():
@@ -42,15 +48,6 @@ def test_create_linked_ach_payment():
     request = CreateLinkedPaymentRequest(10000, "Funding", relationships)
     response = client.payments.create(request)
     assert response.data.type == "achPayment"
-
-
-# def test_create_verified_ach_payment():
-#     account_id = create_deposit_account().data.id
-#     request = CreateVerifiedPaymentRequest(10000, "Funding", "processor-sandbox-561f2b29-d9b5-4ef7-90d6-45e1f0c09c0d",
-#                                            create_relationship("depositAccount", account_id, "account"),
-#                                            direction="Debit")
-#     response = client.payments.create(request)
-#     assert response.data.type == "achPayment"
 
 
 def test_create_wire_payment():
@@ -75,11 +72,6 @@ def test_list_and_get_payments():
     for id in payments_ids:
         response = client.payments.get(id)
         assert "Payment" in response.data.type
-
-
-def test_create_book_payment():
-    response = create_book_payment()
-    assert response.data.type == "bookPayment"
 
 
 def test_list_and_get_payments_filter_by_type():
@@ -110,13 +102,12 @@ def test_list_and_get_payments_filter_by_status():
         assert response.data.attributes["status"] == "Pending" or response.data.attributes["status"] == "Sent"
 
 
-def test_create_book_payment():
-    response = create_book_payment()
-    assert response.data.type == "bookPayment"
+def test_create_book_payment(book_payment):
+    assert book_payment.type == "bookPayment"
 
 
-def test_update_book_payment():
-    payment_id = create_book_payment().data.id
+def test_update_book_payment(book_payment):
+    payment_id = book_payment.id
     tags = {"purpose": "test"}
     request = PatchBookPaymentRequest(payment_id, tags)
     response = client.payments.update(request)
@@ -182,3 +173,10 @@ def test_ach_received_payment_dto():
 
     assert payment.id == _id
     assert str(payment.attributes["completionDate"]) == attributes["completionDate"]
+
+
+def test_cancel_ach_payment(inline_ach_payment):
+    assert inline_ach_payment.type == "achPayment"
+    response = client.payments.cancel(inline_ach_payment.id)
+    assert response.data.type == "achPayment"
+    assert response.data.id == inline_ach_payment.id
