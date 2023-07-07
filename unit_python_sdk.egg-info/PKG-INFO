@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: unit-python-sdk
+Version: 0.10.5
+Summary: This library provides a python wrapper to http://unit.co API. See https://docs.unit.co/
+Home-page: https://github.com/unit-finance/unit-python-sdk
+Download-URL: https://github.com/unit-finance/unit-python-sdk.git
+Author: unit.co
+Author-email: dev@unit.co
+License: Mozilla Public License 2.0
+Keywords: unit,finance,banking,banking-as-a-service,API,SDK
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+License-File: LICENSE
