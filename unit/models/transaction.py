@@ -260,7 +260,7 @@ class CardReversalTransactionDTO(BaseTransactionDTO):
 
 class WireTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, counterparty: Counterparty, description: str,
+                 summary: str, counterparty: Counterparty, description: Optional[str],
                  originator_to_beneficiary_information: str, sender_reference: str,
                  reference_for_beneficiary: str, beneficiary_information: str,
                  beneficiary_advice_information: str, tags: Optional[Dict[str, str]],
@@ -279,7 +279,7 @@ class WireTransactionDTO(BaseTransactionDTO):
     def from_json_api(_id, _type, attributes, relationships):
         return WireTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
                                 attributes["amount"], attributes["balance"], attributes["summary"],
-                                Counterparty.from_json_api(attributes["counterparty"]), attributes["description"],
+                                Counterparty.from_json_api(attributes["counterparty"]), attributes.get("description"),
                                 attributes.get("originatorToBeneficiaryInformation"), attributes.get("senderReference"),
                                 attributes.get("referenceForBeneficiary"), attributes.get("beneficiaryInformation"),
                                 attributes.get("beneficiaryAdviceInformation"), attributes.get("tags"), relationships)
