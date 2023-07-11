@@ -13,7 +13,7 @@ class BaseTransactionDTO(object):
 
 class OriginatedAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, description: str, addenda: Optional[str], counterparty: Counterparty,
+                 summary: str, description: Optional[str], addenda: Optional[str], counterparty: Counterparty,
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'originatedAchTransaction'
@@ -25,14 +25,14 @@ class OriginatedAchTransactionDTO(BaseTransactionDTO):
     def from_json_api(_id, _type, attributes, relationships):
         return OriginatedAchTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes["summary"], attributes["description"],
+            attributes["amount"], attributes["balance"], attributes["summary"], attributes.get("description"),
             attributes.get("addenda"), Counterparty.from_json_api(attributes["counterparty"]),
             attributes.get("tags"), relationships)
 
 
 class ReceivedAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, description: str, addenda: Optional[str], company_name: str,
+                 summary: str, description: Optional[str], addenda: Optional[str], company_name: str,
                  counterparty_routing_number: str, trace_number: Optional[str], sec_code: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
@@ -48,7 +48,7 @@ class ReceivedAchTransactionDTO(BaseTransactionDTO):
     def from_json_api(_id, _type, attributes, relationships):
         return ReceivedAchTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes["summary"], attributes["description"],
+            attributes["amount"], attributes["balance"], attributes["summary"], attributes.get("description"),
             attributes.get("addenda"), attributes["companyName"], attributes["counterpartyRoutingNumber"],
             attributes.get("traceNumber"), attributes.get("secCode"), attributes.get("tags"), relationships)
 
@@ -93,7 +93,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
                  company_name: str, counterparty_routing_number: str, reason: str, trace_number: Optional[str],
                  sec_code: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], description: Optional[str]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'dishonoredAchTransaction'
         self.attributes["companyName"] = company_name
@@ -101,6 +101,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
         self.attributes["traceNumber"] = trace_number
         self.attributes["reason"] = reason
         self.attributes["secCode"] = sec_code
+        self.attributes["description"] = description
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -108,7 +109,7 @@ class DishonoredAchTransactionDTO(BaseTransactionDTO):
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
             attributes["amount"], attributes["balance"], attributes["summary"], attributes["companyName"],
             attributes["counterpartyRoutingNumber"], attributes["reason"], attributes.get("traceNumber"),
-            attributes.get("secCode"), attributes.get("tags"), relationships)
+            attributes.get("secCode"), attributes.get("tags"), relationships, attributes.get("description"))
 
 
 class BookTransactionDTO(BaseTransactionDTO):
@@ -260,7 +261,7 @@ class CardReversalTransactionDTO(BaseTransactionDTO):
 
 class WireTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, counterparty: Counterparty, description: str,
+                 summary: str, counterparty: Counterparty, description: Optional[str],
                  originator_to_beneficiary_information: str, sender_reference: str,
                  reference_for_beneficiary: str, beneficiary_information: str,
                  beneficiary_advice_information: str, tags: Optional[Dict[str, str]],
@@ -279,7 +280,7 @@ class WireTransactionDTO(BaseTransactionDTO):
     def from_json_api(_id, _type, attributes, relationships):
         return WireTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
                                 attributes["amount"], attributes["balance"], attributes["summary"],
-                                Counterparty.from_json_api(attributes["counterparty"]), attributes["description"],
+                                Counterparty.from_json_api(attributes["counterparty"]), attributes.get("description"),
                                 attributes.get("originatorToBeneficiaryInformation"), attributes.get("senderReference"),
                                 attributes.get("referenceForBeneficiary"), attributes.get("beneficiaryInformation"),
                                 attributes.get("beneficiaryAdviceInformation"), attributes.get("tags"), relationships)
@@ -288,7 +289,7 @@ class WireTransactionDTO(BaseTransactionDTO):
 class ReleaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, sender_name: str, sender_address: Address,
                  sender_account_number: str, counterparty: Counterparty, amount: int, direction: str,
-                 description: str, balance: int, summary: str, tags: Optional[Dict[str, str]],
+                 description: Optional[str], balance: int, summary: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'releaseTransaction'
@@ -304,13 +305,13 @@ class ReleaseTransactionDTO(BaseTransactionDTO):
                                      Address.from_json_api(attributes["senderAddress"]),
                                      attributes["senderAccountNumber"],
                                      Counterparty.from_json_api(attributes["counterparty"]), attributes["amount"],
-                                     attributes["direction"], attributes["description"], attributes["balance"],
+                                     attributes["direction"], attributes.get("description"), attributes["balance"],
                                      attributes["summary"], attributes.get("tags"), relationships)
 
 
 class AdjustmentTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 description: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 description: Optional[str], tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'adjustmentTransaction'
         self.attributes["description"] = description
@@ -319,7 +320,7 @@ class AdjustmentTransactionDTO(BaseTransactionDTO):
     def from_json_api(_id, _type, attributes, relationships):
         return AdjustmentTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
                                         attributes["amount"], attributes["balance"],
-                                        attributes["summary"], attributes["description"], attributes.get("tags"),
+                                        attributes["summary"], attributes.get("description"), attributes.get("tags"),
                                         relationships)
 
 
