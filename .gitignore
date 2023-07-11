@@ -12,3 +12,5 @@ venv/*
 dist/
 
 .DS_Store
+
+build/
