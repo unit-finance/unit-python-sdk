@@ -102,7 +102,7 @@ mappings = {
         RecurringDebitAchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "bulkPayments": lambda _id, _type, attributes, relationships:
-        BulkPaymentsDTO.from_json_api(_id, _type, attributes, relationships),
+        BulkPaymentsDTO.from_json_api(_type, attributes),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),

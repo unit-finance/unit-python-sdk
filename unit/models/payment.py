@@ -200,10 +200,14 @@ class RecurringDebitAchPaymentDTO(BaseRecurringPaymentDTO):
 RecurringPaymentDTO = Union[RecurringCreditAchPaymentDTO, RecurringDebitAchPaymentDTO, RecurringCreditBookPaymentDTO]
 
 
-class BulkPaymentsDTO(RawUnitObject):
+class BulkPaymentsDTO(UnitDTO):
+    def __init__(self, _type: str, bulk_id: str):
+        self.type = _type
+        self.attributes = {"bulkId": bulk_id}
+
     @staticmethod
-    def from_json_api(_id, _type, attributes, relationships):
-        return BulkPaymentsDTO(**locals())
+    def from_json_api(_type, attributes):
+        return BulkPaymentsDTO(_type, attributes.get("bulkId"))
 
 
 class CreateRecurringPaymentBaseRequest(UnitRequest):
