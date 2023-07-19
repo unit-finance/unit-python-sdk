@@ -200,6 +200,16 @@ class RecurringDebitAchPaymentDTO(BaseRecurringPaymentDTO):
 RecurringPaymentDTO = Union[RecurringCreditAchPaymentDTO, RecurringDebitAchPaymentDTO, RecurringCreditBookPaymentDTO]
 
 
+class BulkPaymentsDTO(UnitDTO):
+    def __init__(self, _type: str, bulk_id: str):
+        self.type = _type
+        self.attributes = {"bulkId": bulk_id}
+
+    @staticmethod
+    def from_json_api(_type, attributes):
+        return BulkPaymentsDTO(_type, attributes.get("bulkId"))
+
+
 class CreateRecurringPaymentBaseRequest(UnitRequest):
     def __init__(self,_type: str, amount: int, description: str, schedule: CreateSchedule, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]]):
@@ -316,7 +326,7 @@ class CreatePaymentBaseRequest(UnitRequest):
         self.tags = tags
         self.relationships = relationships
 
-    def to_json_api(self) -> Dict:
+    def to_json_api(self, wrap_with_data=True) -> Dict:
         payload = {
             "data": {
                 "type": self.type,
@@ -344,7 +354,7 @@ class CreatePaymentBaseRequest(UnitRequest):
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
 
-        return payload
+        return payload if wrap_with_data else payload.get("data")
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
