@@ -190,7 +190,7 @@ class CreateIndividualDebitCard(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
-class CreateBusinessCard(object):
+class CreateBusinessCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  relationships: Dict[str, Relationship], shipping_address: Optional[Address] = None,
                  ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
@@ -306,7 +306,7 @@ class CreateIndividualVirtualDebitCard(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class CreateBusinessVirtualCard(object):
+class CreateBusinessVirtualCard(UnitRequest):
     def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
                  relationships: Dict[str, Relationship], ssn: Optional[str] = None, passport: Optional[str] = None,
                  nationality: Optional[str] = None, idempotency_key: Optional[str] = None,
@@ -411,7 +411,7 @@ class PatchIndividualDebitCard(UnitRequest):
         json.dumps(self.to_json_api())
 
 
-class PatchBusinessCard(object):
+class PatchBusinessCard(UnitRequest):
     def __init__(self, card_id: str, shipping_address: Optional[Address] = None, address: Optional[Address] = None,
                  phone: Optional[Phone] = None, email: Optional[str] = None, design: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None, limits: Optional[CardLevelLimits] = None):
@@ -491,7 +491,7 @@ class PatchIndividualVirtualDebitCard(UnitRequest):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
-class PatchBusinessVirtualCard(object):
+class PatchBusinessVirtualCard(UnitRequest):
     def __init__(self, card_id: str, address: Optional[Address] = None, phone: Optional[Phone] = None,
                  email: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  _type: str = "businessVirtualDebitCard", limits: Optional[CardLevelLimits] = None):

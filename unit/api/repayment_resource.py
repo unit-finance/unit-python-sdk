@@ -3,7 +3,11 @@ from typing import Union, List, Optional
 from unit.api.base_resource import BaseResource
 from unit.models import UnitResponse, UnitError
 from unit.models.codecs import DtoDecoder
-from unit.models.repayment import RepaymentDTO, CreateRepaymentRequest, ListRepaymentParams
+from unit.models.repayment import (
+    RepaymentDTO,
+    CreateRepaymentRequest,
+    ListRepaymentParams,
+)
 
 
 class RepaymentResource(BaseResource):
@@ -11,9 +15,11 @@ class RepaymentResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "repayments"
 
-    def create(self, request: CreateRepaymentRequest) -> Union[UnitResponse[RepaymentDTO], UnitError]:
+    def create(
+        self, request: CreateRepaymentRequest
+    ) -> Union[UnitResponse[RepaymentDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post_create(self.resource, payload)
+        response = super().post(self.resource, payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[RepaymentDTO](DtoDecoder.decode(data), None)
@@ -28,7 +34,9 @@ class RepaymentResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def list(self, params: Optional[ListRepaymentParams] = None) -> Union[UnitResponse[List[RepaymentDTO]], UnitError]:
+    def list(
+        self, params: Optional[ListRepaymentParams] = None
+    ) -> Union[UnitResponse[List[RepaymentDTO]], UnitError]:
         params = params or ListRepaymentParams()
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
