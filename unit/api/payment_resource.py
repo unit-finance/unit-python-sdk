@@ -45,6 +45,14 @@ class PaymentResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def create_bulk(self, payments: List[PaymentDTO]) -> Union[UnitResponse[BulkPaymentsDTO], UnitError]:
+        response = super().post(f"{self.resource}/bulk", {"data": payments})
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[BulkPaymentsDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
     def cancel(self, payment_id: str) -> Union[UnitResponse[PaymentDTO], UnitError]:
         response = super().post(f"{self.resource}/{payment_id}/cancel")
         if super().is_20x(response.status_code):

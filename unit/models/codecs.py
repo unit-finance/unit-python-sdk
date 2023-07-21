@@ -11,7 +11,7 @@ from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.transaction import transactions_mapper
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO, \
-    RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO
+    RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO, BulkPaymentsDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -100,6 +100,9 @@ mappings = {
 
         "recurringDebitAchPayment": lambda _id, _type, attributes, relationships:
         RecurringDebitAchPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "bulkPayments": lambda _id, _type, attributes, relationships:
+        BulkPaymentsDTO.from_json_api(_type, attributes),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),

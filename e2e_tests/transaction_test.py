@@ -641,3 +641,49 @@ def test_list_and_get_transactions_with_type():
         response = client.transactions.get(id, account_id)
         assert response.data.type == "receivedAchTransaction" or response.data.type == "feeTransaction"
 
+
+def test_wire_transaction():
+    wire_transaction_api_response = {
+      "type": "wireTransaction",
+      "id": "9547",
+      "attributes": {
+        "createdAt": "2020-07-05T15:49:36.864Z",
+        "direction": "Credit",
+        "amount": 1000,
+        "balance": 12000,
+        "summary": "Wire to Jane Smith",
+        "counterparty": {
+          "name": "Jane Smith",
+          "routingNumber": "812345678",
+          "accountNumber": "10039",
+          "accountType": "Checking"
+        }
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "depositAccount",
+            "id": "10035"
+          }
+        },
+        "customer": {
+          "data": {
+            "type": "customer",
+            "id": "5"
+          }
+        }
+      }
+    }
+
+    id = wire_transaction_api_response["id"]
+    _type = wire_transaction_api_response["type"]
+
+    transaction = DtoDecoder.decode(wire_transaction_api_response)
+
+    assert transaction.id == id
+    assert transaction.type == _type
+    assert transaction.attributes["amount"] == wire_transaction_api_response.get("attributes").get("amount")
+    assert transaction.attributes["direction"] == wire_transaction_api_response.get("attributes").get("direction")
+    assert transaction.attributes["balance"] == wire_transaction_api_response.get("attributes").get("balance")
+    assert transaction.attributes["summary"] == wire_transaction_api_response.get("attributes").get("summary")
+
