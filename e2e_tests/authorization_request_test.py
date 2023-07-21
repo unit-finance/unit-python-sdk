@@ -24,10 +24,13 @@ def test_list_with_wrong_parameters():
     response = client.authorization_requests.list(params)
     assert response.data == []
 
-# def test_approve_request():
-#     request = ApproveAuthorizationRequest("3722", 200, {"test": "test"})
-#     response = client.authorization_requests.approve(request)
-#     assert response.data.type == "purchaseAuthorizationRequest"
+def test_approve_request_payload():
+    request_payload = ApproveAuthorizationRequest("3722", 200, {"test": "test"}, "12345").to_json_api()
+    assert request_payload["data"]["type"] == "approveAuthorizationRequest"
+    assert request_payload["data"]["attributes"]["amount"] == 200
+    assert request_payload["data"]["attributes"]["tags"] == {"test": "test"}
+    assert request_payload["data"]["attributes"]["fundingAccount"] == "12345"
+
 #
 # def test_decline_request():
 #     request = DeclineAuthorizationRequest("3722", "ReferToCardIssuer")
