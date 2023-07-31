@@ -27,8 +27,13 @@ def test_list_with_non_authorized():
     authorizations = client.authorizations.list(params)
 
     for authorization in authorizations.data:
-        response = client.authorizations.get(authorization.id)
-        assert response.data.attributes["status"] == "Authorized"
+        response = client.authorizations.get(authorization.id, True)
+        assert response.data.id == authorization.id
+        assert response.data.type == authorization.type
+        assert response.data.attributes["status"] == authorization.attributes["status"]
+        assert response.data.attributes["createdAt"] == authorization.attributes["createdAt"]
+        assert response.data.attributes["amount"] == authorization.attributes["amount"]
+        assert response.data.attributes["cardLast4Digits"] == authorization.attributes["cardLast4Digits"]
 
 def test_list_and_get_authorization():
     authorizations = client.authorizations.list()
