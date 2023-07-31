@@ -85,9 +85,10 @@ class RelationshipArray(Generic[T], UnitDTO):
 
 
 class UnitResponse(Generic[T]):
-    def __init__(self, data: Union[T, List[T]], included):
+    def __init__(self, data: Union[T, List[T]], included=None, meta=None):
         self.data = data
         self.included = included
+        self.meta = meta
 
     @staticmethod
     def from_json_api(data: str):
