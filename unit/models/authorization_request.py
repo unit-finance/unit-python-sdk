@@ -58,27 +58,16 @@ class ListPurchaseAuthorizationRequestParams(object):
         return parameters
 
 
-class ApproveAuthorizationRequest(object):
-    def __init__(self, authorization_id: str, amount: Optional[int] = None, tags: Optional[Dict[str, str]] = None):
+class ApproveAuthorizationRequest(UnitRequest):
+    def __init__(self, authorization_id: str, amount: Optional[int] = None, tags: Optional[Dict[str, str]] = None,
+                 funding_account: Optional[str] = None):
         self.authorization_id = authorization_id
         self.amount = amount
         self.tags = tags
+        self.funding_account = funding_account
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "approveAuthorizationRequest",
-                "attributes": {}
-            }
-        }
-
-        if self.amount:
-            payload["data"]["attributes"]["amount"] = self.amount
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        return payload
+        return super().to_payload("approveAuthorizationRequest", ignore=["authorization_id"])
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
