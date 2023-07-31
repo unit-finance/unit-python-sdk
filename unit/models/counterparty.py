@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, date
-from typing import Optional, Dict
+from typing import Optional, Dict, List
+from typing_extensions import Literal
 
 from unit.models import Relationship, UnitParams, UnitRequest
 from unit.utils import date_utils
@@ -24,10 +25,16 @@ class CounterpartyDTO(object):
                                attributes["accountType"], attributes["type"], attributes["permissions"], relationships)
 
 
-class CreateCounterpartyRequest(object):
-    def __init__(self, name: str, routing_number: str, account_number: str, account_type: str, type: str,
-                 relationships: [Dict[str, Relationship]], tags: Optional[object] = None,
-                 idempotency_key: Optional[str] = None):
+CounterpartyPermissions = Literal["DebitOnly", "CreditAndDebit"]
+CounterpartyAccountType = Literal["Checking", "Savings", "Loan"]
+CounterpartyType = Literal["Business", "Person", "Unknown"]
+
+
+class CreateCounterpartyRequest(UnitRequest):
+    def __init__(self, name: str, routing_number: str, account_number: str, account_type: CounterpartyAccountType,
+                 type: CounterpartyType, relationships: [Dict[str, Relationship]], tags: Optional[object] = None,
+                 idempotency_key: Optional[str] = None,
+                 permissions: Optional[CounterpartyPermissions] = None):
         self.name = name
         self.routing_number = routing_number
         self.account_number = account_number
@@ -36,37 +43,19 @@ class CreateCounterpartyRequest(object):
         self.relationships = relationships
         self.tags = tags
         self.idempotency_key = idempotency_key
+        self.permissions = permissions
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "achCounterparty",
-                "attributes": {
-                    "name": self.name,
-                    "routingNumber": self.routing_number,
-                    "accountNumber": self.account_number,
-                    "accountType": self.account_type,
-                    "type": self.type
-                },
-                "relationships": self.relationships
-            }
-        }
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
-
-        return payload
+        return super().to_payload("achCounterparty", self.relationships)
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
 
 
 class CreateCounterpartyWithTokenRequest(UnitRequest):
-    def __init__(self, name: str, type: str, plaid_processor_token: str, relationships: [Dict[str, Relationship]],
-                 verify_name: Optional[bool] = None, permissions: Optional[str] = None, tags: Optional[object] = None,
+    def __init__(self, name: str, type: CounterpartyType, plaid_processor_token: str,
+                 relationships: [Dict[str, Relationship]], verify_name: Optional[bool] = None,
+                 permissions: Optional[CounterpartyPermissions] = None, tags: Optional[object] = None,
                  idempotency_key: Optional[str] = None):
         self.name = name
         self.type = type
@@ -78,40 +67,15 @@ class CreateCounterpartyWithTokenRequest(UnitRequest):
         self.idempotency_key = idempotency_key
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "achCounterparty",
-                "attributes": {
-                    "name": self.name,
-                    "type": self.type,
-                    "plaidProcessorToken": self.plaid_processor_token
-                },
-                "relationships": self.relationships
-            }
-        }
-
-        if self.verify_name:
-            payload["data"]["attributes"]["verifyName"] = self.verify_name
-
-        if self.permissions:
-            payload["data"]["attributes"]["permissions"] = self.permissions
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
-
-
-        return payload
+        return super().to_payload("achCounterparty", self.relationships)
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
 
 
-class PatchCounterpartyRequest(object):
+class PatchCounterpartyRequest(UnitRequest):
     def __init__(self, counterparty_id: str, plaid_processor_token: str, verify_name: Optional[bool] = None,
-                 permissions: Optional[str] = None, tags: Optional[object] = None):
+                 permissions: Optional[CounterpartyPermissions] = None, tags: Optional[object] = None):
         self.counterparty_id = counterparty_id
         self.plaid_processor_token = plaid_processor_token
         self.verify_name = verify_name
@@ -119,25 +83,7 @@ class PatchCounterpartyRequest(object):
         self.tags = tags
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "counterparty",
-                "attributes": {
-                    "plaidProcessorToken": self.plaid_processor_token
-                }
-            }
-        }
-
-        if self.verify_name:
-            payload["data"]["attributes"]["verifyName"] = self.verify_name
-
-        if self.permissions:
-            payload["data"]["attributes"]["permissions"] = self.permissions
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        return payload
+        return super().to_payload("counterparty", ignore=["counterparty_id"])
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
@@ -157,17 +103,30 @@ class CounterpartyBalanceDTO(object):
 
 class ListCounterpartyParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, account_number: Optional[str] = None,
+                 routing_number: Optional[str] = None, permissions: Optional[List[CounterpartyPermissions]] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
         self.tags = tags
+        self.account_number = account_number
+        self.routing_number = routing_number
+        self.permissions = permissions
 
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
         if self.customer_id:
             parameters["filter[customerId]"] = self.customer_id
+        if self.account_number:
+            parameters["filter[accountNumber]"] = self.account_number
+        if self.routing_number:
+            parameters["filter[routingNumber]"] = self.routing_number
+        if self.permissions:
+            for idx, p in enumerate(self.permissions):
+                parameters[f"filter[permissions][{idx}]"] = p
         if self.tags:
             parameters["filter[tags]"] = json.dumps(self.tags)
         return parameters
+
+
 

@@ -29,7 +29,7 @@ def test_get_counterparty():
 
 
 def test_counterparty_list():
-    response = client.counterparty.list()
+    response = client.counterparty.list(ListCounterpartyParams(permissions=["CreditOnly", "DebitOnly", "CreditAndDebit"]))
     for c in response.data:
         assert c.type == "achCounterparty"
 
