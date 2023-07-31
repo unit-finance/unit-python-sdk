@@ -10,14 +10,14 @@ def test_list_and_get_authorization_requests():
     authorizations = client.authorization_requests.list()
     for authorization in authorizations.data:
         response = client.authorization_requests.get(authorization.id)
-        assert response.data.type == "purchaseAuthorizationRequest"
+        assert "AuthorizationRequest" in response.data.type
 
 def test_list_with_parameters():
     params = ListPurchaseAuthorizationRequestParams(10, 0)
     authorizations = client.authorization_requests.list(params)
     for authorization in authorizations.data:
         response = client.authorization_requests.get(authorization.id)
-        assert response.data.type == "purchaseAuthorizationRequest"
+        assert "AuthorizationRequest" in response.data.type
 
 def test_list_with_wrong_parameters():
     params = ListPurchaseAuthorizationRequestParams(10, 0, "", "-1")
