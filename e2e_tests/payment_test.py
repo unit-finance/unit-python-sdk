@@ -13,14 +13,19 @@ token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
 
-def create_book_payment():
+def create_book_payment_request():
     account_id1 = create_deposit_account().data.id
     account_id2 = create_deposit_account().data.id
 
-    request = CreateBookPaymentRequest(200, "Book payment", {"account": Relationship("depositAccount", account_id1),
-                                                             "counterpartyAccount": Relationship("depositAccount",
-                                                                                                 account_id2)},
-                                       tags={"purpose": "checking"})
+    return CreateBookPaymentRequest(200, "Book payment", {"account": Relationship("depositAccount", account_id1),
+                                                          "counterpartyAccount": Relationship("depositAccount",
+                                                                                              account_id2)},
+                                    tags={"purpose": "checking"})
+
+
+def create_book_payment():
+    request = create_book_payment_request()
+
     return client.payments.create(request)
 
 
@@ -182,3 +187,13 @@ def test_ach_received_payment_dto():
 
     assert payment.id == _id
     assert str(payment.attributes["completionDate"]) == attributes["completionDate"]
+
+
+def test_create_bulk_payments():
+    payment1 = create_book_payment_request().to_json_api(False)
+    payment2 = create_book_payment_request().to_json_api(False)
+
+    response = client.payments.create_bulk([payment1, payment2])
+    assert response.data.type == "bulkPayments"
+    assert response.data.attributes.get("bulkId") is not None
+

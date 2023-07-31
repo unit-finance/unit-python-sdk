@@ -1,4 +1,6 @@
 import os
+
+from e2e_tests.helpers.helpers import create_individual_application
 from unit import Unit
 from unit.models.applicationForm import CreateApplicationFormRequest, ApplicationFormPrefill
 
@@ -15,8 +17,7 @@ def create_application_form():
 
 
 def create_application_form_with_prefill():
-    prefill = ApplicationFormPrefill(None, None, None, None, None, None, "test@castlepay.co",
-                                            None, None, None, None, None, None, None, None, None, None, None)
+    prefill = ApplicationFormPrefill(email="test@castlepay.co")
 
     request = CreateApplicationFormRequest(tags={"userId": "106a75e9-de77-4e25-9561-faffe59d7814"},
                                            application_details=prefill)
@@ -40,4 +41,14 @@ def test_list_application_form():
     response = client.applicationForms.list()
     for app in response.data:
         assert app.type == "applicationForm"
+
+
+def test_create_application_form_for_application():
+    application = create_individual_application(client).data
+    request = CreateApplicationFormRequest(relationships={"application": {"data": {"type": "application",
+                                                                                   "id": application.id}}})
+
+    response = client.applicationForms.create(request)
+
+    assert response.data.type == "applicationForm"
 
