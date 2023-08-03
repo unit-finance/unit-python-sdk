@@ -165,7 +165,7 @@ Title = Literal["CEO", "COO", "CFO", "President"]
 EntityType = Literal["Corporation", "LLC", "Partnership"]
 
 
-class FullName(object):
+class FullName(UnitDTO):
     def __init__(self, first: str, last: str):
         self.first = first
         self.last = last
@@ -179,7 +179,7 @@ class FullName(object):
 
 
 # todo: Alex - use typing.Literal for multi accepted values (e.g country)
-class Address(object):
+class Address(UnitDTO):
     def __init__(
         self,
         street: str,
@@ -208,7 +208,7 @@ class Address(object):
         )
 
 
-class Phone(object):
+class Phone(UnitDTO):
     def __init__(self, country_code: str, number: str):
         self.country_code = country_code
         self.number = number
@@ -218,7 +218,7 @@ class Phone(object):
         return Phone(data.get("countryCode"), data.get("number"))
 
 
-class BusinessContact(object):
+class BusinessContact(UnitDTO):
     def __init__(self, full_name: FullName, email: str, phone: Phone):
         self.full_name = full_name
         self.email = email
@@ -233,7 +233,7 @@ class BusinessContact(object):
         )
 
 
-class Officer(object):
+class Officer(UnitDTO):
     def __init__(
         self,
         full_name: FullName,
@@ -274,7 +274,7 @@ class Officer(object):
         )
 
 
-class BeneficialOwner(object):
+class BeneficialOwner(UnitDTO):
     def __init__(
         self,
         full_name: FullName,
@@ -320,7 +320,7 @@ class BeneficialOwner(object):
         return beneficial_owners
 
 
-class AuthorizedUser(object):
+class AuthorizedUser(UnitDTO):
     def __init__(self, full_name: FullName, email: str, phone: Phone):
         self.full_name = full_name
         self.email = email
@@ -338,7 +338,7 @@ class AuthorizedUser(object):
         return authorized_users
 
 
-class WireCounterparty(object):
+class WireCounterparty(UnitDTO):
     def __init__(
         self, routing_number: str, account_number: str, name: str, address: Address
     ):
@@ -357,7 +357,7 @@ class WireCounterparty(object):
         )
 
 
-class Counterparty(object):
+class Counterparty(UnitDTO):
     def __init__(
         self, routing_number: str, account_number: str, account_type: str, name: str
     ):
@@ -376,7 +376,7 @@ class Counterparty(object):
         )
 
 
-class Coordinates(object):
+class Coordinates(UnitDTO):
     def __init__(self, longitude: int, latitude: int):
         self.longitude = longitude
         self.latitude = latitude
@@ -389,7 +389,7 @@ class Coordinates(object):
             return None
 
 
-class Merchant(object):
+class Merchant(UnitDTO):
     def __init__(
         self, name: str, type: int, category: Optional[str], location: Optional[str]
     ):
@@ -405,7 +405,7 @@ class Merchant(object):
         )
 
 
-class CardLevelLimits(object):
+class CardLevelLimits(UnitDTO):
     def __init__(
         self,
         daily_withdrawal: int,
@@ -428,7 +428,7 @@ class CardLevelLimits(object):
         )
 
 
-class CardTotals(object):
+class CardTotals(UnitDTO):
     def __init__(self, withdrawals: int, deposits: int, purchases: int):
         self.withdrawals = withdrawals
         self.deposits = deposits
@@ -439,7 +439,7 @@ class CardTotals(object):
         return CardTotals(data["withdrawals"], data["deposits"], data["purchases"])
 
 
-class DeviceFingerprint(object):
+class DeviceFingerprint(UnitDTO):
     def __init__(self, value: str, provider: str = "iovation"):
         self.value = value
         self.provider = provider
