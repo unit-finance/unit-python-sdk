@@ -3,6 +3,33 @@ from typing import TypeVar, Generic, Union, Optional, Literal, List, Dict
 from datetime import datetime, date
 
 
+def to_camel_case(snake_str):
+    components = snake_str.lstrip("_").split("_")
+    # We capitalize the first letter of each component except the first one
+    # with the 'title' method and join them together.
+    return components[0] + "".join(x.title() for x in components[1:])
+
+
+def extract_attributes(list_of_attributes, attributes):
+    extracted_attributes = {}
+    for a in list_of_attributes:
+        if a in attributes:
+            extracted_attributes[a] = attributes[a]
+
+    return extracted_attributes
+
+
+class UnitDTO(object):
+    def to_dict(self):
+        if type(self) is dict:
+            return self
+        else:
+            v = vars(self)
+            return dict(
+                (to_camel_case(k), val) for k, val in v.items() if val is not None
+            )
+
+
 class Relationship(object):
     def __init__(self, _type: str, _id: str):
         self.type = _type
@@ -12,7 +39,8 @@ class Relationship(object):
         return {"type": self.type, "id": self.id}
 
 
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class RelationshipArray(Generic[T]):
     def __init__(self, l: List[T]):
@@ -33,9 +61,40 @@ class UnitRequest(object):
     def to_json_api(self) -> Dict:
         pass
 
+    def vars_to_attributes_dict(self, ignore: List[str] = []) -> Dict:
+        attributes = {}
+
+        for k in self.__dict__:
+            if k != "relationships" and k not in ignore:
+                v = getattr(self, k)
+                if v:
+                    attributes[to_camel_case(k)] = v
+
+        return attributes
+
+    def to_payload(
+        self,
+        _type: str,
+        relationships: Dict[str, Relationship] = None,
+        ignore: List[str] = [],
+    ) -> Dict:
+        payload = {
+            "data": {
+                "type": _type,
+                "attributes": self.vars_to_attributes_dict(ignore),
+            }
+        }
+
+        if relationships:
+            payload["data"]["relationships"] = relationships
+
+        return payload
+
+
 class UnitParams(object):
     def to_dict(self) -> Dict:
         pass
+
 
 class RawUnitObject(object):
     def __init__(self, _id, _type, attributes, relationships):
@@ -44,9 +103,16 @@ class RawUnitObject(object):
         self.attributes = attributes
         self.relationships = relationships
 
+
 class UnitErrorPayload(object):
-    def __init__(self, title: str, status: str, detail: Optional[str] = None, details: Optional[str] = None,
-                 source: Optional[Dict] = None):
+    def __init__(
+        self,
+        title: str,
+        status: str,
+        detail: Optional[str] = None,
+        details: Optional[str] = None,
+        source: Optional[Dict] = None,
+    ):
         self.title = title
         self.status = status
         self.detail = detail
@@ -66,22 +132,40 @@ class UnitError(object):
         errors = []
         for err in data["errors"]:
             errors.append(
-                UnitErrorPayload(err.get("title"), err.get("status"), err.get("detail", None),
-                                 err.get("details", None), err.get("source", None))
+                UnitErrorPayload(
+                    err.get("title"),
+                    err.get("status"),
+                    err.get("detail", None),
+                    err.get("details", None),
+                    err.get("source", None),
+                )
             )
 
         return UnitError(errors)
 
     def __str__(self):
-        return json.dumps({"errors": [{"title": err.title, "status": err.status, "detail": err.detail,
-                                "details": err.details, "source": err.source} for err in self.errors]})
+        return json.dumps(
+            {
+                "errors": [
+                    {
+                        "title": err.title,
+                        "status": err.status,
+                        "detail": err.detail,
+                        "details": err.details,
+                        "source": err.source,
+                    }
+                    for err in self.errors
+                ]
+            }
+        )
 
 
 Status = Literal["Approved", "Denied", "PendingReview"]
 Title = Literal["CEO", "COO", "CFO", "President"]
 EntityType = Literal["Corporation", "LLC", "Partnership"]
 
-class FullName(object):
+
+class FullName(UnitDTO):
     def __init__(self, first: str, last: str):
         self.first = first
         self.last = last
@@ -95,9 +179,16 @@ class FullName(object):
 
 
 # todo: Alex - use typing.Literal for multi accepted values (e.g country)
-class Address(object):
-    def __init__(self, street: str, city: str, state: str, postal_code: str, country: str,
-                 street2: Optional[str] = None):
+class Address(UnitDTO):
+    def __init__(
+        self,
+        street: str,
+        city: str,
+        state: str,
+        postal_code: str,
+        country: str,
+        street2: Optional[str] = None,
+    ):
         self.street = street
         self.street2 = street2
         self.city = city
@@ -107,11 +198,17 @@ class Address(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Address(data.get("street"), data.get("city"), data.get("state"),
-                data.get("postalCode"), data.get("country"), data.get("street2", None))
+        return Address(
+            data.get("street"),
+            data.get("city"),
+            data.get("state"),
+            data.get("postalCode"),
+            data.get("country"),
+            data.get("street2", None),
+        )
 
 
-class Phone(object):
+class Phone(UnitDTO):
     def __init__(self, country_code: str, number: str):
         self.country_code = country_code
         self.number = number
@@ -121,7 +218,7 @@ class Phone(object):
         return Phone(data.get("countryCode"), data.get("number"))
 
 
-class BusinessContact(object):
+class BusinessContact(UnitDTO):
     def __init__(self, full_name: FullName, email: str, phone: Phone):
         self.full_name = full_name
         self.email = email
@@ -129,13 +226,27 @@ class BusinessContact(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return BusinessContact(FullName.from_json_api(data.get("fullName")), data.get("email"), Phone.from_json_api(data.get("phone")))
+        return BusinessContact(
+            FullName.from_json_api(data.get("fullName")),
+            data.get("email"),
+            Phone.from_json_api(data.get("phone")),
+        )
 
 
-class Officer(object):
-    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: Optional[Status] = None, title: Optional[Title] = None, ssn: Optional[str] = None,
-                 passport: Optional[str] = None, nationality: Optional[str] = None):
+class Officer(UnitDTO):
+    def __init__(
+        self,
+        full_name: FullName,
+        date_of_birth: date,
+        address: Address,
+        phone: Phone,
+        email: str,
+        status: Optional[Status] = None,
+        title: Optional[Title] = None,
+        ssn: Optional[str] = None,
+        passport: Optional[str] = None,
+        nationality: Optional[str] = None,
+    ):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -149,15 +260,34 @@ class Officer(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Officer(data.get("fullName"), data.get("dateOfBirth"), data.get("address"), data.get("phone"),
-                data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
-                data.get("nationality"))
+        return Officer(
+            data.get("fullName"),
+            data.get("dateOfBirth"),
+            data.get("address"),
+            data.get("phone"),
+            data.get("email"),
+            data.get("status"),
+            data.get("title"),
+            data.get("ssn"),
+            data.get("passport"),
+            data.get("nationality"),
+        )
 
 
-class BeneficialOwner(object):
-    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
-                 status: Optional[Status] = None, ssn: Optional[str] = None, passport: Optional[str] = None,
-                 nationality: Optional[str] = None, percentage: Optional[int] = None):
+class BeneficialOwner(UnitDTO):
+    def __init__(
+        self,
+        full_name: FullName,
+        date_of_birth: date,
+        address: Address,
+        phone: Phone,
+        email: str,
+        status: Optional[Status] = None,
+        ssn: Optional[str] = None,
+        passport: Optional[str] = None,
+        nationality: Optional[str] = None,
+        percentage: Optional[int] = None,
+    ):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -173,13 +303,24 @@ class BeneficialOwner(object):
     def from_json_api(l: List):
         beneficial_owners = []
         for data in l:
-            beneficial_owners.append(BeneficialOwner(data.get("fullName"), data.get("dateOfBirth"), data.get("address"),
-                data.get("phone"), data.get("email"), data.get("status"), data.get("ssn"),
-                data.get("passport"), data.get("nationality"), data.get("percentage")))
+            beneficial_owners.append(
+                BeneficialOwner(
+                    data.get("fullName"),
+                    data.get("dateOfBirth"),
+                    data.get("address"),
+                    data.get("phone"),
+                    data.get("email"),
+                    data.get("status"),
+                    data.get("ssn"),
+                    data.get("passport"),
+                    data.get("nationality"),
+                    data.get("percentage"),
+                )
+            )
         return beneficial_owners
 
 
-class AuthorizedUser(object):
+class AuthorizedUser(UnitDTO):
     def __init__(self, full_name: FullName, email: str, phone: Phone):
         self.full_name = full_name
         self.email = email
@@ -189,11 +330,18 @@ class AuthorizedUser(object):
     def from_json_api(l: List) -> List:
         authorized_users = []
         for data in l:
-            authorized_users.append(AuthorizedUser(data.get("fullName"), data.get("email"), data.get("phone")))
+            authorized_users.append(
+                AuthorizedUser(
+                    data.get("fullName"), data.get("email"), data.get("phone")
+                )
+            )
         return authorized_users
 
-class WireCounterparty(object):
-    def __init__(self, routing_number: str, account_number: str, name: str, address: Address):
+
+class WireCounterparty(UnitDTO):
+    def __init__(
+        self, routing_number: str, account_number: str, name: str, address: Address
+    ):
         self.routing_number = routing_number
         self.account_number = account_number
         self.name = name
@@ -201,11 +349,18 @@ class WireCounterparty(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return WireCounterparty(data["routingNumber"], data["accountNumber"], data["name"],
-                                Address.from_json_api(data["address"]))
+        return WireCounterparty(
+            data["routingNumber"],
+            data["accountNumber"],
+            data["name"],
+            Address.from_json_api(data["address"]),
+        )
 
-class Counterparty(object):
-    def __init__(self, routing_number: str, account_number: str, account_type: str, name: str):
+
+class Counterparty(UnitDTO):
+    def __init__(
+        self, routing_number: str, account_number: str, account_type: str, name: str
+    ):
         self.routing_number = routing_number
         self.account_number = account_number
         self.account_type = account_type
@@ -213,9 +368,15 @@ class Counterparty(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Counterparty(data["routingNumber"], data["accountNumber"], data["accountType"], data["name"])
+        return Counterparty(
+            data["routingNumber"],
+            data["accountNumber"],
+            data["accountType"],
+            data["name"],
+        )
 
-class Coordinates(object):
+
+class Coordinates(UnitDTO):
     def __init__(self, longitude: int, latitude: int):
         self.longitude = longitude
         self.latitude = latitude
@@ -228,8 +389,10 @@ class Coordinates(object):
             return None
 
 
-class Merchant(object):
-    def __init__(self, name: str, type: int, category: Optional[str], location: Optional[str]):
+class Merchant(UnitDTO):
+    def __init__(
+        self, name: str, type: int, category: Optional[str], location: Optional[str]
+    ):
         self.name = name
         self.type = type
         self.category = category
@@ -237,10 +400,19 @@ class Merchant(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Merchant(data["name"], data["type"], data.get("category"), data.get("location"))
+        return Merchant(
+            data["name"], data["type"], data.get("category"), data.get("location")
+        )
 
-class CardLevelLimits(object):
-    def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
+
+class CardLevelLimits(UnitDTO):
+    def __init__(
+        self,
+        daily_withdrawal: int,
+        daily_purchase: int,
+        monthly_withdrawal: int,
+        monthly_purchase: int,
+    ):
         self.daily_withdrawal = daily_withdrawal
         self.daily_purchase = daily_purchase
         self.monthly_withdrawal = monthly_withdrawal
@@ -248,10 +420,15 @@ class CardLevelLimits(object):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return CardLevelLimits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
-                      data["monthlyPurchase"])
+        return CardLevelLimits(
+            data["dailyWithdrawal"],
+            data["dailyPurchase"],
+            data["monthlyWithdrawal"],
+            data["monthlyPurchase"],
+        )
 
-class CardTotals(object):
+
+class CardTotals(UnitDTO):
     def __init__(self, withdrawals: int, deposits: int, purchases: int):
         self.withdrawals = withdrawals
         self.deposits = deposits
@@ -262,7 +439,7 @@ class CardTotals(object):
         return CardTotals(data["withdrawals"], data["deposits"], data["purchases"])
 
 
-class DeviceFingerprint(object):
+class DeviceFingerprint(UnitDTO):
     def __init__(self, value: str, provider: str = "iovation"):
         self.value = value
         self.provider = provider
