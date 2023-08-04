@@ -149,9 +149,10 @@ class AchReceivedPaymentDTO(object):
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
-                 type: str = "achPayment"):
+                 same_day: Optional[bool] = False, type: str = "achPayment"):
         self.type = type
         self.amount = amount
+        self.same_day = same_day
         self.description = description
         self.direction = direction
         self.idempotency_key = idempotency_key
@@ -173,6 +174,9 @@ class CreatePaymentBaseRequest(UnitRequest):
 
         if self.idempotency_key:
             payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+        
+        if self.same_day:
+            payload["data"]["attributes"]["sameDay"] = self.same_day
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
@@ -185,8 +189,8 @@ class CreatePaymentBaseRequest(UnitRequest):
 class CreateInlinePaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, counterparty: Counterparty, relationships: Dict[str, Relationship],
                  addenda: Optional[str], idempotency_key: Optional[str], tags: Optional[Dict[str, str]],
-                 direction: str = "Credit"):
-        CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction)
+                 same_day: Optional[bool] = False, direction: str = "Credit"):
+        CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction, same_day)
         self.counterparty = counterparty
         self.addenda = addenda
 
@@ -203,8 +207,8 @@ class CreateInlinePaymentRequest(CreatePaymentBaseRequest):
 class CreateLinkedPaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], addenda: Optional[str],
                  verify_counterparty_balance: Optional[bool], idempotency_key: Optional[str],
-                 tags: Optional[Dict[str, str]], direction: str = "Credit"):
-        CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction)
+                 same_day: Optional[bool] = False, tags: Optional[Dict[str, str]], direction: str = "Credit"):
+        CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction, same_day)
         self.addenda = addenda
         self.verify_counterparty_balance = verify_counterparty_balance
 
