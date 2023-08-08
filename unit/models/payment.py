@@ -149,7 +149,7 @@ class AchReceivedPaymentDTO(object):
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
-                 same_day: Optional[bool] = False, type: str = "achPayment"):
+                type: str = "achPayment", same_day: Optional[bool] = False):
         self.type = type
         self.amount = amount
         self.same_day = same_day
@@ -207,7 +207,7 @@ class CreateInlinePaymentRequest(CreatePaymentBaseRequest):
 class CreateLinkedPaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship], addenda: Optional[str],
                  verify_counterparty_balance: Optional[bool], idempotency_key: Optional[str],
-                 tags: Optional[Dict[str, str]], same_day: Optional[bool] = False, direction: str = "Credit"):
+                 tags: Optional[Dict[str, str]], direction: str = "Credit", same_day: Optional[bool] = False):
         CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction, same_day)
         self.addenda = addenda
         self.verify_counterparty_balance = verify_counterparty_balance
