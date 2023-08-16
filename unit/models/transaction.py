@@ -131,14 +131,16 @@ class BookTransactionDTO(BaseTransactionDTO):
 
 class PurchaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, card_last_4_digits: str, merchant: Merchant, coordinates: Coordinates, recurring: bool,
-                 interchange: Optional[int], ecommerce: bool, card_present: bool, payment_method: Optional[str],
+                 summary: str, last_4_digits: str, merchantName: str, merchantType:str, merchantLocation: str,
+                 coordinates: Coordinates, recurring: bool,interchange: Optional[int], ecommerce: bool, card_present: bool, payment_method: Optional[str],
                  digital_wallet: Optional[str], card_verification_data, card_network: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
-        self.attributes["cardLast4Digits"] = card_last_4_digits
-        self.attributes["merchant"] = merchant
+        self.attributes["last4Digits"] = last_4_digits
+        self.attributes["merchantName"] = merchantName
+        self.attributes["merchantType"] = merchantType
+        self.attributes["merchantLocation"] = merchantLocation
         self.attributes["coordinates"] = coordinates
         self.attributes["recurring"] = recurring
         self.attributes["interchange"] = interchange
@@ -153,8 +155,9 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
     def from_json_api(_id, _type, attributes, relationships):
         return PurchaseTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes["summary"], attributes["cardLast4Digits"],
-            Merchant.from_json_api(attributes["merchant"]), Coordinates.from_json_api(attributes.get("coordinates")),
+            attributes["amount"], attributes["balance"], attributes.get("summary"), attributes["last4Digits"],
+            attributes.get("merchantName"), attributes.get("merchantType"), attributes.get("merchantLocation"),
+            Coordinates.from_json_api(attributes.get("coordinates")),
             attributes["recurring"], attributes.get("interchange"), attributes.get("ecommerce"),
             attributes.get("cardPresent"), attributes.get("paymentMethod"), attributes.get("digitalWallet"),
             attributes.get("cardVerificationData"), attributes.get("cardNetwork"), attributes.get("tags"),
@@ -464,3 +467,117 @@ class ListTransactionParams(UnitParams):
         if self.include:
             parameters["include"] = self.include
         return parameters
+
+
+class SimulatePurchaseTransaction(UnitRequest):
+    def __init__(
+        self,
+        amount: int,
+        card_id: str,
+        last_4_Digits: str,
+        deposit_account_id: str,
+        merchantName: str,
+        merchantType: str,
+        merchantLocation: str,
+        direction: str = "Debit",
+        authorization_id: str = None,
+    ):
+        self.authorization_id = authorization_id
+        self.last_4_Digits = last_4_Digits
+        self.deposit_account_id = deposit_account_id
+        self.direction = direction
+        self.amount = amount
+        self.card_id = card_id
+        self.merchantName = merchantName
+        self.merchantType = merchantType
+        self.merchantLocation = merchantLocation
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "purchaseTransaction",
+                "attributes": {
+                    "amount": self.amount,
+                    "direction": self.direction,
+                    "last4Digits": self.last_4_Digits,
+                    "merchantName": self.merchantName,
+                    "merchantType": self.merchantType,
+                    "merchantLocation": self.merchantLocation,
+                    "recurring": False
+                },
+                "relationships": {
+                    "account": {
+                        "data": {
+                            "type": "depositAccount",
+                            "id": self.deposit_account_id
+                        }
+                    }
+                }
+
+            }
+        }
+
+        if self.authorization_id:
+            payload["data"]["relationships"]["authorization"] = {
+                "data": {
+                    "type": "authorization",
+                    "id": self.authorization_id
+                }
+            }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+
+class SimulateCardTransaction(UnitRequest):
+    def __init__(
+        self,
+        amount: int,
+        card_id: str,
+        card_last_4_Digits: str,
+        deposit_account: str,
+        merchantName: str,
+        merchantType: str,
+        merchantLocation: str,
+        direction: str = "Debit",
+    ):
+        self.card_last_4_Digits = card_last_4_Digits
+        self.deposit_account = deposit_account
+        self.direction = direction
+        self.amount = amount
+        self.card_id = card_id
+        self.merchantName = merchantName
+        self.merchantType = merchantType
+        self.merchantLocation = merchantLocation
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "cardTransaction",
+                "attributes": {
+                    "amount": self.amount,
+                    "direction": self.direction,
+                    "cardLast4Digits": self.card_last_4_Digits,
+                    "merchantName": "The Home Depot",
+                    "merchantType": self.merchantType,
+                    "merchantLocation": self.merchantLocation,
+                    "recurring": False
+                },
+                "relationships": {
+                    "account": {
+                        "data": {
+                            "type": "depositAccount",
+                            "id": self.deposit_account
+                        }
+                    },
+                }
+
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())

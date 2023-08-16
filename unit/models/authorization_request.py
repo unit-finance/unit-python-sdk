@@ -96,3 +96,40 @@ class DeclineAuthorizationRequest(UnitRequest):
 
     def __repr__(self):
         json.dumps(self.to_json_api())
+
+
+class SimulateAuthorizationRequest(UnitRequest):
+    def __init__(self, amount: int, card_id: str, merchant_name: str, merchant_type: int, merchant_location: str):
+        self.amount = amount
+        self.card_id = card_id
+        self.merchant_name = merchant_name
+        self.merchant_type = merchant_type
+        self.merchant_location = merchant_location
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "purchaseAuthorizationRequest",
+                "attributes": {
+                    "amount": self.amount,
+                    "merchantName": self.merchant_name,
+                    "merchantType": self.merchant_type,
+                    "merchantLocation": self.merchant_location,
+                    "recurring": False
+                },
+                "relationships": {
+                    "card": {
+                        "data": {
+                            "type": "card",
+                            "id": self.card_id
+                        }
+                    }
+                }
+
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())

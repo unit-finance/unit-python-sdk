@@ -44,3 +44,11 @@ class AuthorizationRequestResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def sandbox_simulate(self, request: SimulateAuthorizationRequest) -> Union[UnitResponse[PurchaseAuthorizationRequestDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"sandbox/{self.resource}/purchase", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[PurchaseAuthorizationRequestDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
