@@ -39,7 +39,7 @@ class TransactionResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def sb_simulate_purchase_transaction(self, request: SimulatePurchaseTransaction) -> Union[UnitResponse[PurchaseTransactionDTO], UnitError]:
+    def sandbox_simulate_purchase_transaction(self, request: SimulatePurchaseTransaction) -> Union[UnitResponse[PurchaseTransactionDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"sandbox/purchases", payload)
         if super().is_20x(response.status_code):
@@ -48,7 +48,7 @@ class TransactionResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def sb_simulate_card_transaction(self, request: SimulateCardTransaction) -> Union[UnitResponse[CardTransactionDTO], UnitError]:
+    def sandbox_simulate_card_transaction(self, request: SimulateCardTransaction) -> Union[UnitResponse[CardTransactionDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"sandbox/card-transactions", payload)
         if super().is_20x(response.status_code):

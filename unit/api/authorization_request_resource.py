@@ -44,7 +44,7 @@ class AuthorizationRequestResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def sb_simulate(self, request: SimulateAuthorizationRequest) -> Union[UnitResponse[PurchaseAuthorizationRequestDTO], UnitError]:
+    def sandbox_simulate(self, request: SimulateAuthorizationRequest) -> Union[UnitResponse[PurchaseAuthorizationRequestDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"sandbox/{self.resource}/purchase", payload)
         if super().is_20x(response.status_code):
