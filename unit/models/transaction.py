@@ -500,7 +500,7 @@ class SimulatePurchaseTransaction(UnitRequest):
                     "amount": self.amount,
                     "direction": self.direction,
                     "last4Digits": self.last_4_Digits,
-                    "merchantName": "The Home Depot",
+                    "merchantName": self.merchantName,
                     "merchantType": self.merchantType,
                     "merchantLocation": self.merchantLocation,
                     "recurring": False
