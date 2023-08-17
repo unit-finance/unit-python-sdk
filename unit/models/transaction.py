@@ -134,7 +134,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
                  summary: str, card_last_4_digits: str, merchantName: str, merchantType:str, merchantLocation: str,
                  coordinates: Coordinates, recurring: bool,interchange: Optional[int], ecommerce: bool, card_present: bool, payment_method: Optional[str],
                  digital_wallet: Optional[str], card_verification_data, card_network: Optional[str],
-                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]], last_4_digits: str = None):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -151,17 +151,21 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
         self.attributes["cardVerificationData"] = card_verification_data
         self.attributes["cardNetwork"] = card_network
 
+        # Unit incorrectly returns last4Digits for simulation responses
+        if last_4_digits:
+            self.attributes["last4Digits"] = last_4_digits
+
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return PurchaseTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes.get("summary"), attributes["cardLast4Digits"],
+            attributes["amount"], attributes["balance"], attributes.get("summary"), attributes.get("cardLast4Digits", None),
             attributes.get("merchantName"), attributes.get("merchantType"), attributes.get("merchantLocation"),
             Coordinates.from_json_api(attributes.get("coordinates")),
             attributes["recurring"], attributes.get("interchange"), attributes.get("ecommerce"),
             attributes.get("cardPresent"), attributes.get("paymentMethod"), attributes.get("digitalWallet"),
             attributes.get("cardVerificationData"), attributes.get("cardNetwork"), attributes.get("tags"),
-            relationships)
+            relationships, attributes.get("last4Digits", None))
 
 
 class AtmTransactionDTO(BaseTransactionDTO):
@@ -499,7 +503,7 @@ class SimulatePurchaseTransaction(UnitRequest):
                 "attributes": {
                     "amount": self.amount,
                     "direction": self.direction,
-                    "cardLast4Digits": self.card_last_4_Digits,
+                    "last4Digits": self.last_4_Digits,
                     "merchantName": self.merchantName,
                     "merchantType": self.merchantType,
                     "merchantLocation": self.merchantLocation,
