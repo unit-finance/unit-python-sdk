@@ -22,7 +22,7 @@ class BatchReleaseDTO(object):
         return BatchReleaseDTO(_id, attributes["amount"], attributes["description"], attributes["senderName"], attributes["senderAddress"], attributes["senderAccountNumber"], attributes.get("tags"), relationships)
 
 
-class CreateBatchReleaseRequest(object):
+class CreateBatchRelease(object):
     def __init__(self, amount: int, description: str, sender_name: str, sender_address: Address,
                  sender_account_number: str, relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]] = None,
                  idempotency_key: Optional[str] = None):

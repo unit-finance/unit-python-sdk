@@ -8,7 +8,7 @@ class BatchReleaseResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = 'batch-releases'
 
-    def create(self, batch_releases: List[CreateBatchReleaseRequest]) -> Union[UnitResponse[List[BatchReleaseDTO]], UnitError]:
+    def create(self, batch_releases: List[CreateBatchRelease]) -> Union[UnitResponse[List[BatchReleaseDTO]], UnitError]:
         response = super().post(self.resource, {"data": batch_releases})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
