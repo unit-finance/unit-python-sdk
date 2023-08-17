@@ -131,13 +131,13 @@ class BookTransactionDTO(BaseTransactionDTO):
 
 class PurchaseTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int,
-                 summary: str, last_4_digits: str, merchantName: str, merchantType:str, merchantLocation: str,
+                 summary: str, card_last_4_digits: str, merchantName: str, merchantType:str, merchantLocation: str,
                  coordinates: Coordinates, recurring: bool,interchange: Optional[int], ecommerce: bool, card_present: bool, payment_method: Optional[str],
                  digital_wallet: Optional[str], card_verification_data, card_network: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
-        self.attributes["last4Digits"] = last_4_digits
+        self.attributes["cardLast4Digits"] = card_last_4_digits
         self.attributes["merchantName"] = merchantName
         self.attributes["merchantType"] = merchantType
         self.attributes["merchantLocation"] = merchantLocation
@@ -155,7 +155,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
     def from_json_api(_id, _type, attributes, relationships):
         return PurchaseTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"],
-            attributes["amount"], attributes["balance"], attributes.get("summary"), attributes["last4Digits"],
+            attributes["amount"], attributes["balance"], attributes.get("summary"), attributes["cardLast4Digits"],
             attributes.get("merchantName"), attributes.get("merchantType"), attributes.get("merchantLocation"),
             Coordinates.from_json_api(attributes.get("coordinates")),
             attributes["recurring"], attributes.get("interchange"), attributes.get("ecommerce"),
@@ -499,7 +499,7 @@ class SimulatePurchaseTransaction(UnitRequest):
                 "attributes": {
                     "amount": self.amount,
                     "direction": self.direction,
-                    "last4Digits": self.last_4_Digits,
+                    "cardLast4Digits": self.card_last_4_Digits,
                     "merchantName": self.merchantName,
                     "merchantType": self.merchantType,
                     "merchantLocation": self.merchantLocation,
