@@ -30,7 +30,7 @@ class CreateBatchRelease(object):
         self.description = description
         self.sender_name = sender_name
         self.sender_address = sender_address
-        self.sender_account_number = sender_account_number
+        self.sender_account_number = sender_account_number # BIN followed by last four digits?
         self.tags = tags
         self.idempotency_key = idempotency_key
         self.relationships = relationships
@@ -49,9 +49,9 @@ class CreateBatchRelease(object):
         }
 
         if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
+            payload["attributes"]["idempotencyKey"] = self.idempotency_key
 
         if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
+            payload["attributes"]["tags"] = self.tags
 
         return payload
