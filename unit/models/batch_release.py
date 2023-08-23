@@ -19,10 +19,10 @@ class BatchReleaseDTO(object):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return BatchReleaseDTO(_id, attributes["amount"], attributes["description"], attributes["senderName"], attributes["senderAddress"], attributes["senderAccountNumber"], attributes.get("tags"), relationships)
+        return BatchReleaseDTO(_id, attributes["amount"], attributes["description"], attributes["senderName"], Address.from_json_api(attributes["senderAddress"]), attributes["senderAccountNumber"], attributes.get("tags"), relationships)
 
 
-class CreateBatchRelease(object):
+class CreateBatchRelease(UnitRequest):
     def __init__(self, amount: int, description: str, sender_name: str, sender_address: Address,
                  sender_account_number: str, relationships: Optional[Dict[str, Relationship]], tags: Optional[Dict[str, str]] = None,
                  idempotency_key: Optional[str] = None):
@@ -30,7 +30,7 @@ class CreateBatchRelease(object):
         self.description = description
         self.sender_name = sender_name
         self.sender_address = sender_address
-        self.sender_account_number = sender_account_number # BIN followed by last four digits?
+        self.sender_account_number = sender_account_number
         self.tags = tags
         self.idempotency_key = idempotency_key
         self.relationships = relationships
@@ -55,3 +55,6 @@ class CreateBatchRelease(object):
             payload["attributes"]["tags"] = self.tags
 
         return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())

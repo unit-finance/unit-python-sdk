@@ -8,10 +8,10 @@ class BatchReleaseResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = 'batch-releases'
 
-    def create(self, batch_releases: List[CreateBatchRelease]) -> Union[UnitResponse[List[BatchReleaseDTO]], UnitError]:
+    def create(self, batch_releases: List[BatchReleaseDTO]) -> Union[UnitResponse[List[BatchReleaseDTO]], UnitError]:
         response = super().post(self.resource, {"data": batch_releases})
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[BatchReleaseDTO](DtoDecoder.decode(data), DtoDecoder.decode(data)) # is this right based on list??
+            return UnitResponse[List[BatchReleaseDTO]](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
