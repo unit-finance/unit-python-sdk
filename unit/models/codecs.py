@@ -2,6 +2,7 @@ import json
 from unit.models import *
 from datetime import datetime, date
 
+from unit.models.batch_release import BatchReleaseDTO
 from unit.models.reward import RewardDTO
 from unit.utils import date_utils
 from unit.models.applicationForm import ApplicationFormDTO
@@ -274,6 +275,9 @@ mappings = {
 
         "reward": lambda _id, _type, attributes, relationships:
         RewardDTO.from_json_api(_id, attributes, relationships),
+
+        "batchRelease": lambda _id, _type, attributes, relationships:
+        BatchReleaseDTO.from_json_api(_id, _type, attributes, relationships),
 
 }
 
