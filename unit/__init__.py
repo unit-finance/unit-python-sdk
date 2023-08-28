@@ -1,4 +1,5 @@
 from unit.api.application_resource import ApplicationResource
+from unit.api.check_deposit_resource import CheckDepositResource
 from unit.api.batch_release_resource import BatchReleaseResource
 from unit.api.customer_resource import CustomerResource
 from unit.api.account_resource import AccountResource
@@ -35,6 +36,7 @@ class Unit(object):
         self.cards = CardResource(api_url, token)
         self.transactions = TransactionResource(api_url, token)
         self.payments = PaymentResource(api_url, token)
+        self.check_deposits = CheckDepositResource(api_url, token)
         self.repayments = RepaymentResource(api_url, token)
         self.ach = AchResource(api_url, token)
         self.statements = StatementResource(api_url, token)

@@ -376,6 +376,23 @@ class Counterparty(UnitDTO):
         )
 
 
+class CheckCounterparty(UnitDTO):
+    def __init__(
+        self, routing_number: str, account_number: str, name: str
+    ):
+        self.routing_number = routing_number
+        self.account_number = account_number
+        self.name = name
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return CheckCounterparty(
+            data["routingNumber"],
+            data["accountNumber"],
+            data["name"],
+        )
+
+
 class Coordinates(UnitDTO):
     def __init__(self, longitude: int, latitude: int):
         self.longitude = longitude
