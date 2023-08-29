@@ -242,29 +242,32 @@ class CheckDepositCreatedEvent(BaseEvent):
         return CheckDepositCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
                                       attributes["status"], attributes.get("tags"), relationships)
 
+
 class CheckDepositPendingReviewEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, status: str, tags: Optional[Dict[str, str]],
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'checkDeposit.pendingReview'
-        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CheckDepositCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                      attributes["status"], attributes.get("tags"), relationships)
+                                      attributes["previousStatus"], attributes.get("tags"), relationships)
+
 
 class CheckDepositPendingEvent(BaseEvent):
-    def __init__(self, id: str, created_at: datetime, status: str, tags: Optional[Dict[str, str]],
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseEvent.__init__(self, id, created_at, tags, relationships)
         self.type = 'checkDeposit.pending'
-        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CheckDepositCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                      attributes["status"], attributes.get("tags"), relationships)
+                                      attributes["previous_status"], attributes.get("tags"), relationships)
+
 
 class CheckDepositClearingEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
@@ -292,6 +295,21 @@ class CheckDepositSentEvent(BaseEvent):
                                       attributes["previousStatus"], attributes.get("tags"), relationships)
 
 
+class CheckDepositRejectedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, reason: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkDeposit.rejected'
+        self.attributes["previousStatus"] = previous_status
+        self.attributes["reason"] = reason
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckDepositRejectedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                      attributes["previousStatus"], attributes["reason"], attributes.get("tags"), relationships)
+
+
+
 class CheckDepositReturnedEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -303,6 +321,7 @@ class CheckDepositReturnedEvent(BaseEvent):
     def from_json_api(_id, _type, attributes, relationships):
         return CheckDepositReturnedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
                                       attributes["previousStatus"], attributes.get("tags"), relationships)
+
 
 
 class CustomerCreatedEvent(BaseEvent):
