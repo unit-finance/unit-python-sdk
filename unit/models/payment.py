@@ -314,12 +314,14 @@ class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  direction: str = "Credit", addenda: Optional[str] = None, same_day: Optional[bool] = False,
-                 sec_code: Optional[str] = None, _type: str = "achPayment"):
+                 sec_code: Optional[str] = None, clearing_days_override: Optional[int] = None,
+                 _type: str = "achPayment"):
         self.type = _type
         self.amount = amount
         self.addenda = addenda
         self.same_day = same_day
         self.sec_code = sec_code
+        self.clearing_days_override = clearing_days_override
         self.description = description
         self.direction = direction
         self.idempotency_key = idempotency_key
@@ -327,32 +329,7 @@ class CreatePaymentBaseRequest(UnitRequest):
         self.relationships = relationships
 
     def to_json_api(self, wrap_with_data=True) -> Dict:
-        payload = {
-            "data": {
-                "type": self.type,
-                "attributes": {
-                    "amount": self.amount,
-                    "direction": self.direction,
-                    "description": self.description
-                },
-                "relationships": self.relationships
-            }
-        }
-
-        if self.addenda:
-            payload["data"]["attributes"]["addenda"] = self.addenda
-
-        if self.same_day:
-            payload["data"]["attributes"]["sameDay"] = self.same_day
-
-        if self.sec_code:
-            payload["data"]["attributes"]["secCode"] = self.sec_code
-
-        if self.idempotency_key:
-            payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
+        payload = super().to_payload(self.type, self.relationships, ['type'])
 
         return payload if wrap_with_data else payload.get("data")
 
@@ -364,9 +341,10 @@ class CreateInlinePaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, counterparty: Counterparty, relationships: Dict[str, Relationship],
                  addenda: Optional[str] = None, idempotency_key: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None, direction: Optional[str] = "Credit",
-                 same_day: Optional[bool] = False, sec_code: Optional[str] = None):
+                 same_day: Optional[bool] = False, sec_code: Optional[str] = None,
+                 clearing_days_override: Optional[int] = None):
         CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction,
-                                          addenda, same_day, sec_code)
+                                          addenda, same_day, sec_code, clearing_days_override)
         self.counterparty = counterparty
 
     def to_json_api(self) -> Dict:
@@ -381,9 +359,10 @@ class CreateLinkedPaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  addenda: Optional[str] = None, verify_counterparty_balance: Optional[bool] = None,
                  idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 direction: Optional[str] = "Credit", same_day: Optional[bool] = False, sec_code: Optional[str] = None):
+                 direction: Optional[str] = "Credit", same_day: Optional[bool] = False, sec_code: Optional[str] = None,
+                 clearing_days_override: Optional[int] = None):
         CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags, direction,
-                                          addenda, same_day, sec_code)
+                                          addenda, same_day, sec_code, clearing_days_override)
         self.verify_counterparty_balance = verify_counterparty_balance
 
     def to_json_api(self) -> Dict:
@@ -400,9 +379,9 @@ class CreateVerifiedPaymentRequest(CreatePaymentBaseRequest):
                  counterparty_name: Optional[str] = None, verify_counterparty_balance: Optional[bool] = None,
                  idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  direction: str = "Credit", same_day: Optional[bool] = False, addenda: Optional[str] = None,
-                 sec_code: Optional[str] = None):
+                 sec_code: Optional[str] = None, clearing_days_override: Optional[int] = None):
         CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags,direction,
-                                          addenda, same_day, sec_code)
+                                          addenda, same_day, sec_code, clearing_days_override)
         self.plaid_processor_token = plaid_processor_token
         self.counterparty_name = counterparty_name
         self.verify_counterparty_balance = verify_counterparty_balance
