@@ -3,6 +3,7 @@ from unit.models.application import IndividualApplicationDTO, BusinessApplicatio
     TrustApplicationDTO
 from unit.models.account import DepositAccountDTO, AccountDepositProductDTO, CreditAccountDTO, \
     CreditAccountLimitsDTO, DepositAccountLimitsDTO
+from unit.models.check_payment import CheckPaymentDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO, \
@@ -249,7 +250,10 @@ mappings = {
         CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "beneficialOwner": lambda _id, _type, attributes, relationships:
-        BeneficialOwnerDTO.from_json_api(_id, _type, attributes, relationships)
+        BeneficialOwnerDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment": lambda _id, _type, attributes, relationships:
+        CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 
