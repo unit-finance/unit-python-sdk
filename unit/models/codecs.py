@@ -204,11 +204,23 @@ mappings = {
         "checkDeposit.created": lambda _id, _type, attributes, relationships:
         CheckDepositCreatedEvent.from_json_api(_id, _type, attributes, relationships),
 
+        "checkDeposit.pendingReview": lambda _id, _type, attributes, relationships:
+        CheckDepositPendingReviewEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkDeposit.pending": lambda _id, _type, attributes, relationships:
+        CheckDepositPendingEvent.from_json_api(_id, _type, attributes, relationships),
+
         "checkDeposit.clearing": lambda _id, _type, attributes, relationships:
         CheckDepositClearingEvent.from_json_api(_id, _type, attributes, relationships),
 
         "checkDeposit.sent": lambda _id, _type, attributes, relationships:
         CheckDepositSentEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkDeposit.rejected": lambda _id, _type, attributes, relationships:
+        CheckDepositRejectedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkDeposit.returned": lambda _id, _type, attributes, relationships:
+        CheckDepositReturnedEvent.from_json_api(_id, _type, attributes, relationships),
 
         "payment.clearing": lambda _id, _type, attributes, relationships:
         PaymentClearingEvent.from_json_api(_id, _type, attributes, relationships),
