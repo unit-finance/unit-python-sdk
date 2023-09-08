@@ -483,14 +483,17 @@ class AccountReopenedEvent(BaseEvent):
         return AccountReopenedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("tags"),
                                     relationships)
 
-EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationAwaitingDocumentsEvent,
-                 ApplicationPendingReviewEvent, CardActivatedEvent, CardStatusChangedEvent,
-                 AuthorizationCreatedEvent, AuthorizationCanceledEvent, AuthorizationDeclinedEvent,
-                 AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent,
-                 AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
-                 CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
-                 CheckDepositReturnedEvent, CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent,
-                 PaymentReturnedEvent, StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent, RawUnitObject]
+EventDTO = Union[
+    AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationAwaitingDocumentsEvent,
+    ApplicationPendingReviewEvent, CardActivatedEvent, CardStatusChangedEvent,
+    AuthorizationCreatedEvent, AuthorizationCanceledEvent, AuthorizationDeclinedEvent,
+    AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent,
+    AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
+    CheckDepositCreatedEvent, CheckDepositPendingReviewEvent, CheckDepositPendingEvent,
+    CheckDepositClearingEvent, CheckDepositSentEvent, CheckDepositRejectedEvent, CheckDepositReturnedEvent,
+    CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent,
+    StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent, RawUnitObject,
+]
 
 
 class ListEventParams(UnitParams):
