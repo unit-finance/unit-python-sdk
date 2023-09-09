@@ -187,7 +187,8 @@ class CreateBusinessApplicationRequest(UnitRequest):
                  year_of_incorporation: Optional[Union[date, str]] = None,
                  countries_of_operation: Optional[List[str]] = None, stock_symbol: Optional[str] = None,
                  business_vertical: Optional[BusinessVertical] = None,
-                 device_fingerprints: Optional[List[DeviceFingerprint]] = None
+                 device_fingerprints: Optional[List[DeviceFingerprint]] = None,
+                 tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None
                  ):
         self.name = name
         self.address = address
@@ -210,6 +211,8 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.stock_symbol = stock_symbol
         self.business_vertical = business_vertical
         self.device_fingerprints = device_fingerprints
+        self.tags = tags
+        self.idempotency_key = idempotency_key
 
     def to_json_api(self) -> Dict:
         return super().to_payload("businessApplication")
