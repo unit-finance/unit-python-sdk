@@ -23,7 +23,7 @@ SourceOfIncome = Literal["EmploymentOrPayrollIncome", "PartTimeOrContractorIncom
 Status = Literal["Approved", "Denied", "PendingReview"]
 Title = Literal["CEO", "COO", "CFO", "President", "BenefitsAdministrationOfficer", "CIO", "VP", "AVP", "Treasurer",
                 "Secretary", "Controller", "Manager", "Partner", "Member"]
-EntityType = Literal["LLC", "Partnership", "PubliclyTradedCorporation", "PrivatelyHeldCorporation",
+EntityType = Literal["Corporation", "LLC", "Partnership", "PubliclyTradedCorporation", "PrivatelyHeldCorporation",
                      "NotForProfitOrganization"]
 UseSelfieVerification = Literal["Never", "ReplaceIdentification"]
 
