@@ -266,7 +266,7 @@ class CheckDepositPendingEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CheckDepositCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                      attributes["previous_status"], attributes.get("tags"), relationships)
+                                      attributes["previousStatus"], attributes.get("tags"), relationships)
 
 
 class CheckDepositClearingEvent(BaseEvent):
