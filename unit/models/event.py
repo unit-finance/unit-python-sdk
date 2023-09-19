@@ -220,13 +220,20 @@ def events_mapper(_id, _type, attributes, relationships):
 
 
 class ListEventParams(UnitParams):
-    def __init__(self, limit: int = 100, offset: int = 0, type: Optional[List[str]] = None):
+    def __init__(self, limit: int = 100, offset: int = 0, type: Optional[List[str]] = None, since: Optional[str] = None,
+                 until: Optional[str] = None):
         self.limit = limit
         self.offset = offset
         self.type = type
+        self.since = since
+        self.until = until
 
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
         if self.type:
             parameters["filter[type][]"] = self.type
+        if self.since:
+            parameters["filter[since]"] = self.since
+        if self.until:
+            parameters["filter[until]"] = self.until
         return parameters
