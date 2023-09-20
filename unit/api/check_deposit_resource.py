@@ -21,3 +21,11 @@ class CheckDepositResource(BaseResource):
 
     def list(self, params: ListTransactionParams = None) -> Union[UnitResponse[List[CheckDepositDTO]], UnitError]:
         raise NotImplementedError()
+
+    def get_image(self, check_deposit_id: str, is_back_side: Optional[bool] = False) -> Union[UnitResponse[bytes], UnitError]:
+        params = {}
+        response = super().get(f"{self.resource}/{check_deposit_id}/{'back' if is_back_side else 'front'}", params)
+        if response.status_code == 200:
+            return UnitResponse[bytes](response.content, None)
+        else:
+            return UnitError.from_json_api(response.json())
