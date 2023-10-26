@@ -69,12 +69,15 @@ class CreateApplicationFormRequest(UnitRequest):
     def __init__(self, tags: Optional[Dict[str, str]] = None,
                  application_details: Optional[ApplicationFormPrefill] = None,
                  allowed_application_types: Optional[List[AllowedApplicationTypes]] = None,
-                 settings_override: Optional[ApplicationFormSettingsOverride] = None, lang: Optional[str] = None):
+                 settings_override: Optional[ApplicationFormSettingsOverride] = None, lang: Optional[str] = None,
+                 require_id_verification: Optional[Dict[str, Dict[str, str]]] = None, hide_application_progress_tracker: Optional[bool] = None):
         self.tags = tags
         self.application_details = application_details
         self.allowed_application_types = allowed_application_types
         self.lang = lang
         self.settings_override = settings_override
+        self.require_id_verification = require_id_verification
+        self.hide_application_progress_tracker = hide_application_progress_tracker
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -98,6 +101,12 @@ class CreateApplicationFormRequest(UnitRequest):
 
         if self.lang:
             payload["data"]["attributes"]["lang"] = self.lang
+
+        if self.require_id_verification:
+            payload["data"]["attributes"]["requireIdVerification"] = self.require_id_verification
+
+        if self.hide_application_progress_tracker:
+            payload["data"]["attributes"]["hideApplicationProgressTracker"] = self.hide_application_progress_tracker
 
         return payload
 
