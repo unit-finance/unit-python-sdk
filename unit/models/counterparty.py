@@ -156,11 +156,14 @@ class CounterpartyBalanceDTO(object):
 
 class ListCounterpartyParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
-                 tags: Optional[object] = None):
+                 tags: Optional[object] = None, account_number: Optional[str] = None,
+                 routing_number: Optional[str] = None):
         self.offset = offset
         self.limit = limit
         self.customer_id = customer_id
         self.tags = tags
+        self.account_number = account_number
+        self.routing_number = routing_number
 
     def to_dict(self) -> Dict:
         parameters = {"page[limit]": self.limit, "page[offset]": self.offset}
@@ -168,5 +171,9 @@ class ListCounterpartyParams(UnitParams):
             parameters["filter[customerId]"] = self.customer_id
         if self.tags:
             parameters["filter[tags]"] = self.tags
+        if self.account_number:
+            parameters["filter[accountNumber]"] = self.account_number
+        if self.routing_number:
+            parameters["filter[routingNumber]"] = self.routing_number
         return parameters
 
