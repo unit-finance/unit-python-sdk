@@ -29,7 +29,7 @@ class PurchaseAuthorizationRequestDTO(object):
                                                attributes.get("partialApprovalAllowed"),
                                                attributes.get("approvedAmount"), attributes.get("declineReason"),
                                                attributes["merchant"]["name"], attributes["merchant"]["type"],
-                                               attributes["merchant"]["category"],
+                                               attributes["merchant"].get("category"),
                                                attributes["merchant"].get("location"), attributes["recurring"],
                                                attributes.get("tags"), relationships)
 
