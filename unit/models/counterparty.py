@@ -25,7 +25,7 @@ class CounterpartyDTO(object):
                                attributes["accountType"], attributes["type"], attributes["permissions"], relationships)
 
 
-CounterpartyPermissions = Literal["DebitOnly", "CreditAndDebit"]
+CounterpartyPermissions = Literal["DebitOnly", "CreditAndDebit", "CreditOnly"]
 CounterpartyAccountType = Literal["Checking", "Savings", "Loan"]
 CounterpartyType = Literal["Business", "Person", "Unknown"]
 
