@@ -318,9 +318,7 @@ class CreditAccountLimitsDTO(AccountLimitsDTO):
         return CreditAccountLimitsDTO(_id, _type, AccountCardLimits.from_json_api(attributes.get("card")))
 
 
-AccountCloseReason = Literal["ByCustomer", "Fraud"]
-FraudReason = Literal["ACHActivity", "CardActivity", "CheckActivity", "ApplicationHistory", "AccountActivity",
-                      "ClientIdentified", "IdentityTheft", "LinkedToFraudulentCustomer"]
+AccountCloseReason = Literal["ByCustomer", "Fraud", "NegativeBalance", "Overdue"]
 AccountCloseType = Literal["depositAccountClose", "creditAccountClose"]
 
 
