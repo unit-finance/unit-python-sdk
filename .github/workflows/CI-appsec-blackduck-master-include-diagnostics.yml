@@ -1,8 +1,5 @@
-name: CI-AppSec [Master]
+name: CI-AppSec [Master-include-diagnostics]
 on:
-  schedule:
-    #At 13:00 on every day-of-week from Sunday through Thursday.
-    - cron: '0 13 * * SUN-THU'
   workflow_dispatch:
 
 jobs:
@@ -17,13 +14,14 @@ jobs:
         ### Use below configurations to set specific detect environment varibales
         env:
           DETECT_PROJECT_NAME: ${{ github.event.repository.name }}
+          SPRING_APPLICATION_JSON: '{"detect.cleanup":"false","logging.level.detect":"DEBUG"}ֿ'
         with:
           blackduck_url: ${{ secrets.BLACKDUCK_URL }}
           blackduck_apiToken: ${{ secrets.BLACKDUCK_API_TOKEN }}
           blackduck_scan_full: true
           ### Accepts Multiple Values
           ### Uncomment below configuration if Synopsys Bridge diagnostic files needs to be uploaded
-          # include_diagnostics: true  
+          include_diagnostics: true  
 
       - name: If failed - Configure 1Password Service Account For Slack Webhook URL Secret
         uses: 1password/load-secrets-action/configure@v1
