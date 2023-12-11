@@ -56,7 +56,9 @@ def create_business_application():
                             Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
         ],
         year_of_incorporation=date.today() - timedelta(days=2 * 365),
-        business_vertical="Construction"
+        business_vertical="Construction",
+        tags={"test": "test"},
+        idempotency_key=generate_uuid()
     )
 
     return client.applications.create(request)

@@ -1,4 +1,4 @@
-requests~=2.28.0
+requests~=2.31.0
 backoff~=2.1.2c
 pytest
 typing_extensions

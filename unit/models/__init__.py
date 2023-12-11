@@ -21,8 +21,10 @@ AnnualIncome = Literal["UpTo10k", "Between10kAnd25k", "Between25kAnd50k", "Betwe
 SourceOfIncome = Literal["EmploymentOrPayrollIncome", "PartTimeOrContractorIncome", "InheritancesAndGifts",
                          "PersonalInvestments", "BusinessOwnershipInterests", "GovernmentBenefits"]
 Status = Literal["Approved", "Denied", "PendingReview"]
-Title = Literal["CEO", "COO", "CFO", "President"]
-EntityType = Literal["Corporation", "LLC", "Partnership"]
+Title = Literal["CEO", "COO", "CFO", "President", "BenefitsAdministrationOfficer", "CIO", "VP", "AVP", "Treasurer",
+                "Secretary", "Controller", "Manager", "Partner", "Member"]
+EntityType = Literal["Corporation", "LLC", "Partnership", "PubliclyTradedCorporation", "PrivatelyHeldCorporation",
+                     "NotForProfitOrganization"]
 UseSelfieVerification = Literal["Never", "ReplaceIdentification"]
 
 
