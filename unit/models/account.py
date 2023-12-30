@@ -320,12 +320,13 @@ class CreditAccountLimitsDTO(AccountLimitsDTO):
 
 AccountCloseReason = Literal["ByCustomer", "Fraud", "NegativeBalance", "Overdue", "ByBank"]
 AccountCloseType = Literal["depositAccountClose", "creditAccountClose"]
+BankReason = Literal["ProhibitedBusiness", "MissingCddEdd", "NonUsOperations", "SuspectedFraud"]
 
 
 class CloseAccountRequest(UnitRequest):
     def __init__(self, account_id: str, reason: Optional[AccountCloseReason] = "ByCustomer",
                  fraud_reason: Optional[FraudReason] = None, _type: AccountCloseType = "depositAccountClose",
-                 bank_reason: Optional[str] = None):
+                 bank_reason: Optional[BankReason] = None):
         self.account_id = account_id
         self.reason = reason
         self.fraud_reason = fraud_reason
