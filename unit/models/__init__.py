@@ -120,6 +120,9 @@ class UnitRequest(object):
             }
         }
 
+        if hasattr(self, 'relationships') and self.relationships:
+            payload["data"]["relationships"] = self.relationships
+
         if relationships:
             payload["data"]["relationships"] = relationships
 
@@ -638,3 +641,7 @@ class RichMerchantData(UnitDTO):
                                 RichMerchantDataCategory.from_json_api(data.get("categories")), data.get("address"),
                                 Coordinates.from_json_api(data.get("coordinates")),
                                 RichMerchantDataFacilitator.from_json_api(data.get("facilitators")))
+
+
+Tags = Optional[Dict[str, str]]
+
