@@ -8,29 +8,33 @@ class StatementResource(BaseResource):
     def __init__(self, configuration: Configuration):
         super().__init__("statements", configuration)
 
-    def get(self, params: GetStatementParams) -> Union[UnitResponse[str], UnitError]:
+    def get(self, params: GetStatementParams) -> Union[UnitResponse[bytes], UnitError]:
         parameters = {"language": params.language}
         if params.customer_id:
             parameters["filter[customerId]"] = params.customer_id
 
         response = super().get(f"{self.resource}/{params.statement_id}/{params.output_type}", parameters)
-        if response.status_code == 200:
-            return UnitResponse[str](response.text, None)
+
+        if super().is_20x(response.status_code):
+            return UnitResponse[bytes](response.content, None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def get_bank_verification(self, account_id: str, include_proof_of_funds: Optional[bool] = False) -> Union[UnitResponse[str], UnitError]:
+    def get_bank_verification(self, account_id: str, include_proof_of_funds: Optional[bool] = False) -> \
+            Union[UnitResponse[bytes], UnitError]:
         response = super().get(f"{self.resource}/{account_id}/bank/pdf",
                                {"includeProofOfFunds": include_proof_of_funds})
-        if response.status_code == 200:
-            return UnitResponse[str](response.text, None)
+
+        if super().is_20x(response.status_code):
+            return UnitResponse[bytes](response.content, None)
         else:
             return UnitError.from_json_api(response.json())
 
     def list(self, params: ListStatementParams = None) -> Union[UnitResponse[List[StatementDTO]], UnitError]:
         params = params or ListStatementParams()
         response = super().get(self.resource, params.to_dict())
-        if response.status_code == 200:
+
+        if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[StatementDTO](DtoDecoder.decode(data), None)
         else:
