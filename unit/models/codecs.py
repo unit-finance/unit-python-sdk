@@ -24,7 +24,8 @@ from unit.models.atm_location import AtmLocationDTO
 from unit.models.bill_pay import BillerDTO
 from unit.models.api_token import APITokenDTO
 from unit.models.authorization import AuthorizationDTO
-from unit.models.authorization_request import PurchaseAuthorizationRequestDTO
+from unit.models.authorization_request import PurchaseAuthorizationRequestDTO, CardTransactionAuthorizationRequestDTO, \
+    AtmAuthorizationRequestDTO
 from unit.models.account_end_of_day import AccountEndOfDayDTO
 from unit.models.check_deposit import CheckDepositDTO
 from unit.models.dispute import DisputeDTO
@@ -219,6 +220,12 @@ mappings = {
         "purchaseAuthorizationRequest": lambda _id, _type, attributes, relationships:
         PurchaseAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "cardTransactionAuthorizationRequest": lambda _id, _type, attributes, relationships:
+        CardTransactionAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "atmAuthorizationRequest": lambda _id, _type, attributes, relationships:
+        AtmAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
+
         "accountEndOfDay": lambda _id, _type, attributes, relationships:
         AccountEndOfDayDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -291,10 +298,10 @@ def decode_limits(_id: str, _type: str, attributes: Dict):
 
 
 def mapping_wrapper(_id, _type, attributes, relationships):
-    if "Transaction" in _type:
-        return transactions_mapper(_id, _type, attributes, relationships)
     if _type in mappings:
         return mappings[_type](_id, _type, attributes, relationships)
+    if "Transaction" in _type:
+        return transactions_mapper(_id, _type, attributes, relationships)
     else:
         return RawUnitObject(_id, _type, attributes, relationships)
 

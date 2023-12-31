@@ -12,34 +12,66 @@ DeclineReason = Literal["AccountClosed", "CardExceedsAmountLimit", "DoNotHonor",
                         "ReferToCardIssuer", "RestrictedCard", "Timeout", "TransactionNotPermittedToCardholder"]
 
 
-class PurchaseAuthorizationRequestDTO(object):
-    def __init__(self, id: str, created_at: datetime, amount: int, status: PurchaseAuthorizationRequestStatus,
-                 partial_approval_allowed: str, approved_amount: Optional[int], decline_reason: Optional[DeclineReason],
-                 merchant_name: str, merchant_type: int, merchant_category: str, merchant_location: Optional[str],
-                 recurring: bool, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]],
-                 merchant_id: Optional[str]):
+class BaseAuthorizationRequest(object):
+    def __init__(self, id: str, type: str, attributes: Dict[str, object],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
-        self.type = "purchaseAuthorizationRequest"
-        self.attributes = {"createdAt": created_at, "amount": amount, "status": status,
-                           "partialApprovalAllowed": partial_approval_allowed, "approvedAmount": approved_amount,
-                           "declineReason": decline_reason, "merchant": { "name": merchant_name, "type": merchant_type,
-                                                                          "category": merchant_category,
-                                                                          "location": merchant_location,
-                                                                          "id": merchant_id},
-                           "recurring": recurring, "tags": tags}
+        self.type = type
+        self.attributes = {"createdAt": date_utils.to_datetime(attributes["createdAt"]), "amount": attributes["amount"],
+                           "status": attributes["status"],
+                           "partialApprovalAllowed": attributes.get("partialApprovalAllowed"),
+                           "approvedAmount": attributes.get("approvedAmount"),
+                           "declineReason": attributes.get("declineReason"),
+                           "cardNetwork": attributes.get("cardNetwork"), "tags": attributes.get("tags")}
         self.relationships = relationships
+
+
+class PurchaseAuthorizationRequestDTO(BaseAuthorizationRequest):
+    def __init__(self, id: str, attributes: Dict[str, object], relationships: Optional[Dict[str, Relationship]]):
+        super().__init__(id, "purchaseAuthorizationRequest", attributes, relationships)
+        self.attributes.update({"recurring": attributes.get("recurring"), "ecommerce": attributes.get("ecommerce"),
+                                "cardPresent": attributes.get("cardPresent"),
+                                "paymentMethod": attributes.get("paymentMethod"),
+                                "digitalWallet": attributes.get("digitalWallet"),
+                                "cardVerificationData": attributes.get("cardVerificationData"),
+                                "merchant": Merchant.from_json_api(attributes["merchant"]),
+                                "healthcareAmounts":
+                                    HealthcareAmounts.from_json_api(attributes.get("healthcareAmounts")),
+                                "cashWithdrawalAmount": attributes.get("cashWithdrawalAmount")})
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return PurchaseAuthorizationRequestDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
-                                               attributes["amount"], attributes["status"],
-                                               attributes.get("partialApprovalAllowed"),
-                                               attributes.get("approvedAmount"), attributes.get("declineReason"),
-                                               attributes["merchant"]["name"], attributes["merchant"]["type"],
-                                               attributes["merchant"]["category"],
-                                               attributes["merchant"].get("location"), attributes["recurring"],
-                                               attributes.get("tags"), relationships, attributes["merchant"].get("id"))
+        return PurchaseAuthorizationRequestDTO(_id, attributes, relationships)
 
+
+class CardTransactionAuthorizationRequestDTO(BaseAuthorizationRequest):
+    def __init__(self, id: str, attributes: Dict[str, object], relationships: Optional[Dict[str, Relationship]]):
+        super().__init__(id, "cardTransactionAuthorizationRequest", attributes, relationships)
+        self.attributes.update({"recurring": attributes.get("recurring"),
+                                "paymentMethod": attributes.get("paymentMethod"),
+                                "digitalWallet": attributes.get("digitalWallet"),
+                                "cardVerificationData": attributes.get("cardVerificationData"),
+                                "merchant": Merchant.from_json_api(attributes["merchant"])})
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CardTransactionAuthorizationRequestDTO(_id, attributes, relationships)
+
+
+class AtmAuthorizationRequestDTO(BaseAuthorizationRequest):
+    def __init__(self, id: str, attributes: Dict[str, object], relationships: Optional[Dict[str, Relationship]]):
+        super().__init__(id, "atmAuthorizationRequest", attributes, relationships)
+        self.attributes.update({"atmName": attributes["atmName"], "atmLocation": attributes.get("atmLocation"),
+                                "surcharge": attributes["surcharge"], "direction": attributes.get("direction"),
+                                "internationalServiceFee": attributes.get("internationalServiceFee")})
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AtmAuthorizationRequestDTO(_id, attributes, relationships)
+
+
+AuthorizationRequestDTO = Union[PurchaseAuthorizationRequestDTO, CardTransactionAuthorizationRequestDTO,
+                                AtmAuthorizationRequestDTO]
 
 class ListPurchaseAuthorizationRequestParams(object):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
