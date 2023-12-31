@@ -318,32 +318,23 @@ class CreditAccountLimitsDTO(AccountLimitsDTO):
         return CreditAccountLimitsDTO(_id, _type, AccountCardLimits.from_json_api(attributes.get("card")))
 
 
-AccountCloseReason = Literal["ByCustomer", "Fraud", "NegativeBalance", "Overdue"]
+AccountCloseReason = Literal["ByCustomer", "Fraud", "NegativeBalance", "Overdue", "ByBank"]
 AccountCloseType = Literal["depositAccountClose", "creditAccountClose"]
+BankReason = Literal["ProhibitedBusiness", "MissingCddEdd", "NonUsOperations", "SuspectedFraud"]
 
 
 class CloseAccountRequest(UnitRequest):
     def __init__(self, account_id: str, reason: Optional[AccountCloseReason] = "ByCustomer",
-                 fraud_reason: Optional[FraudReason] = None, _type: AccountCloseType = "depositAccountClose"):
+                 fraud_reason: Optional[FraudReason] = None, _type: AccountCloseType = "depositAccountClose",
+                 bank_reason: Optional[BankReason] = None):
         self.account_id = account_id
         self.reason = reason
         self.fraud_reason = fraud_reason
         self._type = _type
+        self.bank_reason = bank_reason
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": self._type,
-                "attributes": {
-                    "reason": self.reason,
-                }
-            }
-        }
-
-        if self.fraud_reason:
-            payload["data"]["attributes"]["fraudReason"] = self.fraud_reason
-
-        return payload
+        return super().to_payload(self._type, ignore=["_type", "account_id"])
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
