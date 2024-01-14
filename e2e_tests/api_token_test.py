@@ -2,7 +2,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 from unit import Unit
-from unit.models.api_token import CreateAPITokenRequest
+from unit.models.api_token import CreateAPITokenRequest, RestrictedResource
 from unit.utils.date_utils import from_datetime
 
 token = os.environ.get('TOKEN')
@@ -11,7 +11,8 @@ user_id = "252"
 expiration_time = datetime.now() + timedelta(hours=1)
 
 def create_api_token():
-    request = CreateAPITokenRequest(user_id, "Test token", "customers applications", expiration_time)
+    request = CreateAPITokenRequest(user_id, "Test token", "customers applications", expiration_time,
+                                    resources=[RestrictedResource("account", ["10000"])])
     return client.api_tokens.create(request).data
 
 def test_list_api_tokens():

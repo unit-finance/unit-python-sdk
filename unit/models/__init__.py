@@ -421,6 +421,26 @@ class Merchant(UnitDTO):
         return None
 
 
+class HealthcareAmounts(UnitDTO):
+    def __init__(self, dental_amount: int, transit_amount: int, vision_optical_amount: int, prescription_rx_amount: int,
+                 clinic_other_qualified_medical_amount: int, total_healthcare_amount: int):
+        self.dental_amount = dental_amount
+        self.transit_amount = transit_amount
+        self.vision_optical_amount = vision_optical_amount
+        self.prescription_rx_amount = prescription_rx_amount
+        self.clinic_other_qualified_medical_amount = clinic_other_qualified_medical_amount
+        self.total_healthcare_amount = total_healthcare_amount
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if data:
+            return HealthcareAmounts(data.get("dentalAmount"), data.get("transitAmount"),
+                                     data.get("visionOpticalAmount"), data.get("prescriptionRXAmount"),
+                                     data.get("clinicOtherQualifiedMedicalAmount"), data.get("totalHealthcareAmount"))
+
+        return None
+
+
 class CardLevelLimits(UnitDTO):
     def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
         self.daily_withdrawal = daily_withdrawal

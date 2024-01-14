@@ -8,39 +8,39 @@ class AuthorizationRequestResource(BaseResource):
     def __init__(self, configuration: Configuration):
         super().__init__("authorization-requests", configuration)
 
-    def get(self, authorization_id: str) -> Union[UnitResponse[PurchaseAuthorizationRequestDTO], UnitError]:
+    def get(self, authorization_id: str) -> Union[UnitResponse[AuthorizationRequestDTO], UnitError]:
         response = super().get(f"{self.resource}/{authorization_id}")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[PurchaseAuthorizationRequestDTO](DtoDecoder.decode(data), None)
+            return UnitResponse[AuthorizationRequestDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
     def list(self, params: ListPurchaseAuthorizationRequestParams = None) \
-            -> Union[UnitResponse[List[PurchaseAuthorizationRequestDTO]], UnitError]:
+            -> Union[UnitResponse[List[AuthorizationRequestDTO]], UnitError]:
         params = params or ListPurchaseAuthorizationRequestParams()
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[PurchaseAuthorizationRequestDTO](DtoDecoder.decode(data), None)
+            return UnitResponse[AuthorizationRequestDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def approve(self, request: ApproveAuthorizationRequest) -> Union[UnitResponse[PurchaseAuthorizationRequestDTO], UnitError]:
+    def approve(self, request: ApproveAuthorizationRequest) -> Union[UnitResponse[AuthorizationRequestDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{request.authorization_id}/approve", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[PurchaseAuthorizationRequestDTO](DtoDecoder.decode(data), None)
+            return UnitResponse[AuthorizationRequestDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
-    def decline(self, request: DeclineAuthorizationRequest) -> Union[UnitResponse[PurchaseAuthorizationRequestDTO], UnitError]:
+    def decline(self, request: DeclineAuthorizationRequest) -> Union[UnitResponse[AuthorizationRequestDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{request.authorization_id}/decline", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[PurchaseAuthorizationRequestDTO](DtoDecoder.decode(data), None)
+            return UnitResponse[AuthorizationRequestDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
