@@ -193,7 +193,7 @@ class CreateBusinessCard(UnitRequest):
         self.expiry_date = expiry_date
 
     def to_json_api(self, _type: str) -> Dict:
-        return super().to_payload("businessDebitCard")
+        return super().to_payload(_type)
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
