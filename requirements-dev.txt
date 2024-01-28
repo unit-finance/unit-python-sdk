@@ -2,3 +2,4 @@ requests~=2.31.0
 pytest
 backoff
 typing_extensions
+setuptools
