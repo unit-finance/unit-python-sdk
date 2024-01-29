@@ -10,6 +10,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
     MobileWalletPayloadDTO, CardToCardPaymentDTO
 from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
+from unit.models.tax_form import TaxFormDTO
 from unit.models.transaction import transactions_mapper
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO, \
     RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO, BulkPaymentsDTO
@@ -260,7 +261,10 @@ mappings = {
         BeneficialOwnerDTO.from_json_api(_id, _type, attributes, relationships),
 
         "checkPayment": lambda _id, _type, attributes, relationships:
-        CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships)
+        CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "taxForm": lambda _id, _type, attributes, relationships:
+        TaxFormDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 

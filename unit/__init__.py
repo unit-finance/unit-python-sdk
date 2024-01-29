@@ -26,6 +26,7 @@ from unit.api.reward_resource import RewardResource
 from unit.api.recurring_payment_resource import RecurringPaymentResource
 from unit.api.repayment_resource import RepaymentResource
 from unit.api.check_payment_resource import CheckPaymentResource
+from unit.api.tax_form_resource import TaxFormResource
 from unit.utils.configuration import Configuration
 
 __all__ = ["api", "models", "utils"]
@@ -66,4 +67,5 @@ class Unit(object):
         self.repayments = RepaymentResource(c)
         self.recurring_payments = RecurringPaymentResource(c)
         self.check_payments = CheckPaymentResource(c)
+        self.tax_forms = TaxFormResource(c)
 
