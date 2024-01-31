@@ -5,15 +5,23 @@ ApplicationFormStage = Literal["ChooseBusinessOrIndividual", "EnterIndividualInf
                                "EnterBeneficialOwnersInformation", "BusinessApplicationCreated",
                                "EnterSoleProprietorshipInformation", "SoleProprietorshipApplicationCreated"]
 
+ApplicationFormType = Literal["Individual", "Business", "SoleProprietorship"]
+
 
 class ApplicationFormPrefill(UnitDTO):
-    def __init__(self, application_type: Optional[str] = None, full_name: Optional[FullName] = None,
+    def __init__(self, application_type: Optional[ApplicationFormType] = None, full_name: Optional[FullName] = None,
                  ssn: Optional[str] = None, passport: Optional[str] = None, nationality: Optional[str] = None,
                  date_of_birth: Optional[date] = None, email: Optional[str] = None, name: Optional[str] = None,
                  state_of_incorporation: Optional[str] = None, entity_type: Optional[str] = None,
                  contact: Optional[BusinessContact] = None, officer: Optional[Officer] = None,
-                 beneficial_owners: [BeneficialOwner] = None, website: Optional[str] = None, dba: Optional[str] = None,
-                 ein: Optional[str] = None, address: Optional[Address] = None, phone: Optional[Phone] = None):
+                 beneficial_owners: [List[BeneficialOwner]] = None, website: Optional[str] = None,
+                 dba: Optional[str] = None, ein: Optional[str] = None, address: Optional[Address] = None,
+                 phone: Optional[Phone] = None, occupation: Optional[str] = None, annual_income: Optional[str] = None,
+                 source_of_income: Optional[str] = None, business_vertical: Optional[str] = None,
+                 annual_revenue: Optional[str] = None, number_of_employees: Optional[str] = None,
+                 cash_flow: Optional[str] = None, year_of_incorporation: Optional[str] = None,
+                 countries_of_operation: Optional[List[str]] = None, stock_symbol: Optional[str] = None,
+                 has_non_us_entities: Optional[str] = None):
         self.application_type = application_type
         self.full_name = full_name
         self.ssn = ssn
@@ -32,6 +40,17 @@ class ApplicationFormPrefill(UnitDTO):
         self.ein = ein
         self.address = address
         self.phone = phone
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
+        self.business_vertical = business_vertical
+        self.annual_revenue = annual_revenue
+        self.number_of_employees = number_of_employees
+        self.cash_flow = cash_flow
+        self.year_of_incorporation = year_of_incorporation
+        self.countries_of_operation = countries_of_operation
+        self.stock_symbol = stock_symbol
+        self.has_non_us_entities = has_non_us_entities
 
 
 class ApplicationFormDTO(UnitDTO):
@@ -66,46 +85,33 @@ class ApplicationFormSettingsOverride(UnitDTO):
         self.additional_disclosures = additional_disclosures
 
 
+class RequireIdVerification(UnitDTO):
+    def __init__(self, individual: Optional[bool] = None, officer: Optional[bool] = None,
+                 beneficial_owners: Optional[bool] = None):
+        self.individual = individual
+        self.officer = officer
+        self.beneficial_owners = beneficial_owners
+
+
 class CreateApplicationFormRequest(UnitRequest):
     def __init__(self, tags: Optional[Dict[str, str]] = None,
-                 application_details: Optional[ApplicationFormPrefill] = None,
+                 applicant_details: Optional[ApplicationFormPrefill] = None,
                  allowed_application_types: Optional[List[AllowedApplicationTypes]] = None,
                  settings_override: Optional[ApplicationFormSettingsOverride] = None, lang: Optional[str] = None,
-                 relationships: Optional[Dict[str, Dict[str, Relationship]]] = None):
+                 relationships: Optional[Dict[str, Dict[str, Relationship]]] = None,
+                 require_id_verification: Optional[RequireIdVerification] = None,
+                 hide_application_progress_tracker: Optional[bool] = None):
         self.tags = tags
-        self.application_details = application_details
+        self.applicant_details = applicant_details
         self.allowed_application_types = allowed_application_types
         self.lang = lang
         self.settings_override = settings_override
         self.relationships = relationships
+        self.require_id_verification = require_id_verification
+        self.hide_application_progress_tracker = hide_application_progress_tracker
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "data": {
-                "type": "applicationForm",
-                "attributes": {}
-            }
-        }
-
-        if self.tags:
-            payload["data"]["attributes"]["tags"] = self.tags
-
-        if self.application_details:
-            payload["data"]["attributes"]["applicantDetails"] = self.application_details
-
-        if self.allowed_application_types:
-            payload["data"]["attributes"]["allowedApplicationTypes"] = self.allowed_application_types
-
-        if self.settings_override:
-            payload["data"]["attributes"]["settingsOverride"] = self.settings_override
-
-        if self.lang:
-            payload["data"]["attributes"]["lang"] = self.lang
-
-        if self.relationships:
-            payload["data"]["relationships"] = self.relationships
-
-        return payload
+        return super().to_payload("applicationForm", self.relationships)
 
     def __repr__(self):
         return json.dumps(self.to_json_api())

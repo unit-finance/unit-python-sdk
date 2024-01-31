@@ -1,7 +1,6 @@
 import os
 
-from e2e_tests.helpers.helpers import create_relationship, generate_uuid, create_deposit_account, \
-    create_individual_customer
+from e2e_tests.helpers.helpers import create_relationship, generate_uuid, create_deposit_account
 from unit import Unit
 from unit.models import Address
 from unit.models.check_payment import CheckPaymentDTO, CreateCheckPaymentRequest, CheckPaymentCounterparty
@@ -77,12 +76,16 @@ def test_check_payment_from_json():
 
 def test_list_check_payment():
     res = client.check_payments.list()
+    assert len(res.data) > 0
+
     for p in res.data:
         assert p.type == "checkPayment"
 
 
 def test_list_and_get_check_payment():
     res = client.check_payments.list()
+    assert len(res.data) > 0
+
     for p in res.data:
         assert p.type == "checkPayment"
 
@@ -97,7 +100,7 @@ def test_create_check_payment():
     customer_id = created_account.data.relationships.get("customer").id
 
     account = create_relationship("depositAccount", account_id, "account")
-    customer = create_relationship("customer", customer_id)
+    customer = create_relationship("individualCustomer", customer_id, "customer")
 
     relationships = {}
     relationships.update(account)
@@ -107,9 +110,8 @@ def test_create_check_payment():
                                                                   Address("5230 Newell Rd", "Palo Alto", "CA", "94303",
                                                                           "US")), "test create checkPayment",
                                     relationships, send_date="2023-09-10", idempotency_key=generate_uuid())
-
     res = client.check_payments.create(req)
-    assert True
+    assert res
 
 
 def test_check_payment_event():

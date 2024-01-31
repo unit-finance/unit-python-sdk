@@ -21,8 +21,10 @@ AnnualIncome = Literal["UpTo10k", "Between10kAnd25k", "Between25kAnd50k", "Betwe
 SourceOfIncome = Literal["EmploymentOrPayrollIncome", "PartTimeOrContractorIncome", "InheritancesAndGifts",
                          "PersonalInvestments", "BusinessOwnershipInterests", "GovernmentBenefits"]
 Status = Literal["Approved", "Denied", "PendingReview"]
-Title = Literal["CEO", "COO", "CFO", "President"]
-EntityType = Literal["Corporation", "LLC", "Partnership"]
+Title = Literal["CEO", "COO", "CFO", "President", "BenefitsAdministrationOfficer", "CIO", "VP", "AVP", "Treasurer",
+                "Secretary", "Controller", "Manager", "Partner", "Member"]
+EntityType = Literal["Corporation", "LLC", "Partnership", "PubliclyTradedCorporation", "PrivatelyHeldCorporation",
+                     "NotForProfitOrganization"]
 UseSelfieVerification = Literal["Never", "ReplaceIdentification"]
 
 
@@ -415,6 +417,26 @@ class Merchant(UnitDTO):
     def from_json_api(data: Dict):
         if data:
             return Merchant(data["name"], data["type"], data["category"], data.get("location"), data.get("id"))
+
+        return None
+
+
+class HealthcareAmounts(UnitDTO):
+    def __init__(self, dental_amount: int, transit_amount: int, vision_optical_amount: int, prescription_rx_amount: int,
+                 clinic_other_qualified_medical_amount: int, total_healthcare_amount: int):
+        self.dental_amount = dental_amount
+        self.transit_amount = transit_amount
+        self.vision_optical_amount = vision_optical_amount
+        self.prescription_rx_amount = prescription_rx_amount
+        self.clinic_other_qualified_medical_amount = clinic_other_qualified_medical_amount
+        self.total_healthcare_amount = total_healthcare_amount
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if data:
+            return HealthcareAmounts(data.get("dentalAmount"), data.get("transitAmount"),
+                                     data.get("visionOpticalAmount"), data.get("prescriptionRXAmount"),
+                                     data.get("clinicOtherQualifiedMedicalAmount"), data.get("totalHealthcareAmount"))
 
         return None
 

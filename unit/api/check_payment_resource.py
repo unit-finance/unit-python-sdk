@@ -63,3 +63,10 @@ class CheckPaymentResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def cancel_payment(self, check_payment_id: str) -> Union[UnitResponse[CheckPaymentDTO], UnitError]:
+        response = super().post(f"{self.resource}/{check_payment_id}/cancel")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[CheckPaymentDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())

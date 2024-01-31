@@ -15,6 +15,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
     MobileWalletPayloadDTO, CardToCardPaymentDTO
 from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
+from unit.models.tax_form import TaxFormDTO
 from unit.models.transaction import transactions_mapper
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO, \
     RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO, BulkPaymentsDTO
@@ -29,7 +30,8 @@ from unit.models.atm_location import AtmLocationDTO
 from unit.models.bill_pay import BillerDTO
 from unit.models.api_token import APITokenDTO
 from unit.models.authorization import AuthorizationDTO
-from unit.models.authorization_request import PurchaseAuthorizationRequestDTO
+from unit.models.authorization_request import PurchaseAuthorizationRequestDTO, CardTransactionAuthorizationRequestDTO, \
+    AtmAuthorizationRequestDTO
 from unit.models.account_end_of_day import AccountEndOfDayDTO
 from unit.models.check_deposit import CheckDepositDTO
 from unit.models.dispute import DisputeDTO
@@ -153,6 +155,12 @@ mappings = {
         "purchaseAuthorizationRequest": lambda _id, _type, attributes, relationships:
         PurchaseAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "cardTransactionAuthorizationRequest": lambda _id, _type, attributes, relationships:
+        CardTransactionAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "atmAuthorizationRequest": lambda _id, _type, attributes, relationships:
+        AtmAuthorizationRequestDTO.from_json_api(_id, _type, attributes, relationships),
+
         "accountEndOfDay": lambda _id, _type, attributes, relationships:
         AccountEndOfDayDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -187,7 +195,10 @@ mappings = {
         BeneficialOwnerDTO.from_json_api(_id, _type, attributes, relationships),
 
         "checkPayment": lambda _id, _type, attributes, relationships:
-        CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships)
+        CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "taxForm": lambda _id, _type, attributes, relationships:
+        TaxFormDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 
@@ -216,12 +227,12 @@ def decode_limits(_id: str, _type: str, attributes: Dict):
 
 
 def mapping_wrapper(_id, _type, attributes, relationships):
-    if "Transaction" in _type:
-        return transactions_mapper(_id, _type, attributes, relationships)
-    if "." in _type:
-        return events_mapper(_id, _type, attributes, relationships)
     if _type in mappings:
         return mappings[_type](_id, _type, attributes, relationships)
+    if "." in _type:
+        return events_mapper(_id, _type, attributes, relationships)
+    if "Transaction" in _type:
+        return transactions_mapper(_id, _type, attributes, relationships)
     else:
         return RawUnitObject(_id, _type, attributes, relationships)
 
