@@ -198,6 +198,18 @@ class CheckPaymentPendingEvent(BaseEvent):
         return CheckPaymentPendingEvent(_id, _type, attributes, relationships)
 
 
+class TaxFormCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return TaxFormCreatedEvent(_id, _type, attributes, relationships)
+
+
+class TaxFormUpdatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return TaxFormUpdatedEvent(_id, _type, attributes, relationships)
+
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
                  ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
                  AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
@@ -206,7 +218,7 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent, StatementsCreatedEvent,
                  TransactionCreatedEvent, AccountReopenedEvent, CheckPaymentCreatedEvent,
                  CheckPaymentMarkedForReturnEvent, CheckPaymentProcessedEvent, CheckPaymentReturnedEvent,
-                 CheckPaymentPendingEvent]
+                 CheckPaymentPendingEvent, TaxFormCreatedEvent, TaxFormUpdatedEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
