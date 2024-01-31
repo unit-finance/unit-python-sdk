@@ -14,9 +14,9 @@ def test_list_and_get_events():
     for e in response.data:
         assert "." in e.type
         event = client.events.get(e.id).data
-        assert "." in response.type
-        assert e.type == response.type
-        assert e.id == response.id
+        assert "." in event.type
+        assert e.type == event.type
+        assert e.id == event.id
 
 
 def test_fire_event():
