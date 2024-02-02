@@ -138,7 +138,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
                  tags: Optional[Dict[str, str]] = None, relationships: Optional[Dict[str, Relationship]] = None,
                  gross_interchange: Optional[str] = None, cash_withdrawal_amount: Optional[int] = None,
                  currency_conversion: Optional[CurrencyConversion] = None,
-                 rich_merchant_data: Optional[RichMerchantData] = None, last_4_digits: str = None):
+                 rich_merchant_data: Optional[RichMerchantData] = None, last_4_digits: str = None, ):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -163,10 +163,16 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
+        # Purchase simulations do not return the merchant attribute
+        simulation_merchant = dict(
+            name=attributes.get("merchantName", None),
+            type=attributes.get("merchantType", None),
+            location=attributes.get("merchantLocation", None),
+        )
         return PurchaseTransactionDTO(
             _id, date_utils.to_datetime(attributes["createdAt"]), attributes["direction"], attributes["amount"],
             attributes["balance"], attributes.get("summary"), attributes.get("cardLast4Digits", None),
-            Merchant.from_json_api(attributes.get("merchant")), Coordinates.from_json_api(attributes.get("coordinates")),
+            Merchant.from_json_api(attributes.get("merchant") or simulation_merchant), Coordinates.from_json_api(attributes.get("coordinates")),
             attributes["recurring"], attributes.get("ecommerce"), attributes.get("cardPresent"),
             attributes.get("cardVerificationData"), attributes.get("interchange"), attributes.get("paymentMethod"),
             attributes.get("digitalWallet"), attributes.get("cardNetwork"), attributes.get("tags"),
