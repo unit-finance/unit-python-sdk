@@ -23,7 +23,7 @@ class StatementResource(BaseResource):
         response = super().get(f"{self.resource}/{account_id}/bank/pdf",
                                {"includeProofOfFunds": include_proof_of_funds})
         if response.status_code == 200:
-            return UnitResponse[str](response.text, None)
+            return UnitResponse[bytes](response.content, None)
         else:
             return UnitError.from_json_api(response.json())
 
