@@ -385,3 +385,77 @@ class CheckCounterparty(object):
             return None
 
         return CheckCounterparty(data["routingNumber"], data["accountNumber"], data["name"])
+
+class RichMerchantDataFacilitator(object):
+    def __init__(self, name: str, _type: Optional[str], logo: Optional[str]):
+        self.name = name
+        self.type = _type
+        self.logo = logo
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if not data:
+            return None
+
+        arr = []
+        for c in data:
+            arr.append(RichMerchantDataFacilitator(c["name"], c.get("type"), c.get("logo")))
+
+        return arr
+
+
+class RichMerchantDataCategory(object):
+    def __init__(self, name: str, icon: str):
+        self.name = name
+        self.icon = icon
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if not data:
+            return None
+
+        arr = []
+        for c in data:
+            arr.append(RichMerchantDataCategory(c["name"], c["icon"]))
+
+        return arr
+
+
+class RichMerchantDataAddress(object):
+    def __init__(self, city: str, state: str, country: str, street: Optional[str]):
+        self.city = city
+        self.state = state
+        self.country = country
+        self.street = street
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if not data:
+            return None
+
+        return RichMerchantDataAddress(data["city"], data["state"], data["country"], data.get("street"))
+
+
+class RichMerchantData(UnitDTO):
+    def __init__(self, name: str, website: Optional[str], logo: Optional[str], phone: Optional[str],
+                 categories: Optional[List[RichMerchantDataCategory]], address: Optional[RichMerchantDataAddress],
+                 coordinates: Optional[Coordinates], facilitators: Optional[List[RichMerchantDataFacilitator]]):
+        self.name = name
+        self.website = website
+        self.logo = logo
+        self.phone = phone
+        self.categories = categories
+        self.address = address
+        self.coordinates = coordinates
+        self.facilitators = facilitators
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        if not data:
+            return None
+
+        return RichMerchantData(data["name"], data.get("website"), data.get("logo"), data.get("phone"),
+                                RichMerchantDataCategory.from_json_api(data.get("categories")), data.get("address"),
+                                Coordinates.from_json_api(data.get("coordinates")),
+                                RichMerchantDataFacilitator.from_json_api(data.get("facilitators")))
+
