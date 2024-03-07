@@ -40,7 +40,7 @@ Creating Business Application
                 Address("650 Allerton Street",
                         "Redwood City", "CA", "94063", "US"),
                 Phone("1", "2025550127"), "james@unit-finance.com", ssn="574567625"),
-            BeneficialOwner(FullName("Richard", "Hendricks"), datetime.today() - timedelta(days=20 * 365),
+            BeneficialOwner(FullName("Richard", "Hendricks"), date.today() - timedelta(days=20 * 365),
                             Address("470 Allerton Street",
                                     "Redwood City", "CA", "94063", "US"),
                             Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
