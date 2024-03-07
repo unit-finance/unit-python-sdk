@@ -5,14 +5,19 @@ PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"
 PaymentDirections = Literal["Debit", "Credit"]
 PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 
+
 class BasePayment(object):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], astra_routine_id: Optional[str]):
         self.id = id
         self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
                            "description": description, "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
+
+        if astra_routine_id:
+            self.attributes["astraRoutineId"] = astra_routine_id
+
 
 class AchPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, counterparty: Counterparty, direction: str,
@@ -108,6 +113,21 @@ class WirePaymentDTO(BasePayment):
                               attributes["description"], attributes["amount"], attributes.get("reason"),
                               attributes.get("tags"), relationships)
 
+
+class PushToCardPaymentDTO(BasePayment):
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: Optional[str], description: str,
+                 amount: int, astra_routine_id: str, reason: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships, astra_routine_id)
+        self.type = 'bookPayment'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PushToCardPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                    attributes.get("direction"), attributes["description"], attributes["amount"],
+                                    attributes["astraRoutineId"], attributes.get("reason"), attributes.get("tags"),
+                                    relationships)
+
 class BillPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
                  amount: int, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
@@ -149,7 +169,7 @@ class AchReceivedPaymentDTO(object):
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
                  idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
-                type: str = "achPayment", same_day: Optional[bool] = False):
+                type: str = "achPayment", same_day: Optional[bool] = False, configuration: dict = None):
         self.type = type
         self.amount = amount
         self.same_day = same_day
@@ -158,6 +178,7 @@ class CreatePaymentBaseRequest(UnitRequest):
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
+        self.configuration = configuration
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -180,6 +201,9 @@ class CreatePaymentBaseRequest(UnitRequest):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.configuration:
+            payload["data"]["attributes"]["configuration"] = self.configuration
 
         return payload
 
@@ -326,8 +350,17 @@ class CreateWirePaymentRequest(CreatePaymentBaseRequest):
         payload["data"]["attributes"]["counterparty"] = self.counterparty
         return payload
 
+
+class CreatePushToCardPaymentRequest(CreatePaymentBaseRequest):
+    def __init__(self, amount: int, description: str, configuration: dict,
+                 relationships: Dict[str, Relationship],
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
+                 direction: str = "Credit"):
+        super().__init__(amount, description, relationships, idempotency_key, tags, direction, "pushToCardPayment", False, configuration)
+
+
 CreatePaymentRequest = Union[CreateInlinePaymentRequest, CreateLinkedPaymentRequest, CreateVerifiedPaymentRequest,
-                             CreateBookPaymentRequest, CreateWirePaymentRequest]
+                             CreateBookPaymentRequest, CreateWirePaymentRequest, CreatePushToCardPaymentRequest]
 
 class PatchAchPaymentRequest(object):
     def __init__(self, payment_id: str, tags: Dict[str, str]):
