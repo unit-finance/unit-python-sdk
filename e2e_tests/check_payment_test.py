@@ -4,6 +4,7 @@ from e2e_tests.helpers.helpers import create_relationship, generate_uuid, create
 from unit import Unit
 from unit.models import Address
 from unit.models.check_payment import CheckPaymentDTO, CreateCheckPaymentRequest, CheckPaymentCounterparty
+from unit.models.event import CheckPaymentPendingEvent
 
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
@@ -109,7 +110,41 @@ def test_create_check_payment():
                                                                   Address("5230 Newell Rd", "Palo Alto", "CA", "94303",
                                                                           "US")), "test create checkPayment",
                                     relationships, send_date="2023-09-10", idempotency_key=generate_uuid())
-
     res = client.check_payments.create(req)
     assert res
 
+
+def test_check_payment_event():
+    data = {
+      "id": "376",
+      "type": "checkPayment.pending",
+      "attributes": {
+        "createdAt": "2021-06-06T07:21:39.509Z",
+        "status": "Pending",
+        "previousStatus": "New",
+        "counterpartyMoved": True
+      },
+      "relationships": {
+        "checkPayment": {
+          "data": {
+            "id": "122",
+            "type": "checkPayment"
+          }
+        },
+        "account": {
+          "data": {
+            "id": "10001",
+            "type": "account"
+          }
+        },
+        "customer": {
+          "data": {
+            "id": "10000",
+            "type": "customer"
+          }
+        }
+      }
+    }
+
+    event = CheckPaymentPendingEvent.from_json_api(data["id"],data["type"],data["attributes"],data["relationships"])
+    x = 6

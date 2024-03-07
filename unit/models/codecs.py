@@ -1,3 +1,8 @@
+import json
+from datetime import datetime, date
+from typing import Dict
+
+from unit.models import BeneficialOwnerDTO, RelationshipArray, Relationship, RawUnitObject
 from unit.models.applicationForm import ApplicationFormDTO
 from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO,\
     TrustApplicationDTO
@@ -16,7 +21,7 @@ from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, B
     RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO, BulkPaymentsDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
-from unit.models.event import *
+from unit.models.event import events_mapper
 from unit.models.counterparty import CounterpartyDTO, CounterpartyBalanceDTO
 from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
@@ -30,6 +35,7 @@ from unit.models.authorization_request import PurchaseAuthorizationRequestDTO, C
 from unit.models.account_end_of_day import AccountEndOfDayDTO
 from unit.models.check_deposit import CheckDepositDTO
 from unit.models.dispute import DisputeDTO
+from unit.utils import to_relationships
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -128,78 +134,6 @@ mappings = {
         "fee": lambda _id, _type, attributes, relationships:
         FeeDTO.from_json_api(_id, _type, attributes, relationships),
 
-        "account.closed": lambda _id, _type, attributes, relationships:
-        AccountClosedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "account.frozen": lambda _id, _type, attributes, relationships:
-        AccountFrozenEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "application.awaitingDocuments": lambda _id, _type, attributes, relationships:
-        ApplicationAwaitingDocumentsEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "application.denied": lambda _id, _type, attributes, relationships:
-        ApplicationDeniedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "application.pendingReview": lambda _id, _type, attributes, relationships:
-        ApplicationPendingReviewEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "card.activated": lambda _id, _type, attributes, relationships:
-        CardActivatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "card.statusChanged": lambda _id, _type, attributes, relationships:
-        CardStatusChangedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorization.created": lambda _id, _type, attributes, relationships:
-        AuthorizationCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorizationRequest.declined": lambda _id, _type, attributes, relationships:
-        AuthorizationRequestDeclinedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorizationRequest.pending": lambda _id, _type, attributes, relationships:
-        AuthorizationRequestPendingEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "authorizationRequest.approved": lambda _id, _type, attributes, relationships:
-        AuthorizationRequestApprovedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "document.approved": lambda _id, _type, attributes, relationships:
-        DocumentApprovedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "document.rejected": lambda _id, _type, attributes, relationships:
-        DocumentRejectedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "document.approved": lambda _id, _type, attributes, relationships:
-        DocumentApprovedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "checkDeposit.created": lambda _id, _type, attributes, relationships:
-        CheckDepositCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "checkDeposit.clearing": lambda _id, _type, attributes, relationships:
-        CheckDepositClearingEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "checkDeposit.sent": lambda _id, _type, attributes, relationships:
-        CheckDepositSentEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "payment.clearing": lambda _id, _type, attributes, relationships:
-        PaymentClearingEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "payment.sent": lambda _id, _type, attributes, relationships:
-        PaymentSentEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "payment.returned": lambda _id, _type, attributes, relationships:
-        PaymentReturnedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "statements.created": lambda _id, _type, attributes, relationships:
-        StatementsCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "transaction.created": lambda _id, _type, attributes, relationships:
-        TransactionCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "customer.created": lambda _id, _type, attributes, relationships:
-        CustomerCreatedEvent.from_json_api(_id, _type, attributes, relationships),
-
-        "account.reopened": lambda _id, _type, attributes, relationships:
-        AccountReopenedEvent.from_json_api(_id, _type, attributes, relationships),
-
         "webhook": lambda _id, _type, attributes, relationships:
         WebhookDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -270,16 +204,7 @@ mappings = {
 
 def split_json_api_single_response(payload: Dict):
     _id, _type, attributes = payload.get("id"), payload["type"], payload["attributes"]
-    relationships = None
-
-    if payload.get("relationships"):
-        relationships = dict()
-        for k, v in payload.get("relationships").items():
-            if isinstance(v["data"], list):
-                relationships[k] = RelationshipArray(v["data"])
-            else:
-                relationships[k] = Relationship(v["data"]["type"], v["data"]["id"])
-
+    relationships = to_relationships(payload.get("relationships"))
     return _id, _type, attributes, relationships
 
 
@@ -304,6 +229,8 @@ def decode_limits(_id: str, _type: str, attributes: Dict):
 def mapping_wrapper(_id, _type, attributes, relationships):
     if _type in mappings:
         return mappings[_type](_id, _type, attributes, relationships)
+    if "." in _type:
+        return events_mapper(_id, _type, attributes, relationships)
     if "Transaction" in _type:
         return transactions_mapper(_id, _type, attributes, relationships)
     else:
