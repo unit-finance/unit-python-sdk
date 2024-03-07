@@ -442,7 +442,8 @@ class HealthcareAmounts(UnitDTO):
 
 
 class CardLevelLimits(UnitDTO):
-    def __init__(self, daily_withdrawal: int, daily_purchase: int, monthly_withdrawal: int, monthly_purchase: int):
+    def __init__(self, daily_withdrawal: Optional[int] = None, daily_purchase: Optional[int] = None,
+                 monthly_withdrawal: Optional[int] = None, monthly_purchase: Optional[int] = None):
         self.daily_withdrawal = daily_withdrawal
         self.daily_purchase = daily_purchase
         self.monthly_withdrawal = monthly_withdrawal
@@ -450,8 +451,11 @@ class CardLevelLimits(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return CardLevelLimits(data["dailyWithdrawal"], data["dailyPurchase"], data["monthlyWithdrawal"],
-                               data["monthlyPurchase"])
+        if data is None:
+            return None
+
+        return CardLevelLimits(data.get("dailyWithdrawal"), data.get("dailyPurchase"), data.get("monthlyWithdrawal"),
+                               data.get("monthlyPurchase"))
 
 
 class CardTotals(UnitDTO):
@@ -462,7 +466,10 @@ class CardTotals(UnitDTO):
 
     @staticmethod
     def from_json_api(data: Dict):
-        return CardTotals(data["withdrawals"], data["deposits"], data["purchases"])
+        if data is None:
+            return None
+
+        return CardTotals(data.get("withdrawals"), data.get("deposits"), data.get("purchases"))
 
 
 class DeviceFingerprint(UnitDTO):

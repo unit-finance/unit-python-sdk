@@ -386,14 +386,15 @@ class PinStatusDTO(object):
 
 
 class CardLimitsDTO(object):
-    def __init__(self, limits: CardLevelLimits, daily_totals: CardTotals, monthly_totals: CardTotals):
+    def __init__(self, limits: Optional[CardLevelLimits] = None, daily_totals: [CardTotals] = None,
+                 monthly_totals: Optional[CardTotals] = None):
         self.type = "limits"
         self.attributes = {"limits": limits, "dailyTotals": daily_totals, "monthlyTotals": monthly_totals}
 
     @staticmethod
     def from_json_api(attributes):
-        limits = CardLevelLimits.from_json_api(attributes.get("limits")) if attributes.get("limits") else None
-        return CardLimitsDTO(limits, CardTotals.from_json_api(attributes.get("dailyTotals")),
+        return CardLimitsDTO(CardLevelLimits.from_json_api(attributes.get("limits")),
+                             CardTotals.from_json_api(attributes.get("dailyTotals")),
                              CardTotals.from_json_api(attributes.get("monthlyTotals")))
 
 
