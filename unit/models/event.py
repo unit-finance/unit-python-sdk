@@ -197,6 +197,43 @@ class CheckPaymentPendingEvent(BaseEvent):
     def from_json_api(_id, _type, attributes, relationships):
         return CheckPaymentPendingEvent(_id, _type, attributes, relationships)
 
+class CheckPaymentProcessedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentProcessedEvent(_id, _type, attributes, relationships)
+
+
+class CheckPaymentReturnedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentReturnedEvent(_id, _type, attributes, relationships)
+
+
+class CheckPaymentPendingEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentPendingEvent(_id, _type, attributes, relationships)
+
+
+EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
+                 ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
+                 AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
+                 CardStatusChangedEvent, CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
+                 CheckDepositReturnedEvent, CustomerCreatedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
+                 PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent, StatementsCreatedEvent,
+                 TransactionCreatedEvent, AccountReopenedEvent, CheckPaymentCreatedEvent,
+                 CheckPaymentMarkedForReturnEvent, CheckPaymentProcessedEvent, CheckPaymentReturnedEvent,
+                 CheckPaymentPendingEvent]
+
+
+def events_mapper(_id, _type, attributes, relationships):
+    c = globals()
+    dot = _type.index(".")
+    c_name = _type[0].upper() + _type[1:dot] + _type[dot+1].upper() + _type[dot+2:] + "Event"
+    if c_name in c.keys():
+        return c[c_name].from_json_api(_id, _type, attributes, relationships)
+    else:
+        return RawUnitObject(_id, _type, attributes, relationships)
 
 class TaxFormCreatedEvent(BaseEvent):
     @staticmethod
