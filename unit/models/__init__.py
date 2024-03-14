@@ -161,7 +161,8 @@ class UnitError(object):
 
 
 Status = Literal["Approved", "Denied", "PendingReview"]
-Title = Literal["CEO", "COO", "CFO", "President"]
+Title = Literal["CEO", "COO", "CFO", "President", "BenefitsAdministrationOfficer", "CIO", "VP", "AVP", "Treasurer",
+                "Secretary", "Controller", "Manager", "Partner", "Member"]
 EntityType = Literal["Corporation", "LLC", "Partnership"]
 
 

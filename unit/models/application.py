@@ -262,6 +262,7 @@ class CreateIndividualApplicationRequest(UnitRequest):
         device_fingerprints: Optional[List[DeviceFingerprint]] = None,
         idempotency_key: str = None,
         tags: Optional[Dict[str, str]] = None,
+        business_vertical: Optional[BusinessVertical] = None,
     ):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
@@ -278,6 +279,7 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.device_fingerprints = device_fingerprints
         self.idempotency_key = idempotency_key
         self.tags = tags
+        self.business_vertical = business_vertical
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -326,6 +328,9 @@ class CreateIndividualApplicationRequest(UnitRequest):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.business_vertical:
+            payload["data"]["attributes"]["businessVertical"] = self.business_vertical
 
         return payload
 
