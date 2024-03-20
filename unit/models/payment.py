@@ -9,7 +9,7 @@ PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "
 class BasePayment(object):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]], astra_routine_id: Optional[str]):
+                 relationships: Optional[Dict[str, Relationship]], astra_routine_id: Optional[str] = None):
         self.id = id
         self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
                            "description": description, "amount": amount, "reason": reason, "tags": tags}
