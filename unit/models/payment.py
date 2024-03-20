@@ -119,7 +119,7 @@ class PushToCardPaymentDTO(BasePayment):
                  amount: int, astra_routine_id: str, reason: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships, astra_routine_id)
-        self.type = 'bookPayment'
+        self.type = 'pushToCardPayment'
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
