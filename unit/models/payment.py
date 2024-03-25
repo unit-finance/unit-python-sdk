@@ -168,7 +168,7 @@ class AchReceivedPaymentDTO(object):
 
 class CreatePaymentBaseRequest(UnitRequest):
     def __init__(self, amount: int, description: str, relationships: Dict[str, Relationship],
-                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: str = "Credit",
+                 idempotency_key: Optional[str], tags: Optional[Dict[str, str]], direction: Optional[str],
                 type: str = "achPayment", same_day: Optional[bool] = False, configuration: dict = None):
         self.type = type
         self.amount = amount
@@ -186,12 +186,14 @@ class CreatePaymentBaseRequest(UnitRequest):
                 "type": self.type,
                 "attributes": {
                     "amount": self.amount,
-                    "direction": self.direction,
                     "description": self.description
                 },
                 "relationships": self.relationships
             }
         }
+
+        if self.direction:
+            payload["data"]["attributes"]["direction"] = self.direction
 
         if self.idempotency_key:
             payload["data"]["attributes"]["idempotencyKey"] = self.idempotency_key
@@ -354,9 +356,8 @@ class CreateWirePaymentRequest(CreatePaymentBaseRequest):
 class CreatePushToCardPaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, configuration: dict,
                  relationships: Dict[str, Relationship],
-                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
-                 direction: str = "Credit"):
-        super().__init__(amount, description, relationships, idempotency_key, tags, direction, "pushToCardPayment", False, configuration)
+                 idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
+        super().__init__(amount, description, relationships, idempotency_key, tags, None, "pushToCardPayment", False, configuration)
 
 
 CreatePaymentRequest = Union[CreateInlinePaymentRequest, CreateLinkedPaymentRequest, CreateVerifiedPaymentRequest,
