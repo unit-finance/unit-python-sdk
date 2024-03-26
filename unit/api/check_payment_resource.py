@@ -9,6 +9,14 @@ class CheckPaymentResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "check-payments"
 
+    def get(self, check_payment_id: str) -> Union[UnitResponse[CheckPaymentDTO], UnitError]:
+        response = super().get(f"{self.resource}/{check_payment_id}")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[check_payment_id](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
     def approve(self, request: ApproveCheckPaymentRequest) -> Union[UnitResponse[CheckPaymentDTO], UnitError]:
         payload = request.to_json_api()
         response = super().post(f"{self.resource}/{request.check_payment_id}/approve", payload)

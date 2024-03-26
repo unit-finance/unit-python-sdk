@@ -6,7 +6,8 @@ from unit.utils import date_utils
 
 CheckPaymentStatus = Literal["New", "Pending", "PendingCancellation", "Canceled", "InDelivery", "Delivered",
     "ReturnedToSender", "Processed", "PendingReview", "MarkedForReturn", "Returned", "Rejected"]
-CheckPaymentAdditionalVerificationStatus = Literal[
+CheckPaymentAdditionalVerificationStatus = Literal["Required", "NotRequired", "Approved"]
+CheckPaymentReturnStatusReason = Literal[
     "NotSufficientFunds",
     "UncollectedFundsHold",
     "StopPayment",
@@ -26,14 +27,14 @@ CheckPaymentAdditionalVerificationStatus = Literal[
     "WarrantyBreach",
     "UnauthorizedWarrantyBreach"
 ]
-CheckPaymentDeliveryStatus = Literal["Required", "NotRequired", "Approved"]
+CheckPaymentDeliveryStatus = Literal["Mailed", "InLocalArea", "Delivered", "Rerouted", "ReturnedToSender"]
 
 
 class CheckPaymentDTO(object):
     def __init__(self, id: str, created_at: datetime, updated_at: datetime, amount: int, status: CheckPaymentStatus,
                  description: str, check_number: str, originated: bool, on_us: Optional[str],
                  on_us_auxiliary: Optional[str], counterparty_routing_number: Optional[str],
-                 return_status_reason: Optional[str], reject_reason: Optional[str],
+                 return_status_reason: Optional[CheckPaymentReturnStatusReason], reject_reason: Optional[str],
                  pending_review_reasons: Optional[List[str]], return_cutoff_time: Optional[datetime],
                  additional_verification_status: Optional[CheckPaymentAdditionalVerificationStatus],
                  tags: Optional[Dict[str, str]], delivery_status: Optional[CheckPaymentDeliveryStatus],
