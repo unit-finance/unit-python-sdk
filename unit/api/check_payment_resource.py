@@ -4,7 +4,7 @@ from unit.models.check_payment import ApproveCheckPaymentRequest, CheckPaymentDT
 from unit.models.codecs import DtoDecoder
 
 
-class CHeckPaymentResource(BaseResource):
+class CheckPaymentResource(BaseResource):
     def __init__(self, api_url, token):
         super().__init__(api_url, token)
         self.resource = "check-payments"
