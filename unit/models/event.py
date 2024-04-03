@@ -366,6 +366,12 @@ class ChargebackCreatedEvent(BaseEvent):
         return ChargebackCreatedEvent(_id, _type, attributes, relationships)
 
 
+class StatementCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return StatementCreatedEvent(_id, _type, attributes, relationships)
+
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
                  ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
                  AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
@@ -383,7 +389,8 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  CreditApplicationApprovedEvent, RepaymentStatusChangedEvent, RepaymentCreatedEvent,
                  ReceivedPaymentCreatedEvent, ReceivedPaymentReturnedEvent, ReceivedPaymentCompletedEvent,
                  ReceivedPaymentAdvancedEvent, ReceivedPaymentPendingEvent, ReceivedPaymentPendingReviewEvent,
-                 ReceivedPaymentMarkedForReturnEvent, RewardSentEvent, RewardRejectedEvent, ChargebackCreatedEvent]
+                 ReceivedPaymentMarkedForReturnEvent, RewardSentEvent, RewardRejectedEvent, ChargebackCreatedEvent,
+                 StatementCreatedEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
