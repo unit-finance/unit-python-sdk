@@ -306,6 +306,48 @@ class RepaymentCreatedEvent(BaseEvent):
         return RepaymentCreatedEvent(_id, _type, attributes, relationships)
 
 
+class ReceivedPaymentCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentCreatedEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentAdvancedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentAdvancedEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentPendingReviewEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentPendingReviewEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentPendingEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentPendingEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentMarkedForReturnEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentMarkedForReturnEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentCompletedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentCompletedEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentReturnedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentReturnedEvent(_id, _type, attributes, relationships)
+
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
                  ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
                  AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
@@ -320,7 +362,10 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  CheckPaymentAdditionalVerificationApprovedRequiredEvent, CheckPaymentPendingEvent,
                  TaxFormCreatedEvent, TaxFormUpdatedEvent, CreditApplicationCreatedEvent,
                  CreditApplicationCanceledEvent, CreditApplicationDeniedEvent, CreditApplicationPendingEvent,
-                 CreditApplicationApprovedEvent, RepaymentStatusChangedEvent, RepaymentCreatedEvent]
+                 CreditApplicationApprovedEvent, RepaymentStatusChangedEvent, RepaymentCreatedEvent,
+                 ReceivedPaymentCreatedEvent, ReceivedPaymentReturnedEvent, ReceivedPaymentCompletedEvent,
+                 ReceivedPaymentAdvancedEvent, ReceivedPaymentPendingEvent, ReceivedPaymentPendingReviewEvent,
+                 ReceivedPaymentMarkedForReturnEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
