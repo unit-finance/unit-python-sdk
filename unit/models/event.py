@@ -294,6 +294,18 @@ class CreditApplicationCanceledEvent(BaseEvent):
         return CreditApplicationCanceledEvent(_id, _type, attributes, relationships)
 
 
+class RepaymentStatusChangedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RepaymentStatusChangedEvent(_id, _type, attributes, relationships)
+
+
+class RepaymentCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RepaymentCreatedEvent(_id, _type, attributes, relationships)
+
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
                  ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
                  AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
@@ -308,7 +320,7 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  CheckPaymentAdditionalVerificationApprovedRequiredEvent, CheckPaymentPendingEvent,
                  TaxFormCreatedEvent, TaxFormUpdatedEvent, CreditApplicationCreatedEvent,
                  CreditApplicationCanceledEvent, CreditApplicationDeniedEvent, CreditApplicationPendingEvent,
-                 CreditApplicationApprovedEvent]
+                 CreditApplicationApprovedEvent, RepaymentStatusChangedEvent, RepaymentCreatedEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
