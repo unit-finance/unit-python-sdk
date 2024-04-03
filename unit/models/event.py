@@ -264,6 +264,36 @@ class TaxFormUpdatedEvent(BaseEvent):
         return TaxFormUpdatedEvent(_id, _type, attributes, relationships)
 
 
+class CreditApplicationCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationCreatedEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationPendingEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationPendingEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationApprovedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationApprovedEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationDeniedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationDeniedEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationCanceledEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationCanceledEvent(_id, _type, attributes, relationships)
+
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
                  ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
                  AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
@@ -276,7 +306,9 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  CheckPaymentDeliveredEvent, CheckPaymentReturnToSenderEvent, CheckPaymentCanceledEvent,
                  CheckPaymentDeliveryStatusChangedEvent, CheckPaymentAdditionalVerificationRequiredEvent,
                  CheckPaymentAdditionalVerificationApprovedRequiredEvent, CheckPaymentPendingEvent,
-                 TaxFormCreatedEvent, TaxFormUpdatedEvent]
+                 TaxFormCreatedEvent, TaxFormUpdatedEvent, CreditApplicationCreatedEvent,
+                 CreditApplicationCanceledEvent, CreditApplicationDeniedEvent, CreditApplicationPendingEvent,
+                 CreditApplicationApprovedEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
