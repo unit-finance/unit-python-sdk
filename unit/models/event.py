@@ -120,6 +120,18 @@ class CustomerCreatedEvent(BaseEvent):
         return CustomerCreatedEvent(_id, _type, attributes, relationships)
 
 
+class CustomerUpdatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CustomerUpdatedEvent(_id, _type, attributes, relationships)
+
+
+class CustomerArchivedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CustomerArchivedEvent(_id, _type, attributes, relationships)
+
+
 class DocumentApprovedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -415,7 +427,7 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  ReceivedPaymentAdvancedEvent, ReceivedPaymentPendingEvent, ReceivedPaymentPendingReviewEvent,
                  ReceivedPaymentMarkedForReturnEvent, RewardSentEvent, RewardRejectedEvent, ChargebackCreatedEvent,
                  StatementCreatedEvent, PaymentCreatedEvent, PaymentCanceledEvent, PaymentPendingReviewEvent,
-                 PaymentRejectedEvent]
+                 PaymentRejectedEvent, CustomerUpdatedEvent, CustomerArchivedEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
