@@ -144,10 +144,34 @@ class PaymentSentEvent(BaseEvent):
         return PaymentSentEvent(_id, _type, attributes, relationships)
 
 
+class PaymentCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentCreatedEvent(_id, _type, attributes, relationships)
+
+
 class PaymentReturnedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return PaymentReturnedEvent(_id, _type, attributes, relationships)
+
+
+class PaymentRejectedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentRejectedEvent(_id, _type, attributes, relationships)
+
+
+class PaymentCanceledEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentCanceledEvent(_id, _type, attributes, relationships)
+
+
+class PaymentPendingReviewEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentPendingReviewEvent(_id, _type, attributes, relationships)
 
 
 class StatementsCreatedEvent(BaseEvent):
@@ -390,7 +414,8 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  ReceivedPaymentCreatedEvent, ReceivedPaymentReturnedEvent, ReceivedPaymentCompletedEvent,
                  ReceivedPaymentAdvancedEvent, ReceivedPaymentPendingEvent, ReceivedPaymentPendingReviewEvent,
                  ReceivedPaymentMarkedForReturnEvent, RewardSentEvent, RewardRejectedEvent, ChargebackCreatedEvent,
-                 StatementCreatedEvent]
+                 StatementCreatedEvent, PaymentCreatedEvent, PaymentCanceledEvent, PaymentPendingReviewEvent,
+                 PaymentRejectedEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
