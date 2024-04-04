@@ -36,6 +36,30 @@ class AccountFrozenEvent(BaseEvent):
         return AccountFrozenEvent(_id, _type, attributes, relationships)
 
 
+class AccountCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AccountCreatedEvent(_id, _type, attributes, relationships)
+
+
+class AccountReopenedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AccountReopenedEvent(_id, _type, attributes, relationships)
+
+
+class AccountUnfrozenEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AccountUnfrozenEvent(_id, _type, attributes, relationships)
+
+
+class AccountUpdatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AccountUpdatedEvent(_id, _type, attributes, relationships)
+
+
 class ApplicationDeniedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -54,10 +78,46 @@ class ApplicationAwaitingDocumentsEvent(BaseEvent):
         return ApplicationAwaitingDocumentsEvent(_id, _type, attributes, relationships)
 
 
+class ApplicationCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ApplicationCreatedEvent(_id, _type, attributes, relationships)
+
+
+class ApplicationCanceledEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ApplicationCanceledEvent(_id, _type, attributes, relationships)
+
+
 class AuthorizationCreatedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AuthorizationCreatedEvent(_id, _type, attributes, relationships)
+
+
+class AuthorizationCanceledEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AuthorizationCanceledEvent(_id, _type, attributes, relationships)
+
+
+class AuthorizationAmountChangedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AuthorizationAmountChangedEvent(_id, _type, attributes, relationships)
+
+
+class AuthorizationDeclinedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AuthorizationDeclinedEvent(_id, _type, attributes, relationships)
+
+
+class AuthorizationUpdatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return AuthorizationUpdatedEvent(_id, _type, attributes, relationships)
 
 
 class AuthorizationRequestApprovedEvent(BaseEvent):
@@ -427,7 +487,10 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  ReceivedPaymentAdvancedEvent, ReceivedPaymentPendingEvent, ReceivedPaymentPendingReviewEvent,
                  ReceivedPaymentMarkedForReturnEvent, RewardSentEvent, RewardRejectedEvent, ChargebackCreatedEvent,
                  StatementCreatedEvent, PaymentCreatedEvent, PaymentCanceledEvent, PaymentPendingReviewEvent,
-                 PaymentRejectedEvent, CustomerUpdatedEvent, CustomerArchivedEvent]
+                 PaymentRejectedEvent, CustomerUpdatedEvent, CustomerArchivedEvent, AccountUpdatedEvent,
+                 AccountCreatedEvent, AccountReopenedEvent, AccountUnfrozenEvent, ApplicationCanceledEvent,
+                 ApplicationCreatedEvent, AuthorizationUpdatedEvent, AuthorizationDeclinedEvent,
+                 AuthorizationAmountChangedEvent, AuthorizationCanceledEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
