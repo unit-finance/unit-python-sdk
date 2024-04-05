@@ -1,4 +1,5 @@
 from unit.api.application_resource import ApplicationResource
+from unit.api.batch_release_resource import BatchReleaseResource
 from unit.api.customer_resource import CustomerResource
 from unit.api.account_resource import AccountResource
 from unit.api.card_resource import CardResource
@@ -21,6 +22,7 @@ from unit.api.authorization_resource import AuthorizationResource
 from unit.api.authorization_request_resource import AuthorizationRequestResource
 from unit.api.account_end_of_day_resource import AccountEndOfDayResource
 from unit.api.checkDeposit_resource import CheckDepositResource
+from unit.api.check_payment_resource import CheckPaymentResource
 from unit.api.dispute_resource import DisputeResource
 from unit.api.reward_resource import RewardResource
 from unit.api.repayment_resource import RepaymentResource
@@ -52,6 +54,8 @@ class Unit(object):
         self.authorization_requests = AuthorizationRequestResource(api_url, token, retries)
         self.account_end_of_day = AccountEndOfDayResource(api_url, token, retries)
         self.checkDeposits = CheckDepositResource(api_url, token, retries)
+        self.batchRelease = BatchReleaseResource(api_url, token, retries)
+        self.check_payments = CheckPaymentResource(api_url, token, retries)
         self.disputes = DisputeResource(api_url, token, retries)
         self.rewards = RewardResource(api_url, token, retries)
         self.received_payments = ReceivedPaymentResource(api_url, token, retries)

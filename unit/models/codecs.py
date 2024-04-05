@@ -24,6 +24,8 @@ from unit.models.authorization_request import PurchaseAuthorizationRequestDTO
 from unit.models.account_end_of_day import AccountEndOfDayDTO
 from unit.models.check_deposit import CheckDepositDTO
 from unit.models.dispute import DisputeDTO
+from unit.models.batch_release import BatchReleaseDTO
+from unit.models.benificial_owner import BenificialOwnerDTO
 
 mappings = {
         "individualApplication": lambda _id, _type, attributes, relationships:
@@ -294,7 +296,13 @@ mappings = {
         AchRepaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "astra": lambda _id, _type, attributes, relationships:
-        CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships)
+        CardToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "beneficialOwner": lambda _id, _type, attributes, relationships:
+        BenificialOwnerDTO.from_json_api(attributes),
+
+        "batchRelease": lambda _id, _type, attributes, relationships:
+        BatchReleaseDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 

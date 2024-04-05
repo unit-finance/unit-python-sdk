@@ -36,12 +36,12 @@ class PurchaseAuthorizationRequestDTO(object):
                                                attributes.get("partialApprovalAllowed"),
                                                attributes.get("approvedAmount"), attributes.get("declineReason"),
                                                attributes["merchant"]["name"], attributes["merchant"]["type"],
-                                               attributes["merchant"]["category"],
+                                               attributes["merchant"].get("category"),
                                                attributes["merchant"].get("location"), attributes["recurring"],
                                                attributes.get("tags"), relationships, attributes["merchant"].get("id"))
 
 
-class ListPurchaseAuthorizationRequestParams(object):
+class ListPurchaseAuthorizationRequestParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
                  customer_id: Optional[str] = None):
         self.limit = limit
@@ -58,7 +58,7 @@ class ListPurchaseAuthorizationRequestParams(object):
         return parameters
 
 
-class ApproveAuthorizationRequest(object):
+class ApproveAuthorizationRequest(UnitRequest):
     def __init__(self, authorization_id: str, amount: Optional[int] = None, tags: Optional[Dict[str, str]] = None):
         self.authorization_id = authorization_id
         self.amount = amount
@@ -84,7 +84,7 @@ class ApproveAuthorizationRequest(object):
         return json.dumps(self.to_json_api())
 
 
-class DeclineAuthorizationRequest(object):
+class DeclineAuthorizationRequest(UnitRequest):
     def __init__(self, authorization_id: str, reason: DeclineReason):
         self.authorization_id = authorization_id
         self.reason = reason

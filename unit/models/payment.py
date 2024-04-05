@@ -9,11 +9,13 @@ PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "
 class BasePayment(object):
     def __init__(self, _id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], astra_routine_id: Optional[str] = None):
         self.id = _id
         self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
                            "description": description, "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
+        if astra_routine_id:
+            self.attributes["astraRoutineId"] = astra_routine_id
 
 
 class AchPaymentDTO(BasePayment):
@@ -147,7 +149,19 @@ class CreatePaymentBaseRequest(UnitRequest):
     def __repr__(self):
         return json.dumps(self.to_json_api())
 
+class PushToCardPaymentDTO(BasePayment):
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: Optional[str], description: str,
+                 amount: int, astra_routine_id: str, reason: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships, astra_routine_id)
+        self.type = 'pushToCardPayment'
 
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PushToCardPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                    attributes.get("direction"), attributes["description"], attributes["amount"],
+                                    attributes["astraRoutineId"], attributes.get("reason"), attributes.get("tags"),
+                                    relationships)
 class CreateInlinePaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, counterparty: Counterparty, relationships: Dict[str, Relationship],
                  addenda: Optional[str] = None, idempotency_key: Optional[str] = None,

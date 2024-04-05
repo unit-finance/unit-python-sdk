@@ -8,33 +8,21 @@ AuthorizationStatus = Literal["Authorized", "Completed", "Canceled", "Declined"]
 
 class AuthorizationDTO(object):
     def __init__(self, id: str, created_at: datetime, amount: int, card_last_4_digits: str, status: AuthorizationStatus,
-                 merchant_name: str,
-                 merchant_type: int, merchant_category: str, merchant_location: Optional[str], recurring: bool,
-                 payment_method: Optional[str], digital_wallet: Optional[str], card_verification_data,
-                 card_network: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]], merchant_id: Optional[str],
-                 decline_reason: Optional[str], cash_withdrawal_amount: Optional[int]):
+                 merchant: Merchant, recurring: bool, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = id
         self.type = "authorization"
         self.attributes = {"createdAt": created_at, "amount": amount, "cardLast4Digits": card_last_4_digits,
-                           "status": status, "merchant": {"name": merchant_name, "type": merchant_type,
-                                                          "category": merchant_category, "location": merchant_location,
-                                                          "id": merchant_id},
-                           "recurring": recurring, "paymentMethod": payment_method, "digitalWallet": digital_wallet,
-                           "cardVerificationData": card_verification_data, "cardNetwork": card_network, "tags": tags,
-                           "declineReason": decline_reason, "cashWithdrawalAmount": cash_withdrawal_amount}
+                           "status": status, "merchant": merchant,
+                           "recurring": recurring, "tags": tags}
         self.relationships = relationships
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AuthorizationDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["amount"],
-                                attributes["cardLast4Digits"], attributes["status"], attributes["merchant"]["name"],
-                                attributes["merchant"]["type"], attributes["merchant"]["category"],
-                                attributes["merchant"].get("location"), attributes["recurring"],
-                                attributes.get("paymentMethod"), attributes.get("digitalWallet"),
-                                attributes.get("cardVerificationData"), attributes.get("cardNetwork"),
-                                attributes.get("tags"), relationships, attributes["merchant"].get("id"),
-                                attributes.get("declineReason"), attributes.get("cashWithdrawalAmount"))
+                                attributes["cardLast4Digits"], attributes["status"],
+                                Merchant.from_json_api(attributes["merchant"]), attributes["recurring"],
+                                attributes.get("tags"), relationships)
 
 
 class ListAuthorizationParams(UnitParams):
