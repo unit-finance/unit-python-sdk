@@ -3,6 +3,7 @@ from unit.models import *
 from datetime import datetime, date
 
 from unit.models.batch_release import BatchReleaseDTO
+from unit.models.check_payment import CheckPaymentDTO
 from unit.models.reward import RewardDTO
 from unit.utils import date_utils
 from unit.models.applicationForm import ApplicationFormDTO
@@ -114,6 +115,12 @@ mappings = {
         "returnedCheckDepositTransaction": lambda _id, _type, attributes, relationships:
         ReturnedCheckDepositTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "checkPaymentTransaction": lambda _id, _type, attributes, relationships:
+        CheckPaymentTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "returnedCheckPaymentTransaction": lambda _id, _type, attributes, relationships:
+        ReturnedCheckPaymentTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
         #"paymentAdvanceTransaction": lambda _id, _type, attributes, relationships:
         #PaymentAdvanceTransactionTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -134,6 +141,9 @@ mappings = {
 
         "achReceivedPayment": lambda _id, _type, attributes, relationships:
         AchReceivedPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment": lambda _id, _type, attributes, relationships:
+        CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
@@ -221,6 +231,9 @@ mappings = {
 
         "checkDeposit.returned": lambda _id, _type, attributes, relationships:
         CheckDepositReturnedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.additionalVerificationRequired": lambda _id, _type, attributes, relationships:
+        CheckPaymentAdditionalVerificationRequiredEvent.from_json_api(_id, _type, attributes, relationships),
 
         "payment.clearing": lambda _id, _type, attributes, relationships:
         PaymentClearingEvent.from_json_api(_id, _type, attributes, relationships),

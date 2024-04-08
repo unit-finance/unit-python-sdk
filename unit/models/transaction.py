@@ -443,7 +443,8 @@ TransactionDTO = Union[OriginatedAchTransactionDTO, ReceivedAchTransactionDTO, R
                        PurchaseTransactionDTO, AtmTransactionDTO, FeeTransactionDTO, CardTransactionDTO,
                        CardReversalTransactionDTO, WireTransactionDTO, ReleaseTransactionDTO, AdjustmentTransactionDTO,
                        InterestTransactionDTO, DisputeTransactionDTO, CheckDepositTransactionDTO,
-                       ReturnedCheckDepositTransactionDTO, PaymentAdvanceTransactionDTO,
+                       ReturnedCheckDepositTransactionDTO, CheckPaymentTransactionDTO,
+                       ReturnedCheckPaymentTransactionDTO, PaymentAdvanceTransactionDTO,
                        RepaidPaymentAdvanceTransactionDTO]
 
 
