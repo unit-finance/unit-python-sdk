@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.codecs import DtoDecoder
 from unit.models.transaction import *
 
 
 class TransactionResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "transactions"
+    def __init__(self, configuration: Configuration):
+        super().__init__("transactions", configuration)
 
     def get(self, transaction_id: str, account_id: str, include: Optional[str] = "") -> Union[UnitResponse[TransactionDTO], UnitError]:
         params = {"filter[accountId]": account_id, "include": include}

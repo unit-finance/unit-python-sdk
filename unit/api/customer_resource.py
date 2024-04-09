@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.customer import *
 from unit.models.codecs import DtoDecoder
 
 
 class CustomerResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "customers"
+    def __init__(self, configuration: Configuration):
+        super().__init__("customers", configuration)
 
     def update(self, request: PatchCustomerRequest) -> Union[UnitResponse[CustomerDTO], UnitError]:
         payload = request.to_json_api()
@@ -31,7 +31,8 @@ class CustomerResource(BaseResource):
         response = super().get(self.resource, params.to_dict())
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+            meta = response.json().get("meta")
+            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), meta=meta)
         else:
             return UnitError.from_json_api(response.json())
 

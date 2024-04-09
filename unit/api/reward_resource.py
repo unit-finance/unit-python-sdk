@@ -1,4 +1,6 @@
 from typing import Union, List, Optional
+
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models import UnitResponse, UnitError
 from unit.models.reward import RewardDTO, ListRewardsParams, CreateRewardRequest
@@ -6,9 +8,8 @@ from unit.models.codecs import DtoDecoder
 
 
 class RewardResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "rewards"
+    def __init__(self, configuration: Configuration):
+        super().__init__("rewards", configuration)
 
     def create(self, request: CreateRewardRequest) -> Union[UnitResponse[RewardDTO], UnitError]:
         payload = request.to_json_api()

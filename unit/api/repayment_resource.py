@@ -1,4 +1,6 @@
 from typing import Union, List, Optional
+
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models import UnitResponse, UnitError
 from unit.models.codecs import DtoDecoder
@@ -6,9 +8,8 @@ from unit.models.repayment import RepaymentDTO, CreateRepaymentRequest, ListRepa
 
 
 class RepaymentResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "repayments"
+    def __init__(self, configuration: Configuration):
+        super().__init__("repayments", configuration)
 
     def create(self, request: CreateRepaymentRequest) -> Union[UnitResponse[RepaymentDTO], UnitError]:
         payload = request.to_json_api()

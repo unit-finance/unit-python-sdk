@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.applicationForm import *
 from unit.models.codecs import DtoDecoder
 
 
 class ApplicationFormResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "application-forms"
+    def __init__(self, configuration: Configuration):
+        super().__init__("application-forms", configuration)
 
     def create(self, request: CreateApplicationFormRequest) -> Union[UnitResponse[ApplicationFormDTO], UnitError]:
         payload = request.to_json_api()

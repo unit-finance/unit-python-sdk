@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.account import *
 from unit.models.codecs import DtoDecoder
 
 
 class AccountResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = "accounts"
+    def __init__(self, configuration: Configuration):
+        super().__init__("accounts", configuration)
 
     def create(self, request: CreateAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
         payload = request.to_json_api()
@@ -108,7 +108,8 @@ class AccountResource(BaseResource):
         response = super().get(f"{self.resource}/{account_id}/deposit-products")
         if super().is_20x(response.status_code):
             data = response.json().get("data")
-            return UnitResponse[List[AccountDepositProductDTO]](DtoDecoder.decode(data), None)
+            meta = response.json().get("meta")
+            return UnitResponse[List[AccountDepositProductDTO]](DtoDecoder.decode(data), meta=meta)
         else:
             return UnitError.from_json_api(response.json())
 

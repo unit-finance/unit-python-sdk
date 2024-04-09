@@ -1,5 +1,4 @@
 from unit.api.application_resource import ApplicationResource
-from unit.api.batch_release_resource import BatchReleaseResource
 from unit.api.customer_resource import CustomerResource
 from unit.api.account_resource import AccountResource
 from unit.api.card_resource import CardResource
@@ -22,41 +21,51 @@ from unit.api.authorization_resource import AuthorizationResource
 from unit.api.authorization_request_resource import AuthorizationRequestResource
 from unit.api.account_end_of_day_resource import AccountEndOfDayResource
 from unit.api.checkDeposit_resource import CheckDepositResource
-from unit.api.check_payment_resource import CheckPaymentResource
 from unit.api.dispute_resource import DisputeResource
 from unit.api.reward_resource import RewardResource
+from unit.api.recurring_payment_resource import RecurringPaymentResource
 from unit.api.repayment_resource import RepaymentResource
+from unit.api.check_payment_resource import CheckPaymentResource
+from unit.api.tax_form_resource import TaxFormResource
+from unit.utils.configuration import Configuration
 
 __all__ = ["api", "models", "utils"]
 
 
 class Unit(object):
-    def __init__(self, api_url, token, retries=1):
-        self.applications = ApplicationResource(api_url, token, retries)
-        self.customers = CustomerResource(api_url, token, retries)
-        self.accounts = AccountResource(api_url, token, retries)
-        self.cards = CardResource(api_url, token, retries)
-        self.transactions = TransactionResource(api_url, token, retries)
-        self.payments = PaymentResource(api_url, token, retries)
-        self.statements = StatementResource(api_url, token, retries)
-        self.customerTokens = CustomerTokenResource(api_url, token, retries)
-        self.counterparty = CounterpartyResource(api_url, token, retries)
-        self.returnAch = ReturnAchResource(api_url, token, retries)
-        self.applicationForms = ApplicationFormResource(api_url, token, retries)
-        self.fees = FeeResource(api_url, token, retries)
-        self.events = EventResource(api_url, token, retries)
-        self.webhooks = WebhookResource(api_url, token, retries)
-        self.institutions = InstitutionResource(api_url, token, retries)
-        self.atmLocations = AtmLocationResource(api_url, token, retries)
-        self.billPays = BillPayResource(api_url, token, retries)
-        self.api_tokens = APITokenResource(api_url, token, retries)
-        self.authorizations = AuthorizationResource(api_url, token, retries)
-        self.authorization_requests = AuthorizationRequestResource(api_url, token, retries)
-        self.account_end_of_day = AccountEndOfDayResource(api_url, token, retries)
-        self.checkDeposits = CheckDepositResource(api_url, token, retries)
-        self.batchRelease = BatchReleaseResource(api_url, token, retries)
-        self.check_payments = CheckPaymentResource(api_url, token, retries)
-        self.disputes = DisputeResource(api_url, token, retries)
-        self.rewards = RewardResource(api_url, token, retries)
-        self.received_payments = ReceivedPaymentResource(api_url, token, retries)
-        self.repayments = RepaymentResource(api_url, token, retries)
+    def __init__(self, api_url=None, token=None, retries=0, timeout=120, configuration: Configuration = None):
+        if (api_url is not None or token is not None) and configuration is not None:
+            raise Exception("use only configuration")
+
+        c = configuration if configuration else Configuration(api_url, token, retries, timeout)
+
+        self.applications = ApplicationResource(c)
+        self.customers = CustomerResource(c)
+        self.accounts = AccountResource(c)
+        self.cards = CardResource(c)
+        self.transactions = TransactionResource(c)
+        self.payments = PaymentResource(c)
+        self.statements = StatementResource(c)
+        self.customerTokens = CustomerTokenResource(c)
+        self.counterparty = CounterpartyResource(c)
+        self.returnAch = ReturnAchResource(c)
+        self.applicationForms = ApplicationFormResource(c)
+        self.fees = FeeResource(c)
+        self.events = EventResource(c)
+        self.webhooks = WebhookResource(c)
+        self.institutions = InstitutionResource(c)
+        self.atmLocations = AtmLocationResource(c)
+        self.billPays = BillPayResource(c)
+        self.api_tokens = APITokenResource(c)
+        self.authorizations = AuthorizationResource(c)
+        self.authorization_requests = AuthorizationRequestResource(c)
+        self.account_end_of_day = AccountEndOfDayResource(c)
+        self.checkDeposits = CheckDepositResource(c)
+        self.disputes = DisputeResource(c)
+        self.rewards = RewardResource(c)
+        self.received_payments = ReceivedPaymentResource(c)
+        self.repayments = RepaymentResource(c)
+        self.recurring_payments = RecurringPaymentResource(c)
+        self.check_payments = CheckPaymentResource(c)
+        self.tax_forms = TaxFormResource(c)
+

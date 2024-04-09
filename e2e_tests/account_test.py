@@ -19,7 +19,7 @@ def create_individual_customer():
         FullName("Jhon", "Doe"), date.today() - timedelta(days=20 * 365),
         Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
         "jone.doe1@unit-finance.com",
-        Phone("1", "2025550108"), ssn="721074426",
+        Phone("1", "2025550108"), ssn="721074426", occupation="ArchitectOrEngineer"
     )
     response = client.applications.create(request)
     for key, value in response.data.relationships.items():
@@ -193,3 +193,12 @@ def test_remove_owners():
     response = client.accounts.remove_owners(AccountOwnersRequest(account_id, response.data.relationships["customers"]))
     assert response.data.type == "depositAccount"
     assert response.data.relationships.get("customer").id == last_owner_id
+
+
+def test_get_credit_account_limits():
+    account = create_credit_account_for_business().data
+    assert account.type == "creditAccount"
+
+    limits = client.accounts.limits(account.id).data
+    assert limits.type == "creditLimits"
+
