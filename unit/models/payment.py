@@ -365,17 +365,18 @@ class CreateCheckPaymentRequest(UnitRequest):
             self,
             description: str,
             amount: int,
-            send_date: str,
             counterparty: CheckPaymentCounterparty,
             idempotency_key: str,
             relationships: Dict[str, Relationship],
+            memo: Optional[str] = None,
+            send_date: Optional[str] = None,
             tags: Optional[Dict[str, str]] = None,
     ):
         self.description = description
         self.amount = amount
         self.send_date = send_date
         self.counterparty = counterparty
-        self.description = description
+        self.memo = memo
         self.idempotency_key = idempotency_key
         self.tags = tags
         self.relationships = relationships
