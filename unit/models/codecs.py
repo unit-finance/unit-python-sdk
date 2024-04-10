@@ -17,7 +17,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
 from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.tax_form import TaxFormDTO
-from unit.models.transaction import transactions_mapper
+from unit.models.transaction import transactions_mapper, ReturnedCheckPaymentTransactionDTO, CheckPaymentTransactionDTO
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO, \
     RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO, BulkPaymentsDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
@@ -197,6 +197,12 @@ mappings = {
 
         "checkPayment": lambda _id, _type, attributes, relationships:
         CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPaymentTransaction": lambda _id, _type, attributes, relationships:
+        CheckPaymentTransactionDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "returnedCheckPaymentTransaction": lambda _id, _type, attributes, relationships:
+        ReturnedCheckPaymentTransactionDTO.from_json_api(_id, _type, attributes, relationships),
 
         "taxForm": lambda _id, _type, attributes, relationships:
         TaxFormDTO.from_json_api(_id, _type, attributes, relationships),

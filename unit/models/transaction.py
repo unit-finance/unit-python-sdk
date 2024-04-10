@@ -515,14 +515,14 @@ class ReturnedCheckPaymentTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
                  reason: str, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
-        self.attributes["reason"] = reason
+        self.attributes["returnReason"] = reason
         self.type = 'returnedCheckPaymentTransaction'
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return ReturnedCheckPaymentTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
                                                   attributes["direction"], attributes["amount"], attributes["balance"],
-                                                  attributes["summary"], attributes["reason"], attributes.get("tags"),
+                                                  attributes["summary"], attributes["returnReason"], attributes.get("tags"),
                                                   relationships)
 
 
