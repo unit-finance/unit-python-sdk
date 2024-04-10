@@ -28,6 +28,7 @@ from unit.api.repayment_resource import RepaymentResource
 from unit.api.check_payment_resource import CheckPaymentResource
 from unit.api.tax_form_resource import TaxFormResource
 from unit.utils.configuration import Configuration
+from unit.api.batch_release_resource import BatchReleaseResource
 
 __all__ = ["api", "models", "utils"]
 
@@ -49,6 +50,7 @@ class Unit(object):
         self.customerTokens = CustomerTokenResource(c)
         self.counterparty = CounterpartyResource(c)
         self.returnAch = ReturnAchResource(c)
+        self.batchRelease = BatchReleaseResource(c)
         self.applicationForms = ApplicationFormResource(c)
         self.fees = FeeResource(c)
         self.events = EventResource(c)

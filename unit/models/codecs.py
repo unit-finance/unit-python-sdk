@@ -9,6 +9,7 @@ from unit.models.application import IndividualApplicationDTO, BusinessApplicatio
 from unit.models.account import DepositAccountDTO, AccountDepositProductDTO, CreditAccountDTO, \
     CreditAccountLimitsDTO, DepositAccountLimitsDTO
 from unit.models.check_payment import CheckPaymentDTO
+from unit.models.batch_release import BatchReleaseDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO, \
@@ -198,7 +199,10 @@ mappings = {
         CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "taxForm": lambda _id, _type, attributes, relationships:
-        TaxFormDTO.from_json_api(_id, _type, attributes, relationships)
+        TaxFormDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "batchRelease": lambda _id, _type, attributes, relationships:
+        BatchReleaseDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 

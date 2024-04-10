@@ -1,12 +1,12 @@
+from unit.utils.configuration import Configuration
 from unit.api.base_resource import BaseResource
 from unit.models.batch_release import *
 from unit.models.codecs import DtoDecoder
 
 
 class BatchReleaseResource(BaseResource):
-    def __init__(self, api_url, token, retries):
-        super().__init__(api_url, token, retries)
-        self.resource = 'batch-releases'
+    def __init__(self, configuration: Configuration):
+        super().__init__('batch-releases', configuration)
 
     def create(self, batch_releases: List[BatchReleaseDTO]) -> Union[UnitResponse[List[BatchReleaseDTO]], UnitError]:
         response = super().post(self.resource, {"data": batch_releases})
