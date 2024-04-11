@@ -1,5 +1,6 @@
 from unit.utils import date_utils
 from unit.models import *
+from unit.models.check_payment import CheckPaymentCounterparty
 
 PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
 PaymentDirections = Literal["Debit", "Credit"]
@@ -433,9 +434,45 @@ class CreateWirePaymentRequest(CreatePaymentBaseRequest):
         payload["data"]["attributes"]["counterparty"] = self.counterparty
         return payload
 
+class CreatePushToCardPaymentRequest(CreatePaymentBaseRequest):
+        def __init__(self, amount: int, description: str, configuration: dict,
+                     relationships: Dict[str, Relationship],
+                     idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
+            super().__init__(amount, description, relationships, idempotency_key, tags, None, "pushToCardPayment",
+                             False, configuration)
+
+class CreateCheckPaymentRequest(UnitRequest):
+        def __init__(
+                self,
+                description: str,
+                amount: int,
+                counterparty: CheckPaymentCounterparty,
+                idempotency_key: str,
+                relationships: Dict[str, Relationship],
+                memo: Optional[str] = None,
+                send_date: Optional[str] = None,
+                tags: Optional[Dict[str, str]] = None,
+        ):
+            self.description = description
+            self.amount = amount
+            self.send_date = send_date
+            self.counterparty = counterparty
+            self.memo = memo
+            self.idempotency_key = idempotency_key
+            self.tags = tags
+            self.relationships = relationships
+
+        def to_json_api(self) -> Dict:
+            payload = super().to_payload("checkPayment", self.relationships)
+            payload["data"]["attributes"]["counterparty"]["name"] = self.counterparty.name
+            payload["data"]["attributes"]["counterparty"]["counterpartyMoved"] = self.counterparty.counterparty_moved
+            payload["data"]["attributes"]["counterparty"]["address"] = self.counterparty.address
+            return payload
+
+
 
 CreatePaymentRequest = Union[CreateInlinePaymentRequest, CreateLinkedPaymentRequest, CreateVerifiedPaymentRequest,
-                             CreateBookPaymentRequest, CreateWirePaymentRequest]
+                             CreateBookPaymentRequest, CreateWirePaymentRequest, CreatePushToCardPaymentRequest, CreateCheckPaymentRequest]
 
 
 class PatchAchPaymentRequest(object):
