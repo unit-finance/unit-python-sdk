@@ -382,11 +382,7 @@ class CreateCheckPaymentRequest(UnitRequest):
         self.relationships = relationships
 
     def to_json_api(self) -> Dict:
-        payload = super().to_payload("checkPayment", self.relationships)
-        payload["data"]["attributes"]["counterparty"]["name"] = self.counterparty.name
-        payload["data"]["attributes"]["counterparty"]["counterpartyMoved"] = self.counterparty.counterparty_moved
-        payload["data"]["attributes"]["counterparty"]["address"] = self.counterparty.address
-        return payload
+        return super().to_payload("checkPayment", self.relationships)
 
 
 CreatePaymentRequest = Union[CreateInlinePaymentRequest, CreateLinkedPaymentRequest, CreateVerifiedPaymentRequest,
