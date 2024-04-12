@@ -432,7 +432,6 @@ class UnitEncoder(json.JSONEncoder):
         if isinstance(obj, CheckPaymentCounterparty):
             return {
                 "name": obj.name,
-                "counterpartyMoved": obj.counterparty_moved,
                 "address": obj.address
             }
         return json.JSONEncoder.default(self, obj)
