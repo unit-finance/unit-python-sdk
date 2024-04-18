@@ -323,6 +323,188 @@ class CheckDepositReturnedEvent(BaseEvent):
                                       attributes["previousStatus"], attributes.get("tags"), relationships)
 
 
+class CheckPaymentCreatedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, additional_verification_status: str,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.created'
+        self.attributes["status"] = status
+        self.attributes["additionalVerificationStatus"] = additional_verification_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                        attributes["status"], attributes["additionalVerificationStatus"],
+                                        attributes.get("tags"), relationships)
+
+
+class CheckPaymentMarkedForReturnEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.markedForReturn'
+        self.attributes["previousStatus"] = previous_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentMarkedForReturnEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                                attributes["previousStatus"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentProcessedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, additional_verification_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.processed'
+        self.attributes["previousStatus"] = previous_status
+        self.attributes["additionalVerificationStatus"] = additional_verification_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentProcessedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                          attributes["previousStatus"], attributes["additionalVerificationStatus"],
+                                          attributes.get("tags"), relationships)
+
+
+class CheckPaymentReturnedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.returned'
+        self.attributes["previousStatus"] = previous_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentReturnedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                         attributes["previousStatus"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentPendingEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, previous_status: str,
+                 counterparty_moved: Optional[bool], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.pending'
+        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
+        self.attributes["counterpartyMoved"] = counterparty_moved
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentPendingEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                        attributes["status"], attributes["previousStatus"],
+                                        attributes.get("counterpartyMoved"), attributes.get("tags"), relationships)
+
+
+class CheckPaymentRejectedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, previous_status: str,
+                 reject_reason: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.rejected'
+        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
+        self.attributes["rejectReason"] = reject_reason
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentRejectedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                         attributes["status"], attributes["previousStatus"],
+                                         attributes["rejectReason"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentInProductionEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.inProduction'
+        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentInProductionEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                             attributes["previousStatus"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentInDeliveryEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, previous_status: str, delivery_status: str,
+                 tracked_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.inDelivery'
+        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
+        self.attributes["deliveryStatus"] = delivery_status
+        self.attributes["trackedAt"] = tracked_at
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentInDeliveryEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                           attributes["previousStatus"], attributes["deliveryStatus"],
+                                           attributes["trackedAt"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentDeliveredEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.delivered'
+        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentDeliveredEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                          attributes["previousStatus"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentReturnToSenderEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.returnToSender'
+        self.attributes["status"] = status
+        self.attributes["previousStatus"] = previous_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentDeliveredEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                          attributes["previousStatus"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentCanceledEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, previous_status: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.canceled'
+        self.attributes["previousStatus"] = previous_status
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentCanceledEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                          attributes["previousStatus"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentDeliveryStatusChangedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, previous_delivery_status: str, new_delivery_status: str,
+                 tracked_at: datetime, postal_code: str, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.deliveryStatusChanged'
+        self.attributes["previousDeliveryStatus"] = previous_delivery_status
+        self.attributes["NewDeliveryStatus"] = new_delivery_status
+        self.attributes["trackedAt"] = tracked_at
+        self.attributes["postalCode"] = postal_code
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentDeliveryStatusChangedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                                      attributes["previousDeliveryStatus"],
+                                                      attributes["NewDeliveryStatus"], attributes["trackedAt"],
+                                                      attributes["postalCode"], attributes.get("tags"), relationships)
+
+
 class CheckPaymentAdditionalVerificationRequiredEvent(BaseEvent):
     def __init__(self, id: str, created_at: datetime, status: str, amount: int, tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
@@ -334,6 +516,20 @@ class CheckPaymentAdditionalVerificationRequiredEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return CheckPaymentAdditionalVerificationRequiredEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
+                                      attributes["status"], attributes["amount"], attributes.get("tags"), relationships)
+
+
+class CheckPaymentAdditionalVerificationApprovedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, amount: int, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'checkPayment.additionalVerificationApproved'
+        self.attributes["status"] = status
+        self.attributes["amount"] = amount
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentAdditionalVerificationApprovedEvent(_id, date_utils.to_datetime(attributes["createdAt"]),
                                       attributes["status"], attributes["amount"], attributes.get("tags"), relationships)
 
 
@@ -504,6 +700,11 @@ EventDTO = Union[
     AuthorizationRequestApprovedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
     CheckDepositCreatedEvent, CheckDepositPendingReviewEvent, CheckDepositPendingEvent,
     CheckDepositClearingEvent, CheckDepositSentEvent, CheckDepositRejectedEvent, CheckDepositReturnedEvent,
+    CheckPaymentCreatedEvent, CheckPaymentMarkedForReturnEvent, CheckPaymentProcessedEvent, CheckPaymentReturnedEvent,
+    CheckPaymentPendingEvent, CheckPaymentRejectedEvent, CheckPaymentInProductionEvent, CheckPaymentInDeliveryEvent,
+    CheckPaymentDeliveredEvent, CheckPaymentReturnToSenderEvent, CheckPaymentCanceledEvent,
+    CheckPaymentDeliveryStatusChangedEvent, CheckPaymentAdditionalVerificationRequiredEvent,
+    CheckPaymentAdditionalVerificationApprovedEvent,
     CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent,
     StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent, RawUnitObject,
 ]
