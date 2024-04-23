@@ -145,6 +145,48 @@ mappings = {
         "checkPayment": lambda _id, _type, attributes, relationships:
         CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
+        "checkPayment.created": lambda _id, _type, attributes, relationships:
+        CheckPaymentCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.markedForReturn": lambda _id, _type, attributes, relationships:
+        CheckPaymentMarkedForReturnEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.processed": lambda _id, _type, attributes, relationships:
+        CheckPaymentProcessedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.returned": lambda _id, _type, attributes, relationships:
+        CheckPaymentReturnedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.pending": lambda _id, _type, attributes, relationships:
+        CheckPaymentPendingEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.rejected": lambda _id, _type, attributes, relationships:
+        CheckPaymentRejectedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.inProduction": lambda _id, _type, attributes, relationships:
+        CheckPaymentInProductionEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.inDelivery": lambda _id, _type, attributes, relationships:
+        CheckPaymentInDeliveryEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.delivered": lambda _id, _type, attributes, relationships:
+        CheckPaymentDeliveredEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.returnToSender": lambda _id, _type, attributes, relationships:
+        CheckPaymentReturnToSenderEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.canceled": lambda _id, _type, attributes, relationships:
+        CheckPaymentCanceledEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.deliveryStatusChanged": lambda _id, _type, attributes, relationships:
+        CheckPaymentDeliveryStatusChangedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.additionalVerificationRequired": lambda _id, _type, attributes, relationships:
+        CheckPaymentAdditionalVerificationRequiredEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "checkPayment.additionalVerificationApproved": lambda _id, _type, attributes, relationships:
+        CheckPaymentAdditionalVerificationApprovedEvent.from_json_api(_id, _type, attributes, relationships),
+
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
 
