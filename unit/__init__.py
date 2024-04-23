@@ -2,6 +2,7 @@ from unit.api.application_resource import ApplicationResource
 from unit.api.check_deposit_resource import CheckDepositResource
 from unit.api.batch_release_resource import BatchReleaseResource
 from unit.api.check_payment_resource import CheckPaymentResource
+from unit.api.check_stop_payment_resource import CheckStopPaymentResource
 from unit.api.customer_resource import CustomerResource
 from unit.api.account_resource import AccountResource
 from unit.api.card_resource import CardResource
@@ -58,3 +59,4 @@ class Unit(object):
         self.rewards = RewardResource(api_url, token)
         self.batchRelease = BatchReleaseResource(api_url, token)
         self.check_payments = CheckPaymentResource(api_url, token)
+        self.check_stop_payments = CheckStopPaymentResource(api_url, token)

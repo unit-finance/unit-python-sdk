@@ -187,6 +187,15 @@ mappings = {
         "checkPayment.additionalVerificationApproved": lambda _id, _type, attributes, relationships:
         CheckPaymentAdditionalVerificationApprovedEvent.from_json_api(_id, _type, attributes, relationships),
 
+        "stopPayment.created": lambda _id, _type, attributes, relationships:
+        StopPaymentCreatedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "stopPayment.paymentStopped": lambda _id, _type, attributes, relationships:
+        StopPaymentPaymentStoppedEvent.from_json_api(_id, _type, attributes, relationships),
+
+        "stopPayment.disabled": lambda _id, _type, attributes, relationships:
+        StopPaymentDisabledEvent.from_json_api(_id, _type, attributes, relationships),
+
         "accountStatementDTO": lambda _id, _type, attributes, relationships:
         StatementDTO.from_json_api(_id, _type, attributes, relationships),
 

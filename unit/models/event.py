@@ -1,6 +1,8 @@
 import json
 from datetime import datetime, date
 from typing import Literal, Optional
+
+from unit.models.check_stop_payment import StopPaymentStatus
 from unit.utils import date_utils
 from unit.models import *
 
@@ -692,6 +694,45 @@ class AccountReopenedEvent(BaseEvent):
         return AccountReopenedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("tags"),
                                     relationships)
 
+class StopPaymentCreatedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.type = 'stopPayment.created'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return StopPaymentCreatedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("tags"),
+                                       relationships)
+
+
+class StopPaymentPaymentStoppedEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, stopped_payment_type: str,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.attributes['stoppedPaymentType'] = stopped_payment_type
+        self.type = 'stopPayment.paymentStopped'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return StopPaymentPaymentStoppedEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["stoppedPaymentType"], attributes.get("tags"),
+                                              relationships)
+
+
+class StopPaymentDisabledEvent(BaseEvent):
+    def __init__(self, id: str, created_at: datetime, status: str, previous_status: str,
+                 tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):
+        BaseEvent.__init__(self, id, created_at, tags, relationships)
+        self.attributes['status'] = status
+        self.attributes['previousStatus'] = previous_status
+        self.type = 'stopPayment.disabled'
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return StopPaymentDisabledEvent(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                        attributes["previousStatus"], attributes.get("tags"), relationships)
+
+
 EventDTO = Union[
     AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationAwaitingDocumentsEvent,
     ApplicationPendingReviewEvent, CardActivatedEvent, CardStatusChangedEvent,
@@ -707,6 +748,7 @@ EventDTO = Union[
     CheckPaymentAdditionalVerificationApprovedEvent,
     CustomerCreatedEvent, PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent,
     StatementsCreatedEvent, TransactionCreatedEvent, AccountReopenedEvent, RawUnitObject,
+    StopPaymentCreatedEvent, StopPaymentPaymentStoppedEvent, StopPaymentDisabledEvent,
 ]
 
 
