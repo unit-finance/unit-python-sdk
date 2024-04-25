@@ -1,5 +1,6 @@
 from unit.utils import date_utils
 from unit.models import *
+from unit.models.check_payment import CheckPaymentCounterparty
 
 PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
 PaymentDirections = Literal["Debit", "Credit"]
@@ -336,7 +337,19 @@ class CreatePaymentBaseRequest(UnitRequest):
     def __repr__(self):
         return json.dumps(self.to_json_api())
 
+class PushToCardPaymentDTO(BasePayment):
+    def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: Optional[str], description: str,
+                 amount: int, astra_routine_id: str, reason: Optional[str], tags: Optional[Dict[str, str]],
+                 relationships: Optional[Dict[str, Relationship]]):
+        BasePayment.__init__(self, id, created_at, status, direction, description, amount, reason, tags, relationships, astra_routine_id)
+        self.type = 'pushToCardPayment'
 
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PushToCardPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
+                                    attributes.get("direction"), attributes["description"], attributes["amount"],
+                                    attributes["astraRoutineId"], attributes.get("reason"), attributes.get("tags"),
+                                    relationships)
 class CreateInlinePaymentRequest(CreatePaymentBaseRequest):
     def __init__(self, amount: int, description: str, counterparty: Counterparty, relationships: Dict[str, Relationship],
                  addenda: Optional[str] = None, idempotency_key: Optional[str] = None,
@@ -419,9 +432,45 @@ class CreateWirePaymentRequest(CreatePaymentBaseRequest):
         payload["data"]["attributes"]["counterparty"] = self.counterparty
         return payload
 
+class CreatePushToCardPaymentRequest(CreatePaymentBaseRequest):
+        def __init__(self, amount: int, description: str, configuration: dict,
+                     relationships: Dict[str, Relationship],
+                     idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
+            CreatePaymentBaseRequest.__init__(amount, description, relationships, idempotency_key, tags,_type="pushToCardPayment")
+            self.configuration = configuration
+        def to_json_api(self) -> Dict:
+            payload = CreatePaymentBaseRequest.to_json_api(self)
+            return payload
+
+class CreateCheckPaymentRequest(CreatePaymentBaseRequest):
+        def __init__(
+                self,
+                description: str,
+                amount: int,
+                counterparty: CheckPaymentCounterparty,
+                idempotency_key: str,
+                relationships: Dict[str, Relationship],
+                memo: Optional[str] = None,
+                send_date: Optional[str] = None,
+                tags: Optional[Dict[str, str]] = None,
+        ):
+            CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags,
+                                             _type="checkPayment")
+            self.send_date = send_date
+            self.counterparty = counterparty
+            self.memo = memo
+
+        def to_json_api(self) -> Dict:
+            payload = CreatePaymentBaseRequest.to_json_api(self)
+            payload["data"]["attributes"]["counterparty"]["name"] = self.counterparty.name
+            payload["data"]["attributes"]["counterparty"]["counterpartyMoved"] = self.counterparty.counterparty_moved
+            payload["data"]["attributes"]["counterparty"]["address"] = self.counterparty.address
+            return payload
+
+
 
 CreatePaymentRequest = Union[CreateInlinePaymentRequest, CreateLinkedPaymentRequest, CreateVerifiedPaymentRequest,
-                             CreateBookPaymentRequest, CreateWirePaymentRequest]
+                             CreateBookPaymentRequest, CreateWirePaymentRequest, CreatePushToCardPaymentRequest, CreateCheckPaymentRequest]
 
 
 class PatchAchPaymentRequest(object):

@@ -9,6 +9,7 @@ from unit.models.application import IndividualApplicationDTO, BusinessApplicatio
 from unit.models.account import DepositAccountDTO, AccountDepositProductDTO, CreditAccountDTO, \
     CreditAccountLimitsDTO, DepositAccountLimitsDTO
 from unit.models.check_payment import CheckPaymentDTO
+from unit.models.batch_release import BatchReleaseDTO
 from unit.models.customer import IndividualCustomerDTO, BusinessCustomerDTO
 from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, IndividualVirtualDebitCardDTO, \
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO, BusinessCreditCardDTO, BusinessVirtualCreditCardDTO, \
@@ -16,7 +17,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
 from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.tax_form import TaxFormDTO
-from unit.models.transaction import transactions_mapper
+from unit.models.transaction import transactions_mapper, ReturnedCheckPaymentTransactionDTO, CheckPaymentTransactionDTO
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO, \
     RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO, BulkPaymentsDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
@@ -198,7 +199,10 @@ mappings = {
         CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "taxForm": lambda _id, _type, attributes, relationships:
-        TaxFormDTO.from_json_api(_id, _type, attributes, relationships)
+        TaxFormDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "batchRelease": lambda _id, _type, attributes, relationships:
+        BatchReleaseDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 

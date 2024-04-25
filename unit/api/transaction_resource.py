@@ -8,9 +8,10 @@ class TransactionResource(BaseResource):
     def __init__(self, configuration: Configuration):
         super().__init__("transactions", configuration)
 
-    def get(self, transaction_id: str, include: Optional[str] = "") -> Union[UnitResponse[TransactionDTO], UnitError]:
-        response = super().get(f"{self.resource}/{transaction_id}", {"include": include})
-        if super().is_20x(response.status_code):
+    def get(self, transaction_id: str, account_id: str, include: Optional[str] = "") -> Union[UnitResponse[TransactionDTO], UnitError]:
+        params = {"filter[accountId]": account_id, "include": include}
+        response = super().get(f"{self.resource}/{transaction_id}", params)
+        if response.status_code == 200:
             data = response.json().get("data")
             included = response.json().get("included")
             return UnitResponse[TransactionDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
