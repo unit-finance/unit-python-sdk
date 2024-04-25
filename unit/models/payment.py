@@ -42,13 +42,11 @@ class CreateSchedule(UnitDTO):
 class BasePayment(object):
     def __init__(self, _id: str, created_at: datetime, status: PaymentStatus, direction: PaymentDirections, description: str,
                  amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]], astra_routine_id: Optional[str] = None):
+                 relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
         self.attributes = {"createdAt": created_at, "status": status, "direction": direction,
                            "description": description, "amount": amount, "reason": reason, "tags": tags}
         self.relationships = relationships
-        if astra_routine_id:
-            self.attributes["astraRoutineId"] = astra_routine_id
 
 
 class AchPaymentDTO(BasePayment):
@@ -438,10 +436,13 @@ class CreatePushToCardPaymentRequest(CreatePaymentBaseRequest):
         def __init__(self, amount: int, description: str, configuration: dict,
                      relationships: Dict[str, Relationship],
                      idempotency_key: Optional[str] = None, tags: Optional[Dict[str, str]] = None):
-            super().__init__(amount, description, relationships, idempotency_key, tags, None, "pushToCardPayment",
-                             False, configuration)
+            CreatePaymentBaseRequest.__init__(amount, description, relationships, idempotency_key, tags,_type="pushToCardPayment")
+            self.configuration = configuration
+        def to_json_api(self) -> Dict:
+            payload = CreatePaymentBaseRequest.to_json_api(self)
+            return payload
 
-class CreateCheckPaymentRequest(UnitRequest):
+class CreateCheckPaymentRequest(CreatePaymentBaseRequest):
         def __init__(
                 self,
                 description: str,
@@ -453,17 +454,14 @@ class CreateCheckPaymentRequest(UnitRequest):
                 send_date: Optional[str] = None,
                 tags: Optional[Dict[str, str]] = None,
         ):
-            self.description = description
-            self.amount = amount
+            CreatePaymentBaseRequest.__init__(self, amount, description, relationships, idempotency_key, tags,
+                                             _type="checkPayment")
             self.send_date = send_date
             self.counterparty = counterparty
             self.memo = memo
-            self.idempotency_key = idempotency_key
-            self.tags = tags
-            self.relationships = relationships
 
         def to_json_api(self) -> Dict:
-            payload = super().to_payload("checkPayment", self.relationships)
+            payload = CreatePaymentBaseRequest.to_json_api(self)
             payload["data"]["attributes"]["counterparty"]["name"] = self.counterparty.name
             payload["data"]["attributes"]["counterparty"]["counterpartyMoved"] = self.counterparty.counterparty_moved
             payload["data"]["attributes"]["counterparty"]["address"] = self.counterparty.address

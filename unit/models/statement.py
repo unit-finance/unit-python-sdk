@@ -16,7 +16,7 @@ class StatementDTO(object):
 
 OutputType = Literal["html", "pdf"]
 
-class GetStatementParams(UnitRequest):
+class GetStatementParams(object):
     def __init__(self, statement_id: str, output_type: Optional[OutputType] = "html", language: Optional[str] = "en",
                  customer_id: Optional[str] = None):
         self.statement_id = statement_id

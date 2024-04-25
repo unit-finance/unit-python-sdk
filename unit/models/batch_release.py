@@ -39,25 +39,7 @@ class CreateBatchRelease(UnitRequest):
         self.relationships = relationships
 
     def to_json_api(self) -> Dict:
-        payload = {
-            "type": "batchRelease",
-            "attributes": {
-                "amount": self.amount,
-                "description": self.description,
-                "senderName": self.sender_name,
-                "senderAccountNumber": self.sender_account_number,
-                "senderAddress": self.sender_address
-            },
-            "relationships": self.relationships
-        }
-
-        if self.idempotency_key:
-            payload["attributes"]["idempotencyKey"] = self.idempotency_key
-
-        if self.tags:
-            payload["attributes"]["tags"] = self.tags
-
-        return payload
+        return super().to_payload('batchRelease')
 
     def __repr__(self):
         return json.dumps(self.to_json_api())

@@ -198,12 +198,6 @@ mappings = {
         "checkPayment": lambda _id, _type, attributes, relationships:
         CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
-        "checkPaymentTransaction": lambda _id, _type, attributes, relationships:
-        CheckPaymentTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "returnedCheckPaymentTransaction": lambda _id, _type, attributes, relationships:
-        ReturnedCheckPaymentTransactionDTO.from_json_api(_id, _type, attributes, relationships),
-
         "taxForm": lambda _id, _type, attributes, relationships:
         TaxFormDTO.from_json_api(_id, _type, attributes, relationships),
 
