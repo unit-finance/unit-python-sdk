@@ -32,7 +32,7 @@ CheckPaymentDeliveryStatus = Literal["Mailed", "InLocalArea", "Delivered", "Rero
 
 class CheckPaymentDTO(object):
     def __init__(self, id: str, created_at: datetime, updated_at: datetime, amount: int, status: CheckPaymentStatus,
-                 description: str, check_number: str, originated: bool, on_us: Optional[str],
+                 description: str, originated: bool, check_number: Optional[str], on_us: Optional[str],
                  on_us_auxiliary: Optional[str], counterparty_routing_number: Optional[str],
                  return_status_reason: Optional[CheckPaymentReturnStatusReason], reject_reason: Optional[str],
                  pending_review_reasons: Optional[List[str]], return_cutoff_time: Optional[datetime],
@@ -96,7 +96,7 @@ class CheckPaymentDTO(object):
             amount=attributes["amount"],
             status=attributes["status"],
             description=attributes["description"],
-            check_number=attributes["checkNumber"],
+            check_number=attributes.get("checkNumber"),
             originated=attributes["originated"],
             on_us=attributes.get("onUs"),
             on_us_auxiliary=attributes.get("onUsAuxiliary"),
