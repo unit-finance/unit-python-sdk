@@ -46,15 +46,7 @@ def create_business_application():
                            address=Address("950 Allerton Street", "Redwood City", "CA", "94063", "US"),
                            phone=Phone("1", "2025550108"), email="jone.doe@unit-finance.com", ssn="123456789"),
         contact=BusinessContact(full_name=FullName("Jone", "Doe"), email="jone.doe@unit-finance.com", phone=Phone("1", "2025550108")),
-        beneficial_owners=[
-            BeneficialOwner(
-                FullName("James", "Smith"), date.today() - timedelta(days=20*365),
-                Address("650 Allerton Street","Redwood City","CA","94063","US"),
-                Phone("1","2025550127"),"james@unit-finance.com",ssn="574567625"),
-            BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
-                            Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
-                            Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")
-        ],
+        beneficial_owners=[],
         year_of_incorporation=date.today() - timedelta(days=2 * 365),
         business_vertical="Construction",
         tags={"test": "test"},
