@@ -10,7 +10,7 @@ client = Unit("https://api.s.unit.sh", token)
 def test_list_and_get_transactions():
     transaction_ids = []
     response = client.transactions.list(ListTransactionParams(150, 20, since="2022-10-13T16:01:19.346Z",
-                                                              until="2022-11-13T16:01:19.346Z"))
+                                                              until="2022-11-13T16:01:19.346Z", account_id="3344334"))
 
     for t in response.data:
         assert "Transaction" in t.type

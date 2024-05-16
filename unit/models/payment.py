@@ -137,7 +137,7 @@ class AchReceivedPaymentDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AchReceivedPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                                     attributes["wasAdvanced"], attributes["isAdvanceable"], date_utils.to_date(attributes["completionDate"]),
+                                     attributes["wasAdvanced"], attributes.get("isAdvanceable", None), date_utils.to_date(attributes["completionDate"]),
                                      attributes.get("returnReason"), attributes["amount"], attributes["description"],
                                      attributes.get("addenda"), attributes.get("companyName"),
                                      attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
