@@ -180,7 +180,7 @@ class CreateIndividualApplicationRequest(BaseCreateIndividualApplicationRequest)
 class CreateBusinessApplicationRequest(UnitRequest):
     def __init__(self, name: str, address: Address, phone: Phone, state_of_incorporation: str, ein: str,
                  contact: BusinessContact, officer: Officer,
-                 entity_type: EntityType, beneficial_owners: Optional[BeneficialOwner] = [], dba: Optional[str] = None, ip: Optional[str] = None,
+                 entity_type: EntityType, beneficial_owners: Optional[List[BeneficialOwner]] = None, dba: Optional[str] = None, ip: Optional[str] = None,
                  website: Optional[str] = None, industry: Optional[Industry] = None,
                  annual_revenue: Optional[AnnualRevenue] = None,
                  number_of_employees: Optional[NumberOfEmployees] = None, cash_flow: Optional[CashFlow] = None,
@@ -198,7 +198,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.contact = contact
         self.officer = officer
         self.entity_type = entity_type
-        self.beneficial_owners = beneficial_owners
+        self.beneficial_owners = beneficial_owners if beneficial_owners is not None else []
         self.dba = dba
         self.ip = ip
         self.website = website
@@ -214,8 +214,14 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.tags = tags
         self.idempotency_key = idempotency_key
 
+    def to_payload(self, payload_type: str) -> Dict:
+        payload = super().to_payload(payload_type)
+        if self.beneficial_owners == []:
+            payload['data']['attributes']['beneficialOwners'] = self.beneficial_owners
+        return payload
+
     def to_json_api(self) -> Dict:
-        return super().to_payload("businessApplication")
+        return self.to_payload("businessApplication")
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
