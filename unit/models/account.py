@@ -166,7 +166,7 @@ class PatchCreditAccountRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": CreditAccountType,
+                "type": "creditAccount",  # Assuming CreditAccountType resolves to "creditAccount"
                 "attributes": {}
             }
         }
@@ -181,7 +181,6 @@ class PatchCreditAccountRequest(UnitRequest):
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
-
 
 PatchAccountRequest = Union[PatchDepositAccountRequest, PatchCreditAccountRequest]
 
