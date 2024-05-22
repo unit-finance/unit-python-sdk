@@ -27,9 +27,9 @@ class CheckPaymentResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
-    def create(self, request: CreateCheckPaymentRequest) -> Union[UnitResponse[CheckPaymentDTO], UnitError]:
+    def create(self, request: CreateCheckPaymentRequest, timeout: float = None) -> Union[UnitResponse[CheckPaymentDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(f"{self.resource}", payload)
+        response = super().post(f"{self.resource}", payload, timeout=timeout)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[CheckPaymentDTO](DtoDecoder.decode(data), None)

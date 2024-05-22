@@ -8,9 +8,9 @@ class PaymentResource(BaseResource):
         super().__init__(api_url, token)
         self.resource = "payments"
 
-    def create(self, request: CreatePaymentRequest) -> Union[UnitResponse[PaymentDTO], UnitError]:
+    def create(self, request: CreatePaymentRequest, timeout: float = None) -> Union[UnitResponse[PaymentDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post(self.resource, payload, timeout=timeout)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[PaymentDTO](DtoDecoder.decode(data), None)

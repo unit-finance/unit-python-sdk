@@ -14,22 +14,22 @@ class BaseResource(object):
             "user-agent": "unit-python-sdk"
         }
 
-    def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
-        return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
+    def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None, timeout: float = None):
+        return requests.get(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers), timeout=timeout)
 
-    def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
+    def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None, timeout: float = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
+        return requests.post(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers), timeout=timeout)
 
-    def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
+    def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None, timeout: float = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
-        return requests.patch(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
+        return requests.patch(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers), timeout=timeout)
 
-    def delete(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
-        return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers))
+    def delete(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None, timeout: float = None):
+        return requests.delete(f"{self.api_url}/{resource}", params=params, headers=self.__merge_headers(headers), timeout=timeout)
 
-    def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
-        return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers))
+    def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None, timeout: float = None):
+        return requests.put(f"{self.api_url}/{resource}", data=data, headers=self.__merge_headers(headers), timeout=timeout)
 
     def __merge_headers(self, headers: Optional[Dict[str, str]] = None):
         if not headers:
