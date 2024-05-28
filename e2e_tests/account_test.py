@@ -145,8 +145,7 @@ def test_update_account():
 
 
 def test_update_credit_account():
-    # Mock or assume the existence of these functions
-    account_id = "3344334"  # Assuming this function exists
+    account_id = "3344334"
     _credit_limit = 4000
     request = PatchCreditAccountRequest(account_id, tags={
         "purpose": "tax",

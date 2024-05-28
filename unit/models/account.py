@@ -166,7 +166,7 @@ class PatchCreditAccountRequest(UnitRequest):
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": "creditAccount",  # Assuming CreditAccountType resolves to "creditAccount"
+                "type": CreditAccountType,
                 "attributes": {}
             }
         }
