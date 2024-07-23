@@ -447,7 +447,27 @@ class PatchBookPaymentRequest(object):
     def __repr__(self):
         json.dumps(self.to_json_api())
 
-PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest]
+class PatchCheckPaymentRequest(object):
+    def __init__(self, payment_id: str, tags: Dict[str, str]):
+        self.payment_id = payment_id
+        self.tags = tags
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "checkPayment",
+                "attributes": {
+                    "tags": self.tags
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        json.dumps(self.to_json_api())
+
+PatchPaymentRequest = Union[PatchAchPaymentRequest, PatchBookPaymentRequest, PatchCheckPaymentRequest]
 
 class ListPaymentParams(UnitParams):
     def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
