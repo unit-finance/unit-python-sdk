@@ -10,7 +10,13 @@ class ApplicationFormResource(BaseResource):
 
     def create(self, request: CreateApplicationFormRequest) -> Union[UnitResponse[ApplicationFormDTO], UnitError]:
         payload = request.to_json_api()
-        response = super().post(self.resource, payload)
+        response = super().post(
+            self.resource,
+            payload,
+            headers={
+                "X-Accept-Version": "V2024_06"
+            }
+        )
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[ApplicationFormDTO](DtoDecoder.decode(data), None)
