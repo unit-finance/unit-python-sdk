@@ -12,10 +12,7 @@ class ApplicationFormResource(BaseResource):
         payload = request.to_json_api()
         response = super().post(
             self.resource,
-            payload,
-            headers={
-                "X-Accept-Version": "V2024_06"
-            }
+            payload
         )
         if super().is_20x(response.status_code):
             data = response.json().get("data")
