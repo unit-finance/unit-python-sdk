@@ -59,6 +59,8 @@ def test_ach_received_payment_dto():
           "createdAt": "2022-02-01T12:03:14.406Z",
           "status": "Pending",
           "wasAdvanced": False,
+          "isAdvanceable": False,
+          "direction": "Credit",
           "amount": 500000,
           "completionDate": "2020-07-30",
           "companyName": "UBER LTD",
@@ -103,6 +105,8 @@ def test_ach_received_payment_dto():
             "createdAt": "2022-02-01T12:03:14.406Z",
             "status": "Completed",
             "wasAdvanced": True,
+            "isAdvanceable": True,
+            "direction": "Credit",
             "amount": 100000,
             "completionDate": "2022-01-23",
             "companyName": "Uber",
@@ -168,6 +172,7 @@ def test_list_and_get_payments():
     payments_ids = []
 
     response = client.received_payments.list()
+    print(response)
 
     for t in response.data:
         assert t.type == "achReceivedPayment"
