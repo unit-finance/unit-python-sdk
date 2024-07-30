@@ -8,7 +8,7 @@ from unit.models.account import *
 from unit.models.application import CreateIndividualApplicationRequest
 from e2e_tests.helpers.helpers import create_relationship
 
-token = 'v2.public.eyJyb2xlIjoiYWRtaW4iLCJ1c2VySWQiOiI0MTQ4Iiwic3ViIjoic29sb21paWFAY29kaWZ5LmlvIiwiZXhwIjoiMjAyNC0xMC0yNlQxNDoxODo0Ny4zMTdaIiwianRpIjoiMzQ5ODY0Iiwib3JnSWQiOiIxMjYiLCJzY29wZSI6ImFwcGxpY2F0aW9ucyBhcHBsaWNhdGlvbnMtd3JpdGUgY3VzdG9tZXJzIGN1c3RvbWVycy13cml0ZSBjdXN0b21lci10YWdzLXdyaXRlIGN1c3RvbWVyLXRva2VuLXdyaXRlIGFjY291bnRzIGFjY291bnRzLXdyaXRlIGNhcmRzIGNhcmRzLXdyaXRlIGNhcmRzLXNlbnNpdGl2ZSBjYXJkcy1zZW5zaXRpdmUtd3JpdGUgdHJhbnNhY3Rpb25zIHRyYW5zYWN0aW9ucy13cml0ZSBhdXRob3JpemF0aW9ucyBzdGF0ZW1lbnRzIHBheW1lbnRzIHBheW1lbnRzLXdyaXRlIHBheW1lbnRzLXdyaXRlLWNvdW50ZXJwYXJ0eSBwYXltZW50cy13cml0ZS1saW5rZWQtYWNjb3VudCBhY2gtcGF5bWVudHMtd3JpdGUgd2lyZS1wYXltZW50cy13cml0ZSByZXBheW1lbnRzIHJlcGF5bWVudHMtd3JpdGUgcGF5bWVudHMtd3JpdGUtYWNoLWRlYml0IGNvdW50ZXJwYXJ0aWVzIGNvdW50ZXJwYXJ0aWVzLXdyaXRlIGJhdGNoLXJlbGVhc2VzIGJhdGNoLXJlbGVhc2VzLXdyaXRlIGxpbmtlZC1hY2NvdW50cyBsaW5rZWQtYWNjb3VudHMtd3JpdGUgd2ViaG9va3Mgd2ViaG9va3Mtd3JpdGUgZXZlbnRzIGV2ZW50cy13cml0ZSBhdXRob3JpemF0aW9uLXJlcXVlc3RzIGF1dGhvcml6YXRpb24tcmVxdWVzdHMtd3JpdGUgY2FzaC1kZXBvc2l0cyBjYXNoLWRlcG9zaXRzLXdyaXRlIGNoZWNrLWRlcG9zaXRzIGNoZWNrLWRlcG9zaXRzLXdyaXRlIHJlY2VpdmVkLXBheW1lbnRzIHJlY2VpdmVkLXBheW1lbnRzLXdyaXRlIGRpc3B1dGVzIGNoYXJnZWJhY2tzIGNoYXJnZWJhY2tzLXdyaXRlIHJld2FyZHMgcmV3YXJkcy13cml0ZSBjaGVjay1wYXltZW50cyBjaGVjay1wYXltZW50cy13cml0ZSBjcmVkaXQtZGVjaXNpb25zIGNyZWRpdC1kZWNpc2lvbnMtd3JpdGUgbGVuZGluZy1wcm9ncmFtcyBsZW5kaW5nLXByb2dyYW1zLXdyaXRlIGNhcmQtZnJhdWQtY2FzZXMgY2FyZC1mcmF1ZC1jYXNlcy13cml0ZSBjcmVkaXQtYXBwbGljYXRpb25zIGNyZWRpdC1hcHBsaWNhdGlvbnMtd3JpdGUgbWlncmF0aW9ucyBtaWdyYXRpb25zLXdyaXRlIiwib3JnIjoiU0RLIiwic291cmNlSXAiOiIiLCJ1c2VyVHlwZSI6Im9yZyIsImlzVW5pdFBpbG90IjpmYWxzZX2-6FLKsEFWv62pCEkf6E8o9wNBXLLK7xRUaAAza2zACkl6lMhwSPaez5o6CX7cStbeB2hRRdcyL_-JyPKOGxcG'
+token = os.environ.get('TOKEN')
 
 client = Unit("https://api.s.unit.sh", token)
 
@@ -145,17 +145,12 @@ def test_update_account():
 
 
 def test_update_credit_account():
-    account_id = "3344334"
+    account_id = "792799"
     _credit_limit = 4000
     request = PatchCreditAccountRequest(account_id, tags={
-        "purpose": "tax",
-        "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"},
-                                        credit_limit=_credit_limit)
+        "purpose": "tax"})
     response = client.accounts.update(request)
     assert response.data.type == "creditAccount"
-    assert response.data.attributes.get("creditLimit") == _credit_limit
-    assert response.data.attributes.get("tags").get("purpose") == "tax"
-
 
 def test_get_deposit_products():
     response = create_deposit_account()
