@@ -172,7 +172,6 @@ def test_list_and_get_payments():
     payments_ids = []
 
     response = client.received_payments.list()
-    print(response)
 
     for t in response.data:
         assert t.type == "achReceivedPayment"
