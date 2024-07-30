@@ -121,14 +121,14 @@ AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned
 
 class AchReceivedPaymentDTO(object):
     def __init__(self, _id: str, created_at: datetime, status: AchReceivedPaymentStatus, was_advanced: bool,
-                 is_advanceable: bool, completion_date: date, return_reason: Optional[str], amount: int, description: str,
+                 is_advanceable: bool, direction: str, completion_date: date, return_reason: Optional[str], amount: int, description: str,
                  addenda: Optional[str], company_name: str, counterparty_routing_number: str, trace_number: str,
                  sec_code: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         self.id = _id
         self.type = "achReceivedPayment"
         self.attributes = {"createdAt": created_at, "status": status, "wasAdvanced": was_advanced,
-                           "isAdvanceable": is_advanceable, "completionDate": completion_date, "returnReason": return_reason, "description": description,
+                           "isAdvanceable": is_advanceable, "direction": direction, "completionDate": completion_date, "returnReason": return_reason, "description": description,
                            "amount": amount, "addenda": addenda, "companyName": company_name,
                            "counterpartyRoutingNumber": counterparty_routing_number, "traceNumber": trace_number,
                            "secCode": sec_code, "tags": tags}
@@ -137,7 +137,7 @@ class AchReceivedPaymentDTO(object):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return AchReceivedPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                                     attributes["wasAdvanced"], attributes["isAdvanceable"], date_utils.to_date(attributes["completionDate"]),
+                                     attributes["wasAdvanced"], attributes.get("isAdvanceable"), attributes["direction"], date_utils.to_date(attributes["completionDate"]),
                                      attributes.get("returnReason"), attributes["amount"], attributes["description"],
                                      attributes.get("addenda"), attributes.get("companyName"),
                                      attributes.get("counterpartyRoutingNumber"), attributes.get("traceNumber"),
