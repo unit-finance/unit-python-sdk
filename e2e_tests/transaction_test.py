@@ -10,15 +10,12 @@ def test_list_and_get_transactions():
     transaction_ids = []
     account_ids = []
 
-    # Adjust the parameters based on your API documentation.
     response = client.transactions.list(ListTransactionParams(150, 20, since="2022-10-13T16:01:19.346Z",
                                                               until="2022-11-13T16:01:19.346Z"))
 
     for t in response.data:
         assert "Transaction" in t.type
         transaction_ids.append(t.id)
-
-        # Accessing account ID from the dictionary
         account_id = t.relationships["account"].id
         account_ids.append(account_id)
 
