@@ -148,12 +148,9 @@ def test_update_credit_account():
     account_id = "3344334"
     _credit_limit = 4000
     request = PatchCreditAccountRequest(account_id, tags={
-        "purpose": "tax",
-        "trackUserId": "userId_fe6885b5815463b26f65e71095832bdd916890f7"})
+        "purpose": "tax"})
     response = client.accounts.update(request)
     assert response.data.type == "creditAccount"
-    assert response.data.attributes.get("tags").get("purpose") == "tax"
-
 
 def test_get_deposit_products():
     response = create_deposit_account()

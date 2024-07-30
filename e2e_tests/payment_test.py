@@ -156,6 +156,7 @@ def test_ach_received_payment_dto():
             "status": "Completed",
             "wasAdvanced": True,
             "isAdvanceable": True,
+            "direction": "Credit",
             "amount": 100000,
             "completionDate": "2022-01-23",
             "companyName": "Uber",
