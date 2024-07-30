@@ -6,9 +6,11 @@ from unit.models.codecs import DtoDecoder, mappings
 token = os.environ.get('TOKEN')
 client = Unit("https://api.s.unit.sh", token)
 
-
 def test_list_and_get_transactions():
     transaction_ids = []
+    account_ids = []
+
+    # Adjust the parameters based on your API documentation.
     response = client.transactions.list(ListTransactionParams(150, 20, since="2022-10-13T16:01:19.346Z",
                                                               until="2022-11-13T16:01:19.346Z"))
 
@@ -16,10 +18,14 @@ def test_list_and_get_transactions():
         assert "Transaction" in t.type
         transaction_ids.append(t.id)
 
-    for id in transaction_ids:
-        response = client.transactions.get(id)
-        assert "Transaction" in response.data.type
+        # Accessing account ID from the dictionary
+        account_id = t.relationships["account"].id
+        account_ids.append(account_id)
 
+    for idx, id in enumerate(transaction_ids):
+        account_id = account_ids[idx]
+        response = client.transactions.get(id, account_id)
+        assert "Transaction" in response.data.type
 
 def test_list_and_get_transactions_with_account_id():
     transaction_ids = []
