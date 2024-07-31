@@ -145,7 +145,7 @@ def test_update_account():
 
 
 def test_update_credit_account():
-    account_id = "3344334"
+    account_id = reate_credit_account_for_business().data.id
     _credit_limit = 4000
     request = PatchCreditAccountRequest(account_id, tags={
         "purpose": "tax"})
