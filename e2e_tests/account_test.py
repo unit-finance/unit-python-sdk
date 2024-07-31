@@ -29,7 +29,7 @@ def create_individual_customer():
 
 
 def create_business_customer():
-    b_app = c_business_application().data
+    b_app = create_business_application().data
     return b_app.relationships.get("customer").id
 
 
