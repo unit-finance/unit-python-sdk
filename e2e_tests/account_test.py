@@ -29,7 +29,7 @@ def create_individual_customer():
 
 
 def create_business_customer():
-    b_app = create_business_application().data
+    b_app = c_business_application().data
     return b_app.relationships.get("customer").id
 
 
@@ -145,7 +145,7 @@ def test_update_account():
 
 
 def test_update_credit_account():
-    account_id = reate_credit_account_for_business().data.id
+    account_id = create_credit_account_for_business().data.id
     _credit_limit = 4000
     request = PatchCreditAccountRequest(account_id, tags={
         "purpose": "tax"})
