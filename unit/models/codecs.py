@@ -18,7 +18,7 @@ from unit.models.received_payment import AchReceivedPaymentDTO
 from unit.models.repayment import BookRepaymentDTO, AchRepaymentDTO
 from unit.models.tax_form import TaxFormDTO
 from unit.models.transaction import transactions_mapper, ReturnedCheckPaymentTransactionDTO, CheckPaymentTransactionDTO
-from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO, AchReceivedPaymentDTO, \
+from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO, \
     RecurringCreditAchPaymentDTO, RecurringCreditBookPaymentDTO, RecurringDebitAchPaymentDTO, BulkPaymentsDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
@@ -28,7 +28,6 @@ from unit.models.webhook import WebhookDTO
 from unit.models.institution import InstitutionDTO
 from unit.models.statement import StatementDTO
 from unit.models.atm_location import AtmLocationDTO
-from unit.models.bill_pay import BillerDTO
 from unit.models.api_token import APITokenDTO
 from unit.models.authorization import AuthorizationDTO
 from unit.models.authorization_request import PurchaseAuthorizationRequestDTO, CardTransactionAuthorizationRequestDTO, \
@@ -96,9 +95,6 @@ mappings = {
         "wirePayment": lambda _id, _type, attributes, relationships:
         WirePaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
-        "billPayment": lambda _id, _type, attributes, relationships:
-        BillPaymentDTO.from_json_api(_id, _type, attributes, relationships),
-
         "achReceivedPayment": lambda _id, _type, attributes, relationships:
         AchReceivedPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
@@ -143,9 +139,6 @@ mappings = {
 
         "atmLocation": lambda _id, _type, attributes, relationships:
         AtmLocationDTO.from_json_api(_type, attributes),
-
-        "biller": lambda _id, _type, attributes, relationships:
-        BillerDTO.from_json_api(_id, _type, attributes, relationships),
 
         "apiToken": lambda _id, _type, attributes, relationships:
         APITokenDTO.from_json_api(_id, _type, attributes, relationships),

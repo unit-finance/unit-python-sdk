@@ -15,7 +15,6 @@ from unit.api.event_resource import EventResource
 from unit.api.webhook_resource import WebhookResource
 from unit.api.institution_resource import InstitutionResource
 from unit.api.atmLocation_resource import AtmLocationResource
-from unit.api.bill_pay_resource import BillPayResource
 from unit.api.api_token_resource import APITokenResource
 from unit.api.authorization_resource import AuthorizationResource
 from unit.api.authorization_request_resource import AuthorizationRequestResource
@@ -57,7 +56,6 @@ class Unit(object):
         self.webhooks = WebhookResource(c)
         self.institutions = InstitutionResource(c)
         self.atmLocations = AtmLocationResource(c)
-        self.billPays = BillPayResource(c)
         self.api_tokens = APITokenResource(c)
         self.authorizations = AuthorizationResource(c)
         self.authorization_requests = AuthorizationRequestResource(c)
