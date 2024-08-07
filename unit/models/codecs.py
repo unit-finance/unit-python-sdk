@@ -4,8 +4,7 @@ from typing import Dict
 
 from unit.models import BeneficialOwnerDTO, RelationshipArray, Relationship, RawUnitObject
 from unit.models.applicationForm import ApplicationFormDTO
-from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO,\
-    TrustApplicationDTO
+from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
 from unit.models.account import DepositAccountDTO, AccountDepositProductDTO, CreditAccountDTO, \
     CreditAccountLimitsDTO, DepositAccountLimitsDTO
 from unit.models.check_payment import CheckPaymentDTO
@@ -43,9 +42,6 @@ mappings = {
 
         "businessApplication": lambda _id, _type, attributes, relationships:
         BusinessApplicationDTO.from_json_api(_id, _type, attributes, relationships),
-
-        "trustApplication": lambda _id, _type, attributes, relationships:
-        TrustApplicationDTO.from_json_api(_id, _type, attributes, relationships),
 
         "document": lambda _id, _type, attributes, relationships:
         ApplicationDocumentDTO.from_json_api(_id, _type, attributes),

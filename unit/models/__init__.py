@@ -512,43 +512,6 @@ class BaseIndividual(UnitDTO):
         self.address = address
 
 
-class Grantor(BaseIndividual):
-    @staticmethod
-    def from_json_api(data: Dict):
-        if not data:
-            return None
-
-        return Grantor(FullName.from_json_api(data["fullName"]), data["dateOfBirth"], data["ssn"], data["email"],
-                       Phone.from_json_api(data["phone"]), Address.from_json_api(data["address"]))
-
-
-class Trustee(BaseIndividual):
-    @staticmethod
-    def from_json_api(data: Dict):
-        if not data:
-            return None
-
-        return Trustee(FullName.from_json_api(data["fullName"]), data["dateOfBirth"], data["ssn"], data["email"],
-                       Phone.from_json_api(data["phone"]), Address.from_json_api(data["address"]))
-
-
-class TrustContact(UnitDTO):
-    def __init__(self, full_name: FullName, email: str, phone: Phone, address: Address, jwt_subject: Optional[str]):
-        self.full_name = full_name
-        self.email = email
-        self.phone = phone
-        self.address = address
-        self.jwt_subject = jwt_subject
-
-    @staticmethod
-    def from_json_api(data: Dict):
-        if not data:
-            return None
-
-        return TrustContact(FullName.from_json_api(data["fullName"]), data["email"], Phone.from_json_api(data["phone"]),
-                            Address.from_json_api(data["address"]), data.get("jwtSubject"))
-
-
 class Agent(BaseIndividual):
     def __init__(self, status: str, full_name: FullName, ssn: Optional[str], passport: Optional[str],
                  nationality: Optional[str], date_of_birth: date, email: str, phone: Phone, address: Address,
@@ -567,19 +530,6 @@ class Agent(BaseIndividual):
         return Agent(data["status"], FullName.from_json_api(data["fullName"]), data.get("ssn"), data.get("passport"),
                      data.get("nationality"), data["dateOfBirth"], data["email"], Phone.from_json_api(data["phone"]),
                      Address.from_json_api(data["address"]), data.get("jwtSubject"))
-
-
-class Beneficiary(UnitDTO):
-    def __init__(self, full_name: FullName, date_of_birth: date):
-        self.full_name = full_name
-        self.date_of_birth = date_of_birth
-
-    @staticmethod
-    def from_json_api(data: Dict):
-        if not data:
-            return None
-
-        return Beneficiary(FullName.from_json_api(data["fullName"]), data.get("dateOfBirth"))
 
 
 class CurrencyConversion(UnitDTO):
