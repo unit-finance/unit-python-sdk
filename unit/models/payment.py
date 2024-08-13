@@ -2,7 +2,7 @@ from unit.utils import date_utils
 from unit.models import *
 from unit.models.check_payment import CheckPaymentCounterparty
 
-PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment", "BillPayment"]
+PaymentTypes = Literal["AchPayment", "BookPayment", "WirePayment"]
 PaymentDirections = Literal["Debit", "Credit"]
 PaymentStatus = Literal["Pending", "Rejected", "Clearing", "Sent", "Canceled", "Returned"]
 RecurringStatus = Literal["Active", "Completed", "Disabled"]
@@ -99,22 +99,7 @@ class WirePaymentDTO(BasePayment):
                               attributes["description"], attributes["amount"], attributes.get("reason"),
                               attributes.get("tags"), relationships)
 
-
-class BillPaymentDTO(BasePayment):
-    def __init__(self, _id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
-                 amount: int, reason: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
-        BasePayment.__init__(self, _id, created_at, status, direction, description, amount, reason, tags, relationships)
-        self.type = 'billPayment'
-
-    @staticmethod
-    def from_json_api(_id, _type, attributes, relationships):
-        return BillPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
-                              attributes["direction"], attributes["description"], attributes["amount"],
-                              attributes.get("reason"), attributes.get("tags"), relationships)
-
-
-PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, BillPaymentDTO]
+PaymentDTO = Union[AchPaymentDTO, BookPaymentDTO, WirePaymentDTO]
 
 AchReceivedPaymentStatus = Literal["Pending", "Advanced", "Completed", "Returned"]
 

@@ -13,7 +13,6 @@ unit/api/atmLocation_resource.py
 unit/api/authorization_request_resource.py
 unit/api/authorization_resource.py
 unit/api/base_resource.py
-unit/api/bill_pay_resource.py
 unit/api/card_resource.py
 unit/api/checkDeposit_resource.py
 unit/api/counterparty_resource.py
@@ -40,7 +39,6 @@ unit/models/applicationForm.py
 unit/models/atm_location.py
 unit/models/authorization.py
 unit/models/authorization_request.py
-unit/models/bill_pay.py
 unit/models/card.py
 unit/models/check_deposit.py
 unit/models/codecs.py

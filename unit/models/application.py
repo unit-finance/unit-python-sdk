@@ -10,7 +10,7 @@ DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "Certifi
 ReasonCode = Literal["PoorQuality", "NameMismatch", "SSNMismatch", "AddressMismatch", "DOBMismatch", "ExpiredId",
                      "EINMismatch", "StateMismatch", "Other"]
 
-ApplicationTypes = Literal["individualApplication", "businessApplication", "trustApplication"]
+ApplicationTypes = Literal["individualApplication", "businessApplication"]
 
 
 Industry = Literal["Retail", "Wholesale", "Restaurants", "Hospitals", "Construction", "Insurance", "Unions",
@@ -109,29 +109,7 @@ class BusinessApplicationDTO(BaseApplication):
         )
 
 
-class TrustApplicationDTO(BaseApplication):
-    def __init__(self, id: str, created_at: datetime, name: str, message: Optional[str],
-                 status: ApplicationStatus, state_of_incorporation: str, revocability: Revocability,
-                 source_of_funds: SourceOfFunds, tax_id: str, grantor: Grantor, contact: TrustContact,
-                 archived: bool, updated_at: Optional[datetime], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
-        super().__init__(id, "trustApplication", created_at, status, message, archived, relationships, updated_at, tags)
-        self.attributes.update({"name": name, "stateOfIncorporation": state_of_incorporation,
-                                "revocability": revocability, "sourceOfFunds": source_of_funds, "taxId": tax_id,
-                                "grantor": grantor, "contact": contact})
-
-    @staticmethod
-    def from_json_api(_id, _type, attributes, relationships):
-        return TrustApplicationDTO(
-            _id, date_utils.to_datetime(attributes["createdAt"]), attributes.get("name"), attributes.get("message"),
-            attributes.get("status"), attributes.get("stateOfIncorporation"), attributes.get("revocability"),
-            attributes.get("sourceOfFunds"), attributes.get("taxId"), Grantor.from_json_api(attributes.get("grantor")),
-            TrustContact.from_json_api(attributes.get("contact")), attributes.get("archived"),
-            date_utils.to_datetime(attributes.get("updatedAt")), attributes.get("tags"), relationships
-        )
-
-
-ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO, TrustApplicationDTO]
+ApplicationDTO = Union[IndividualApplicationDTO, BusinessApplicationDTO]
 
 
 class BaseCreateIndividualApplicationRequest(UnitRequest):
@@ -179,8 +157,8 @@ class CreateIndividualApplicationRequest(BaseCreateIndividualApplicationRequest)
 
 class CreateBusinessApplicationRequest(UnitRequest):
     def __init__(self, name: str, address: Address, phone: Phone, state_of_incorporation: str, ein: str,
-                 contact: BusinessContact, officer: Officer, beneficial_owners: [BeneficialOwner],
-                 entity_type: EntityType, dba: Optional[str] = None, ip: Optional[str] = None,
+                 contact: BusinessContact, officer: Officer,
+                 entity_type: EntityType, beneficial_owners: Optional[List[BeneficialOwner]] = None, dba: Optional[str] = None, ip: Optional[str] = None,
                  website: Optional[str] = None, industry: Optional[Industry] = None,
                  annual_revenue: Optional[AnnualRevenue] = None,
                  number_of_employees: Optional[NumberOfEmployees] = None, cash_flow: Optional[CashFlow] = None,
@@ -197,8 +175,8 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.ein = ein
         self.contact = contact
         self.officer = officer
-        self.beneficial_owners = beneficial_owners
         self.entity_type = entity_type
+        self.beneficial_owners = beneficial_owners if beneficial_owners is not None else []
         self.dba = dba
         self.ip = ip
         self.website = website
@@ -214,37 +192,17 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.tags = tags
         self.idempotency_key = idempotency_key
 
+    def to_payload(self, payload_type: str) -> Dict:
+        payload = super().to_payload(payload_type)
+        if self.beneficial_owners == []:
+            payload['data']['attributes']['beneficialOwners'] = self.beneficial_owners
+        return payload
+
     def to_json_api(self) -> Dict:
-        return super().to_payload("businessApplication")
+        return self.to_payload("businessApplication")
 
     def __repr__(self):
         return json.dumps(self.to_json_api())
-
-
-class CreateTrustApplicationRequest(UnitRequest):
-    def __init__(self, name: str, state_of_incorporation: str, revocability: Revocability,
-                 source_of_funds: SourceOfFunds, tax_id: str, grantor: Grantor, trustees: List[Trustee],
-                 beneficiaries: List[Beneficiary], contact: TrustContact, ip: Optional[str] = None,
-                 tags: Optional[object] = None, idempotency_key: Optional[str] = None, device_fingerprints: Optional[List[DeviceFingerprint]] = None):
-        self.name = name
-        self.state_of_incorporation = state_of_incorporation
-        self.revocability = revocability
-        self.source_of_funds = source_of_funds
-        self.tax_id = tax_id
-        self.grantor = grantor
-        self.trustees = trustees
-        self.beneficiaries = beneficiaries
-        self.contact = contact
-        self.ip = ip
-        self.tags = tags
-        self.idempotency_key = idempotency_key
-        self.device_fingerprints = device_fingerprints
-
-    def to_json_api(self) -> Dict:
-        return super().to_payload("trustApplication")
-
-    def __repr__(self):
-        json.dumps(self.to_json_api())
 
 
 class CreateSoleProprietorApplicationRequest(BaseCreateIndividualApplicationRequest):
@@ -268,7 +226,7 @@ class CreateSoleProprietorApplicationRequest(BaseCreateIndividualApplicationRequ
 
 
 CreateApplicationRequest = Union[CreateIndividualApplicationRequest, CreateBusinessApplicationRequest,
-                                 CreateTrustApplicationRequest, CreateSoleProprietorApplicationRequest]
+                                 CreateSoleProprietorApplicationRequest]
 
 
 class ApplicationDocumentDTO(object):
@@ -401,14 +359,8 @@ class PatchBusinessApplicationRequest(PatchApplicationRequest):
         self.officer = officer
 
 
-class PatchTrustApplicationRequest(PatchApplicationRequest):
-    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None):
-        super().__init__(application_id, "trustApplication", tags)
-
-
 UnionPatchApplicationRequest = Union[PatchApplicationRequest, PatchIndividualApplicationRequest,
-                                     PatchSoleProprietorApplicationRequest, PatchBusinessApplicationRequest,
-                                     PatchTrustApplicationRequest]
+                                     PatchSoleProprietorApplicationRequest, PatchBusinessApplicationRequest]
 
 
 class CancelApplicationRequest(UnitRequest):
