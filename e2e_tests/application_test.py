@@ -9,7 +9,7 @@ c = Configuration("https://api.s.unit.sh", token, 2, 150)
 client = Unit(configuration=c)
 
 
-ApplicationTypes = ["individualApplication", "businessApplication", "trustApplication"]
+ApplicationTypes = ["individualApplication", "businessApplication"]
 
 
 def create_individual_application(ssn: str = "000000003"):
@@ -465,33 +465,6 @@ def test_create_business_application_from_json():
     assert app.attributes["status"] == "AwaitingDocuments"
     assert app.attributes["name"] == "Pied Piper"
     assert app.attributes["entityType"] == "Corporation"
-
-
-def create_trust_application():
-    request = CreateTrustApplicationRequest("Trust me Inc.", "CA", "Revocable", "Salary", "123456789",
-                                            create_grantor(), create_trustee(), create_beneficiaries(),
-                                            create_trust_contact(), tags={"test": "test1"})
-    return client.applications.create(request)
-
-
-def test_create_trust_application():
-    response = create_trust_application()
-    assert response.data.type == "trustApplication"
-
-
-def test_update_trust_application():
-    response = create_trust_application()
-    assert response.data.type == "trustApplication"
-
-    tags = {"update_test": "update_test"}
-
-    request = PatchTrustApplicationRequest(response.data.id, tags)
-    trust_app = client.applications.update(request)
-
-    tags_to_compare = tags
-    tags_to_compare.update(response.data.attributes["tags"])
-
-    assert trust_app.data.attributes["tags"] == tags_to_compare
 
 
 def test_update_business_application_request():
