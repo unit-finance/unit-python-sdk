@@ -457,19 +457,22 @@ class ChargebackTransactionDTO(BaseTransactionDTO):
 
 class AccountLowBalanceClosureTransactionDTO(BaseTransactionDTO):
     def __init__(self, id: str, created_at: datetime, direction: str, amount: int, balance: int, summary: str,
-                 receiver_counterparty: Counterparty, tags: Optional[Dict[str, str]],
+                 receiver_counterparty: Optional[Counterparty], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]]):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'accountLowBalanceClosureTransaction'
-        self.attributes["receiverCounterparty"] = receiver_counterparty
+        if receiver_counterparty:
+            self.attributes["receiverCounterparty"] = receiver_counterparty
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
+        counterparty = None
+        if attributes.get("receiverCounterparty"):
+            counterparty = Counterparty.from_json_api(attributes.get("receiverCounterparty"))
         return AccountLowBalanceClosureTransactionDTO(_id, date_utils.to_datetime(attributes["createdAt"]),
                                                    attributes["direction"], attributes["amount"], attributes["balance"],
-                                                   attributes["summary"],
-                                                   Counterparty.from_json_api(attributes.get("receiverCounterparty")),
-                                                   attributes.get("tags"), relationships)
+                                                   attributes["summary"], counterparty, attributes.get("tags"),
+                                                   relationships)
 
 
 class NegativeBalanceCoverageTransactionDTO(BaseTransactionDTO):
