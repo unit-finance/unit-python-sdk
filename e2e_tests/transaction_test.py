@@ -1,4 +1,7 @@
 import os
+
+import pytest
+
 from unit import Unit
 from unit.models.transaction import *
 from unit.models.codecs import DtoDecoder, mappings
@@ -690,3 +693,75 @@ def test_wire_transaction():
     assert transaction.attributes["balance"] == wire_transaction_api_response.get("attributes").get("balance")
     assert transaction.attributes["summary"] == wire_transaction_api_response.get("attributes").get("summary")
 
+
+@pytest.mark.parametrize("include_counterparty", [True, False])
+def test_account_low_balance_closure_transaction(include_counterparty):
+    account_low_balance_closure_transaction_response = {
+        "type": "accountLowBalanceClosureTransaction",
+        "id": "53",
+        "attributes": {
+            "createdAt": "2022-04-06T10:46:34.371Z",
+            "amount": 800,
+            "direction": "Credit",
+            "balance": 113000,
+            "summary": "Account Low Balance Closure",
+            "tags": {
+                "customer_type": "vip"
+            }
+        },
+        "relationships": {
+            "account": {
+                "data": {
+                    "type": "account",
+                    "id": "10001"
+                }
+            },
+            "customer": {
+                "data": {
+                    "type": "customer",
+                    "id": "10000"
+                }
+            },
+            "customers": {
+                "data": [
+                    {
+                        "type": "customer",
+                        "id": "10000"
+                    }
+                ]
+            },
+            "org": {
+                "data": {
+                    "type": "org",
+                    "id": "1"
+                }
+            },
+            "receiverAccount": {
+                "data": {
+                    "type": "account",
+                    "id": "10000"
+                }
+            }
+        }
+    }
+    if include_counterparty:
+        account_low_balance_closure_transaction_response["attributes"]["receiverCounterparty"] = {
+            "name": "Unit Finance Inc.",
+            "routingNumber": "091311229",
+            "accountNumber": "864800000000",
+            "accountType": "Checking"
+        }
+
+    transaction = DtoDecoder.decode(account_low_balance_closure_transaction_response)
+
+    assert transaction.id == "53"
+    assert transaction.type == "accountLowBalanceClosureTransaction"
+    assert transaction.attributes["amount"] == 800
+    assert transaction.attributes["direction"] == "Credit"
+    assert transaction.attributes["balance"] == 113000
+    assert transaction.attributes["summary"] == "Account Low Balance Closure"
+
+    if include_counterparty:
+        assert transaction.attributes["receiverCounterparty"].routing_number == "091311229"
+    else:
+        assert "receiverCounterparty" not in transaction.attributes
