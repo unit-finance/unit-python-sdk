@@ -49,7 +49,7 @@ class BaseResource(object):
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def get_with_backoff(path: str, p: Dict, h: Dict[str, str]):
-            return requests.get(path, params=p, headers=h)
+            return requests.get(path, params=p, headers=h, timeout=self.configuration.get_timeout())
 
         return get_with_backoff(f"{self.configuration.api_url}/{resource}", params, self.__merge_headers(headers))
 
@@ -62,7 +62,7 @@ class BaseResource(object):
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_with_backoff(path: str, d: Dict, h: Dict[str, str]):
-            return requests.post(path, data=d, headers=h)
+            return requests.post(path, data=d, headers=h, timeout=self.configuration.get_timeout())
 
         return post_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
@@ -75,7 +75,7 @@ class BaseResource(object):
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_create_with_backoff(path: str, d, h):
-            return requests.post(path, data=d, headers=h)
+            return requests.post(path, data=d, headers=h, timeout=self.configuration.get_timeout())
 
         return post_create_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
@@ -88,7 +88,7 @@ class BaseResource(object):
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_full_path_with_backoff(p, d, h):
-            return requests.post(p, data=d, headers=h)
+            return requests.post(p, data=d, headers=h, timeout=self.configuration.get_timeout())
 
         return post_full_path_with_backoff(path, data, self.__merge_headers(headers))
 
@@ -101,7 +101,7 @@ class BaseResource(object):
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def patch_with_backoff(p, d, h):
-            return requests.patch(p, data=d, headers=h)
+            return requests.patch(p, data=d, headers=h, timeout=self.configuration.get_timeout())
 
         return patch_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
@@ -114,7 +114,7 @@ class BaseResource(object):
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def delete_with_backoff(p, d, h):
-            return requests.delete(p, data=d, headers=h)
+            return requests.delete(p, data=d, headers=h, timeout=self.configuration.get_timeout())
 
         return delete_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
@@ -125,7 +125,7 @@ class BaseResource(object):
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def put_with_backoff(p, d, h):
-            return requests.put(p, data=d, headers=h)
+            return requests.put(p, data=d, headers=h, timeout=self.configuration.get_timeout())
 
         return put_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
