@@ -125,7 +125,7 @@ class PushToCardPaymentDTO(BasePayment):
     def from_json_api(_id, _type, attributes, relationships):
         return PushToCardPaymentDTO(_id, date_utils.to_datetime(attributes["createdAt"]), attributes["status"],
                                     attributes.get("direction"), attributes["description"], attributes["amount"],
-                                    attributes["astraRoutineId"], attributes.get("reason"), attributes.get("tags"),
+                                    attributes.get("astraRoutineId"), attributes.get("reason"), attributes.get("tags"),
                                     relationships)
 
 
