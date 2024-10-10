@@ -128,6 +128,7 @@ class PushToCardPaymentDTO(BasePayment):
                                     attributes["astraRoutineId"], attributes.get("reason"), attributes.get("tags"),
                                     relationships)
 
+
 class BillPaymentDTO(BasePayment):
     def __init__(self, id: str, created_at: datetime, status: PaymentStatus, direction: str, description: str,
                  amount: int, tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]]):

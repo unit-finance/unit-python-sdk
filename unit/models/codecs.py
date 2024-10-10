@@ -14,7 +14,7 @@ from unit.models.card import IndividualDebitCardDTO, BusinessDebitCardDTO, Indiv
     BusinessVirtualDebitCardDTO, PinStatusDTO, CardLimitsDTO
 from unit.models.transaction import *
 from unit.models.payment import AchPaymentDTO, BookPaymentDTO, WirePaymentDTO, AchReceivedPaymentDTO, BillPaymentDTO, \
-    SimulateIncomingAchPaymentDTO
+    SimulateIncomingAchPaymentDTO, PushToCardPaymentDTO
 from unit.models.customerToken import CustomerTokenDTO, CustomerVerificationTokenDTO
 from unit.models.fee import FeeDTO
 from unit.models.event import *
@@ -144,6 +144,9 @@ mappings = {
 
         "checkPayment": lambda _id, _type, attributes, relationships:
         CheckPaymentDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "pushToCardPayment": lambda _id, _type, attributes, relationships:
+        PushToCardPaymentDTO.from_json_api(_id, _type, attributes, relationships),
 
         "checkPayment.created": lambda _id, _type, attributes, relationships:
         CheckPaymentCreatedEvent.from_json_api(_id, _type, attributes, relationships),
