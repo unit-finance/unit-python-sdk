@@ -10,6 +10,18 @@ DocumentType = Literal[
     "AddressVerification",
     "CertificateOfIncorporation",
     "EmployerIdentificationNumberConfirmation",
+    "SocialSecurityCard",
+    "ClientRequested",
+    "SelfieVerification",
+]
+
+ApplicationDocumentStatus = Literal[
+    "Required",
+    "ReceivedBack",
+    "ReceivedFront",
+    "Invalid",
+    "Approved",
+    "PendingReview"
 ]
 
 ReasonCode = Literal[
@@ -435,7 +447,7 @@ class ApplicationDocumentDTO(object):
     def __init__(
         self,
         id: str,
-        status: ApplicationStatus,
+        status: ApplicationDocumentStatus,
         document_type: DocumentType,
         description: str,
         name: str,

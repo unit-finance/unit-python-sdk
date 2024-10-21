@@ -160,10 +160,23 @@ class UnitError(object):
         )
 
 
+Occupation = Literal["ArchitectOrEngineer", "BusinessAnalystAccountantOrFinancialAdvisor",
+                     "CommunityAndSocialServicesWorker", "ConstructionMechanicOrMaintenanceWorker", "Doctor",
+                     "Educator", "EntertainmentSportsArtsOrMedia", "ExecutiveOrManager", "FarmerFishermanForester",
+                     "FoodServiceWorker", "GigWorker", "HospitalityOfficeOrAdministrativeSupportWorker",
+                     "HouseholdManager", "JanitorHousekeeperLandscaper", "Lawyer", "ManufacturingOrProductionWorker",
+                     "MilitaryOrPublicSafety", "NurseHealthcareTechnicianOrHealthcareSupport",
+                     "PersonalCareOrServiceWorker", "PilotDriverOperator", "SalesRepresentativeBrokerAgent",
+                     "ScientistOrTechnologist", "Student"]
+AnnualIncome = Literal["UpTo10k", "Between10kAnd25k", "Between25kAnd50k", "Between50kAnd100k", "Between100kAnd250k",
+                       "Over250k"]
+SourceOfIncome = Literal["EmploymentOrPayrollIncome", "PartTimeOrContractorIncome", "InheritancesAndGifts",
+                         "PersonalInvestments", "BusinessOwnershipInterests", "GovernmentBenefits"]
 Status = Literal["Approved", "Denied", "PendingReview"]
 Title = Literal["CEO", "COO", "CFO", "President", "BenefitsAdministrationOfficer", "CIO", "VP", "AVP", "Treasurer",
                 "Secretary", "Controller", "Manager", "Partner", "Member"]
-EntityType = Literal["Corporation", "LLC", "Partnership"]
+EntityType = Literal["Corporation", "LLC", "Partnership", "PubliclyTradedCorporation", "PrivatelyHeldCorporation",
+                     "NotForProfitOrganization"]
 
 
 class FullName(UnitDTO):
@@ -235,19 +248,11 @@ class BusinessContact(UnitDTO):
 
 
 class Officer(UnitDTO):
-    def __init__(
-        self,
-        full_name: FullName,
-        date_of_birth: date,
-        address: Address,
-        phone: Phone,
-        email: str,
-        status: Optional[Status] = None,
-        title: Optional[Title] = None,
-        ssn: Optional[str] = None,
-        passport: Optional[str] = None,
-        nationality: Optional[str] = None,
-    ):
+    def __init__(self, full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
+                 status: Optional[Status] = None, title: Optional[Title] = None, ssn: Optional[str] = None,
+                 passport: Optional[str] = None, nationality: Optional[str] = None, id_theft_score: Optional[str] = None,
+                 occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
+                 source_of_income: Optional[SourceOfIncome] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -258,21 +263,17 @@ class Officer(UnitDTO):
         self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
+        self.id_theft_score = id_theft_score
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
 
     @staticmethod
     def from_json_api(data: Dict):
-        return Officer(
-            data.get("fullName"),
-            data.get("dateOfBirth"),
-            data.get("address"),
-            data.get("phone"),
-            data.get("email"),
-            data.get("status"),
-            data.get("title"),
-            data.get("ssn"),
-            data.get("passport"),
-            data.get("nationality"),
-        )
+        return Officer(data.get("fullName"), data.get("dateOfBirth"), data.get("address"), data.get("phone"),
+                       data.get("email"), data.get("status"), data.get("title"), data.get("ssn"), data.get("passport"),
+                       data.get("nationality"), data.get("idTheftScore"), data.get("occupation"), data.get("annualIncome"),
+                       data.get("sourceOfIncome"))
 
 
 class BeneficialOwner(UnitDTO):
