@@ -289,6 +289,9 @@ class BeneficialOwner(UnitDTO):
         passport: Optional[str] = None,
         nationality: Optional[str] = None,
         percentage: Optional[int] = None,
+        occupation: Optional[Occupation] = None,
+        annual_income: Optional[AnnualIncome] = None,
+        source_of_income: Optional[SourceOfIncome] = None
     ):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
@@ -300,6 +303,9 @@ class BeneficialOwner(UnitDTO):
         self.passport = passport
         self.nationality = nationality
         self.percentage = percentage
+        self.occupation = occupation
+        self.annual_income = annual_income
+        self.source_of_income = source_of_income
 
     @staticmethod
     def from_json_api(l: List):
@@ -317,6 +323,9 @@ class BeneficialOwner(UnitDTO):
                     data.get("passport"),
                     data.get("nationality"),
                     data.get("percentage"),
+                    data.get("occupation"),
+                    data.get("annualIncome"),
+                    data.get("sourceOfIncome")
                 )
             )
         return beneficial_owners

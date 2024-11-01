@@ -203,6 +203,13 @@ class BusinessApplicationDTO(object):
         ip: Optional[str],
         ein: Optional[str],
         dba: Optional[str],
+        website: Optional[str],
+        year_of_incorporation: Optional[str],
+        business_vertical: Optional[BusinessVertical],
+        annual_revenue: Optional[AnnualRevenue],
+        number_of_employees: Optional[NumberOfEmployees],
+        cash_flow: Optional[CashFlow],
+        countries_of_operation: Optional[List[str]],
         tags: Optional[Dict[str, str]],
         relationships: Optional[Dict[str, Relationship]],
     ):
@@ -216,12 +223,18 @@ class BusinessApplicationDTO(object):
             "status": status,
             "ssn": ssn,
             "stateOfIncorporation": state_of_incorporation,
-            "ssn": ssn,
             "message": message,
             "ip": ip,
             "ein": ein,
             "entityType": entity_type,
             "dba": dba,
+            "website": website,
+            "yearOfIncorporation": year_of_incorporation,
+            "businessVertical": business_vertical,
+            "annualRevenue": annual_revenue,
+            "numberOfEmployees": number_of_employees,
+            "cashFlow": cash_flow,
+            "countriesOfOperation": countries_of_operation,
             "contact": contact,
             "officer": officer,
             "beneficialOwners": beneficial_owners,
@@ -248,6 +261,13 @@ class BusinessApplicationDTO(object):
             attributes.get("ip"),
             attributes.get("ein"),
             attributes.get("dba"),
+            attributes.get("website"),
+            attributes.get("year_of_incorporation"),
+            attributes.get("business_vertical"),
+            attributes.get("annual_revenue"),
+            attributes.get("number_of_employees"),
+            attributes.get("cash_flow"),
+            attributes.get("countries_of_operation"),
             attributes.get("tags"),
             relationships,
         )
@@ -274,6 +294,9 @@ class CreateIndividualApplicationRequest(UnitRequest):
         device_fingerprints: Optional[List[DeviceFingerprint]] = None,
         idempotency_key: str = None,
         tags: Optional[Dict[str, str]] = None,
+        website: str = None,
+        annual_revenue: Optional[AnnualRevenue] = None,
+        number_of_employees: Optional[NumberOfEmployees] = None,
         business_vertical: Optional[BusinessVertical] = None,
     ):
         self.full_name = full_name
@@ -291,7 +314,10 @@ class CreateIndividualApplicationRequest(UnitRequest):
         self.device_fingerprints = device_fingerprints
         self.idempotency_key = idempotency_key
         self.tags = tags
+        self.annual_revenue = annual_revenue
+        self.number_of_employees = number_of_employees
         self.business_vertical = business_vertical
+        self.website = website
 
     def to_json_api(self) -> Dict:
         payload = {
@@ -340,6 +366,15 @@ class CreateIndividualApplicationRequest(UnitRequest):
 
         if self.tags:
             payload["data"]["attributes"]["tags"] = self.tags
+
+        if self.website:
+            payload["data"]["attributes"]["website"] = self.website
+
+        if self.annual_revenue:
+            payload["data"]["attributes"]["annualRevenue"] = self.annual_revenue
+
+        if self.number_of_employees:
+            payload["data"]["attributes"]["numberOfEmployees"] = self.number_of_employees
 
         if self.business_vertical:
             payload["data"]["attributes"]["businessVertical"] = self.business_vertical
@@ -413,13 +448,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
                     "officer": self.officer,
                     "beneficialOwners": self.beneficial_owners,
                     "entityType": self.entity_type,
-                    "industry": self.industry,
-                    "annualRevenue": self.annual_revenue,
-                    "numberOfEmployees": self.number_of_employees,
-                    "cashFlow": self.cash_flow,
                     "yearOfIncorporation": self.year_of_incorporation,
-                    "countriesOfOperation": self.countries_of_operation,
-                    "stockSymbol": self.stock_symbol,
                     "businessVertical": self.business_vertical,
                 },
             }
@@ -436,6 +465,24 @@ class CreateBusinessApplicationRequest(UnitRequest):
 
         if self.website:
             payload["data"]["attributes"]["website"] = self.website
+
+        if self.industry:
+            payload["data"]["attributes"]["industry"] = self.industry
+
+        if self.annual_revenue:
+            payload["data"]["attributes"]["annualRevenue"] = self.annual_revenue
+
+        if self.number_of_employees:
+            payload["data"]["attributes"]["numberOfEmployees"] = self.number_of_employees
+
+        if self.cash_flow:
+            payload["data"]["attributes"]["cashFlow"] = self.cash_flow
+
+        if self.countries_of_operation:
+            payload["data"]["attributes"]["countriesOfOperation"] = self.countries_of_operation
+
+        if self.stock_symbol:
+            payload["data"]["attributes"]["stockSymbol"] = self.stock_symbol
 
         return payload
 

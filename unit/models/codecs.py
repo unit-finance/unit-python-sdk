@@ -459,6 +459,14 @@ class UnitEncoder(json.JSONEncoder):
                 officer["passport"] = obj.passport
             if obj.nationality is not None:
                 officer["nationality"] = obj.nationality
+            if obj.id_theft_score is not None:
+                officer["idTheftScore"] = obj.id_theft_score
+            if obj.occupation is not None:
+                officer["occupation"] = obj.occupation
+            if obj.annual_income is not None:
+                officer["annualIncome"] = obj.annual_income
+            if obj.source_of_income is not None:
+                officer["sourceOfIncome"] = obj.source_of_income
             return officer
         if isinstance(obj, BeneficialOwner):
             beneficial_owner = {"fullName": obj.full_name, "dateOfBirth": date_utils.to_date_str(obj.date_of_birth),
@@ -473,6 +481,12 @@ class UnitEncoder(json.JSONEncoder):
                 beneficial_owner["nationality"] = obj.nationality
             if obj.percentage is not None:
                 beneficial_owner["percentage"] = obj.percentage
+            if obj.occupation is not None:
+                beneficial_owner["occupation"] = obj.occupation
+            if obj.annual_income is not None:
+                beneficial_owner["annualIncome"] = obj.annual_income
+            if obj.source_of_income is not None:
+                beneficial_owner["sourceOfIncome"] = obj.source_of_income
             return beneficial_owner
         if isinstance(obj, RelationshipArray):
             return {"data": list(map(lambda r: r.to_dict(), obj.relationships))}
