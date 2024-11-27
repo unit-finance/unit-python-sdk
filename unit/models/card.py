@@ -335,7 +335,7 @@ class PatchBusinessVirtualCard(UnitRequest):
         self.limits = limits
 
     def to_json_api(self, _type: str = "businessVirtualDebitCard") -> Dict:
-        return super().to_payload(_type, igonre=["card_id"])
+        return super().to_payload(_type, ignore=["card_id"])
 
 
 class PatchBusinessVirtualDebitCard(PatchBusinessVirtualCard):
