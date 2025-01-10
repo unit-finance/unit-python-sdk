@@ -1,17 +1,23 @@
 from unit.utils import date_utils
 from unit.models import *
 
+ArchiveReason = Literal["Inactive", "FraudACHActivity", "FraudCardActivity", "FraudCheckActivity",
+                        "FraudApplicationHistory", "FraudAccountActivity", "FraudClientIdentified"]
+
+CustomerStatus = Literal["Active", "Archived"]
 
 class IndividualCustomerDTO(object):
     def __init__(self, id: str, created_at: datetime, full_name: FullName, date_of_birth: date, address: Address,
                  phone: Phone, email: str, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
                  authorized_users: [AuthorizedUser], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], status: CustomerStatus,
+                 archive_reason: Optional[ArchiveReason]):
         self.id = id
         self.type = 'individualCustomer'
         self.attributes = {"createdAt": created_at, "fullName": full_name, "dateOfBirth": date_of_birth,
                            "address": address, "phone": phone, "email": email, "ssn": ssn, "passport": passport,
-                           "nationality": nationality, "authorizedUsers": authorized_users, "tags": tags}
+                           "nationality": nationality, "authorizedUsers": authorized_users, "tags": tags,
+                           "status": status, "archiveReason": archive_reason}
         self.relationships = relationships
 
     @staticmethod
@@ -21,7 +27,8 @@ class IndividualCustomerDTO(object):
             FullName.from_json_api(attributes["fullName"]), date_utils.to_date(attributes["dateOfBirth"]),
             Address.from_json_api(attributes["address"]), Phone.from_json_api(attributes["phone"]),
             attributes["email"], attributes.get("ssn"), attributes.get("passport"), attributes.get("nationality"),
-            AuthorizedUser.from_json_api(attributes["authorizedUsers"]), attributes.get("tags"), relationships
+            AuthorizedUser.from_json_api(attributes["authorizedUsers"]), attributes.get("tags"), relationships,
+            attributes.get("status"), attributes.get("archiveReason")
         )
 
 
@@ -29,12 +36,14 @@ class BusinessCustomerDTO(object):
     def __init__(self, id: str, created_at: datetime, name: str, address: Address, phone: Phone,
                  state_of_incorporation: str, ein: str, entity_type: EntityType, contact: BusinessContact,
                  authorized_users: [AuthorizedUser], dba: Optional[str], tags: Optional[Dict[str, str]],
-                 relationships: Optional[Dict[str, Relationship]]):
+                 relationships: Optional[Dict[str, Relationship]], status: CustomerStatus,
+                 archive_reason: Optional[ArchiveReason]):
         self.id = id
         self.type = 'businessCustomer'
         self.attributes = {"createdAt": created_at, "name": name, "address": address, "phone": phone,
                            "stateOfIncorporation": state_of_incorporation, "ein": ein, "entityType": entity_type,
-                           "contact": contact, "authorizedUsers": authorized_users, "dba": dba, "tags": tags}
+                           "contact": contact, "authorizedUsers": authorized_users, "dba": dba, "tags": tags,
+                           "status": status, "archiveReason": archive_reason}
         self.relationships = relationships
 
     @staticmethod
@@ -45,7 +54,8 @@ class BusinessCustomerDTO(object):
             attributes["stateOfIncorporation"], attributes["ein"], attributes["entityType"],
             BusinessContact.from_json_api(attributes["contact"]),
             AuthorizedUser.from_json_api(attributes["authorizedUsers"]),
-            attributes.get("dba"), attributes.get("tags"), relationships)
+            attributes.get("dba"), attributes.get("tags"), relationships, attributes.get("status"),
+            attributes.get("archiveReason"))
 
 CustomerDTO = Union[IndividualCustomerDTO, BusinessCustomerDTO]
 
@@ -156,3 +166,24 @@ class ListCustomerParams(UnitParams):
             parameters["sort"] = self.sort
         return parameters
 
+
+class ArchiveCustomerRequest(UnitRequest):
+    def __init__(self, customer_id: str, reason: Optional[ArchiveReason] = None):
+        self.customer_id = customer_id
+        self.reason = reason
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": "archiveCustomer",
+                "attributes": {}
+            }
+        }
+
+        if self.reason:
+            payload["data"]["attributes"]["reason"] = self.reason
+
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())

@@ -38,3 +38,12 @@ class CustomerResource(BaseResource):
             return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
+
+    def archive(self, request: ArchiveCustomerRequest) -> Union[UnitResponse[CustomerDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.customer_id}/archive", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[CustomerDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())

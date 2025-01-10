@@ -288,15 +288,20 @@ class AccountLimitsDTO(object):
                                 CheckDepositAccountLimits.from_json_api(attributes["checkDeposit"]))
 
 
+AccountCloseType = Literal["depositAccountClose", "creditAccountClose"]
+
+
 class CloseAccountRequest(UnitRequest):
-    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer"):
+    def __init__(self, account_id: str, reason: Optional[Literal["ByCustomer", "Fraud"]] = "ByCustomer",
+                 _type: AccountCloseType = "depositAccountClose"):
         self.account_id = account_id
         self.reason = reason
+        self._type = _type
 
     def to_json_api(self) -> Dict:
         payload = {
             "data": {
-                "type": "accountClose",
+                "type": self._type,
                 "attributes": {
                     "reason": self.reason,
                 }
@@ -306,7 +311,7 @@ class CloseAccountRequest(UnitRequest):
         return payload
 
     def __repr__(self):
-        json.dumps(self.to_json_api())
+        return json.dumps(self.to_json_api())
 
 
 class ListAccountParams(UnitParams):
