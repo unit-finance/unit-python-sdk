@@ -33,6 +33,15 @@ class AccountResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def freeze_account(self, request: FreezeAccountRequest) -> Union[UnitResponse[AccountDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post(f"{self.resource}/{request.account_id}/freeze", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[AccountDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
     def get(self, account_id: str, include: Optional[str] = "") -> Union[UnitResponse[AccountDTO], UnitError]:
         response = super().get(f"{self.resource}/{account_id}", {"include": include})
         if super().is_20x(response.status_code):

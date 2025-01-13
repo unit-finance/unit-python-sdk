@@ -314,6 +314,39 @@ class CloseAccountRequest(UnitRequest):
         return json.dumps(self.to_json_api())
 
 
+
+AccountFreezeReasons = Literal["Other", "Fraud"]
+
+
+class FreezeAccountRequest(UnitRequest):
+    def __init__(
+        self,
+        account_id: str,
+        reason: AccountFreezeReasons,
+        reason_text: Optional[str],
+    ):
+        self.account_id = account_id
+        self.reason = reason
+        self.reason_text = reason_text
+        self._type = "accountFreeze"
+
+    def to_json_api(self) -> Dict:
+        payload = {
+            "data": {
+                "type": self._type,
+                "attributes": {
+                    "reason": self.reason,
+                    "reason_text": self.reason_text,
+                }
+            }
+        }
+
+        return payload
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
 class ListAccountParams(UnitParams):
     def __init__(self, offset: int = 0, limit: int = 100, customer_id: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None, include: Optional[str] = None,
