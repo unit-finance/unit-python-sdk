@@ -316,6 +316,7 @@ class CloseAccountRequest(UnitRequest):
 
 
 AccountFreezeReasons = Literal["Other", "Fraud"]
+AccountFreezeTypes = Literal["accountFreeze", "creditAccountFreeze"]
 
 
 class FreezeAccountRequest(UnitRequest):
@@ -324,11 +325,12 @@ class FreezeAccountRequest(UnitRequest):
         account_id: str,
         reason: AccountFreezeReasons,
         reason_text: Optional[str],
+        type: Optional[str] = "accountFreeze",
     ):
         self.account_id = account_id
         self.reason = reason
         self.reason_text = reason_text
-        self._type = "accountFreeze"
+        self._type = type
 
     def to_json_api(self) -> Dict:
         payload = {
