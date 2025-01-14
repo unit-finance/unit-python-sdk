@@ -336,7 +336,7 @@ class FreezeAccountRequest(UnitRequest):
                 "type": self._type,
                 "attributes": {
                     "reason": self.reason,
-                    "reason_text": self.reason_text,
+                    "reasonText": self.reason_text,
                 }
             }
         }
