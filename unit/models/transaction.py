@@ -571,7 +571,7 @@ class PatchTransactionRequest(BaseTransactionDTO, UnitRequest):
 
 
 class ListTransactionParams(UnitParams):
-    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None,
+    def __init__(self, limit: int = 100, offset: int = 0, account_id: Optional[str] = None, account_ids: Optional[List[str]], 
                  customer_id: Optional[str] = None, query: Optional[str] = None, tags: Optional[Dict[str, str]] = None,
                  since: Optional[str] = None, until: Optional[str] = None, card_id: Optional[str] = None,
                  type: Optional[List[str]] = None, exclude_fees: Optional[bool] = None,
@@ -579,6 +579,7 @@ class ListTransactionParams(UnitParams):
         self.limit = limit
         self.offset = offset
         self.account_id = account_id
+        self.account_ids = account_ids
         self.customer_id = customer_id
         self.query = query
         self.tags = tags
@@ -596,6 +597,9 @@ class ListTransactionParams(UnitParams):
             parameters["filter[customerId]"] = self.customer_id
         if self.account_id:
             parameters["filter[accountId]"] = self.account_id
+        if self.account_ids:
+            for idx, account_id in enumerate(self.account_ids):
+                parameters[f"filter[accountIds][{idx}]"] = account_id
         if self.query:
             parameters["filter[query]"] = self.query
         if self.tags:
