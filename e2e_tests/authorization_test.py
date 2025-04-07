@@ -51,7 +51,7 @@ def test_list_with_parameters():
 def test_list_with_wrong_parameters():
     params = ListAuthorizationParams(10, 0, "", "-1", include_non_authorized=False)
     response = client.authorizations.list(params)
-    assert response.data == []
+    assert len(response.errors) > 0
 
 def test_authorization_api_response():
     authorization_api_response = {
