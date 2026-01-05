@@ -19,6 +19,17 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def create_thread_application(self, request: CreateThreadApplicationRequest) -> Union[UnitResponse[ThreadApplicationDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().post_create(self.resource, payload)
+
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            included = response.json().get("included")
+            return UnitResponse[ThreadApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
+        else:
+            return UnitError.from_json_api(response.json())
+
     def list(self, params: ListApplicationParams = None) -> Union[UnitResponse[List[ApplicationDTO]], UnitError]:
         params = params or ListApplicationParams()
         response = super().get(self.resource, params.to_dict())
@@ -68,12 +79,30 @@ class ApplicationResource(BaseResource):
         else:
             return UnitError.from_json_api(response.json())
 
+    def update_thread_application(self, request: UnionPatchThreadApplicationRequest) -> Union[UnitResponse[ThreadApplicationDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().patch(f"{self.resource}/{request.application_id}", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[ThreadApplicationDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
     def update_business_beneficial_owner(self, request: PatchBusinessBeneficialOwnerRequest) -> Union[UnitResponse[BeneficialOwnerDTO], UnitError]:
         payload = request.to_json_api()
         response = super().patch(f"beneficial-owner/{request.beneficial_owner_id}", payload)
         if super().is_20x(response.status_code):
             data = response.json().get("data")
             return UnitResponse[BeneficialOwnerDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def update_thread_business_beneficial_owner(self, request: PatchThreadBusinessBeneficialOwnerRequest) -> Union[UnitResponse[ThreadBeneficialOwnerDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().patch(f"beneficial-owner/{request.beneficial_owner_id}", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[ThreadBeneficialOwnerDTO](DtoDecoder.decode(data), None)
         else:
             return UnitError.from_json_api(response.json())
 
