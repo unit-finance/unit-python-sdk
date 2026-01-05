@@ -52,10 +52,10 @@ def create_business_application():
             beneficial_owners=[BeneficialOwner(
                 FullName("James", "Smith"), date.today() - timedelta(days=20*365),
                 Address("650 Allerton Street","Redwood City","CA","94063","US"),
-                Phone("1","2025550127"),"james@unit-finance.com",ssn="574567625"),
+                Phone("1","2025550127"),"james@unit-finance.com",ssn="574567625", percentage=50),
             BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
                             Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
-                            Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")],
+                            Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795", percentage=50)],
             ein="123456789",
             officer=Officer(
                 full_name=FullName("Jone", "Doe"),
