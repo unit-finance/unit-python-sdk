@@ -190,7 +190,7 @@ class IndividualThreadApplicationDTO(BaseApplication):
                  ein: Optional[str], dba: Optional[str], archived: Optional[bool],
                  id_theft_score: Optional[int], tags: Optional[Dict[str, str]],
                  account_purpose: Optional[ThreadApplicationIndividualAccountPurpose],
-                 account_purpose_description: Optional[str],
+                 account_purpose_detail: Optional[str],
                  source_of_funds: Optional[ThreadApplicationIndividualSourceOfFunds],
                  transaction_volume: Optional[ThreadApplicationIndividualTransactionVolume],
                  profession: Optional[ThreadApplicationProfession],
@@ -203,7 +203,7 @@ class IndividualThreadApplicationDTO(BaseApplication):
                                 "soleProprietorship": sole_proprietorship, "ein": ein, "dba": dba,
                                 "idTheftScore": id_theft_score,
                                 "accountPurpose": account_purpose,
-                                "accountPurposeDescription": account_purpose_description,
+                                "accountPurposeDetail": account_purpose_detail,
                                 "sourceOfFunds": source_of_funds,
                                 "transactionVolume": transaction_volume,
                                 "profession": profession})
@@ -220,7 +220,7 @@ class IndividualThreadApplicationDTO(BaseApplication):
             attributes["email"], attributes.get("ip"),
             attributes.get("soleProprietorship"), attributes.get("ein"), attributes.get("dba"),
             attributes.get("archived"), attributes.get("idTheftScore"), attributes.get("tags"),
-            attributes.get("accountPurpose"), attributes.get("accountPurposeDescription"),
+            attributes.get("accountPurpose"), attributes.get("accountPurposeDetail"),
             attributes.get("sourceOfFunds"), attributes.get("transactionVolume"),
             attributes.get("profession"),
             relationships)
@@ -267,7 +267,7 @@ class BusinessThreadApplicationDTO(BaseApplication):
                  is_regulated: Optional[bool], regulator_name: Optional[str],
                  us_nexus: Optional[List[ThreadApplicationUSNexus]],
                  account_purpose: Optional[ThreadApplicationBusinessAccountPurpose],
-                 account_purpose_description: Optional[str],
+                 account_purpose_detail: Optional[str],
                  transaction_volume: Optional[ThreadApplicationBusinessTransactionVolume],
                  stock_exchange_name: Optional[str], stock_symbol: Optional[str],
                  countries_of_operation: Optional[List[str]], year_of_incorporation: Optional[str],
@@ -287,7 +287,7 @@ class BusinessThreadApplicationDTO(BaseApplication):
                                 "isRegulated": is_regulated, "regulatorName": regulator_name,
                                 "usNexus": us_nexus,
                                 "accountPurpose": account_purpose,
-                                "accountPurposeDescription": account_purpose_description,
+                                "accountPurposeDetail": account_purpose_detail,
                                 "transactionVolume": transaction_volume,
                                 "stockExchangeName": stock_exchange_name, "stockSymbol": stock_symbol,
                                 "countriesOfOperation": countries_of_operation,
@@ -312,7 +312,7 @@ class BusinessThreadApplicationDTO(BaseApplication):
             attributes.get("businessIndustry"), attributes.get("businessDescription"),
             attributes.get("isRegulated"), attributes.get("regulatorName"),
             attributes.get("usNexus"),
-            attributes.get("accountPurpose"), attributes.get("accountPurposeDescription"),
+            attributes.get("accountPurpose"), attributes.get("accountPurposeDetail"),
             attributes.get("transactionVolume"),
             attributes.get("stockExchangeName"), attributes.get("stockSymbol"),
             attributes.get("countriesOfOperation"), attributes.get("yearOfIncorporation"),
@@ -376,7 +376,7 @@ class CreateIndividualThreadApplicationRequest(UnitRequest):
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None,
                  jwt_subject: Optional[str] = None, banks: Optional[List[str]] = None,
                  account_purpose: Optional[ThreadApplicationIndividualAccountPurpose] = None,
-                 account_purpose_description: Optional[str] = None,
+                 account_purpose_detail: Optional[str] = None,
                  source_of_funds: Optional[ThreadApplicationIndividualSourceOfFunds] = None,
                  transaction_volume: Optional[ThreadApplicationIndividualTransactionVolume] = None,
                  transaction_volume_description: Optional[str] = None,
@@ -397,7 +397,7 @@ class CreateIndividualThreadApplicationRequest(UnitRequest):
         self.jwt_subject = jwt_subject
         self.banks = banks
         self.account_purpose = account_purpose
-        self.account_purpose_description = account_purpose_description
+        self.account_purpose_detail = account_purpose_detail
         self.source_of_funds = source_of_funds
         self.transaction_volume = transaction_volume
         self.transaction_volume_description = transaction_volume_description
@@ -419,7 +419,7 @@ class CreateSoleProprietorThreadApplicationRequest(UnitRequest):
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None,
                  jwt_subject: Optional[str] = None, banks: Optional[List[str]] = None,
                  account_purpose: Optional[ThreadApplicationBusinessAccountPurpose] = None,
-                 account_purpose_description: Optional[str] = None,
+                 account_purpose_detail: Optional[str] = None,
                  source_of_funds: Optional[ThreadApplicationBusinessSourceOfFunds] = None,
                  transaction_volume: Optional[ThreadApplicationSoleProprietorTransactionVolume] = None,
                  transaction_volume_description: Optional[str] = None,
@@ -443,7 +443,7 @@ class CreateSoleProprietorThreadApplicationRequest(UnitRequest):
         self.jwt_subject = jwt_subject
         self.banks = banks
         self.account_purpose = account_purpose
-        self.account_purpose_description = account_purpose_description
+        self.account_purpose_detail = account_purpose_detail
         self.source_of_funds = source_of_funds
         self.transaction_volume = transaction_volume
         self.transaction_volume_description = transaction_volume_description
@@ -468,7 +468,7 @@ class CreateBusinessThreadApplicationRequest(UnitRequest):
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None,
                  jwt_subject: Optional[str] = None, banks: Optional[List[str]] = None,
                  account_purpose: Optional[ThreadApplicationBusinessAccountPurpose] = None,
-                 account_purpose_description: Optional[str] = None,
+                 account_purpose_detail: Optional[str] = None,
                  source_of_funds: Optional[ThreadApplicationBusinessSourceOfFunds] = None,
                  transaction_volume: Optional[ThreadApplicationBusinessTransactionVolume] = None,
                  transaction_volume_description: Optional[str] = None):
@@ -494,7 +494,7 @@ class CreateBusinessThreadApplicationRequest(UnitRequest):
         self.jwt_subject = jwt_subject
         self.banks = banks
         self.account_purpose = account_purpose
-        self.account_purpose_description = account_purpose_description
+        self.account_purpose_detail = account_purpose_detail
         self.source_of_funds = source_of_funds
         self.transaction_volume = transaction_volume
         self.transaction_volume_description = transaction_volume_description
