@@ -115,3 +115,20 @@ class ApplicationResource(BaseResource):
             return UnitResponse[ApplicationDTO](DtoDecoder.decode(data), DtoDecoder.decode(included))
         else:
             return UnitError.from_json_api(response.json())
+
+    def upgrade_to_thread_application(self, request: UpgradeToThreadApplicationRequest) -> Union[UnitResponse[ThreadApplicationDTO], UnitError]:
+        payload = request.to_json_api()
+        response = super().patch(f"{self.resource}/{request.application_id}", payload)
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[ThreadApplicationDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
+
+    def get_missing_fields(self, application_id: str) -> Union[UnitResponse[ApplicationMissingFieldsDTO], UnitError]:
+        response = super().get(f"{self.resource}/{application_id}/missing-fields")
+        if super().is_20x(response.status_code):
+            data = response.json().get("data")
+            return UnitResponse[ApplicationMissingFieldsDTO](DtoDecoder.decode(data), None)
+        else:
+            return UnitError.from_json_api(response.json())
