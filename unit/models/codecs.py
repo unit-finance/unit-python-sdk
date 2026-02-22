@@ -4,7 +4,8 @@ from typing import Dict
 
 from unit.models import BeneficialOwnerDTO, RelationshipArray, Relationship, RawUnitObject
 from unit.models.applicationForm import ApplicationFormDTO
-from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO
+from unit.models.application import IndividualApplicationDTO, BusinessApplicationDTO, ApplicationDocumentDTO, \
+    IndividualApplicationMissingFieldsDTO, BusinessApplicationMissingFieldsDTO
 from unit.models.account import DepositAccountDTO, AccountDepositProductDTO, CreditAccountDTO, \
     CreditAccountLimitsDTO, DepositAccountLimitsDTO
 from unit.models.check_payment import CheckPaymentDTO
@@ -191,7 +192,13 @@ mappings = {
         TaxFormDTO.from_json_api(_id, _type, attributes, relationships),
 
         "batchRelease": lambda _id, _type, attributes, relationships:
-        BatchReleaseDTO.from_json_api(_id, _type, attributes, relationships)
+        BatchReleaseDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "individualApplicationMissingFields": lambda _id, _type, attributes, relationships:
+        IndividualApplicationMissingFieldsDTO.from_json_api(_id, _type, attributes, relationships),
+
+        "businessApplicationMissingFields": lambda _id, _type, attributes, relationships:
+        BusinessApplicationMissingFieldsDTO.from_json_api(_id, _type, attributes, relationships)
     }
 
 

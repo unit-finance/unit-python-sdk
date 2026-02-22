@@ -4,6 +4,41 @@ from typing import IO
 
 ApplicationStatus = Literal["Approved", "Denied", "Pending", "PendingReview", "AwaitingDocuments", "Canceled"]
 
+
+class MissingField(object):
+    def __init__(self, field_name: str, description: str):
+        self.field_name = field_name
+        self.description = description
+
+    @staticmethod
+    def from_json_api(data: Dict):
+        return MissingField(data.get("fieldName"), data.get("description"))
+
+
+class IndividualApplicationMissingFieldsDTO(object):
+    def __init__(self, missing_fields: List["MissingField"]):
+        self.type = "individualApplicationMissingFields"
+        self.attributes = {"missingFields": missing_fields}
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        missing_fields = [MissingField.from_json_api(mf) for mf in attributes.get("missingFields", [])]
+        return IndividualApplicationMissingFieldsDTO(missing_fields)
+
+
+class BusinessApplicationMissingFieldsDTO(object):
+    def __init__(self, missing_fields: List["MissingField"]):
+        self.type = "businessApplicationMissingFields"
+        self.attributes = {"missingFields": missing_fields}
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        missing_fields = [MissingField.from_json_api(mf) for mf in attributes.get("missingFields", [])]
+        return BusinessApplicationMissingFieldsDTO(missing_fields)
+
+
+ApplicationMissingFieldsDTO = Union[IndividualApplicationMissingFieldsDTO, BusinessApplicationMissingFieldsDTO]
+
 DocumentType = Literal["IdDocument", "Passport", "AddressVerification", "CertificateOfIncorporation",
                        "EmployerIdentificationNumberConfirmation"]
 
@@ -334,7 +369,7 @@ class BaseCreateIndividualApplicationRequest(UnitRequest):
                  tags: Optional[Dict[str, str]] = None, jwt_subject: Optional[str] = None,
                  power_of_attorney_agent: Optional[Agent] = None, evaluation_params: Optional[EvaluationParams] = None,
                  occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
-                 source_of_income: Optional[SourceOfIncome] = None):
+                 source_of_income: Optional[SourceOfIncome] = None, operating_address: Optional[Address] = None):
         self.full_name = full_name
         self.date_of_birth = date_of_birth
         self.address = address
@@ -356,6 +391,7 @@ class BaseCreateIndividualApplicationRequest(UnitRequest):
         self.occupation = occupation
         self.annual_income = annual_income
         self.source_of_income = source_of_income
+        self.operating_address = operating_address
 
     def to_json_api(self) -> Dict:
         return super().to_payload("individualApplication")
@@ -380,7 +416,8 @@ class CreateIndividualThreadApplicationRequest(UnitRequest):
                  source_of_funds: Optional[ThreadApplicationIndividualSourceOfFunds] = None,
                  transaction_volume: Optional[ThreadApplicationIndividualTransactionVolume] = None,
                  transaction_volume_description: Optional[str] = None,
-                 profession: Optional[ThreadApplicationProfession] = None):
+                 profession: Optional[ThreadApplicationProfession] = None,
+                 operating_address: Optional[Address] = None):
         self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
@@ -402,6 +439,7 @@ class CreateIndividualThreadApplicationRequest(UnitRequest):
         self.transaction_volume = transaction_volume
         self.transaction_volume_description = transaction_volume_description
         self.profession = profession
+        self.operating_address = operating_address
 
     def to_json_api(self) -> Dict:
         return super().to_payload("individualApplication")
@@ -413,17 +451,25 @@ class CreateIndividualThreadApplicationRequest(UnitRequest):
 class CreateSoleProprietorThreadApplicationRequest(UnitRequest):
     def __init__(self, ssn: Optional[str], passport: Optional[str], nationality: Optional[str],
                  full_name: FullName, date_of_birth: date, address: Address, phone: Phone, email: str,
+                 sole_proprietorship: bool = True,
                  dba: Optional[str] = None, ein: Optional[str] = None, website: Optional[str] = None,
                  evaluation_params: Optional[EvaluationParams] = None, ip: Optional[str] = None,
                  tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None,
                  jwt_subject: Optional[str] = None, banks: Optional[List[str]] = None,
-                 account_purpose: Optional[ThreadApplicationBusinessAccountPurpose] = None,
-                 account_purpose_detail: Optional[str] = None,
                  source_of_funds: Optional[ThreadApplicationBusinessSourceOfFunds] = None,
+                 source_of_funds_description: Optional[str] = None,
+                 business_industry: Optional[ThreadApplicationBusinessIndustry] = None,
+                 is_incorporated: Optional[bool] = None,
+                 state_of_incorporation: Optional[str] = None,
+                 year_of_incorporation: Optional[str] = None,
+                 countries_of_operation: Optional[List[str]] = None,
+                 us_nexus: Optional[List[ThreadApplicationUSNexus]] = None,
                  transaction_volume: Optional[ThreadApplicationSoleProprietorTransactionVolume] = None,
                  transaction_volume_description: Optional[str] = None,
-                 profession: Optional[ThreadApplicationProfession] = None):
+                 account_purpose: Optional[ThreadApplicationBusinessAccountPurpose] = None,
+                 account_purpose_detail: Optional[str] = None,
+                 operating_address: Optional[Address] = None):
         self.ssn = ssn
         self.passport = passport
         self.nationality = nationality
@@ -432,6 +478,7 @@ class CreateSoleProprietorThreadApplicationRequest(UnitRequest):
         self.address = address
         self.phone = phone
         self.email = email
+        self.sole_proprietorship = sole_proprietorship
         self.dba = dba
         self.ein = ein
         self.website = website
@@ -442,12 +489,19 @@ class CreateSoleProprietorThreadApplicationRequest(UnitRequest):
         self.device_fingerprints = device_fingerprints
         self.jwt_subject = jwt_subject
         self.banks = banks
-        self.account_purpose = account_purpose
-        self.account_purpose_detail = account_purpose_detail
         self.source_of_funds = source_of_funds
+        self.source_of_funds_description = source_of_funds_description
+        self.business_industry = business_industry
+        self.is_incorporated = is_incorporated
+        self.state_of_incorporation = state_of_incorporation
+        self.year_of_incorporation = year_of_incorporation
+        self.countries_of_operation = countries_of_operation
+        self.us_nexus = us_nexus
         self.transaction_volume = transaction_volume
         self.transaction_volume_description = transaction_volume_description
-        self.profession = profession
+        self.account_purpose = account_purpose
+        self.account_purpose_detail = account_purpose_detail
+        self.operating_address = operating_address
 
     def to_json_api(self) -> Dict:
         return super().to_payload("individualApplication")
@@ -471,7 +525,8 @@ class CreateBusinessThreadApplicationRequest(UnitRequest):
                  account_purpose_detail: Optional[str] = None,
                  source_of_funds: Optional[ThreadApplicationBusinessSourceOfFunds] = None,
                  transaction_volume: Optional[ThreadApplicationBusinessTransactionVolume] = None,
-                 transaction_volume_description: Optional[str] = None):
+                 transaction_volume_description: Optional[str] = None,
+                 operating_address: Optional[Address] = None):
         self.name = name
         self.address = address
         self.phone = phone
@@ -498,6 +553,7 @@ class CreateBusinessThreadApplicationRequest(UnitRequest):
         self.source_of_funds = source_of_funds
         self.transaction_volume = transaction_volume
         self.transaction_volume_description = transaction_volume_description
+        self.operating_address = operating_address
 
     def to_payload(self, payload_type: str) -> Dict:
         payload = super().to_payload(payload_type)
@@ -523,8 +579,8 @@ class CreateBusinessApplicationRequest(UnitRequest):
                  countries_of_operation: Optional[List[str]] = None, stock_symbol: Optional[str] = None,
                  business_vertical: Optional[BusinessVertical] = None,
                  device_fingerprints: Optional[List[DeviceFingerprint]] = None,
-                 tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None
-                 ):
+                 tags: Optional[Dict[str, str]] = None, idempotency_key: Optional[str] = None,
+                 operating_address: Optional[Address] = None):
         self.name = name
         self.address = address
         self.phone = phone
@@ -548,6 +604,7 @@ class CreateBusinessApplicationRequest(UnitRequest):
         self.device_fingerprints = device_fingerprints
         self.tags = tags
         self.idempotency_key = idempotency_key
+        self.operating_address = operating_address
 
     def to_payload(self, payload_type: str) -> Dict:
         payload = super().to_payload(payload_type)
@@ -573,10 +630,12 @@ class CreateSoleProprietorApplicationRequest(BaseCreateIndividualApplicationRequ
                  occupation: Optional[Occupation] = None, annual_income: Optional[AnnualIncome] = None,
                  source_of_income: Optional[SourceOfIncome] = None, annual_revenue: Optional[AnnualRevenue] = None,
                  number_of_employees: Optional[NumberOfEmployees] = None,
-                 business_vertical: Optional[BusinessVertical] = None):
+                 business_vertical: Optional[BusinessVertical] = None,
+                 operating_address: Optional[Address] = None):
         super().__init__(full_name, date_of_birth, address, email, phone, ip, ein, dba, sole_proprietorship, passport,
                          nationality, ssn, device_fingerprints, idempotency_key, tags, jwt_subject,
-                         power_of_attorney_agent, evaluation_params, occupation, annual_income, source_of_income)
+                         power_of_attorney_agent, evaluation_params, occupation, annual_income, source_of_income,
+                         operating_address)
         self.annual_revenue = annual_revenue
         self.number_of_employees = number_of_employees
         self.business_vertical = business_vertical
@@ -648,10 +707,11 @@ class ListApplicationParams(UnitParams):
 
 class PatchApplicationRequest(UnitRequest):
     def __init__(self, application_id: str, type: ApplicationTypes = "individualApplication",
-                 tags: Optional[Dict[str, str]] = None):
+                 tags: Optional[Dict[str, str]] = None, operating_address: Optional[Address] = None):
         self.application_id = application_id
         self.type = type
         self.tags = tags
+        self.operating_address = operating_address
 
     def to_json_api(self) -> Dict:
         return super().to_payload(self.type, ignore=['application_id', 'type'])
@@ -660,8 +720,8 @@ class PatchApplicationRequest(UnitRequest):
 class PatchIndividualApplicationRequest(PatchApplicationRequest):
     def __init__(self, application_id: str, occupation: Optional[Occupation] = None,
                  annual_income: Optional[AnnualIncome] = None, source_of_income: Optional[SourceOfIncome] = None,
-                 tags: Optional[Dict[str, str]] = None):
-        super().__init__(application_id, tags=tags)
+                 tags: Optional[Dict[str, str]] = None, operating_address: Optional[Address] = None):
+        super().__init__(application_id, tags=tags, operating_address=operating_address)
         self.occupation = occupation
         self.annual_income = annual_income
         self.source_of_income = source_of_income
@@ -671,8 +731,8 @@ class PatchSoleProprietorApplicationRequest(PatchApplicationRequest):
     def __init__(self, application_id: str, annual_revenue: Optional[AnnualRevenue] = None,
                  number_of_employees: Optional[NumberOfEmployees] = None,
                  business_vertical: Optional[BusinessVertical] = None, website: Optional[str] = None,
-                 tags: Optional[Dict[str, str]] = None):
-        super().__init__(application_id, tags=tags)
+                 tags: Optional[Dict[str, str]] = None, operating_address: Optional[Address] = None):
+        super().__init__(application_id, tags=tags, operating_address=operating_address)
         self.annual_revenue = annual_revenue
         self.number_of_employees = number_of_employees
         self.business_vertical = business_vertical
@@ -719,8 +779,9 @@ class PatchBusinessApplicationRequest(PatchApplicationRequest):
                  number_of_employees: Optional[NumberOfEmployees] = None, cash_flow: Optional[CashFlow] = None,
                  year_of_incorporation: Optional[str] = None, countries_of_operation: Optional[str] = None,
                  stock_symbol: Optional[str] = None, business_vertical: Optional[BusinessVertical] = None,
-                 officer: Optional[UpdateBusinessAttributes] = None, tags: Optional[Dict[str, str]] = None):
-        super().__init__(application_id, "businessApplication", tags=tags)
+                 officer: Optional[UpdateBusinessAttributes] = None, tags: Optional[Dict[str, str]] = None,
+                 operating_address: Optional[Address] = None):
+        super().__init__(application_id, "businessApplication", tags=tags, operating_address=operating_address)
         self.annual_revenue = annual_revenue
         self.number_of_employees = number_of_employees
         self.cash_flow = cash_flow
@@ -732,18 +793,21 @@ class PatchBusinessApplicationRequest(PatchApplicationRequest):
 
 
 class PatchIndividualThreadApplicationRequest(PatchApplicationRequest):
-    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None):
-        super().__init__(application_id, "individualApplication", tags=tags)
+    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None,
+                 operating_address: Optional[Address] = None):
+        super().__init__(application_id, "individualApplication", tags=tags, operating_address=operating_address)
 
 
 class PatchSoleProprietorThreadApplicationRequest(PatchApplicationRequest):
-    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None):
-        super().__init__(application_id, "individualApplication", tags=tags)
+    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None,
+                 operating_address: Optional[Address] = None):
+        super().__init__(application_id, "individualApplication", tags=tags, operating_address=operating_address)
 
 
 class PatchBusinessThreadApplicationRequest(PatchApplicationRequest):
-    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None):
-        super().__init__(application_id, "businessApplication", tags=tags)
+    def __init__(self, application_id: str, tags: Optional[Dict[str, str]] = None,
+                 operating_address: Optional[Address] = None):
+        super().__init__(application_id, "businessApplication", tags=tags, operating_address=operating_address)
 
 
 UnionPatchApplicationRequest = Union[PatchApplicationRequest, PatchIndividualApplicationRequest,
@@ -752,6 +816,122 @@ UnionPatchApplicationRequest = Union[PatchApplicationRequest, PatchIndividualApp
 UnionPatchThreadApplicationRequest = Union[PatchIndividualThreadApplicationRequest,
                                            PatchSoleProprietorThreadApplicationRequest,
                                            PatchBusinessThreadApplicationRequest]
+
+
+class UpgradeIndividualToThreadApplicationRequest(UnitRequest):
+    def __init__(self, application_id: str,
+                 tags: Optional[Dict[str, str]] = None,
+                 account_purpose: Optional[ThreadApplicationIndividualAccountPurpose] = None,
+                 account_purpose_description: Optional[str] = None,
+                 source_of_funds: Optional[ThreadApplicationIndividualSourceOfFunds] = None,
+                 transaction_volume: Optional[ThreadApplicationIndividualTransactionVolume] = None,
+                 transaction_volume_description: Optional[str] = None,
+                 profession: Optional[ThreadApplicationProfession] = None):
+        self.application_id = application_id
+        self.tags = tags
+        self.account_purpose = account_purpose
+        self.account_purpose_description = account_purpose_description
+        self.source_of_funds = source_of_funds
+        self.transaction_volume = transaction_volume
+        self.transaction_volume_description = transaction_volume_description
+        self.profession = profession
+
+    def to_json_api(self) -> Dict:
+        return super().to_payload("individualApplication", ignore=['application_id'])
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
+class UpgradeSoleProprietorToThreadApplicationRequest(UnitRequest):
+    def __init__(self, application_id: str,
+                 tags: Optional[Dict[str, str]] = None,
+                 website: Optional[str] = None,
+                 source_of_funds: Optional[ThreadApplicationBusinessSourceOfFunds] = None,
+                 source_of_funds_description: Optional[str] = None,
+                 business_industry: Optional[ThreadApplicationBusinessIndustry] = None,
+                 is_incorporated: Optional[bool] = None,
+                 state_of_incorporation: Optional[str] = None,
+                 year_of_incorporation: Optional[str] = None,
+                 countries_of_operation: Optional[List[str]] = None,
+                 us_nexus: Optional[List[ThreadApplicationUSNexus]] = None,
+                 transaction_volume: Optional[ThreadApplicationSoleProprietorTransactionVolume] = None,
+                 transaction_volume_description: Optional[str] = None,
+                 account_purpose: Optional[ThreadApplicationBusinessAccountPurpose] = None,
+                 account_purpose_description: Optional[str] = None):
+        self.application_id = application_id
+        self.tags = tags
+        self.website = website
+        self.source_of_funds = source_of_funds
+        self.source_of_funds_description = source_of_funds_description
+        self.business_industry = business_industry
+        self.is_incorporated = is_incorporated
+        self.state_of_incorporation = state_of_incorporation
+        self.year_of_incorporation = year_of_incorporation
+        self.countries_of_operation = countries_of_operation
+        self.us_nexus = us_nexus
+        self.transaction_volume = transaction_volume
+        self.transaction_volume_description = transaction_volume_description
+        self.account_purpose = account_purpose
+        self.account_purpose_description = account_purpose_description
+
+    def to_json_api(self) -> Dict:
+        return super().to_payload("individualApplication", ignore=['application_id'])
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
+class UpgradeBusinessToThreadApplicationRequest(UnitRequest):
+    def __init__(self, application_id: str,
+                 tags: Optional[Dict[str, str]] = None,
+                 source_of_funds: Optional[ThreadApplicationBusinessSourceOfFunds] = None,
+                 source_of_funds_description: Optional[str] = None,
+                 business_industry: Optional[ThreadApplicationBusinessIndustry] = None,
+                 business_description: Optional[str] = None,
+                 is_regulated: Optional[bool] = None,
+                 regulator_name: Optional[str] = None,
+                 us_nexus: Optional[List[ThreadApplicationUSNexus]] = None,
+                 account_purpose: Optional[ThreadApplicationBusinessAccountPurpose] = None,
+                 account_purpose_description: Optional[str] = None,
+                 transaction_volume: Optional[ThreadApplicationBusinessTransactionVolume] = None,
+                 transaction_volume_description: Optional[str] = None,
+                 stock_exchange_name: Optional[str] = None,
+                 stock_symbol: Optional[str] = None,
+                 countries_of_operation: Optional[List[str]] = None,
+                 year_of_incorporation: Optional[str] = None,
+                 entity_type: Optional[ThreadApplicationEntityType] = None,
+                 website: Optional[str] = None):
+        self.application_id = application_id
+        self.tags = tags
+        self.source_of_funds = source_of_funds
+        self.source_of_funds_description = source_of_funds_description
+        self.business_industry = business_industry
+        self.business_description = business_description
+        self.is_regulated = is_regulated
+        self.regulator_name = regulator_name
+        self.us_nexus = us_nexus
+        self.account_purpose = account_purpose
+        self.account_purpose_description = account_purpose_description
+        self.transaction_volume = transaction_volume
+        self.transaction_volume_description = transaction_volume_description
+        self.stock_exchange_name = stock_exchange_name
+        self.stock_symbol = stock_symbol
+        self.countries_of_operation = countries_of_operation
+        self.year_of_incorporation = year_of_incorporation
+        self.entity_type = entity_type
+        self.website = website
+
+    def to_json_api(self) -> Dict:
+        return super().to_payload("businessApplication", ignore=['application_id'])
+
+    def __repr__(self):
+        return json.dumps(self.to_json_api())
+
+
+UpgradeToThreadApplicationRequest = Union[UpgradeIndividualToThreadApplicationRequest,
+                                          UpgradeSoleProprietorToThreadApplicationRequest,
+                                          UpgradeBusinessToThreadApplicationRequest]
 
 
 class CancelApplicationRequest(UnitRequest):

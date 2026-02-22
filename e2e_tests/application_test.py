@@ -786,3 +786,60 @@ def test_update_thread_beneficial_owner():
     else:
         print("Test failed due to an error during thread application creation.")
 
+
+def test_get_missing_fields():
+    app = create_individual_application()
+    response = client.applications.get_missing_fields(app.data.id)
+    assert response.data.type in ["individualApplicationMissingFields", "businessApplicationMissingFields"]
+    assert "missingFields" in response.data.attributes
+
+
+def test_get_missing_fields_business():
+    app = create_business_application()
+    if app is not None:
+        response = client.applications.get_missing_fields(app.data.id)
+        assert response.data.type in ["individualApplicationMissingFields", "businessApplicationMissingFields"]
+        assert "missingFields" in response.data.attributes
+    else:
+        print("Test failed due to an error during business application creation.")
+
+
+def test_missing_fields_dto_from_json():
+    data = {
+        "type": "individualApplicationMissingFields",
+        "attributes": {
+            "missingFields": [
+                {
+                    "fieldName": "usNexus",
+                    "description": "usNexus is required"
+                },
+                {
+                    "fieldName": "transactionVolume",
+                    "description": "transactionVolume is required"
+                }
+            ]
+        }
+    }
+
+    dto = IndividualApplicationMissingFieldsDTO.from_json_api(None, data.get("type"), data.get("attributes"), None)
+
+    assert dto.type == "individualApplicationMissingFields"
+    assert len(dto.attributes["missingFields"]) == 2
+    assert dto.attributes["missingFields"][0].field_name == "usNexus"
+    assert dto.attributes["missingFields"][0].description == "usNexus is required"
+    assert dto.attributes["missingFields"][1].field_name == "transactionVolume"
+
+
+def test_business_missing_fields_dto_from_json():
+    data = {
+        "type": "businessApplicationMissingFields",
+        "attributes": {
+            "missingFields": []
+        }
+    }
+
+    dto = BusinessApplicationMissingFieldsDTO.from_json_api(None, data.get("type"), data.get("attributes"), None)
+
+    assert dto.type == "businessApplicationMissingFields"
+    assert len(dto.attributes["missingFields"]) == 0
+

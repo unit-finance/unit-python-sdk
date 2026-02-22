@@ -347,7 +347,8 @@ class BeneficialOwnerDTO(UnitDTO):
 class ThreadBeneficialOwner(UnitDTO):
     def __init__(self, status: Optional[Status], full_name: FullName, ssn: Optional[str],
                  passport: Optional[str], nationality: Optional[str], date_of_birth: date,
-                 address: Address, phone: Phone, email: str):
+                 address: Address, phone: Phone, email: str, percentage: Optional[int] = None,
+                 id_theft_score: Optional[int] = None):
         self.status = status
         self.full_name = full_name
         self.ssn = ssn
@@ -357,6 +358,8 @@ class ThreadBeneficialOwner(UnitDTO):
         self.address = address
         self.phone = phone
         self.email = email
+        self.percentage = percentage
+        self.id_theft_score = id_theft_score
 
     @staticmethod
     def create(data: Dict):
@@ -369,7 +372,9 @@ class ThreadBeneficialOwner(UnitDTO):
             data.get("dateOfBirth"),
             Address.from_json_api(data.get("address")),
             Phone.from_json_api(data.get("phone")),
-            data.get("email"))
+            data.get("email"),
+            data.get("percentage"),
+            data.get("idTheftScore"))
 
     @staticmethod
     def from_json_api(l: Union[List, Dict]):
