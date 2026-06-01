@@ -135,7 +135,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
                  card_network: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]], gross_interchange: Optional[str],
                  cash_withdrawal_amount: Optional[int], currency_conversion: Optional[CurrencyConversion],
-                 rich_merchant_data: Optional[RichMerchantData]):
+                 rich_merchant_data: Optional[RichMerchantData], card_decision_source: Optional[str] = None):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'purchaseTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -153,6 +153,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
         self.attributes["cashWithdrawalAmount"] = cash_withdrawal_amount
         self.attributes["currencyConversion"] = currency_conversion
         self.attributes["richMerchantData"] = rich_merchant_data
+        self.attributes["cardDecisionSource"] = card_decision_source
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -165,7 +166,7 @@ class PurchaseTransactionDTO(BaseTransactionDTO):
             attributes.get("cardVerificationData"), attributes.get("cardNetwork"), attributes.get("tags"),
             relationships, attributes.get("grossInterchange"), attributes.get("cashWithdrawalAmount"),
             CurrencyConversion.from_json_api(attributes.get("currencyConversion")),
-            RichMerchantData.from_json_api(attributes.get("richMerchantData")))
+            RichMerchantData.from_json_api(attributes.get("richMerchantData")), attributes.get("cardDecisionSource"))
 
 
 class AtmTransactionDTO(BaseTransactionDTO):
@@ -173,7 +174,8 @@ class AtmTransactionDTO(BaseTransactionDTO):
                  summary: str, card_last_4_digits: str, atm_name: str, atm_location: Optional[str], surcharge: int,
                  interchange: Optional[int], card_network: Optional[str],
                  tags: Optional[Dict[str, str]], relationships: Optional[Dict[str, Relationship]],
-                 gross_interchange: Optional[str], currency_conversion: Optional[CurrencyConversion]):
+                 gross_interchange: Optional[str], currency_conversion: Optional[CurrencyConversion],
+                 card_decision_source: Optional[str] = None):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'atmTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -184,6 +186,7 @@ class AtmTransactionDTO(BaseTransactionDTO):
         self.attributes["cardNetwork"] = card_network
         self.attributes["grossInterchange"] = gross_interchange
         self.attributes["currencyConversion"] = currency_conversion
+        self.attributes["cardDecisionSource"] = card_decision_source
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -192,7 +195,8 @@ class AtmTransactionDTO(BaseTransactionDTO):
                                  attributes["cardLast4Digits"], attributes["atmName"], attributes.get("atmLocation"),
                                  attributes["surcharge"], attributes.get("interchange"), attributes.get("cardNetwork"),
                                  attributes.get("tags"), relationships, attributes.get("grossInterchange"),
-                                 CurrencyConversion.from_json_api(attributes.get("currencyConversion")))
+                                 CurrencyConversion.from_json_api(attributes.get("currencyConversion")),
+                                 attributes.get("cardDecisionSource"))
 
 
 class FeeTransactionDTO(BaseTransactionDTO):
@@ -214,7 +218,8 @@ class CardTransactionDTO(BaseTransactionDTO):
                  interchange: Optional[int], payment_method: Optional[str], digital_wallet: Optional[str],
                  card_verification_data: Optional[Dict], card_network: Optional[str], tags: Optional[Dict[str, str]],
                  relationships: Optional[Dict[str, Relationship]], gross_interchange: Optional[str],
-                 currency_conversion: Optional[CurrencyConversion], rich_merchant_data: Optional[RichMerchantData]):
+                 currency_conversion: Optional[CurrencyConversion], rich_merchant_data: Optional[RichMerchantData],
+                 card_decision_source: Optional[str] = None):
         BaseTransactionDTO.__init__(self, id, created_at, direction, amount, balance, summary, tags, relationships)
         self.type = 'cardTransaction'
         self.attributes["cardLast4Digits"] = card_last_4_digits
@@ -228,6 +233,7 @@ class CardTransactionDTO(BaseTransactionDTO):
         self.attributes["grossInterchange"] = gross_interchange
         self.attributes["currencyConversion"] = currency_conversion
         self.attributes["richMerchantData"] = rich_merchant_data
+        self.attributes["cardDecisionSource"] = card_decision_source
 
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -239,7 +245,8 @@ class CardTransactionDTO(BaseTransactionDTO):
                                   attributes.get("cardVerificationData"), attributes.get("cardNetwork"),
                                   attributes.get("tags"), relationships, attributes.get("grossInterchange"),
                                   CurrencyConversion.from_json_api(attributes.get("currencyConversion")),
-                                  RichMerchantData.from_json_api(attributes.get("richMerchantData"))
+                                  RichMerchantData.from_json_api(attributes.get("richMerchantData")),
+                                  attributes.get("cardDecisionSource")
                                   )
 
 

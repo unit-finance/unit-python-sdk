@@ -41,6 +41,7 @@ def test_card_transaction_authorization_request_dto():
         "createdAt": "2021-06-22T13:39:17.018Z",
         "amount": 2500,
         "status": "Pending",
+        "outcome": "WaitTimeout",
         "partialApprovalAllowed": False,
         "merchant": {
           "name": "Apple Inc.",
@@ -84,6 +85,7 @@ def test_card_transaction_authorization_request_dto():
     assert authorization_request.id == data["id"]
     assert authorization_request.type == data["type"]
     assert authorization_request.attributes.get("cardNetwork") == data["attributes"]["cardNetwork"]
+    assert authorization_request.attributes.get("outcome") == data["attributes"]["outcome"]
 
 
 def test_atm_authorization_request_dto():
@@ -94,6 +96,7 @@ def test_atm_authorization_request_dto():
             "createdAt": "2021-06-22T13:39:17.018Z",
             "amount": 2500,
             "status": "Pending",
+            "outcome": "PostTimeout",
             "partialApprovalAllowed": False,
             "direction": "Debit",
             "atmName": "HOME FED SAV BK",
@@ -129,6 +132,7 @@ def test_atm_authorization_request_dto():
     assert authorization_request.id == data["id"]
     assert authorization_request.type == data["type"]
     assert authorization_request.attributes.get("cardNetwork") == data["attributes"]["cardNetwork"]
+    assert authorization_request.attributes.get("outcome") == data["attributes"]["outcome"]
 
 
 def test_purchase_authorization_request_dto():
@@ -139,6 +143,7 @@ def test_purchase_authorization_request_dto():
         "createdAt": "2021-06-22T13:39:17.018Z",
         "amount": 2500,
         "status": "Pending",
+        "outcome": "Approved",
         "partialApprovalAllowed": False,
         "merchant": {
           "name": "Apple Inc.",
@@ -178,6 +183,13 @@ def test_purchase_authorization_request_dto():
         }
       }
     }
+
+    authorization_request = DtoDecoder.decode(data)
+    assert type(authorization_request) is PurchaseAuthorizationRequestDTO
+    assert authorization_request.id == data["id"]
+    assert authorization_request.type == data["type"]
+    assert authorization_request.attributes.get("cardNetwork") == data["attributes"]["cardNetwork"]
+    assert authorization_request.attributes.get("outcome") == data["attributes"]["outcome"]
 
 
 #
