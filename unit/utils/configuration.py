@@ -59,7 +59,7 @@ class Configuration(object):
     @staticmethod
     def __check_request_timeout(seconds):
         # Per-request HTTP timeout passed to requests. Must be a positive int;
-        # 0 / None are rejected to avoid the historical "hang forever" behavior.
+        # None is rejected to avoid waiting indefinitely; 0 is rejected to avoid immediate timeouts.
         if seconds is None:
             raise Exception("request_timeout must be a positive int")
 

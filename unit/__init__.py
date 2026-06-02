@@ -33,8 +33,8 @@ __all__ = ["api", "models", "utils"]
 
 
 class Unit(object):
-    def __init__(self, api_url=None, token=None, retries=0, timeout=120, request_timeout=120,
-                 configuration: Configuration = None):
+    def __init__(self, api_url=None, token=None, retries=0, timeout=120,
+                 configuration: Configuration = None, request_timeout=120):
         if (api_url is not None or token is not None) and configuration is not None:
             raise Exception("use only configuration")
 
