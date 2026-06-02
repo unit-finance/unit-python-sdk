@@ -83,14 +83,14 @@ the default amount of retries is 0. <br>Unit initialization with retries:
 ```
 
 ## Request Timeouts
-Every HTTP request issued by the SDK has a per-attempt timeout (default: 30 seconds).
+Every HTTP request issued by the SDK has a per-attempt timeout (default: 120 seconds).
 This prevents calls from hanging indefinitely if a connection stalls during a Unit API
 outage. The previous `timeout` argument is still honored — it now controls the **total
 retry budget** for the backoff loop, while the new `request_timeout` argument controls
 the **per-attempt** HTTP timeout passed to `requests`.
 
 ```python
-    unit = Unit(api_url, token, retries=3, timeout=120, request_timeout=30)
+    unit = Unit(api_url, token, retries=3, timeout=120, request_timeout=120)
 ```
 
 `requests.exceptions.Timeout` and `requests.exceptions.ConnectionError` are now retried

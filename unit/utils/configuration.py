@@ -1,5 +1,5 @@
 class Configuration(object):
-    def __init__(self, api_url, token, retries=0, timeout=120, request_timeout=30):
+    def __init__(self, api_url, token, retries=0, timeout=120, request_timeout=120):
         self.api_url = self.__check_api_url(api_url)
         self.token = self.__check_token(token)
         self.retries = self.__check_retries(retries)
