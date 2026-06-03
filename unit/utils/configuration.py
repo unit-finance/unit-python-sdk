@@ -1,15 +1,16 @@
 class Configuration(object):
-    def __init__(self, api_url, token, retries=0, timeout=120):
+    def __init__(self, api_url, token, retries=0, timeout=120, request_timeout=120):
         self.api_url = self.__check_api_url(api_url)
         self.token = self.__check_token(token)
         self.retries = self.__check_retries(retries)
         self.timeout = self.__check_timeout(timeout)
+        self.request_timeout = self.__check_request_timeout(request_timeout)
 
     def get_headers(self):
         return {
             "content-type": "application/vnd.api+json",
             "authorization": f"Bearer {self.token}",
-            "X-UNIT-SDK": f"unit-python-sdk@v1.2.0"
+            "X-UNIT-SDK": f"unit-python-sdk@v1.3.0"
         }
 
     def set_api_url(self, api_url):
@@ -20,6 +21,9 @@ class Configuration(object):
 
     def set_timeout(self, timeout):
         self.timeout = self.__check_timeout(timeout)
+
+    def set_request_timeout(self, request_timeout):
+        self.request_timeout = self.__check_request_timeout(request_timeout)
 
     def set_retries(self, retries):
         self.retries = self.__check_retries(retries)
@@ -36,6 +40,9 @@ class Configuration(object):
     def get_timeout(self):
         return self.timeout
 
+    def get_request_timeout(self):
+        return self.request_timeout
+
     @staticmethod
     def __check_timeout(seconds):
         try:
@@ -46,6 +53,23 @@ class Configuration(object):
 
         if i_seconds < 0:
             raise Exception("seconds must be 0 or greater")
+
+        return i_seconds
+
+    @staticmethod
+    def __check_request_timeout(seconds):
+        # Per-request HTTP timeout passed to requests. Must be a positive int;
+        # None is rejected to avoid waiting indefinitely; 0 is rejected to avoid immediate timeouts.
+        if seconds is None:
+            raise Exception("request_timeout must be a positive int")
+
+        try:
+            i_seconds = int(seconds)
+        except Exception:
+            raise Exception("request_timeout must be a positive int")
+
+        if i_seconds <= 0:
+            raise Exception("request_timeout must be a positive int")
 
         return i_seconds
 
@@ -75,4 +99,3 @@ class Configuration(object):
             raise Exception("token is missing")
 
         return token
-
