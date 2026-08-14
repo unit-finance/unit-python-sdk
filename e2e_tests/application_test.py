@@ -8,6 +8,10 @@ token = os.environ.get('TOKEN')
 c = Configuration("https://api.s.unit.sh", token, 2, 150)
 client = Unit(configuration=c)
 
+thread_token = os.environ.get('THREAD_TOKEN')
+thread_c = Configuration("https://api.s.unit.sh", thread_token, 2, 150)
+thread_client = Unit(configuration=thread_c)
+
 
 ApplicationTypes = ["individualApplication", "businessApplication"]
 
@@ -48,10 +52,10 @@ def create_business_application():
             beneficial_owners=[BeneficialOwner(
                 FullName("James", "Smith"), date.today() - timedelta(days=20*365),
                 Address("650 Allerton Street","Redwood City","CA","94063","US"),
-                Phone("1","2025550127"),"james@unit-finance.com",ssn="574567625"),
+                Phone("1","2025550127"),"james@unit-finance.com",ssn="574567625", percentage=50),
             BeneficialOwner(FullName("Richard","Hendricks"), date.today() - timedelta(days=20 * 365),
                             Address("470 Allerton Street", "Redwood City", "CA", "94063", "US"),
-                            Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795")],
+                            Phone("1", "2025550158"), "richard@unit-finance.com", ssn="574572795", percentage=50)],
             ein="123456789",
             officer=Officer(
                 full_name=FullName("Jone", "Doe"),
@@ -481,4 +485,361 @@ def test_update_beneficial_owner():
         "EmploymentOrPayrollIncome"))
 
     assert updated.data.type == "beneficialOwner"
+
+
+def create_individual_thread_application(ssn: str = "000000004"):
+    request = CreateIndividualThreadApplicationRequest(
+        ssn=ssn,
+        passport=None,
+        nationality="US",
+        full_name=FullName("Jane", "Doe"),
+        date_of_birth=date.today() - timedelta(days=20*365),
+        address=Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
+        phone=Phone("1", "2025550109"),
+        email="jane.doe@unit-finance.com",
+        idempotency_key=generate_uuid(),
+        account_purpose="EverydaySpending",
+        source_of_funds="SalaryOrWages",
+        transaction_volume="Between1KAnd5K",
+        profession="SoftwareEngineer"
+    )
+
+    return thread_client.applications.create_thread_application(request)
+
+
+def test_create_individual_thread_application():
+    app = create_individual_thread_application()
+    assert app.data.type == "individualApplication"
+
+
+def create_business_thread_application():
+    try:
+        request = CreateBusinessThreadApplicationRequest(
+            name="Thread Acme Inc.",
+            address=Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
+            phone=Phone("1", "9294723498"),
+            state_of_incorporation="CA",
+            ein="123456780",
+            entity_type="LLC",
+            contact=BusinessContact(
+                full_name=FullName("Jane", "Doe"),
+                email="jane.doe@unit-finance.com",
+                phone=Phone("1", "2025550109")
+            ),
+            officer=Officer(
+                full_name=FullName("Jane", "Doe"),
+                date_of_birth=date.today() - timedelta(days=20 * 365),
+                address=Address("950 Allerton Street", "Redwood City", "CA", "94063", "US"),
+                phone=Phone("1", "2025550109"),
+                email="jane.doe@unit-finance.com",
+                ssn="123456780"
+            ),
+            beneficial_owners=[BeneficialOwner(
+                FullName("James", "Smith"), date.today() - timedelta(days=20*365),
+                Address("650 Allerton Street", "Redwood City", "CA", "94063", "US"),
+                Phone("1", "2025550127"), "james@unit-finance.com", ssn="574567626", percentage=50)
+            ],
+            business_industry="FinTechOrPaymentProcessing",
+            business_description="A fintech company providing payment solutions",
+            account_purpose="TechnologyStartupOperations",
+            source_of_funds="SalesOfServices",
+            transaction_volume="Between50KAnd250K",
+            year_of_incorporation="2020",
+            tags={"test": "thread_test"},
+            idempotency_key=generate_uuid()
+        )
+
+        return thread_client.applications.create_thread_application(request)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+
+def test_create_business_thread_application():
+    response = create_business_thread_application()
+    if response is not None:
+        assert response.data.type == "businessApplication"
+    else:
+        print("Test failed due to an error during thread application creation.")
+
+
+def create_sole_proprietor_thread_application(ssn: str = "000000005"):
+    try:
+        request = CreateSoleProprietorThreadApplicationRequest(
+            ssn=ssn,
+            passport=None,
+            nationality="US",
+            full_name=FullName("John", "Smith"),
+            date_of_birth=date.today() - timedelta(days=25*365),
+            address=Address("1600 Pennsylvania Avenue Northwest", "Washington", "CA", "20500", "US"),
+            phone=Phone("1", "2025550110"),
+            email="john.smith@unit-finance.com",
+            dba="Smith's Consulting",
+            ein="987654321",
+            website="https://smithconsulting.com",
+            idempotency_key=generate_uuid(),
+            account_purpose="EverydaySpending",
+            source_of_funds="BusinessIncome",
+            transaction_volume="Between5KAnd15K",
+            profession="Consultant",
+            tags={"test": "sole_prop_thread_test"}
+        )
+
+        return thread_client.applications.create_thread_application(request)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+
+def test_create_sole_proprietor_thread_application():
+    response = create_sole_proprietor_thread_application()
+    if response is not None:
+        assert response.data.type == "individualApplication"
+    else:
+        print("Test failed due to an error during sole proprietor thread application creation.")
+
+
+def test_individual_thread_application_dto():
+    data = {
+        "type": "individualApplication",
+        "id": "100",
+        "attributes": {
+            "createdAt": "2024-01-14T14:05:04.718Z",
+            "status": "PendingReview",
+            "message": "Application is being reviewed.",
+            "fullName": {
+                "first": "Jane",
+                "last": "Doe"
+            },
+            "ssn": "000000004",
+            "nationality": "US",
+            "address": {
+                "street": "1600 Pennsylvania Avenue",
+                "city": "Washington",
+                "state": "DC",
+                "postalCode": "20500",
+                "country": "US"
+            },
+            "dateOfBirth": "2000-01-15",
+            "email": "jane.doe@unit-finance.com",
+            "phone": {
+                "countryCode": "1",
+                "number": "2025550109"
+            },
+            "archived": False,
+            "accountPurpose": "EverydaySpending",
+            "sourceOfFunds": "SalaryOrWages",
+            "transactionVolume": "Between1KAnd5K",
+            "profession": "SoftwareEngineer"
+        },
+        "relationships": {
+            "org": {
+                "data": {
+                    "type": "org",
+                    "id": "1"
+                }
+            }
+        }
+    }
+
+    app = IndividualThreadApplicationDTO.from_json_api(
+        data.get("id"), data.get("type"), data.get("attributes"), data.get("relationships")
+    )
+
+    assert app.type == "individualApplication"
+    assert app.id == "100"
+    assert app.attributes["ssn"] == "000000004"
+    assert app.attributes["accountPurpose"] == "EverydaySpending"
+    assert app.attributes["sourceOfFunds"] == "SalaryOrWages"
+    assert app.attributes["transactionVolume"] == "Between1KAnd5K"
+    assert app.attributes["profession"] == "SoftwareEngineer"
+
+
+def test_business_thread_application_dto():
+    data = {
+        "type": "businessApplication",
+        "id": "200",
+        "attributes": {
+            "createdAt": "2024-01-13T16:01:19.346Z",
+            "status": "PendingReview",
+            "message": "Application is being reviewed.",
+            "name": "Thread Acme Inc.",
+            "address": {
+                "street": "1600 Pennsylvania Avenue",
+                "city": "Washington",
+                "state": "DC",
+                "postalCode": "20500",
+                "country": "US"
+            },
+            "phone": {
+                "countryCode": "1",
+                "number": "9294723498"
+            },
+            "stateOfIncorporation": "CA",
+            "ein": "123456780",
+            "contact": {
+                "fullName": {
+                    "first": "Jane",
+                    "last": "Doe"
+                },
+                "email": "jane.doe@unit-finance.com",
+                "phone": {
+                    "countryCode": "1",
+                    "number": "2025550109"
+                }
+            },
+            "officer": {
+                "fullName": {
+                    "first": "Jane",
+                    "last": "Doe"
+                },
+                "ssn": "123456780",
+                "address": {
+                    "street": "950 Allerton Street",
+                    "city": "Redwood City",
+                    "state": "CA",
+                    "postalCode": "94063",
+                    "country": "US"
+                },
+                "dateOfBirth": "2000-01-15",
+                "email": "jane.doe@unit-finance.com",
+                "phone": {
+                    "countryCode": "1",
+                    "number": "2025550109"
+                },
+                "status": "Approved"
+            },
+            "beneficialOwners": [],
+            "archived": False,
+            "businessIndustry": "FinTechOrPaymentProcessing",
+            "businessDescription": "A fintech company",
+            "accountPurpose": "TechnologyStartupOperations",
+            "sourceOfFunds": "SalesOfServices",
+            "transactionVolume": "Between50KAnd250K",
+            "entityType": "LLC"
+        },
+        "relationships": {
+            "org": {
+                "data": {
+                    "type": "org",
+                    "id": "1"
+                }
+            }
+        }
+    }
+
+    app = BusinessThreadApplicationDTO.from_json_api(
+        data.get("id"), data.get("type"), data.get("attributes"), data.get("relationships")
+    )
+
+    assert app.type == "businessApplication"
+    assert app.id == "200"
+    assert app.attributes["name"] == "Thread Acme Inc."
+    assert app.attributes["businessIndustry"] == "FinTechOrPaymentProcessing"
+    assert app.attributes["accountPurpose"] == "TechnologyStartupOperations"
+    assert app.attributes["sourceOfFunds"] == "SalesOfServices"
+    assert app.attributes["transactionVolume"] == "Between50KAnd250K"
+    assert app.attributes["entityType"] == "LLC"
+
+
+def test_update_individual_thread_application():
+    app = create_individual_thread_application()
+    updated = thread_client.applications.update_thread_application(
+        PatchIndividualThreadApplicationRequest(app.data.id, tags={"patch": "thread-test-patch"})
+    )
+    assert updated.data.type == "individualApplication"
+
+
+def test_update_business_thread_application():
+    app = create_business_thread_application()
+    if app is not None:
+        updated = thread_client.applications.update_thread_application(
+            PatchBusinessThreadApplicationRequest(app.data.id, tags={"patch": "thread-business-patch"})
+        )
+        assert updated.data.type == "businessApplication"
+    else:
+        print("Test failed due to an error during thread application creation.")
+
+
+def test_update_sole_proprietor_thread_application():
+    app = create_sole_proprietor_thread_application()
+    if app is not None:
+        updated = thread_client.applications.update_thread_application(
+            PatchSoleProprietorThreadApplicationRequest(app.data.id, tags={"patch": "thread-sole-prop-patch"})
+        )
+        assert updated.data.type == "individualApplication"
+    else:
+        print("Test failed due to an error during sole proprietor thread application creation.")
+
+
+def test_update_thread_beneficial_owner():
+    app = create_business_thread_application()
+    if app is not None:
+        updated = thread_client.applications.update_thread_business_beneficial_owner(
+            PatchThreadBusinessBeneficialOwnerRequest(
+                app.data.relationships["beneficialOwners"].data[0].id,
+                app.data.id,
+                percentage=30
+            )
+        )
+        assert updated.data.type == "beneficialOwner"
+    else:
+        print("Test failed due to an error during thread application creation.")
+
+
+def test_get_missing_fields():
+    app = create_individual_application()
+    response = client.applications.get_missing_fields(app.data.id)
+    assert response.data.type in ["individualApplicationMissingFields", "businessApplicationMissingFields"]
+    assert "missingFields" in response.data.attributes
+
+
+def test_get_missing_fields_business():
+    app = create_business_application()
+    if app is not None:
+        response = client.applications.get_missing_fields(app.data.id)
+        assert response.data.type in ["individualApplicationMissingFields", "businessApplicationMissingFields"]
+        assert "missingFields" in response.data.attributes
+    else:
+        print("Test failed due to an error during business application creation.")
+
+
+def test_missing_fields_dto_from_json():
+    data = {
+        "type": "individualApplicationMissingFields",
+        "attributes": {
+            "missingFields": [
+                {
+                    "fieldName": "usNexus",
+                    "description": "usNexus is required"
+                },
+                {
+                    "fieldName": "transactionVolume",
+                    "description": "transactionVolume is required"
+                }
+            ]
+        }
+    }
+
+    dto = IndividualApplicationMissingFieldsDTO.from_json_api(None, data.get("type"), data.get("attributes"), None)
+
+    assert dto.type == "individualApplicationMissingFields"
+    assert len(dto.attributes["missingFields"]) == 2
+    assert dto.attributes["missingFields"][0].field_name == "usNexus"
+    assert dto.attributes["missingFields"][0].description == "usNexus is required"
+    assert dto.attributes["missingFields"][1].field_name == "transactionVolume"
+
+
+def test_business_missing_fields_dto_from_json():
+    data = {
+        "type": "businessApplicationMissingFields",
+        "attributes": {
+            "missingFields": []
+        }
+    }
+
+    dto = BusinessApplicationMissingFieldsDTO.from_json_api(None, data.get("type"), data.get("attributes"), None)
+
+    assert dto.type == "businessApplicationMissingFields"
+    assert len(dto.attributes["missingFields"]) == 0
 

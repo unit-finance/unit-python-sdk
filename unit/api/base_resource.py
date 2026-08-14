@@ -2,9 +2,13 @@ import json
 import requests
 import backoff
 from typing import Optional, Dict
+from requests.exceptions import Timeout, ConnectionError as RequestsConnectionError
 
 from unit.utils.configuration import Configuration
 from unit.models.codecs import UnitEncoder
+
+
+RETRYABLE_NETWORK_EXCEPTIONS = (Timeout, RequestsConnectionError)
 
 
 def backoff_idempotency_key_handler(e):
@@ -36,6 +40,31 @@ def idempotency_key_is_present(e):
     return body["data"]["attributes"].get("idempotencyKey") is not None
 
 
+def giveup_unless_idempotent(e):
+    """`backoff.on_exception` giveup predicate. Returns True to STOP retrying.
+
+    Mirrors `idempotency_key_is_present` but operates on the raised
+    `requests` exception, defensively handling missing/unparseable bodies
+    (e.g. a `ConnectTimeout` that occurred before any body was sent)."""
+    request = getattr(e, "request", None)
+    body_raw = getattr(request, "body", None) if request is not None else None
+    if not body_raw:
+        return True
+
+    try:
+        body = json.loads(body_raw)
+    except (ValueError, TypeError):
+        return True
+
+    if not body:
+        return True
+
+    try:
+        return body["data"]["attributes"].get("idempotencyKey") is None
+    except (KeyError, TypeError, AttributeError):
+        return True
+
+
 class BaseResource(object):
     def __init__(self, resource: str, configuration: Configuration):
         self.resource = resource
@@ -43,89 +72,132 @@ class BaseResource(object):
 
     def get(self, resource: str, params: Dict = None, headers: Optional[Dict[str, str]] = None):
 
+        @backoff.on_exception(backoff.expo,
+                              RETRYABLE_NETWORK_EXCEPTIONS,
+                              max_tries=self.configuration.get_tries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
                               max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def get_with_backoff(path: str, p: Dict, h: Dict[str, str]):
-            return requests.get(path, params=p, headers=h, timeout=self.configuration.get_timeout())
+            return requests.get(path, params=p, headers=h,
+                                timeout=self.configuration.get_request_timeout())
 
         return get_with_backoff(f"{self.configuration.api_url}/{resource}", params, self.__merge_headers(headers))
 
     def post(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
 
+        @backoff.on_exception(backoff.expo,
+                              RETRYABLE_NETWORK_EXCEPTIONS,
+                              max_tries=self.configuration.get_tries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
                               max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_with_backoff(path: str, d: Dict, h: Dict[str, str]):
-            return requests.post(path, data=d, headers=h, timeout=self.configuration.get_timeout())
+            return requests.post(path, data=d, headers=h,
+                                 timeout=self.configuration.get_request_timeout())
 
         return post_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
     def post_create(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
 
+        @backoff.on_exception(backoff.expo,
+                              RETRYABLE_NETWORK_EXCEPTIONS,
+                              max_tries=self.configuration.get_tries,
+                              max_time=self.configuration.get_timeout,
+                              giveup=giveup_unless_idempotent,
+                              jitter=backoff.random_jitter)
         @backoff.on_predicate(backoff.expo,
                               backoff_idempotency_key_handler,
                               max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_create_with_backoff(path: str, d, h):
-            return requests.post(path, data=d, headers=h, timeout=self.configuration.get_timeout())
+            return requests.post(path, data=d, headers=h,
+                                 timeout=self.configuration.get_request_timeout())
 
         return post_create_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
     def post_full_path(self, path: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
 
+        @backoff.on_exception(backoff.expo,
+                              RETRYABLE_NETWORK_EXCEPTIONS,
+                              max_tries=self.configuration.get_tries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
                               max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def post_full_path_with_backoff(p, d, h):
-            return requests.post(p, data=d, headers=h, timeout=self.configuration.get_timeout())
+            return requests.post(p, data=d, headers=h,
+                                 timeout=self.configuration.get_request_timeout())
 
         return post_full_path_with_backoff(path, data, self.__merge_headers(headers))
 
     def patch(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
 
+        @backoff.on_exception(backoff.expo,
+                              RETRYABLE_NETWORK_EXCEPTIONS,
+                              max_tries=self.configuration.get_tries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
                               max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def patch_with_backoff(p, d, h):
-            return requests.patch(p, data=d, headers=h, timeout=self.configuration.get_timeout())
+            return requests.patch(p, data=d, headers=h,
+                                  timeout=self.configuration.get_request_timeout())
 
         return patch_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
     def delete(self, resource: str, data: Dict = None, headers: Optional[Dict[str, str]] = None):
         data = json.dumps(data, cls=UnitEncoder) if data is not None else None
 
+        @backoff.on_exception(backoff.expo,
+                              RETRYABLE_NETWORK_EXCEPTIONS,
+                              max_tries=self.configuration.get_tries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
                               max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def delete_with_backoff(p, d, h):
-            return requests.delete(p, data=d, headers=h, timeout=self.configuration.get_timeout())
+            return requests.delete(p, data=d, headers=h,
+                                   timeout=self.configuration.get_request_timeout())
 
         return delete_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
     def put(self, resource: str, data: Optional[Dict] = None, headers: Optional[Dict[str, str]] = None):
+        @backoff.on_exception(backoff.expo,
+                              RETRYABLE_NETWORK_EXCEPTIONS,
+                              max_tries=self.configuration.get_tries,
+                              max_time=self.configuration.get_timeout,
+                              jitter=backoff.random_jitter)
         @backoff.on_predicate(backoff.expo,
                               backoff_handler,
                               max_tries=self.configuration.get_tries,
                               max_time=self.configuration.get_timeout,
                               jitter=backoff.random_jitter)
         def put_with_backoff(p, d, h):
-            return requests.put(p, data=d, headers=h, timeout=self.configuration.get_timeout())
+            return requests.put(p, data=d, headers=h,
+                                timeout=self.configuration.get_request_timeout())
 
         return put_with_backoff(f"{self.configuration.api_url}/{resource}", data, self.__merge_headers(headers))
 
@@ -140,4 +212,3 @@ class BaseResource(object):
     @staticmethod
     def is_20x(status: int):
         return status == 200 or status == 201 or status == 204
-

@@ -344,6 +344,63 @@ class BeneficialOwnerDTO(UnitDTO):
         return BeneficialOwnerDTO(_id, _type, BeneficialOwner.from_json_api(attributes), relationships)
 
 
+class ThreadBeneficialOwner(UnitDTO):
+    def __init__(self, status: Optional[Status], full_name: FullName, ssn: Optional[str],
+                 passport: Optional[str], nationality: Optional[str], date_of_birth: date,
+                 address: Address, phone: Phone, email: str, percentage: Optional[int] = None,
+                 id_theft_score: Optional[int] = None):
+        self.status = status
+        self.full_name = full_name
+        self.ssn = ssn
+        self.passport = passport
+        self.nationality = nationality
+        self.date_of_birth = date_of_birth
+        self.address = address
+        self.phone = phone
+        self.email = email
+        self.percentage = percentage
+        self.id_theft_score = id_theft_score
+
+    @staticmethod
+    def create(data: Dict):
+        return ThreadBeneficialOwner(
+            data.get("status"),
+            FullName.from_json_api(data.get("fullName")),
+            data.get("ssn"),
+            data.get("passport"),
+            data.get("nationality"),
+            data.get("dateOfBirth"),
+            Address.from_json_api(data.get("address")),
+            Phone.from_json_api(data.get("phone")),
+            data.get("email"),
+            data.get("percentage"),
+            data.get("idTheftScore"))
+
+    @staticmethod
+    def from_json_api(l: Union[List, Dict]):
+        if l is None:
+            return None
+        if isinstance(l, list):
+            beneficial_owners = []
+            for data in l:
+                beneficial_owners.append(ThreadBeneficialOwner.create(data))
+            return beneficial_owners
+        else:
+            return ThreadBeneficialOwner.create(l)
+
+
+class ThreadBeneficialOwnerDTO(UnitDTO):
+    def __init__(self, _id: str, _type: str, attributes: ThreadBeneficialOwner, relationships: Dict[str, Relationship]):
+        self.id = _id
+        self.type = _type
+        self.attributes = attributes
+        self.relationships = relationships
+
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ThreadBeneficialOwnerDTO(_id, _type, ThreadBeneficialOwner.from_json_api(attributes), relationships)
+
+
 class AuthorizedUser(UnitDTO):
     def __init__(self, full_name: FullName, email: str, phone: Phone, jwt_subject: Optional[str]):
         self.full_name = full_name

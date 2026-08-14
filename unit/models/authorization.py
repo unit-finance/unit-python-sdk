@@ -17,7 +17,8 @@ class AuthorizationDTO(object):
                  relationships: Optional[Dict[str, Relationship]], merchant_id: Optional[str],
                  decline_reason: Optional[str], cash_withdrawal_amount: Optional[int], summary: Optional[str],
                  currency_conversion: Optional[CurrencyConversion], rich_merchant_data: Optional[RichMerchantData],
-                 card_decision_source: Optional[CardDecisionSource] = None
+                 card_decision_source: Optional[CardDecisionSource], decline_description: Optional[str],
+                 declined_by: Optional[str]
                  ):
         self.id = id
         self.type = "authorization"
@@ -29,7 +30,8 @@ class AuthorizationDTO(object):
                            "cardVerificationData": card_verification_data, "cardNetwork": card_network, "tags": tags,
                            "declineReason": decline_reason, "cashWithdrawalAmount": cash_withdrawal_amount,
                            "summary": summary, "currencyConversion": currency_conversion,
-                           "richMerchantData": rich_merchant_data, "cardDecisionSource": card_decision_source}
+                           "richMerchantData": rich_merchant_data, "cardDecisionSource": card_decision_source,
+                           "declineDescription": decline_description, "declinedBy": declined_by}
         self.relationships = relationships
 
     @staticmethod
@@ -45,7 +47,8 @@ class AuthorizationDTO(object):
                                 attributes.get("summary"),
                                 CurrencyConversion.from_json_api(attributes.get("currencyConversion")),
                                 RichMerchantData.from_json_api(attributes.get("richMerchantData")),
-                                attributes.get("cardDecisionSource")
+                                attributes.get("cardDecisionSource"), attributes.get("declineDescription"),
+                                attributes.get("declinedBy")
                                 )
 
 

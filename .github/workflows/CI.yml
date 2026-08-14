@@ -21,4 +21,4 @@ jobs:
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Test with pytest
       run: |
-        TOKEN=${{ secrets.UNIT_TOKEN }} py.test
+        TOKEN=${{ secrets.UNIT_TOKEN }} THREAD_TOKEN=${{ secrets.UNIT_THREAD_TOKEN }} py.test
