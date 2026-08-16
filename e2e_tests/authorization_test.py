@@ -79,6 +79,7 @@ def test_authorization_api_response():
         "cardNetwork": "Visa",
         "paymentMethod": "Swipe",
         "digitalWallet": "Google",
+        "cardDecisionSource": "Org",
         "cashWithdrawalAmount": 150
       },
       "relationships": {

@@ -8,6 +8,7 @@ from unit.models import *
 from unit.utils import date_utils
 
 PurchaseAuthorizationRequestStatus = Literal["Pending", "Approved", "Declined"]
+AuthorizationRequestOutcome = Literal["Approved", "Declined", "PostTimeout", "PostError", "WaitTimeout"]
 DeclineReason = Literal["AccountClosed", "CardExceedsAmountLimit", "DoNotHonor", "InsufficientFunds", "InvalidMerchant",
                         "ReferToCardIssuer", "RestrictedCard", "Timeout", "TransactionNotPermittedToCardholder"]
 
@@ -19,6 +20,7 @@ class BaseAuthorizationRequest(object):
         self.type = type
         self.attributes = {"createdAt": date_utils.to_datetime(attributes["createdAt"]), "amount": attributes["amount"],
                            "status": attributes["status"],
+                           "outcome": attributes.get("outcome"),
                            "partialApprovalAllowed": attributes.get("partialApprovalAllowed"),
                            "approvedAmount": attributes.get("approvedAmount"),
                            "declineReason": attributes.get("declineReason"),

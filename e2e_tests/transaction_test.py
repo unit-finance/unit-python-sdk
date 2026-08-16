@@ -204,7 +204,8 @@ def test_card_transaction():
             "cardVerificationData": {
               "verificationMethod": "CVV2"
             },
-            "cardNetwork": "Visa"
+            "cardNetwork": "Visa",
+            "cardDecisionSource": "IssuerStandIn"
           },
           "relationships": {
             "account": {
@@ -233,6 +234,7 @@ def test_card_transaction():
     assert transaction.attributes["recurring"] is False
     assert transaction.attributes["paymentMethod"] == "Contactless"
     assert transaction.attributes["cardNetwork"] == "Visa"
+    assert transaction.attributes["cardDecisionSource"] == "IssuerStandIn"
     assert transaction.attributes["digitalWallet"] == "Apple"
     assert transaction.attributes["cardVerificationData"]["verificationMethod"] == "CVV2"
 
@@ -252,7 +254,8 @@ def test_atm_transaction():
             "atmLocation": "Masontown, PA 15461",
             "surcharge": 10,
             "interchange": 15.2,
-            "cardNetwork": "Allpoint"
+            "cardNetwork": "Allpoint",
+            "cardDecisionSource": "TimeoutApprove"
           },
           "relationships": {
             "account": {
@@ -287,6 +290,7 @@ def test_atm_transaction():
     assert transaction.attributes["surcharge"] == 10
     assert transaction.attributes["interchange"] == 15.2
     assert transaction.attributes["cardNetwork"] == "Allpoint"
+    assert transaction.attributes["cardDecisionSource"] == "TimeoutApprove"
 
 def test_purchase_transaction():
     purchase_transaction_api_response = {
@@ -318,7 +322,8 @@ def test_purchase_transaction():
             "cardVerificationData": {
               "verificationMethod": "CVV2"
             },
-            "cardNetwork": "Visa"
+            "cardNetwork": "Visa",
+            "cardDecisionSource": "Unit"
           },
           "relationships": {
             "account": {
@@ -361,6 +366,7 @@ def test_purchase_transaction():
     assert transaction.attributes["recurring"] is False
     assert transaction.attributes["cardPresent"] is True
     assert transaction.attributes["cardNetwork"] == "Visa"
+    assert transaction.attributes["cardDecisionSource"] == "Unit"
     assert transaction.attributes["digitalWallet"] == "Apple"
     assert transaction.attributes["paymentMethod"] == "Contactless"
 
