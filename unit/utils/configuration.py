@@ -10,7 +10,7 @@ class Configuration(object):
         return {
             "content-type": "application/vnd.api+json",
             "authorization": f"Bearer {self.token}",
-            "X-UNIT-SDK": f"unit-python-sdk@v1.3.1"
+            "X-UNIT-SDK": f"unit-python-sdk@v1.3.2"
         }
 
     def set_api_url(self, api_url):
