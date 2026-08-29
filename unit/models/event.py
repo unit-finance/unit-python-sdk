@@ -120,6 +120,18 @@ class CustomerCreatedEvent(BaseEvent):
         return CustomerCreatedEvent(_id, _type, attributes, relationships)
 
 
+class CustomerUpdatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CustomerUpdatedEvent(_id, _type, attributes, relationships)
+
+
+class CustomerArchivedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CustomerArchivedEvent(_id, _type, attributes, relationships)
+
+
 class DocumentApprovedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
@@ -144,10 +156,34 @@ class PaymentSentEvent(BaseEvent):
         return PaymentSentEvent(_id, _type, attributes, relationships)
 
 
+class PaymentCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentCreatedEvent(_id, _type, attributes, relationships)
+
+
 class PaymentReturnedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
         return PaymentReturnedEvent(_id, _type, attributes, relationships)
+
+
+class PaymentRejectedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentRejectedEvent(_id, _type, attributes, relationships)
+
+
+class PaymentCanceledEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentCanceledEvent(_id, _type, attributes, relationships)
+
+
+class PaymentPendingReviewEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return PaymentPendingReviewEvent(_id, _type, attributes, relationships)
 
 
 class StatementsCreatedEvent(BaseEvent):
@@ -197,43 +233,60 @@ class CheckPaymentPendingEvent(BaseEvent):
     def from_json_api(_id, _type, attributes, relationships):
         return CheckPaymentPendingEvent(_id, _type, attributes, relationships)
 
-class CheckPaymentProcessedEvent(BaseEvent):
+
+class CheckPaymentRejectedEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CheckPaymentProcessedEvent(_id, _type, attributes, relationships)
+        return CheckPaymentRejectedEvent(_id, _type, attributes, relationships)
 
 
-class CheckPaymentReturnedEvent(BaseEvent):
+class CheckPaymentInProductionEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CheckPaymentReturnedEvent(_id, _type, attributes, relationships)
+        return CheckPaymentInProductionEvent(_id, _type, attributes, relationships)
 
 
-class CheckPaymentPendingEvent(BaseEvent):
+class CheckPaymentInDeliveryEvent(BaseEvent):
     @staticmethod
     def from_json_api(_id, _type, attributes, relationships):
-        return CheckPaymentPendingEvent(_id, _type, attributes, relationships)
+        return CheckPaymentInDeliveryEvent(_id, _type, attributes, relationships)
 
 
-EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
-                 ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
-                 AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
-                 CardStatusChangedEvent, CheckDepositCreatedEvent, CheckDepositClearingEvent, CheckDepositSentEvent,
-                 CheckDepositReturnedEvent, CustomerCreatedEvent, DocumentApprovedEvent, DocumentRejectedEvent,
-                 PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent, StatementsCreatedEvent,
-                 TransactionCreatedEvent, AccountReopenedEvent, CheckPaymentCreatedEvent,
-                 CheckPaymentMarkedForReturnEvent, CheckPaymentProcessedEvent, CheckPaymentReturnedEvent,
-                 CheckPaymentPendingEvent]
+class CheckPaymentDeliveredEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentDeliveredEvent(_id, _type, attributes, relationships)
 
 
-def events_mapper(_id, _type, attributes, relationships):
-    c = globals()
-    dot = _type.index(".")
-    c_name = _type[0].upper() + _type[1:dot] + _type[dot+1].upper() + _type[dot+2:] + "Event"
-    if c_name in c.keys():
-        return c[c_name].from_json_api(_id, _type, attributes, relationships)
-    else:
-        return RawUnitObject(_id, _type, attributes, relationships)
+class CheckPaymentReturnToSenderEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentReturnToSenderEvent(_id, _type, attributes, relationships)
+
+
+class CheckPaymentCanceledEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentCanceledEvent(_id, _type, attributes, relationships)
+
+
+class CheckPaymentDeliveryStatusChangedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentDeliveryStatusChangedEvent(_id, _type, attributes, relationships)
+
+
+class CheckPaymentAdditionalVerificationRequiredEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentAdditionalVerificationRequiredEvent(_id, _type, attributes, relationships)
+
+
+class CheckPaymentAdditionalVerificationApprovedRequiredEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CheckPaymentAdditionalVerificationApprovedRequiredEvent(_id, _type, attributes, relationships)
+
 
 class TaxFormCreatedEvent(BaseEvent):
     @staticmethod
@@ -247,6 +300,114 @@ class TaxFormUpdatedEvent(BaseEvent):
         return TaxFormUpdatedEvent(_id, _type, attributes, relationships)
 
 
+class CreditApplicationCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationCreatedEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationPendingEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationPendingEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationApprovedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationApprovedEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationDeniedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationDeniedEvent(_id, _type, attributes, relationships)
+
+
+class CreditApplicationCanceledEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return CreditApplicationCanceledEvent(_id, _type, attributes, relationships)
+
+
+class RepaymentStatusChangedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RepaymentStatusChangedEvent(_id, _type, attributes, relationships)
+
+
+class RepaymentCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RepaymentCreatedEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentCreatedEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentAdvancedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentAdvancedEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentPendingReviewEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentPendingReviewEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentPendingEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentPendingEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentMarkedForReturnEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentMarkedForReturnEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentCompletedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentCompletedEvent(_id, _type, attributes, relationships)
+
+
+class ReceivedPaymentReturnedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ReceivedPaymentReturnedEvent(_id, _type, attributes, relationships)
+
+
+class RewardSentEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RewardSentEvent(_id, _type, attributes, relationships)
+
+
+class RewardRejectedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return RewardRejectedEvent(_id, _type, attributes, relationships)
+
+
+class ChargebackCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return ChargebackCreatedEvent(_id, _type, attributes, relationships)
+
+
+class StatementCreatedEvent(BaseEvent):
+    @staticmethod
+    def from_json_api(_id, _type, attributes, relationships):
+        return StatementCreatedEvent(_id, _type, attributes, relationships)
+
+
 EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent, ApplicationPendingReviewEvent,
                  ApplicationAwaitingDocumentsEvent, AuthorizationCreatedEvent, AuthorizationRequestApprovedEvent,
                  AuthorizationRequestDeclinedEvent, AuthorizationRequestPendingEvent, CardActivatedEvent,
@@ -255,7 +416,18 @@ EventDTO = Union[AccountClosedEvent, AccountFrozenEvent, ApplicationDeniedEvent,
                  PaymentClearingEvent, PaymentSentEvent, PaymentReturnedEvent, StatementsCreatedEvent,
                  TransactionCreatedEvent, AccountReopenedEvent, CheckPaymentCreatedEvent,
                  CheckPaymentMarkedForReturnEvent, CheckPaymentProcessedEvent, CheckPaymentReturnedEvent,
-                 CheckPaymentPendingEvent, TaxFormCreatedEvent, TaxFormUpdatedEvent]
+                 CheckPaymentRejectedEvent, CheckPaymentInProductionEvent, CheckPaymentInDeliveryEvent,
+                 CheckPaymentDeliveredEvent, CheckPaymentReturnToSenderEvent, CheckPaymentCanceledEvent,
+                 CheckPaymentDeliveryStatusChangedEvent, CheckPaymentAdditionalVerificationRequiredEvent,
+                 CheckPaymentAdditionalVerificationApprovedRequiredEvent, CheckPaymentPendingEvent,
+                 TaxFormCreatedEvent, TaxFormUpdatedEvent, CreditApplicationCreatedEvent,
+                 CreditApplicationCanceledEvent, CreditApplicationDeniedEvent, CreditApplicationPendingEvent,
+                 CreditApplicationApprovedEvent, RepaymentStatusChangedEvent, RepaymentCreatedEvent,
+                 ReceivedPaymentCreatedEvent, ReceivedPaymentReturnedEvent, ReceivedPaymentCompletedEvent,
+                 ReceivedPaymentAdvancedEvent, ReceivedPaymentPendingEvent, ReceivedPaymentPendingReviewEvent,
+                 ReceivedPaymentMarkedForReturnEvent, RewardSentEvent, RewardRejectedEvent, ChargebackCreatedEvent,
+                 StatementCreatedEvent, PaymentCreatedEvent, PaymentCanceledEvent, PaymentPendingReviewEvent,
+                 PaymentRejectedEvent, CustomerUpdatedEvent, CustomerArchivedEvent]
 
 
 def events_mapper(_id, _type, attributes, relationships):
